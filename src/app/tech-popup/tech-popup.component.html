@@ -1,0 +1,81 @@
+<div class="modal fade" id="techPopup" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="assets/graphics/images/superpowers.png" title="Superpowers!" height=30> &nbsp;<b>Technology</b>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 0;">
+
+<div style="background-color: #ccc;">
+	<button id="" (click)="infoFlg=!infoFlg" type="button" class="btn btn-primary roundButton" style="font-size: 20px; cursor: help;"><i class="fa fa-info-circle"></i></button>
+	<button id="" (click)="descFlg=!descFlg" type="button" class="btn btn-primary roundButton"><i class="fa fa-clipboard"></i> Show Descriptions</button>
+	<div style="padding: 20px;" *ngIf="infoFlg">
+		<div class="borderClass2">
+		<p><b>Upgrades:</b> Upgrades can be purchased at any time for 10 coins each. Anti-balistics or Advanced Railway. You can use this technology on the same turn that you buy it.</p>
+		<p><b>Research:</b> Research you aquire randomly. The cost is 10 coins per research tech and you are guaranteed something. For any given type, you will receive Level 1 before Level 2, before Level 3. You can buy as much research as you want and get to use it the same turn that you buy it.</p>
+		</div>
+	</div>
+</div>
+
+
+<div class="blueBgWhite">Upgrades</div>
+<table border=1 width=100% class="spTable"><tr>
+		<td><app-tech [tech]="technology[18]" [descFlg]="descFlg" [adminFlg]="adminFlg"></app-tech></td>
+		<td><app-tech [tech]="technology[19]" [descFlg]="descFlg" [adminFlg]="adminFlg"></app-tech></td>
+</tr>
+</table>
+
+<div class="blueBgWhite">Research</div>
+<table border=1 class="spTable" width=100%>
+	<tr><th>Type</th><th>Level 1</th><th>Level 2</th><th>Level 3</th></tr>
+	<tr><td><div class="blueBgWhite">Air Power</div><img src="assets/graphics/units/piece6u.png" width=70> </td>
+		<td><app-tech [tech]="technology[0]" [descFlg]="descFlg" [adminFlg]="adminFlg"></app-tech></td>
+		<td><app-tech [tech]="technology[1]" [descFlg]="descFlg" [adminFlg]="adminFlg"></app-tech></td>
+		<td><app-tech [tech]="technology[2]" [descFlg]="descFlg" [adminFlg]="adminFlg"></app-tech></td>
+	</tr>
+	<tr><td><div class="blueBgWhite">Warheads</div><img src="assets/graphics/units/piece1u.png" width=70> </td>
+		<td><app-tech [tech]="technology[3]" [descFlg]="descFlg" [adminFlg]="adminFlg"></app-tech></td>
+		<td><app-tech [tech]="technology[4]" [descFlg]="descFlg" [adminFlg]="adminFlg"></app-tech></td>
+		<td><app-tech [tech]="technology[5]" [descFlg]="descFlg" [adminFlg]="adminFlg"></app-tech></td>
+	</tr>
+	<tr><td><div class="blueBgWhite">Torpedoes</div><img src="assets/graphics/units/piece5u.png" width=70> </td>
+		<td><app-tech [tech]="technology[6]" [descFlg]="descFlg" [adminFlg]="adminFlg"></app-tech></td>
+		<td><app-tech [tech]="technology[7]" [descFlg]="descFlg" [adminFlg]="adminFlg"></app-tech></td>
+		<td><app-tech [tech]="technology[8]" [descFlg]="descFlg" [adminFlg]="adminFlg"></app-tech></td>
+	</tr>
+	<tr><td><div class="blueBgWhite">Economy</div><img src="assets/graphics/units/piece19u.png" width=70> </td>
+		<td><app-tech [tech]="technology[9]" [descFlg]="descFlg" [adminFlg]="adminFlg"></app-tech></td>
+		<td><app-tech [tech]="technology[10]" [descFlg]="descFlg" [adminFlg]="adminFlg"></app-tech></td>
+		<td><app-tech [tech]="technology[11]" [descFlg]="descFlg" [adminFlg]="adminFlg"></app-tech></td>
+	</tr>
+	<tr><td><div class="blueBgWhite">Bombers</div><img src="assets/graphics/units/piece7u.png" width=70> </td>
+		<td><app-tech [tech]="technology[12]" [descFlg]="descFlg" [adminFlg]="adminFlg"></app-tech></td>
+		<td><app-tech [tech]="technology[13]" [descFlg]="descFlg" [adminFlg]="adminFlg"></app-tech></td>
+		<td><app-tech [tech]="technology[14]" [descFlg]="descFlg" [adminFlg]="adminFlg"></app-tech></td>
+	</tr>
+	<tr><td><div class="blueBgWhite">Tactical</div><img src="assets/graphics/units/piece13u.png" width=70> </td>
+		<td><app-tech [tech]="technology[15]" [descFlg]="descFlg" [adminFlg]="adminFlg"></app-tech></td>
+		<td><app-tech [tech]="technology[16]" [descFlg]="descFlg" [adminFlg]="adminFlg"></app-tech></td>
+		<td><app-tech [tech]="technology[17]" [descFlg]="descFlg" [adminFlg]="adminFlg"></app-tech></td>
+	</tr>
+</table>
+
+	<div *ngIf="players.length>0" style="color: #ccc;">Total Tech Count</div>
+	<span *ngFor="let player of players" style="color: white;">
+		<img src="graphics/flag{{player.nation}}.gif" height=15> 
+		<span *ngIf="player.totalTech && player.totalTech<20">{{player.totalTech}}</span>
+		<span *ngIf="player.totalTech && player.totalTech>=20"><i class="fa fa-check"></i></span>
+	</span>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

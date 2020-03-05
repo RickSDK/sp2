@@ -1,0 +1,48 @@
+import { Component, OnInit } from '@angular/core';
+
+declare var $: any;
+declare var isMusicOn: any;
+declare var isSoundOn: any;
+declare var isVoiceOn: any;
+
+@Component({
+  selector: 'app-audio-popup',
+  templateUrl: './audio-popup.component.html',
+  styleUrls: ['./audio-popup.component.scss']
+})
+export class AudioPopupComponent implements OnInit {
+  public musicFlg:boolean;
+  public soundFlg:boolean;
+  public voiceFlg:boolean;
+  
+  constructor() { }
+
+  ngOnInit(): void {
+  }
+  show() {
+    $("#audioPopup").modal();
+    	this.musicFlg = isMusicOn();
+    	this.soundFlg = isSoundOn();
+    	this.voiceFlg = isVoiceOn();
+	(<HTMLInputElement>document.getElementById('musicBox')).checked=isMusicOn();
+	(<HTMLInputElement>document.getElementById('soundBox')).checked=isSoundOn();
+	(<HTMLInputElement>document.getElementById('voiceBox')).checked=isVoiceOn();
+  }
+  changeAudioSettings() { 
+	if((<HTMLInputElement>document.getElementById('musicBox')).checked) {
+		localStorage.removeItem('musicBox');
+	} else {
+		localStorage.musicBox='N';
+	}
+	if((<HTMLInputElement>document.getElementById('soundBox')).checked)
+		localStorage.removeItem('soundBox');
+	else
+		localStorage.soundBox='N';
+	if((<HTMLInputElement>document.getElementById('voiceBox')).checked)
+		localStorage.removeItem('voiceBox');
+	else
+		localStorage.voiceBox='N';
+	
+  }
+
+}

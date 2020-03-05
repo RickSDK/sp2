@@ -1,0 +1,56 @@
+<div class="modal fade" id="gameInfoPopup" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="assets/graphics/images/superpowers.png" title="Superpowers!" height=30> &nbsp;<b>Game Info</b>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+
+<div *ngIf="gameObj && currentPlayer" style="text-align: left; padding: 10px; background-color: #ddd; border: 1px solid black;">
+	<div *ngIf="gameObj.gameOver" style="background-color: yellow; color: red; padding: 2px;">{{gameObj.finalMessage || ''}}</div>
+	<div *ngIf="!gameObj.gameOver"><b>Current Turn Status: <font color=green>{{currentPlayer.status}}</font></b></div>
+	<div *ngIf="ableToTakeThisTurn && currentPlayer.status=='Purchase' && currentPlayer.placedInf<3 && gameObj.round==1">Place 3 infantry by clicking on any of the territories you own.</div>
+	<div *ngIf="ableToTakeThisTurn && currentPlayer.status=='Purchase' && (currentPlayer.placedInf==3 || gameObj.round>1)">Purchase new units that will be placed at the end of your turn. Click on any of your territories to purchase units.</div>
+	<div *ngIf="ableToTakeThisTurn && currentPlayer.status!='Purchase'">Make attacks by clicking on enemy territories. You can also move troops into position for next turn. Then press 'Complete Turn' to place your units and end your turn.</div>
+</div>
+<div *ngIf="gameObj && user && gameObj.allowAlliances && gameObj.multiPlayerFlg && gameObj.top1.length>0" style="background-color: #ace;">Team-balancing enforced. Top 2 players: 
+	<img src="assets/graphics/images/flag{{gameObj.top1Nation || 1}}.gif" height=15> <b>{{gameObj.top1}}</b> and 
+	<img src="assets/graphics/images/flag{{gameObj.top2Nation || 1}}.gif" height=15> <b>{{gameObj.top2}}</b> cannot be allies with each other in this game.</div>
+	<div *ngIf="user && user.rank==0" style="text-align: left; padding: 10px; background-color: white; border: 1px solid black;"><b>Basic Traning:</b> Conquer Russia and Indo-China before Japan does.</div>
+	<div *ngIf="user && user.rank>0" style="text-align: left; padding: 10px; background-color: white; border: 1px solid black;"><b>Game Type: <i ng-class="ngClassGameType(gameObj.type)"></i> <font color=blue>{{gameObj.typeName}}</font></b>: {{gameObj.desc}}
+	<div style="color: #337ab7;"><b><span *ngIf="gameObj.mmFlg">Matchmaking</span> Game Points:</b> {{gamePoints}}</div>
+</div>
+
+<table width=100% class="spTable" *ngIf="gameObj">
+	<tr>
+		<th style="padding: 5px; text-align: center;">Field</th>
+		<th style="padding: 5px; text-align: center;">Value</th>
+	</tr>
+	<tr><td><b>Created:</b></td><td>{{gameObj.created}}</td></tr>
+	<tr><td><b>Attack:</b></td><td>{{gameObj.attack}}</td></tr>
+	<tr><td><b>Max Allies:</b></td><td>{{gameObj.maxAllies}}</td></tr>
+	<tr *ngIf="gameObj.multiPlayerFlg"><td><b>Host:</b></td><td>{{gameObj.host}}</td></tr>
+	<tr *ngIf="gameObj.turboFlg"><td><b>Turbo Game:</b></td><td><font color=#000>Y</font></td></tr>
+	<tr *ngIf="gameObj.autoNations=='Y'"><td><b>Auto Assign:</b></td><td><font color=#c80>{{gameObj.autoNations}}</font></td></tr>
+	<tr *ngIf="gameObj.fogOfWar=='Y'"><td><b>Fog of War:</b></td><td><font color=#08f>{{gameObj.fogOfWar}}</font></td></tr>
+	<tr *ngIf="gameObj.hardFog=='Y'"><td><b>Hardcore Fog:</b></td><td><font color=#08f>{{gameObj.hardFog}}</font></td></tr>
+	<tr *ngIf="gameObj.autoSkip=='Y'"><td><b>Auto Skip:</b></td><td><font color=#c00>{{gameObj.autoSkip}}</font></td></tr>
+	<tr *ngIf="gameObj.restrict_units_flg=='Y'"><td><b>No Special Units:</b></td><td><font color=#c00>{{gameObj.restrict_units_flg}}</font></td></tr>
+	<tr *ngIf="gameObj.no_stats_flg=='Y' && !gameObj.mmFlg"><td><b>No Stats:</b></td><td><font color=#c00>{{gameObj.no_stats_flg}}</font></td></tr>
+	<tr *ngIf="gameObj.mmFlg"><td><b>League:</b></td><td><font color=red>Official Matchmaking</font></td></tr>
+</table>
+
+
+
+
+
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,153 @@
+	<div class="headline">{{selectedUnit.name}}</div>
+	<div class="container-fluid" style="text-align: center;">
+               <div class="row">
+                    <div class="col-sm-6" style="line-height: 200px; vertical-align: middle;">
+                    	<img src="{{ngUnitSrc(selectedUnit.id, nation)}}" class="shadowed" style="max-width: 100%; max-height: 250px;">
+		    </div>
+                    <div class="col-sm-6">
+			<div class="borderClass3">
+				<div class="blueBgWhite">{{selectedUnit.name}} stats</div>
+				<table align=center>
+					<tr>
+						<td align=right>Type:</td>
+						<td><i class="fa {{buttonList[selectedUnit.type-1].icon}}" title="{{buttonList[selectedUnit.type-1].title}}"></i></td>
+						<td>(<b>{{buttonList[selectedUnit.type-1].title}}/{{selectedUnit.subType}}</b>)</td>
+					</tr>
+					<tr>
+						<td align=right>Cost:</td>
+						<td><img src="assets/graphics/images/coin.png" height=20 title="coins"></td>
+						<td><b>{{selectedUnit.cost}}</b></td>
+					</tr>
+					<tr>
+						<td align=right>Move:</td>
+						<td><i class="fa fa-arrows-alt" title="Movement"></i></td>
+						<td><b>{{selectedUnit.move}}</b></td>
+					</tr>
+					<tr>
+						<td align=right>Attack:</td>
+						<td><i class="fa fa-bolt" title="Attack"></i></td>
+						<td>
+					<img *ngIf="selectedUnit.att>0" title="{{selectedUnit.att}}" src="assets/graphics/dice/diceh{{selectedUnit.att}}.png" height="30">
+					<img *ngIf="selectedUnit.numAtt>1" title="{{selectedUnit.att}}" src="assets/graphics/dice/diceh{{selectedUnit.att}}.png" height="30">
+					<img *ngIf="selectedUnit.numAtt>2" title="{{selectedUnit.att}}" src="assets/graphics/dice/diceh{{selectedUnit.att}}.png" height="30"> 
+					<img *ngIf="selectedUnit.numAtt>3" title="{{selectedUnit.att}}" src="assets/graphics/dice/diceh{{selectedUnit.att}}.png" height="30"> 
+					<img *ngIf="selectedUnit.numAtt>4" title="{{selectedUnit.att}}" src="assets/graphics/dice/diceh{{selectedUnit.att}}.png" height="30"> 
+						</td>
+					</tr>
+					<tr>
+						<td align=right>Defend:</td>
+						<td><i class="fa fa-shield" title="Defend"></i></td>
+						<td>
+					<img *ngIf="selectedUnit.def>0" title="{{selectedUnit.def}}" src="assets/graphics/dice/diceh{{selectedUnit.def}}.png" height="30"> 
+					<img *ngIf="selectedUnit.numDef>1" title="{{selectedUnit.def}}" src="assets/graphics/dice/diceh{{selectedUnit.def}}.png" height="30"> 
+					<img *ngIf="selectedUnit.numDef>2" title="{{selectedUnit.def}}" src="assets/graphics/dice/diceh{{selectedUnit.def}}.png" height="30"> 
+						</td>
+					</tr>
+				</table>
+
+				<div *ngIf="!selectedUnit.target || selectedUnit.target.length==0"><i style="color: red;" class="fa fa-bullseye" title="Target"></i><b>Target:</b> Targets all units.</div>
+				<div *ngIf="selectedUnit.target=='vehicles'"><i style="color: red;" class="fa fa-bullseye" title="Target"></i><b>Target:</b> Targets tanks and artillery first on offense and defense.</div>
+				<div *ngIf="selectedUnit.target=='soldierOnly'"><i style="color: red;" class="fa fa-bullseye" title="Target"></i><b>Target:</b> Can only hit soldier class units</div>
+				<div *ngIf="selectedUnit.target=='noplanes'"><i style="color: red;" class="fa fa-bullseye" title="Target"></i><b>Target:</b> Cannot hit planes</div>
+				<div *ngIf="selectedUnit.target=='kamakazi'"><i style="color: red;" class="fa fa-bullseye" title="Target"></i><b>Target:</b> Targets transports, planes and vehicles only.</div>
+				<div *ngIf="selectedUnit.target=='planes'"><i style="color: red;" class="fa fa-bullseye" title="Target"></i><b>Target:</b> Targets planes first, but can hit any unit.</div>
+				<div *ngIf="selectedUnit.target=='planesTanks'"><i style="color: red;" class="fa fa-bullseye" title="Target"></i><b>Target:</b> Targets planes, tanks and artillery first, but can hit any unit.</div>
+				<div *ngIf="selectedUnit.target=='hijacker'"><i style="color: red;" class="fa fa-bullseye" title="Target"></i><b>Target:</b> Targets planes and vehicles only.</div>
+				<div *ngIf="selectedUnit.id==13"><i style="color: red;" class="fa fa-bullseye" title="Target"></i><b>Target:</b> Planes & Choppers only.</div>
+				<div *ngIf="selectedUnit.returnFlg && selectedUnit.type==1"><b>* Range Attacker.</b></div>
+				<div *ngIf="selectedUnit.spotterReq"><b>** Spotter required</b></div>
+			</div>
+                    </div>
+		</div>
+	</div>
+
+
+
+			<hr>
+			<div *ngFor="let desc of selectedUnit.desc" style="padding: 5px; text-align: left;">{{desc}}</div>
+			<p *ngIf="selectedUnit.id>=20 && selectedUnit.id<=51" style="padding: 5px; font-size: 10px; font-weight: 800;">Limit 6 units per offensive attack. No limits on defense.</p>
+
+			<div *ngIf="selectedUnit.id==10">
+				<hr>
+				<div>Each General has a unique bonus specific to your Superpower:</div>
+				<div *ngFor="let desc of selectedUnit.generalBonuses; let i = index;" ng-style="ngStyleLogs(i+1)" style="border: 1px solid black;">
+					<img src="assets/graphics/images/flag{{i+1}}.gif" height="40" align=left>  {{desc}}
+				</div>
+			</div>
+			<div *ngIf="selectedUnit.id==12">
+				<div class="borderClass3">
+					<div class="blueBgWhite">Super Battleship Upgrades</div>
+					<div style="text-align: left; padding-left: 20px; padding-right: 5px; font-size: 12px;">
+						<i class="fa fa-check-square-o"></i> Attack at 5<br>
+						<i class="fa fa-check-square-o"></i> Bonus attack dice (x2)<br>
+						<i class="fa fa-check-square-o"></i> Defend at 5<br>
+						<i class="fa fa-check-square-o"></i> Bonus defense dice (x2)<br>
+						<i class="fa fa-check-square-o"></i> AA gun included (x2)<br>
+						<i class="fa fa-check-square-o"></i> Bonus hit points (x2)<br>
+					</div>
+					<div class="blueBgWhite">(3 coins per upgrade)</div>
+				</div>
+				<div> A fully upgraded super battleship costs 45 coins</div>
+			</div>
+			<div *ngIf="selectedUnit.id==14">
+				<div class="borderClass3">
+					<div class="blueBgWhite"><img src="assets/graphics/units/piece14u.png" height=20> Damage Chart</div>
+				
+					<table width=100% border=1>
+						<tr><th>Defense</th><th>Kills</th></tr>
+						<tr><td>None</td><td>12</td></tr>
+						<tr><td><img src="assets/graphics/units/piece13u.png" height=15></td><td>10</td></tr>
+						<tr><td><img src="assets/graphics/units/piece13u.png" height=15><img src="assets/graphics/units/piece13u.png" height=15></td><td>8</td></tr>
+						<tr><td><img src="assets/graphics/units/piece13u.png" height=15><img src="assets/graphics/units/piece13u.png" height=15><img src="assets/graphics/units/piece13u.png" height=15></td><td>6</td></tr>
+						<tr><td><img src="assets/graphics/units/piece13u.png" height=15> + <i class="fa fa-shield" title="Anti-Balistics"></i></td><td>8</td></tr>
+						<tr><td><img src="assets/graphics/units/piece13u.png" height=15><img src="assets/graphics/units/piece13u.png" height=15> + <i class="fa fa-shield" title="Anti-Balistics"></i></td><td>4</td></tr>
+						<tr><td><img src="assets/graphics/units/piece13u.png" height=15><img src="assets/graphics/units/piece13u.png" height=15><img src="assets/graphics/units/piece13u.png" height=15> + <i class="fa fa-shield" title="Anti-Balistics"></i></td><td>0</td></tr>
+					</table>
+					<div class="blueBgWhite">+3 kills with Chem. Warheads</div>
+					<div class="blueBgWhite">+3 kills with Anthrax</div>
+				</div>
+			</div>
+			<div *ngIf="selectedUnit.id==7 || selectedUnit.id==15 || selectedUnit.id==19">
+				<div class="blueBgWhite">Factory Income</div>
+				<div style="padding-left: 50px;">
+					<div><img src="assets/graphics/units/piece19.gif" height=20> <font color=gray size=1>Economic Center</font> (<font color=green>+5/turn</font>)</div>
+					<div><img src="assets/graphics/units/piece100.gif" height=20> <font color=gray size=1>Factory</font> </div>
+					<div><img src="assets/graphics/units/piece103.gif" height=20> <font color=gray size=1>Bombed Factory</font> (<font color=red>-5/turn</font>)</div>
+				</div>
+				<div class="blueBgWhite">Strategic Bombings</div>
+				<div style="text-align: left;">
+					<p><img src="assets/graphics/units/piece7u.png" height=20> Bombers have the unique ability to wreck enemy economies by bombing factories and economic centers.</p>
+					<p>Successfully bombing an economic center will turn it into a factory, bombing a factory will turn it into a "bombed factory". Bombed factories can not sustain further damage.</p>
+					<p>To succesfully strike a hit, each bomber must first survive enemy air defense, and then roll a successful hit.</p>
+					<p>Bombers hit by air defense are immediately killed without a chance of dropping bombs.</p>
+				</div>
+				<div class="blueBgWhite">Air Defense</div>
+				<div style="text-align: left;">
+					<p><img src="assets/graphics/units/piece13u.png" height=20> Each factory can be protected against bombing raids by up to 2 AA guns.</p>
+					<p> Each AA gun gets to fire against each incoming bomber. So 2 guns against 2 bombers would be 4 dice rolls. Each "1" on the dice strikes a hit.</p>
+					<p> Having more than 2 AA guns does not provide any additional defense.</p>
+					<p> With Advanced Radar, fighters also scramble to defend against bombers, scoring a hit with a "5" or less, meaning almost perfect defense against bombing raids.</p>
+					<p> <img src="assets/graphics/units/piece100.gif" height=20> <img src="assets/graphics/units/piece101.gif" height=20> <img src="assets/graphics/units/piece102.gif" height=20> <img src="assets/graphics/units/piece104.gif" height=20> 
+					Plus-signs on the factory indicate the number of AA guns protecting it. Note up to 3 AA guns can be used as defense against nukes, which is the reason for indicating 3 AA guns. </p>
+				</div>
+				<div class="blueBgWhite">Technology</div>
+				<div style="text-align: left;">
+					<p>Technology affecting strategic bombings:</p>
+					<div style="color: #700;">
+						<div><img src="assets/graphics/units/piece7u.png" height=20> Help Bombers:</div>
+						<div><i class="fa fa-flask"></i> <b>Advanced Radar:</b> Bombers face at most 1 AA gun.</div>
+						<div><i class="fa fa-flask"></i> <b>Heavy Bombers:</b> Each bomber gets 2 dice to attempt a single hit.</div>
+						<div><i class="fa fa-flask"></i> <b>Smart Bombs:</b> Bombers now hit with a "5".</div>
+						<div><i class="fa fa-flask"></i> <b>Nuclear Warheads:</b> Bombers get 3 dice to attempt a single hit.</div>
+						<div><i class="fa fa-flask"></i> <b>Long Range Aircraft:</b> Increased bomber range.</div>
+					</div>
+					<div style="color: #007;">
+						<div><img src="assets/graphics/units/piece15u.png" height=20> Help Defense:</div>
+						<div><i class="fa fa-flask"></i> <b>Air Defense Shield:</b> Each factory gets additional AA gun automatically.</div>
+						<div><i class="fa fa-flask"></i> <b>Advanced Radar:</b> Fighters assist in air defense against bombers.</div>
+					</div>
+				</div>
+			</div>
+			<hr>
+			<div *ngIf="selectedUnit.returnFlg && selectedUnit.type==1" style="font-size: 12px; text-align: left;">* Range Attacker: Unit attacks without moving into the territory. It cannot be hit when attacking and remains in its original territory.</div>
+			<div *ngIf="selectedUnit.spotterReq" style="font-size: 12px; text-align: left;">** Spotter required for this unit. one infantry or tank needed.</div>

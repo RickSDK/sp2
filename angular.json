@@ -28,9 +28,26 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "./node_modules/bootstrap/dist/css/bootstrap.min.css",
+	      "./node_modules/font-awesome/css/font-awesome.css"
             ],
-            "scripts": []
+            "scripts": [
+                "./node_modules/jquery/dist/jquery.slim.min.js",
+		"./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
+		"src/js/data.js",
+		"src/js/graph.js",
+		"src/js/jsLib.js",
+		"src/js/loadGame.js",
+		"src/js/parse.js",
+		"src/js/practice.js",
+		"src/js/saveGame.js",
+		"src/js/script.js",
+		"src/js/sound.js",
+		"src/js/spLib.js",
+		"src/js/board.js",
+		"src/js/displayBoard.js",
+		]
           },
           "configurations": {
             "production": {

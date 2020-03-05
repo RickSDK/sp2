@@ -1,0 +1,31 @@
+<div class="modal fade" id="ranksPopup" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header"  style="border: 0;">
+                <img src="assets/graphics/images/superpowers.png" title="Superpowers!" height=30> &nbsp;<b>Ranks</b>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 0; ">
+            
+            <table border=0 class="spTable">
+            	<tr><th align=center>Rank</th><th>Needed to reach the level</th></tr>
+            	<tr *ngFor="let rank of ranks" style="border-bottom: 1px solid black;">
+            		<td>
+            			<img src="assets/graphics/ranks/rank{{rank.id}}.png" title="{{rank.id}}: {{rank.name}}" style="max-width: 100px; max-height: 44px;">
+            			 <div style="font-size: 10px;">{{rank.name}}</div>
+            		</td>
+            		<td style="text-align: left;"><b>{{rank.name}}</b>: {{rank.desc}}</td>
+            	</tr>
+            </table>
+            
+            </div> <!--modal-body-->
+            <div class="modal-footer">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

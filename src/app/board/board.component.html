@@ -1,0 +1,140 @@
+<div style="margin-top: 100px; position: absolute; z-index: -10;">
+	<img id="map" src="assets/graphics/images/map.png">
+</div>
+
+<svg *ngFor="let svg of svgs" [attr.x]="svg.left" [attr.y]="svg.top" [attr.width]="svg.width" [attr.height]="svg.height"
+	[attr.viewBox]="svg.viewBox" 
+	style="z-index: -8; position: absolute; width: {{svg.width}}; left: {{svg.left}}; top: {{svg.top}};">
+	<g id="svg{{svg.id}}" fill="transparent" stroke="none" stroke-width="60">
+		<path [attr.d]="svg.path"/>
+	 </g>
+</svg>
+
+<!---flags--->
+<div *ngFor="let terr of gameObj.territories" id="{{'terr'+terr.id}}" style="position: absolute; cursor: pointer; z-index: -4;">
+	<div><img (click)="terrClicked(territoryPopup, terr)" src="assets/graphics/images/{{terr.flag || 'flag1.gif'}}" [class]="ngClassFlag(terr)" id="{{'flag'+terr.id}}" title='{{terr.title}}' alt='{{terr.title}}' style="max-width: 55px;" (mouseenter)="changeSVGColor(true, terr.id, terr.owner)" (mouseleave)="changeSVGColor(false, terr.id, terr.owner)"></div>
+	<div style="padding-top: 0px; margin-top: -6px" *ngIf="terr.nation<99"><span class="boardBlack">{{terr.displayUnitCount}}</span><img *ngIf="terr.piece>0" src="{{ngUnitSrc(terr.piece, terr.owner)}}" title="{{terr.piece}}" style="max-height: 18px; max-width: 24px;"></div>
+	<div style="padding-top: 0px; margin-top: -6px" *ngIf="terr.nation==99 && terr.totalUnitCount>0"><img *ngIf="terr.piece>0" src="{{ngUnitSrc(terr.piece, terr.owner)}}" title="{{terr.piece}}" style="max-height: 22px; max-width: 45px;"></div>
+</div>
+
+<!---nation labels--->
+<span *ngFor="let terr of gameObj.territories" id="name{{terr.id}}" [ngStyle]="ngStyleNameLabel(terr)" style="z-index: -2; display: none; position: absolute; text-align: center; width: 55px; background-color: black; color: white; font-size: 10px; border: 1px solid white; box-shadow: 5px 5px 5px #000;">{{terr.name}}
+	<div *ngIf="terr.capital && terr.id<79" style="color: yellow; font-size: 10px;"><i class="fa fa-star"></i>Capital</div>
+</span>
+
+<img src="assets/graphics/images/target.png" id="target" class="targetSign off">
+
+<section *ngIf="showControls" class="gradient" style="z-index: 201; text-align: center; position: fixed; width: 100%; top: 0px; height: 44px; background-color: #ccc; box-shadow: 2px 2px 3px #000; max-height: 44px; line-height: 1.5em; overflow: hidden;">
+	<a routerLink="/"><button id="homeButton" type="button" class="btn btn-secondary roundButton"><i class="fa fa-home"></i></button></a>
+	<button id="playersButton" (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button" class="btn btn-primary roundButton"><i class="fa fa-user"></i> Players</button>
+	<button id="details2Button" (click)="gameInfoPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button" class="btn btn-primary roundButton"><i class="fa fa-info-circle"></i> Info</button>
+	<button *ngIf="ableToTakeThisTurn && gameObj.actionButtonMessage.length>0" (click)="completeTurnButtonPressed()" id="completeTurnButton" type="button" class="btn btn-success roundButton">{{gameObj.actionButtonMessage}}</button>
+	<img (click)="scrollToNation(currentPlayer.nation)" src="assets/graphics/images/flag{{currentPlayer.nation || 1}}.gif" height=42 title="{{superpowers[gameObj.currentNation]}}" style="cursor: pointer;">
+	<span style="background-color: #777; color: white; border: 1px solid black;">{{currentPlayer.userName}}</span>
+	<span style="background-color: #ccc; color: black; font-size: 14px; padding: 3px;">
+		<span *ngIf="currentPlayer.status == 'Purchase'"><img src="assets/graphics/images/coin.png" height=30 title="coins">{{currentPlayer.money}} </span>
+		<span *ngIf="currentPlayer.status != 'Purchase'"><i class="fa fa-bolt"></i> {{currentPlayer.status}}!</span>
+	</span>
+	<span *ngIf="currentPlayer.nation != yourPlayer.nation">
+		<img (click)="scrollToNation(yourPlayer.nation)" src="assets/graphics/images/flag{{yourPlayer.nation || 1}}.gif" height=42 title="{{superpowers[yourPlayer.nation]}}" style="cursor: pointer;">
+		<span style="background-color: #777; color: white; border: 1px solid black;">{{yourPlayer.userName}}</span>
+	</span>
+</section>
+<div style="z-index: 201; opacity: .75; background-color: gray; text-align: center;  position: fixed; top: 45px; width: 100%; height: 55px;"><span ng-show="loadingFlg" style="color: white; font-size: 24px;"><i class="fa fa-spinner fa-spin"></i> Loading...</span></div>
+<div *ngIf="showControls" style="z-index: 201; text-align: center;  position: fixed; top: 45px; width: 100%; line-height: 1.5em; overflow: hidden; max-height: 55px;">
+	<span style="max-height: 44px; line-height: 1.5em; height: 44px; background-color: #557; border: 1px solid gray; box-shadow: 5px 5px 5px #000;">
+		<button id="unitsButton" (click)="unitsPopup.show()" type="button" class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-fighter-jet"></i><br><span style="font-size: 10px;">Units</span></button>
+		<button id="techButton" (click)="techPopup.show()" type="button" class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-flask"></i><br><span style="font-size: 10px;">Tech</span></button>
+		<button id="alliesButton" (click)="alliesPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button" class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-users"></i><br><span style="font-size: 10px;">Allies</span></button>
+		<button id="logsButton" (click)="logsPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button" class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-list-ol"></i><br><span style="font-size: 10px;">Logs</span></button>
+		<button id="chatButton" (click)="chatPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button" class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-comment"></i><br><span style="font-size: 10px;">Chat</span></button>
+		<button id="statsButton" (click)="statsPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button" class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-line-chart"></i><br><span style="font-size: 10px;">Stats</span></button>
+		<button id="audioButton" (click)="audioPopup.show()" type="button" class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-volume-up"></i><br><span style="font-size: 10px;">Sound</span></button>
+	</span>
+</div>
+<div style="z-index: 202; text-align: center;  position: fixed; top: 87px; width: 100%; ">
+	<span title="{{gameObj.desc}}" style="cursor: pointer; text-align: center; font-size: 12px; padding-left: 5px; color: #ccc; line-height: 1.5em; overflow: hidden; background-color: #557; border: 1px solid gray; box-shadow: 5px 5px 5px #000;">
+		Round <font color=white><b><span *ngIf="historyMode">{{historyRound}}/</span>{{gameObj.round}}</b></font> <span style="background-color: #007; color: white; font-weight: 700; padding-left: 5px; padding-right: 5px;"><i class="fa {{gameObj.icon}}"></i> {{gameObj.name}}</span>
+	</span>
+</div>
+
+<img (click)="dismissArrow()" id="arrow" src="assets/graphics/images/arrow.png" style="z-index: 999; position: fixed; top: 45px; left: 100px; height: 100px; display: none;">
+
+<div id="popupMsgBox" onClick="closePopup('popupMsgBox')" class="popupMsg off" style="padding: 5px; position: absolute; width: 240px;">
+		<table border=0 padding=3 style="width: 100%; background-color: yellow;"><tr>
+		<td valign=middle><img id="popupFlag1" src="assets/graphics/images/flag1.gif" height=40></td>
+		<td valign=middle align=center><span id="popupMsg">Done!</span></td>
+		<td valign=middle><img id="popupFlag2" src="assets/graphics/images/flag1.gif" height=40></td>
+		</tr></table>
+</div>
+<div id="popupDiplomacyBox" onClick="closePopup('popupDiplomacyBox')" class="popupMsg off" style="padding: 5px; position: absolute; width: 240px;">
+		<table border=0 padding=3 style="width: 100%;"><tr>
+		<td valign=middle><img id="popupFlag1b" src="assets/graphics/images/flag1.gif" height=40></td>
+		<td valign=middle align=center><i class="fa fa-users"></i> &nbsp;<span id="popupMsgb">Done!</span></td>
+		<td valign=middle><img id="popupFlag2b" src="assets/graphics/images/flag1.gif" height=40></td>
+		</tr></table>
+</div>
+<div id="alertPopup" class="popupScreen2" onClick="closePopup('unitPopup')">
+	<div><font size=4><i class="fa fa-exclamation-triangle"></i> <span id="alertMessage">Done!</span></font> </div>
+   	<button onClick="closePopup('alertPopup')" id="" type="button" class="btn btn-primary roundButton medium">OK</button><p>
+</div>
+<button *ngIf="showControls " id="menu1Button" ng-click="openCloseSlider('menu1')" type="button" class="btn btn-primary roundButton" style="z-index: 300; position: fixed; left: -2px;"><i class="fa fa-bars"></i> Menu</button>
+<div ng-show="showControls" ng-click="playersPopupClicked()" id="sidelinePopup" style="cursor: pointer; position: fixed; min-width: 50px; max-width: 60px; top: 150px; border: 1px solid black; text-align: center; box-shadow: 3px 3px 5px #000; transition: all 1s ease;">
+	<div id="playerPanel" class="roundedPanel" >
+		<div style="background-color: #444; color: white; font-size: 10px;">Players</div>
+<!--	   	<div ng-repeat="player in gameObj.players" ng-show="player.alive" style="white-space: nowrap;">
+	   		<div ng-show="player.nation==gameObj.currentNation" style=" background-color: #777;">
+	   			<img ng-src="graphics/flag{{player.nation}}.gif" height=30>
+		   		<img ng-show="player.nukes" ng-src="graphics/units/piece14.gif" height=15 style="margin-left: -6px; margin-right: -10px;">
+		   		<span style="font-size: 10px; color: white; font-weight: 700;">{{player.income}}</span>
+				<div style="color: white; font-size: 8px;">{{currentPlayer.userName}}</div>
+				<div style="color: yellow; font-size: 11px;"><b>{{currentPlayer.status}}</b></div>
+		   	</div>
+	   		<div ng-hide="player.nation==gameObj.currentNation || user.userName==player.userName">
+		   		<img ng-src="graphics/flag{{player.nation}}.gif" height=25 title="{{player.userName}}">
+		   		<img ng-show="player.nukes" ng-src="graphics/units/piece14.gif" height=15 style="margin-left: -6px; margin-right: -10px;">
+		   		<span style="font-size: 10px; color: black;">{{player.income}}</span>
+		   	</div>
+	   		<div ng-show="user.userName==player.userName && player.nation!=gameObj.currentNation" style="background-color: #ffc; border: 1px solid black;">
+		   		<img ng-src="graphics/flag{{player.nation}}.gif" height=25 title="{{player.userName}}">
+		   		<img ng-show="player.nukes" ng-src="graphics/units/piece14.gif" height=15 style="margin-left: -6px; margin-right: -10px;">
+		   		<span style="font-size: 10px; color: black;">{{player.income}}</span>
+		   	</div>
+	   	</div>-->
+	</div>
+</div>
+
+<div id="popupSaving" class="popupScreen2" style="max-width: 300px;">
+	<div style="font-size: 24px; color: #007;"><i class="fa fa-spinner fa-spin"></i> <span id="popupMessage">Saving...</span> </div>
+	<div *ngIf="uploadMultiplayerFlg" id="statusMessage" style="font-size: 24px; color: #007;"></div>
+	<div class="progress">
+		<div id="progressBar" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"
+			aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+		</div>
+	</div>
+	<div *ngIf="uploadMultiplayerFlg">
+		<img id="statusImg" src="assets/graphics/misc/yellow.png" height=44>
+	   	<button ng-click="closeMultiplayerStatus()" id="spinnerOKButton" type="button" class="btn btn-primary roundButton medium"><span id="statusOkButton">OK</span></button>
+	   	<div id="statusMsg">Note: Don't leave page until this completes. If it hangs, refresh page and try again.</div>
+	</div>
+</div>
+
+
+
+
+
+
+<app-leader-message-popup #leaderMessagePopup></app-leader-message-popup>
+<app-loading-popup #loadingPopup></app-loading-popup>
+<app-message-popup #messagePopup></app-message-popup>
+<app-territory-popup #territoryPopup></app-territory-popup>
+
+<app-game-info-popup #gameInfoPopup></app-game-info-popup>
+<app-game-players-popup #gamePlayersPopup></app-game-players-popup>
+<app-units-popup #unitsPopup></app-units-popup>
+<app-tech-popup #techPopup></app-tech-popup>
+<app-allies-popup #alliesPopup></app-allies-popup>
+<app-logs-popup #logsPopup></app-logs-popup>
+<app-chat-popup #chatPopup></app-chat-popup>
+<app-stats-popup #statsPopup></app-stats-popup>
+<app-audio-popup #audioPopup></app-audio-popup>

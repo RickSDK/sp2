@@ -1,0 +1,49 @@
+<div class="modal fade" id="loginPopup" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img src="assets/graphics/images/superpowers.png" title="Superpowers!" height=30> &nbsp;<b>Login</b>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="text-align: center; background: url('assets/graphics/splash/splash1024.png')">
+
+
+
+
+		<div class="popupScreen" style="display: inline-block; padding:20px; margin-top: 20px;" *ngIf="showLoginFlg">
+			<div><input type=email id="emailField" name="email" placeholder="Username/Email" value="" (click)="clearValue($event)" [value]="email"></div>
+			<div><input type=password id="passwordField" name="password" placeholder="Password" value="" (click)="clearValue($event)" [value]="password"></div>
+			<div><button (click)="loginPressed()" type="button" class="btn btn-primary tall roundButton">Login</button></div>
+			<!--<fb:login-button 
+			  scope="public_profile,email"
+			  onlogin="checkLoginState();">
+			</fb:login-button>-->
+	
+			<div><button (click)="forgotPasswordPressed()" type="button" class="btn btn-secondary roundButton">Forgot Password</button></div>
+			<div>&nbsp;</div>
+			<div><button (click)="showLoginFlg=false" type="button" class="btn btn-primary roundButton tall2 glowButton">Create New Account</button></div>
+		</div>
+
+		<div class="popupScreen" style="display: inline-block; padding:20px; margin-top: 20px;" *ngIf="!showLoginFlg && !requestSentFlg">
+			<div><input type=email id="emailField2" name="email" placeholder="Email" maxlength="60" [value]="email"></div>
+			<div><input type=text id="firstName" name="firstName" placeholder="Username" maxlength="20" [value]="username"></div>
+			<div><input type=password name="password1" id="password1" placeholder="Password" maxlength="20" [value]="password"></div>
+			<div><input type=password name="password2"id="password2"  placeholder="Retype Password" maxlength="20" [value]="password2"></div>
+			<div><button (click)="createNewPressed()" id="createButton" type="button" class="btn btn-primary tall roundButton">Create</button></div>
+		</div>
+
+		<div class="popupScreen" style="display: inline-block; padding:20px; margin-top: 20px;" *ngIf="requestSentFlg">
+			<i class="fa fa-spinner fa-spin"></i> Sending...
+		</div>
+
+
+            </div>
+            <div class="modal-footer">
+			<button ng-click="displaySPPopup('privacyPopup')" id="" type="button" class="btn btn-primary roundButton"><i class="fa fa-check"></i> Privacy Policy</button>
+			<a href="#!email"><button type="button" class="btn ptp-gray roundButton"><i class="fa fa-envelope"></i> Email Developer</button></a>
+            </div>
+        </div>
+    </div>
+</div>
