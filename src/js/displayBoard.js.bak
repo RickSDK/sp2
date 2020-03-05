@@ -1,0 +1,5 @@
+function initBoard() {
+	startSpinner('Loading Game', '100px');
+	updateProgressBar(20);
+	console.log('init!');
+}
