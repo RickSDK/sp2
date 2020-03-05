@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
 declare var getSuperpowersData: any;
@@ -8,14 +9,15 @@ declare var getSuperpowersData: any;
   templateUrl: './allies-popup.component.html',
   styleUrls: ['./allies-popup.component.scss']
 })
-export class AlliesPopupComponent implements OnInit {
+export class AlliesPopupComponent extends BaseComponent implements OnInit {
   public ableToTakeThisTurn=false
   public currentPlayer:any;
   public gameObj:any;
   public user:any;
   public superpowersData:any;
+  public showInfoFlg = false;
 
-  constructor() { }
+  constructor() { super(); }
 
   ngOnInit(): void {
     this.superpowersData = getSuperpowersData();

@@ -35,6 +35,7 @@ import { AlliesPopupComponent } from './allies-popup/allies-popup.component';
 import { LogsPopupComponent } from './logs-popup/logs-popup.component';
 import { ChatPopupComponent } from './chat-popup/chat-popup.component';
 import { StatsPopupComponent } from './stats-popup/stats-popup.component';
+import { BaseComponent } from './base/base.component';
 
 @NgModule({
   declarations: [
@@ -70,7 +71,8 @@ import { StatsPopupComponent } from './stats-popup/stats-popup.component';
     AlliesPopupComponent,
     LogsPopupComponent,
     ChatPopupComponent,
-    StatsPopupComponent
+    StatsPopupComponent,
+    BaseComponent
   ],
   imports: [
     BrowserModule,

@@ -1,5 +1,0 @@
-<a routerLink="/"> <div style="background-color: #337ab7;">
-	<i class="fa fa-arrow-left" style="font-size: 20px;"></i>  <img src="assets/graphics/images/superpowers.png" title="Superpowers!" height=60>
-	<span style="position: fixed; top: 18px; right: 20px; color: white;">Info</span>
-</div></a>
-
