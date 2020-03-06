@@ -3,13 +3,12 @@
         <div class="modal-content">
             <div class="modal-header">
                 <img src="assets/graphics/images/superpowers.png" title="Superpowers!" height=30>
-                &nbsp;<b>alliesPopup</b>
+                &nbsp;<b><i class="fa fa-users"></i> Allies</b>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body" *ngIf="gameObj">
-
                 <div *ngIf="gameObj.allowAlliances && gameObj.multiPlayerFlg && gameObj.top1.length>0"
                     style="background-color: #ace;">Team-balancing enforced. Top 2 players:
                     <img src="assets/graphics/images/flag{{gameObj.top1Nation}}.gif" height=15> <b>{{gameObj.top1}}</b>

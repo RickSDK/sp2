@@ -1,39 +1,45 @@
 <div class="modal fade" id="unitsPopup" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <img src="assets/graphics/images/superpowers.png" title="Superpowers!" height=30> &nbsp;<b>Units</b>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" style="padding: 5px; text-align: center;">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<img src="assets/graphics/images/superpowers.png" title="Superpowers!" height=30> &nbsp;<b>Units</b>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body" style="padding: 5px; text-align: center;">
 
-            	<div class="btn-group">
-	            	<button *ngFor="let button of buttonList; let i = index;" (click)="selectButton(i)" type="button" class="btn btn-primary roundButton" [ngClass]="{'btn btn-primary roundButton': buttonIdx==i, 'btn btn-secondary roundButton': buttonIdx!=i}"
-	            		style="min-width: 45px;">
-	            		<i class="fa {{button.icon}}" style="font-size: 20px;"></i>
-	                    	<div style="font-size: 10px;">{{button.name}}</div>
-	                </button>
-	        </div>
-		<div *ngIf="buttonIdx>=3" style="font-size: 16px; font-weight: 700;">Special Units {{buttonIdx-2}}</div>
-		<div *ngIf="buttonIdx==3">These units available once you achieve rank of <b>Sergeant</b></div>
-		<div *ngIf="buttonIdx==4">These units available once you achieve rank of <b>Warrant Officer</b></div>
-		<div *ngIf="buttonIdx==5">These units available once you achieve rank of <b>Lieutenant</b></div>
-		<div *ngIf="buttonIdx==6">These units available once you achieve rank of <b>Brig General</b></div>
+				<div class="btn-group">
+					<button *ngFor="let button of buttonList; let i = index;" (click)="selectButton(i)" type="button"
+						class="btn btn-default roundButton" [ngClass]="ngClassSegment(segmentIdx,i)"
+						style="min-width: 45px;">
+						<i class="fa {{button.icon}}" style="font-size: 20px;"></i>
+						<div style="font-size: 10px;">{{button.name}}</div>
+					</button>
+				</div>
+				<div *ngIf="segmentIdx>=3" style="font-size: 16px; font-weight: 700;">Special Units {{segmentIdx-2}}</div>
+				<div *ngIf="segmentIdx==3">These units available once you achieve rank of <b>Sergeant</b></div>
+				<div *ngIf="segmentIdx==4">These units available once you achieve rank of <b>Warrant Officer</b></div>
+				<div *ngIf="segmentIdx==5">These units available once you achieve rank of <b>Lieutenant</b></div>
+				<div *ngIf="segmentIdx==6">These units available once you achieve rank of <b>Brig General</b></div>
 
-<table border=0 width=100%>
-	<tr><td valign=top align=center width="130" >
-		<div *ngFor="let unit of unitList"><button (click)="selectUnit(unit)" type="button" class="btn ptp-yellow unitButton roundButton" style="max-width: 105px;">
-			<img *ngIf="unit.flag>0" src="assets/graphics/images/flag{{unit.flag}}.gif" height=30> <img src="{{ngUnitSrc(unit.id)}}" style="max-height:40px; max-width:80px"></button></div>
-	</td><td valign=top>
+				<table border=0 width=100%>
+					<tr>
+						<td valign=top align=center width="130">
+							<div *ngFor="let unit of unitList"><button (click)="selectUnit(unit)" type="button"
+									class="btn ptp-yellow unitButton roundButton" style="max-width: 105px;">
+									<img *ngIf="unit.flag>0" src="assets/graphics/images/flag{{unit.flag}}.gif"
+										height=30> <img src="{{ngUnitSrc(unit.id)}}"
+										style="max-height:40px; max-width:80px"></button></div>
+						</td>
+						<td valign=top>
 
 
 
-		<app-unit-detail nation="1" [selectedUnit]="selectedUnit"></app-unit-detail>
+							<app-unit-detail nation="1" [selectedUnit]="selectedUnit"></app-unit-detail>
 
 
-<!--
+							<!--
 			<div class="headline">{{selectedUnit.name}}</div>
 			<div><img src="{{ngUnitSrc(selectedUnit.id)}}" class="shadowed" style="max-width: 100%; max-height: 200px;"></div>
 			<div class="borderClass3">
@@ -176,43 +182,57 @@
 			<div *ngIf="selectedUnit.spotterReq" style="font-size: 12px; text-align: left;">** Spotter required for this unit. one infantry or tank needed.</div>
 -->
 
-	</td></tr></table>
+						</td>
+					</tr>
+				</table>
 
 
 
 
-			<div style="background-color: #ace; border: 1px solid black;">
-				<div style="background-color: #337ab7; color: white;">User Strategy Tips</div>
-				<div *ngIf="loadingFlg"><i class="fa fa-spinner fa-spin"></i> Loading...</div>
-				<div *ngFor="let strategy of userStrategies" class="borderClass2" style="text-align: left;">
-					<img src="http://www.superpowersgame.com/graphics/avitars/{{strategy.graphic}}" style="max-height: 150px; width: 100px;" align=left>
-					<img src="assets/graphics/ranks/rank{{strategy.rank}}.png" style="height: 25px; max-width: 100px;">
-					<span style="font-size: 24px;"><b>{{strategy.userName}}</b></span>:
-					<div [innerHTML]="strategy.desc" style="max-width: 320px"></div>
-			
-					<button ng-click="deleteStratButtonPressed(strategy)" *ngIf="user.userName=='Rick'" id="homeButton" type="button" class="btn ptp-red roundButton"><i class="fa fa-trash"></i></button> 
+				<div style="background-color: #ace; border: 1px solid black;">
+					<div style="background-color: #337ab7; color: white;">User Strategy Tips</div>
+					<div *ngIf="loadingFlg"><i class="fa fa-spinner fa-spin"></i> Loading...</div>
+					<div *ngFor="let strategy of userStrategies" class="borderClass2" style="text-align: left;">
+						<img src="http://www.superpowersgame.com/graphics/avitars/{{strategy.graphic}}"
+							style="max-height: 150px; width: 100px;" align=left>
+						<img src="assets/graphics/ranks/rank{{strategy.rank}}.png"
+							style="height: 25px; max-width: 100px;">
+						<span style="font-size: 24px;"><b>{{strategy.userName}}</b></span>:
+						<div [innerHTML]="strategy.desc" style="max-width: 320px"></div>
+
+						<button ng-click="deleteStratButtonPressed(strategy)" *ngIf="user.userName=='Rick'"
+							id="homeButton" type="button" class="btn ptp-red roundButton"><i
+								class="fa fa-trash"></i></button>
+					</div>
+					<div *ngIf="user.rank>3" style="color: black;">
+						<table width=100%>
+							<tr>
+								<td>
+									<input name="strategyText" id="strategyText" placeholder="Add your strategy tips"
+										style="width: 100%;">
+								</td>
+								<td width=80>
+									<button id="uploadStrategyButton" type="button"
+										(click)="uploadStrategyPressed(selectedUnit)"
+										class="btn btn-primary roundButton">Upload</button>
+								</td>
+							</tr>
+						</table>
+					</div>
 				</div>
-				<div *ngIf="user.rank>3" style="color: black;">
-					<table width=100%><tr><td>
-					<input name="strategyText" id="strategyText" placeholder="Add your strategy tips" style="width: 100%;">
-					</td><td width=80>
-					<button id="uploadStrategyButton" type="button" (click)="uploadStrategyPressed(selectedUnit)" class="btn btn-primary roundButton">Upload</button>
-					</td></tr></table>
-				</div>
+
+
+
+
+
+
+
 			</div>
-
-
-
-
-
-
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        </div>
-    </div>
+			<div class="modal-footer">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+		</div>
+	</div>
 </div>

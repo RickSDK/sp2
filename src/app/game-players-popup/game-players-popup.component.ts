@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
 declare var getSuperpowersData: any;
@@ -8,27 +9,18 @@ declare var getSuperpowersData: any;
   templateUrl: './game-players-popup.component.html',
   styleUrls: ['./game-players-popup.component.scss']
 })
-export class GamePlayersPopupComponent implements OnInit {
-  public ableToTakeThisTurn=false
-  public currentPlayer:any;
-  public gameObj:any;
-  public user:any;
-  public filterNumber=0;
+export class GamePlayersPopupComponent extends BaseComponent implements OnInit {
   public showIncomeInfo = false;
-  public superpowersData:any;
 
-  constructor() { }
+  constructor() { super(); }
 
   ngOnInit(): void {
-    this.superpowersData = getSuperpowersData();
   }
-  show(gameObj, ableToTakeThisTurn, currentPlayer, user) {
-    this.gameObj = gameObj;
-    this.ableToTakeThisTurn = ableToTakeThisTurn;
-    this.currentPlayer = currentPlayer;
-    this.user = user;
-    this.superpowersData = getSuperpowersData();
-    $("#gamePlayersPopup").modal();
+
+  show(gameObj:any, ableToTakeThisTurn:any, currentPlayer:any, user:any) {
+    this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);
+    this.openModal('#gamePlayersPopup');
   }
+
 
 }

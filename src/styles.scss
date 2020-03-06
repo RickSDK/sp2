@@ -1,5 +1,6 @@
 $dark-blue: #337ab7;
 $medium-blue: #17a2b8;
+$light-blue: #cef;
 
 .btn-primary {
   background-color: $dark-blue !important;
@@ -11,13 +12,19 @@ $medium-blue: #17a2b8;
 .darkBlue {
   color: $dark-blue;
 }
+.modal-dialog {
+	border: 1px solid black;
+	box-shadow: 3px 3px 7px black;
+}
 .modal-header {
-  background: $medium-blue;
+  background: $dark-blue;
   color: white;
   border: 0;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
 }
 .modal-footer {
-  background: $medium-blue;
+  background: $dark-blue;
   color: white;
   border: 0;
 }
@@ -282,7 +289,6 @@ th {
   width: 100%;
 }
 .spTable:hover {
-  border: 2px solid black;
   box-shadow: 2px 2px 3px #000;
 }
 .spTable tr:nth-child(even){
@@ -385,7 +391,7 @@ margin: 1px;
     border-radius: 10px;
 }
 .bgHighlight {
-	background-color: #ffc; padding-left: 3px; padding-right: 3px; color: black;
+	background-color: $light-blue; padding-left: 3px; padding-right: 3px; color: black;
 }
 .borderClass {
 	border: 1px solid gray; padding: 5px; margin: 5px; background-color: #aaa; color: black;

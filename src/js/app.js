@@ -416,7 +416,7 @@ var app = angular.module('ptpApp', ["ngRoute"]);
     };
     function templateFunc() { 
     	return '<section class="green-bg"><center>'+
-	'<table><td><a href="#!icons"><img ng-src=\'graphics/playerType{{gameStatsObj.playerTypeNumber}}.png\' title=\'{{gameStatsObj.playerTypeName}}\' height=100></a></td>'+
+	'<table><td><a href="#!icons"><img src=\'graphics/playerType{{gameStatsObj.playerTypeNumber}}.png\' title=\'{{gameStatsObj.playerTypeName}}\' height=100></a></td>'+
 	'<td width=100%>'+
 	'<div class="whiteBoldLabel hidden-xxs">Games: {{gameStatsObj.gameString}}</div>'+
 	'<div class="whiteBoldLabel visible-xxs">Games</div>'+
@@ -437,11 +437,11 @@ var app = angular.module('ptpApp', ["ngRoute"]);
     };
     function templateFunc() { 
     	return '<table width=100% ng-style="{\'background-color\': game.status==\'In Progress\' ? \'yellow\':\'\'}"><td><div style="padding: 0; background-color: yellow; width: 50px; text-align: center; border: 1px solid black; height: 50px;"><div style="color: white;" class="green-bg">ROI</div>{{game.roi}}%</div></td>'+
-    	'<td width=100% style="padding-left: 5px;" class="gameCellLabel"><div class="gameCellLabel" ng-show="game.status==\'In Progress\'">Now Playing!</div>'+
+    	'<td width=100% style="padding-left: 5px;" class="gameCellLabel"><div class="gameCellLabel" *ngIf="game.status==\'In Progress\'">Now Playing!</div>'+
     	'<div class="gameCellLabel" ng-hide="game.status==\'In Progress\'"><b><i ng-if="game.type==\'Cash\'" class="fa fa-money"></i><i ng-if="game.type==\'Tournament\'" class="fa fa-trophy"> </i><i ng-if="game.hudHeroLine" class="fa fa-user-secret" style="color: purple; padding-left: 5px;"></i> {{game.name}}</b></div>'+
     	'<div class="gameCellLabel"><table width=100%><td width=60%><font color=green><i class="fa fa-calendar"></i> {{game.startDay}}</font></td>'+
     	'<td align=left><span style="background-color: #fe0; color: green; padding-left: 8px; padding-right: 8px; border-radius: 25px;"><i class="fa fa-clock-o"></i> {{game.hours}}</span></td></table></div></td>'+
-    	'<td style="padding-right: 5px;" class="gameCellLabel" align=right><div class="gameCellLabel"><font color=green>{{game.location}}</font></div><div style="color: red;" ng-show="game.profit<0"><label>{{sign}}{{game.profit}}</label></div><div style="color: green;" ng-show="game.profit>=0"><label>{{sign}}{{game.profit}}</label></div></td></table></div>'; 
+    	'<td style="padding-right: 5px;" class="gameCellLabel" align=right><div class="gameCellLabel"><font color=green>{{game.location}}</font></div><div style="color: red;" *ngIf="game.profit<0"><label>{{sign}}{{game.profit}}</label></div><div style="color: green;" *ngIf="game.profit>=0"><label>{{sign}}{{game.profit}}</label></div></td></table></div>'; 
     	}
   }).directive('reportCell', function() {
     return {
@@ -465,7 +465,7 @@ var app = angular.module('ptpApp', ["ngRoute"]);
     template: templateFunc(),
     };
     function templateFunc() { 
-    	return '<table width=100%><td><img ng-if="item.img" class="cellPhotos" ng-src=graphics/{{item.img}} height=50></td><td width=100%><div class="ptpCellLabel"><table style="width: 100%; color: black;"><td style="color: black; font-size: 20px;"><b>{{item.name}}</b></td><td align=right>{{item.topRight}}</td></table></div>'+
+    	return '<table width=100%><td><img ng-if="item.img" class="cellPhotos" src=graphics/{{item.img}} height=50></td><td width=100%><div class="ptpCellLabel"><table style="width: 100%; color: black;"><td style="color: black; font-size: 20px;"><b>{{item.name}}</b></td><td align=right>{{item.topRight}}</td></table></div>'+
     	'<div class="ptpCellLabel"><table style="width: 100%; color: #080;"><td>{{item.botLeft}}</td><td align=right><font color=gray>{{item.botRight}}</font></td></table></div>'+
     	'</td></table>';
     	}

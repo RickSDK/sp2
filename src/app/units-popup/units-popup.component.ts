@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
 declare var populateUnits: any;
@@ -11,13 +12,13 @@ declare var userGraphicFromLine: any;
   templateUrl: './units-popup.component.html',
   styleUrls: ['./units-popup.component.scss']
 })
-export class UnitsPopupComponent implements OnInit {
+export class UnitsPopupComponent extends BaseComponent implements OnInit {
   public units = [];
   public user:any;
   public loadingFlg = true;
   public unitList = [];
   public userStrategies = [];
-  public buttonIdx:number;
+//  public buttonIdx:number;
   public selectedUnit:any;
   
   public buttonList = [
@@ -29,7 +30,7 @@ export class UnitsPopupComponent implements OnInit {
   	{name: 'Sp3', icon: 'fa-star'},
   	{name: 'Sp4', icon: 'fa-star'},
   	];
-  constructor() { }
+  constructor() { super(); }
 
   ngOnInit(): void {
   	this.units = populateUnits();
@@ -37,12 +38,13 @@ export class UnitsPopupComponent implements OnInit {
   	this.user = userObjFromUser(localStorage.username, localStorage.rank, localStorage.password);
   }
   show() {
-    $("#unitsPopup").modal();
-    this.buttonIdx = 0;
+//	this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);
+    this.openModal('#unitsPopup');
+    this.segmentIdx = 0;
     
   }
   selectButton(idx) {
-  	this.buttonIdx = idx;
+  	this.segmentIdx = idx;
   	this.unitList = [];
   	if(idx==0) {
 	  	this.unitList.push(this.units[1]);

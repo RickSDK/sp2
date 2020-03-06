@@ -22,7 +22,7 @@
 	<img src="assets/graphics/images/flag{{gameObj.top2Nation || 1}}.gif" height=15> <b>{{gameObj.top2}}</b> cannot be allies with each other in this game.</div>
 	<div *ngIf="user && user.rank==0" style="text-align: left; padding: 10px; background-color: white; border: 1px solid black;"><b>Basic Traning:</b> Conquer Russia and Indo-China before Japan does.</div>
 	<div *ngIf="user && user.rank>0" style="text-align: left; padding: 10px; background-color: white; border: 1px solid black;"><b>Game Type: <i ng-class="ngClassGameType(gameObj.type)"></i> <font color=#337ab7>{{gameObj.typeName}}</font></b>: {{gameObj.desc}}
-	<div style="color: #337ab7;"><b><span *ngIf="gameObj.mmFlg">Matchmaking</span> Game Points:</b> {{gamePoints}}</div>
+	<div style="color: #337ab7;"><b><span *ngIf="gameObj.mmFlg">Matchmaking</span> Game Points:</b> {{gameObj.gamePoints}}</div>
 </div>
 
 <table width=100% class="spTable" *ngIf="gameObj">

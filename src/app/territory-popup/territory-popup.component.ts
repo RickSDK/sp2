@@ -19,24 +19,21 @@ export class TerritoryPopupComponent implements OnInit {
   public showLeaderMessage = true;
   public showInfoFlg = false;
   public unitDetailFlg = false;
-//  public gUnits = [];
   public superpowersData:any;
   
-  constructor() { }
+  constructor() {  }
 
   ngOnInit(): void {
   }
   show(terr, currentPlayer, gameObj) {
     $("#territoryPopup").modal();
     this.selectedTerritory = terr;
-//    this.gUnits = populateUnits();
     this.currentPlayer = currentPlayer;
     this.gameObj = gameObj;
     
     this.superpowersData = getSuperpowersData();
     this.optionType = 'none';
-    console.log(terr);
-    console.log(this.superpowersData);
+    console.log(terr.name, terr);
   }
   ngUnitSrc(piece, nation) {
   	return ngUnitSrc(piece, nation);

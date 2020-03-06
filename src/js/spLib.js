@@ -416,7 +416,6 @@ function militaryAdvisorPopup2(message) {
 	playSound('clearThroat.mp3');
 	displayFixedPopup("advisorPopup");
 	document.getElementById("advisorMessage").innerHTML = message;
-	document.getElementById("advisorMessage2").innerHTML = message;
 }
 function showTreatyConfirmationPopup(message, msgId, nation) {
 	localStorage.confirmationOption = msgId;
