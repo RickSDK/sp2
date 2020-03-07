@@ -22,17 +22,16 @@
 					<table>
 						<tr>
 							<td style="margin: 0; padding: 0;">
-								<img src="assets/graphics/advisors/{{selectedTerritory.leaderPic}}" style="height: 100%; max-height: 110px;"
-									title="{{selectedTerritory.leaderName}}">
+								<img src="assets/graphics/advisors/{{selectedTerritory.leaderPic}}"
+									style="height: 100%; max-height: 110px;" title="{{selectedTerritory.leaderName}}">
 							</td>
 							<td>
 								<div><b>{{selectedTerritory.leaderName}}</b></div>
 								<div style="font-size: 12px;">"{{selectedTerritory.leaderMessage}}"</div>
 								<div *ngIf="selectedTerritory.owner>0 && selectedTerritory.treatyStatus < 4">
-									<button
-										*ngIf="selectedTerritory.treatyStatus < 2"
-										ng-click="offerTreaty(2)" id="peaceButton" type="button"
-										class="btn btn-warning roundButton"><i class="fa fa-user-secret"></i> Offer
+									<button *ngIf="selectedTerritory.treatyStatus < 2" ng-click="offerTreaty(2)"
+										id="peaceButton" type="button" class="btn btn-warning roundButton"><i
+											class="fa fa-user-secret"></i> Offer
 										Peace</button>
 									<button
 										*ngIf="selectedTerritory.treatyStatus == 2 && gameObj.allowAlliances && gameObj.type!='barbarian' && gameObj.type!='battlebots'"
@@ -93,7 +92,7 @@
 	   			<span ng-hide="optionType=='attack'">Time to expand the empire! Press 'Attack' to invade Ukraine</span>
 	   			<span *ngIf="optionType=='attack'">Select ALL your units and then press 'Send into Battle!'</span>
 	   		</div>
-		   	<button ng-hide="optionType=='none' || optionType=='units'" ng-click="topMenuButtonClicked()" id="" type="button" class="btn ptp-blue roundButton"><i class="fa fa-arrow-left"></i> Back</button>
+		   	<button ng-hide="optionType=='none' || optionType=='units'" ng-click="topMenuButtonClicked()" id="" type="button" class="btn btn-primary roundButton"><i class="fa fa-arrow-left"></i> Back</button>
 		   	<div *ngIf="optionType=='none' || optionType=='units'">
 			   	<button *ngIf="gameObj.currentNation==selectedTerritory.owner || (selectedTerritory.nation==99 && selectedTerritory.unitCount==0) || treatyStatus=='Alliance'" ng-click="moveButtonClicked()" id="" type="button" class="btn ptp-green"><i class="fa fa-arrows-alt"></i>  <span ng-hide="loadingFlg">Move Here</span><span *ngIf="loadingFlg" style="color: white; font-size: 14px;"><i class="fa fa-spinner fa-spin"></i> Loading...</span></button>
 			   	<button *ngIf="gameObj.currentNation==selectedTerritory.owner && selectedTerritory.nation==99" ng-click="moveButtonClicked(true)" id="" type="button" class="btn ptp-green"><i class="fa fa-ship"></i>  <span ng-hide="loadingFlg">Load Ships</span><span *ngIf="loadingFlg" style="color: white; font-size: 14px;"><i class="fa fa-spinner fa-spin"></i> Loading...</span></button>
@@ -127,7 +126,7 @@
 			<div *ngIf="optionType=='attack'">
 			   	<button ng-click="autoAttackButtonClicked()" id="" type="button" class="btn ptp-red roundButton"><i class="fa fa-star"></i> Auto Attack</button>
 			   	<button ng-click="fullAttackButtonClicked()" id="" type="button" class="btn ptp-red roundButton"><i class="fa fa-bolt"></i> Full Attack</button>
-				<button ng-click="attackInfoButtonPressed()" id="" type="button" class="btn ptp-gray roundButton"><i class="fa fa-info-circle"></i> Attack Info</button>
+				<button ng-click="attackInfoButtonPressed()" id="" type="button" class="btn btn-secondary roundButton"><i class="fa fa-info-circle"></i> Attack Info</button>
 		   	</div>
 		</div>
 	</div>-->
@@ -135,7 +134,7 @@
 				<!--	<div *ngIf="optionType=='transfer'" class="borderClass">
 		<div>Transfer controll of this territory to an ally?</div>
 	   	<button ng-click="tranferButtonClicked()" type="button" class="btn ptp-red roundButton"><i class="fa fa-times"></i> Cancel</button>
-	   	<button ng-repeat="ally in allies" ng-click="transferToAlly(ally)" id="" type="button" class="btn ptp-blue medium"><img src="graphics/flag{{ally.nation}}.gif" height=50></button>
+	   	<button ng-repeat="ally in allies" ng-click="transferToAlly(ally)" id="" type="button" class="btn btn-primary medium"><img src="graphics/flag{{ally.nation}}.gif" height=50></button>
 	</div>
 	<div *ngIf="optionType=='requestTranfer'" class="borderClass">
 		<div>Request that your ally transfer this country to you?</div>
@@ -172,7 +171,7 @@
 	</div>-->
 				<!------------------top units----------------------------->
 				<div *ngIf="optionType=='production' || optionType=='units' || optionType=='none'">
-					<div id="topBar" style="background-color: #007; color: white;">{{selectedTerritory.name}} Units
+					<div id="topBar" style="background-color: #007; color: white;">{{selectedTerritory.name}} units
 						<button *ngIf="selectedTerritory.unitCount>0" (click)="unitDetailFlg=!unitDetailFlg"
 							type="button" class="btn btn-primary roundButton"><i class="fa fa-retweet"></i></button>
 					</div>
@@ -182,7 +181,7 @@
 							*ngFor="let nation of selectedTerritory.flags"
 							src="assets/graphics/images/flag{{nation}}.gif" height=30>
 					</div>
-					<div *ngIf="ableToTakeThisTurn && selectedTerritory.id<=79 && selectedTerritory.flags.length>1 && selectedTerritory.owner==currentPlayer.nation && currentPlayer.status=='Attack'"
+					<div *ngIf="ableToTakeThisTurn && selectedTerritory.id <= 79 && selectedTerritory.flags.length > 1 && selectedTerritory.owner==currentPlayer.nation && currentPlayer.status=='Attack'"
 						style="font-size: 11px;"> Multiple nations. <button ng-click="attackButtonClicked()"
 							id="warButton" type="button" class="btn ptp-red roundButton">Attack!</button></div>
 
@@ -197,18 +196,9 @@
 										src="{{ngUnitSrc(unit.piece, unit.owner)}}"
 										[ngStyle]="ngStyleUnitTop(optionType)" title="{{unit.name}}"
 										style="cursor: pointer;">
-									<div style="font-size: 10px;" *ngIf="optionType=='production'"><span
+									<div style="font-size: 10px;"><span
 											*ngIf="unit.amount>1">({{unit.amount}})</span>&nbsp;</div>
-									<div style="font-size: 10px;" ng-hide="optionType=='production'">{{unit.name}} <span
-											*ngIf="unit.amount>1">({{unit.amount}})</span></div>
 								</span>
-								<div *ngIf="selectedTerritory.showUnitDetailFlg"><button
-										*ngIf="selectedTerritory.unitCount>0" ng-click="toggleUnitDetail()"
-										type="button" class="btn btn-primary roundButton">
-										<img *ngFor="let nation of selectedTerritory.flags"
-											src="assetsgraphics/images/flag{{nation}}.gif" height=30>
-										Unit Detail</button>
-								</div>
 							</div>
 							<!------------------small img units----------------------------->
 							<div *ngIf="unitDetailFlg">
@@ -234,9 +224,10 @@
 						<div *ngIf="selectedTerritory.fogOfWar">
 							<div>-Fog of War-</div>
 							<div *ngIf="gameObj.hardFog=='Y'">
-								<button ng-click="showInfo()" id="" type="button" class="btn ptp-gray roundButton"><i
-										class="fa fa-info-circle"></i> HardCore Fog of War</button>
-								<div class="borderClass2" *ngIf="showInfoFlg">
+								<button ng-click="showInfo()" id="" type="button"
+									class="btn btn-secondary roundButton"><i class="fa fa-info-circle"></i> HardCore Fog
+									of War</button>
+								<div class="borderClass2" *ngIf="infoFlg">
 									<p>In Hardcore Fog-of-war mode, you can see all troops in yours and your ally's
 										territories.</p>
 									<p>For all other territories, if you have at least 1 unit that borders the
@@ -244,9 +235,10 @@
 								</div>
 							</div>
 							<div ng-hide="gameObj.hardFog=='Y'">
-								<button ng-click="showInfo()" id="" type="button" class="btn ptp-gray roundButton"><i
-										class="fa fa-info-circle"></i> Fog of War Info</button>
-								<div class="borderClass2" *ngIf="showInfoFlg">
+								<button ng-click="showInfo()" id="" type="button"
+									class="btn btn-secondary roundButton"><i class="fa fa-info-circle"></i> Fog of War
+									Info</button>
+								<div class="borderClass2" *ngIf="infoFlg">
 									<div>With Fog of War enemy units are hidden from view. Instead you will be given an
 										approximate size of their force, without knowing which units are present:</div>
 									<li>1 = 1 unit
@@ -264,14 +256,219 @@
 						</div>
 					</div>
 					<!--colored unit section-->
-
 				</div>
+				<!------------------end top units----------------------------->
 
+				<!------------------Production----------------------------->
+				<!--			<div *ngIf="displayQueue.length>0 && optionType!='production'">
+					<div style="vertical-align: middle;" *ngIf="ableToTakeThisTurn">Queue: <span
+							style="border: 1px solid black; height: 15px; min-width: 15px;"><span
+								*ngIf="displayQueue.length==0">&nbsp;</span>
+							<span ng-repeat="unit in displayQueue"><img *ngIf="unit.piece>0"
+									src="{{ngUnitSrc(unit.piece, unit.nation)}}" height=15><span
+									*ngIf="unit.count>1">({{unit.count}})</span></span>
+						</span>
+					</div>
+				</div>-->
+				<div *ngIf="optionType=='production'">
+					<div style="background-color: #007; color: white;"><img src="assets/graphics/units/piece15u.png"
+							height=20> {{selectedTerritory.name}} Production</div>
+					<div *ngIf="selectedTerritory.strategyHint.length>0"
+						style="border: 1px solid black; background-color: #cef; font-size: 12px; min-height: 48px;">
+						<img src="assets/graphics/advisors/general{{currentPlayer.nation}}.jpg" height=48 align=left>
+						<i class="fa fa-flag"></i> Hint: {{selectedTerritory.strategyHint}}
+					</div>
+
+					<!---------technology--------->
+					<div *ngIf="selectedTerritory.factoryCount>0"
+						style="background-color: #cdf; border: 1px solid black; border-radius: 5px;">
+						<div class="darkBlueBg" style="font-size: 10px;"><i class="fa fa-flask"></i> Technology</div>
+						<table class="spTable">
+							<tr>
+								<td>
+									<button [disabled]="currentPlayer.money<10 || currentPlayer.abFlg"
+										*ngIf="!currentPlayer.tech[18]" (click)="addUniToQueue(16,1)" type="button"
+										class="btn btn-primary roundButton" title="Anti-Balistics"><i
+											class="fa fa-shield"></i></button>
+									<div *ngIf="currentPlayer.tech[18]" style="font-size: 18px;"><i class="fa fa-check"
+											style="color: green;"></i><i class="fa fa-shield"></i></div>
+									<div style="font-size: 8px;">Anti-Balistics</div>
+								</td>
+								<td>
+									<button [disabled]="currentPlayer.money<10 || currentPlayer.railFlg"
+										*ngIf="!currentPlayer.tech[19]" (click)="addUniToQueue(17,1)" type="button"
+										class="btn btn-primary roundButton" title="Railway"><i
+											class="fa fa-train"></i></button>
+									<div *ngIf="currentPlayer.tech[19]" style="font-size: 18px;"><i class="fa fa-check"
+											style="color: green;"></i><i class="fa fa-train"></i></div>
+									<div style="font-size: 8px;">Railway</div>
+								</td>
+								<td>
+									<button [disabled]="currentPlayer.money<10" *ngIf="currentPlayer.techCount<18"
+										(click)="addUniToQueue(18,1)" type="button"
+										class="btn btn-primary roundButton"><i class="fa fa-flask"></i>
+										Research ({{currentPlayer.techCount}})</button>
+									<div *ngIf="currentPlayer.techCount>=18" style="font-size: 18px;"><i
+											class="fa fa-check" style="color: green;"></i><i class="fa fa-flask"></i>
+									</div>
+									<div style="font-size: 8px;">Technology</div>
+								</td>
+								<td>
+									<button (click)="infoFlg=!infoFlg" type="button"
+										class="btn btn-secondary roundButton"><i class="fa fa-info-circle"></i></button>
+									<div style="font-size: 8px;">Info</div>
+								</td>
+							</tr>
+						</table>
+						<div class="borderClass2" *ngIf="infoFlg">
+							<i class="fa fa-flask"></i> <b>Technology:</b> You can purchase upgrades or fund research
+							for 10 coins each. See the Technology tab at the top of the board for more info.
+						</div>
+					</div>
+					<!---------queue--------->
+					<div style="background-color: #cdf; border: 1px solid black; border-radius: 5px;">
+						<div class="darkBlueBg" style="font-size: 10px;"><i class="fa fa-building-o"></i> Production Queue
+						</div>
+						<img src="assets/graphics/units/piece15u.png" height=20 title="Queue">: <span
+							style="border: 1px solid black; height: 15px; min-width: 15px;"><span
+								*ngIf="selectedTerritory.displayQueue.length==0">&nbsp;</span>
+							<span *ngFor="let unit of selectedTerritory.displayQueue"><img *ngIf="unit.piece>0"
+									src="{{ngUnitSrc(unit.piece, 1)}}" height=15><span
+									*ngIf="unit.count>1">({{unit.count}})</span></span>
+						</span>
+						<button [disabled]="selectedTerritory.displayQueue.length==0" (click)="clearQueue()"
+							type="button" class="btn btn-secondary roundButton">Clear</button>
+					</div>
+					<!---------purchase form--------->
+					<div class="btn-group" *ngIf="selectedTerritory.factoryCount>0">
+						<button (click)="changeProdType(0)" [ngClass]="ngClassSegment(segmentIdx,0)" type="button"
+							class="btn btn-default"><i class="fa fa-truck"></i> Ground</button>
+						<button (click)="changeProdType(1)" [ngClass]="ngClassSegment(segmentIdx,1)" type="button"
+							class="btn btn-default"><i class="fa fa-fighter-jet"></i> Air</button>
+						<button (click)="changeProdType(2)" [ngClass]="ngClassSegment(segmentIdx,2)" type="button"
+							class="btn btn-default"><i class="fa fa-anchor"></i> Sea</button>
+						<button *ngIf="gameObj.restrict_units_flg !='Y' && user.rank>=0" (click)="changeProdType(3)"
+							[ngClass]="ngClassSegment(segmentIdx,3)" type="button" class="btn btn-default"><i
+								class="fa fa-star"></i> Sp</button>
+					</div>
+					<div *ngIf="segmentIdx==2 && selectedTerritory.id<79" style="padding: 20px; color: #800;">
+						<i class="fa fa-exclamation-triangle"></i> Click on sea zones to build new ships</div>
+					<div *ngIf="segmentIdx!=2 || selectedTerritory.id>=79" class="listborder">
+						<table class="spTable">
+							<tr>
+								<td></td>
+								<td style="min-width: 25px;" align=center><img src="assets/graphics/images/coin.png"
+										height=20 title="cost"></td>
+								<td style="min-width: 25px;" align=center>
+									<font color=black><i class="fa fa-arrows-alt" title="Movement"></i></font>
+								</td>
+								<td style="min-width: 25px;" align=center>
+									<font color=#900><i class="fa fa-bolt" title="Attack"></i></font>
+								</td>
+								<td style="min-width: 25px;" align=center>
+									<font color=blue><i class="fa fa-shield" title="Defend"></i></font>
+								</td>
+								<td></td>
+							</tr>
+							<tr *ngFor="let unit of productionDisplayUnits">
+								<td style="font-size: 8px;" align=center>
+									<img (click)="unitDetailPopup.show(unit)" src="{{ngUnitSrc(unit.id, 1)}}"
+										style="max-width: 60px; max-height: 40px; cursor: pointer;"
+										title="{{unit.name}}"><br>{{unit.name}}</td>
+								<td align=center>
+									<font color=#c80><b>{{unit.cost}}</b></font>
+								</td>
+								<td align=center>
+									<font color=black>{{unit.move}}</font>
+								</td>
+								<td align=center>
+									<font color=#900>{{unit.att}} <span *ngIf="unit.numAtt>1">x
+											{{unit.numAtt}}</span></font>
+								</td>
+								<td align=center>
+									<font color=blue>{{unit.def}}</font>
+								</td>
+								<td>
+									<button [disabled]="currentPlayer.money<unit.cost" id="{{'buy'+unit.id}}"
+										(click)="addUniToQueue(unit.id, 1)" type="button"
+										class="btn btn-secondary roundButton"><i class="fa fa-lock"
+											*ngIf="unit.locked"></i><span ng-hide="unit.locked">buy</span></button>
+									<button *ngIf="unit.id != 12" [disabled]="currentPlayer.money<unit.cost*5"
+										id="{{'buy5'+unit.id}}" (click)="addUniToQueue(unit.id, 5)" type="button"
+										class="btn btn-secondary roundButton">x5</button>
+								</td>
+							</tr>
+							<!------factory-->
+							<tr *ngIf="selectedTerritory.factoryCount==0 && selectedTerritory.id<79">
+								<td style="font-size: 8px;" align=center><img
+										(click)="unitDetailPopup.show(superpowersData.units[15])"
+										src="{{ngUnitSrc(15, 1)}}"
+										style="max-width: 60px; max-height: 40px; cursor: pointer;"
+										title="Factory"><br>Factory</td>
+								<td align=center>
+									<font color=#c80>15</font>
+								</td>
+								<td align=center>
+									<font color=black>0</font>
+								</td>
+								<td align=center>
+									<font color=#900>0</font>
+								</td>
+								<td align=center>
+									<font color=blue>0</font>
+								</td>
+								<td>
+									<button [disabled]="currentPlayer.money<15" id="buy15"
+										(click)="addUniToQueue(15, 1)" type="button"
+										class="btn btn-secondary roundButton">buy</button>
+								</td>
+							</tr>
+							<!------emp-->
+							<tr *ngIf="segmentIdx==2 && selectedTerritory.id<79 && gameObj.mmFlg"
+								class="tableRowClickable2">
+								<td style="font-size: 8px;" align=center><img ng-click="unitPopup(52)"
+										src="assets/graphics/units/piece52u.png"
+										style="max-width: 40px; max-height: 40px;" title="EMP Blast"><br>EMP</td>
+								<td align=center>
+									<font color=#c80><b>0</b></font>
+								</td>
+								<td align=center>
+									<font color=black>1</font>
+								</td>
+								<td align=center>
+									<font color=#900>36</font>
+								</td>
+								<td align=center>
+									<font color=blue>-</font>
+								</td>
+								<td>
+									<button id="buyEMP" ng-click="buyEmp()" type="button"
+										class="btn btn-secondary roundButton">buy</button>
+								</td>
+							</tr>
+						</table>
+						<div *ngIf="selectedTerritory.facBombedFlg && segmentIdx==0"><img
+								src="assets/graphics/units/piece103.gif" height=20 title="Repair bombed factory"> <i
+								class="fa fa-arrow-right"></i>
+							<img src="assets/graphics/units/piece15.gif" height=20 title="Repair bombed factory">
+							<font color=#fc0>15</font> <button id="" ng-click="addUniToQueue(19, 1)" type="button"
+								class="btn btn-secondary roundButton">buy</button>
+						</div>
+						<div style="padding: 10px;">
+							<img src="assets/graphics/images/coin.png" height=30 title="coins"> Coins: <span
+								class="money">{{currentPlayer.money}}</span>
+						</div>
+					</div>
+				</div>
+				<!------------------Production----------------------------->
 
 
 
 			</div>
 			<div class="modal-footer" style="background-color: #337ab7;  border: 0">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
 			</div>
 		</div>
 	</div>

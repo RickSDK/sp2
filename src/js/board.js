@@ -251,8 +251,20 @@ function getYourPlayer(gameObj, userName) {
 	}
 	return humanPlayer;
 }
+function highlightCapital(nation) {
+	var ids = [1,1,7,13,21,28,35,42,50];
+//	highlightTerritory(ids[nation], nation, true);
+	var obj = capitalXY(nation);
+	var e = document.getElementById('arrow');
+	e.style.display='block';
+	e.style.position='absolute';
+	e.style.left=(obj.x-40).toString()+'px';
+	e.style.top=(obj.y+140).toString()+'px';
+}
 
 function refreshTerritory(terr, gameObj, gUnits, currentPlayer, superpowers, yourPlayer, cleanDice = false) {
+	if(!gameObj)
+		console.log('!!!! no gameObj!!');
 	var unitCount = 0;
 	var highestPiece = 0;
 	var adCount = 0;
@@ -590,8 +602,51 @@ function refreshTerritory(terr, gameObj, gUnits, currentPlayer, superpowers, you
 	if (superBC)
 		terr.title += '\n' + superBSStats;
 }
-function displayLeaderInfo(terr, currentPlayer, yourPlayer) {
-	console.log('currentPlayer', currentPlayer);
+function isUnitGoodForForm(segmentIdx, type, subType) {
+	if(segmentIdx==3 && type!=3) // special
+		return true;
+	if(segmentIdx==2 && (type==3 || type==4)) // water
+		return true;
+	if(segmentIdx==2 && subType=='fighter') // water
+		return true;
+	return false;
+}
+function getDisplayQueueFromQueue(terr, gameObj) {
+	var queue=[];
+	var pieceHash={};
+
+	gameObj.unitPurchases.forEach(function(unit) {
+		if(unit.terr==terr.id) {
+			if(pieceHash[unit.piece]>0)
+				pieceHash[unit.piece]++;
+			else
+				pieceHash[unit.piece]=1;
+		}
+	});
+	var keys = Object.keys(pieceHash);
+	for(x=0;x<keys.length;x++) {
+		var piece = keys[x];
+		queue.push({piece: piece, count: pieceHash[piece]});
+	}
+	return queue;
+}
+function displayLeaderAndAdvisorInfo(terr, currentPlayer, yourPlayer, user, gameObj) {
+	var strategyHint = '';
+	if (user.rank < 2 && terr.treatyStatus==4) {
+		if (gameObj.round == 1 && terr.factoryCount > 0)
+			strategyHint = 'Not sure what to buy? Get tanks. They are good all-purpose units.';
+		if (gameObj.round == 2 && terr.factoryCount > 0)
+			strategyHint = 'Buying an Economic Center will boost your income.';
+		if (gameObj.round <=5 && terr.factoryCount == 0)
+			strategyHint = 'Buying a factory will allow you to place new units here next turn.';
+		if (gameObj.round == 3 && terr.factoryCount > 0)
+			strategyHint = 'Factories purchased this turn will be available for use starting next turn.';
+		if (gameObj.round == 4 && terr.factoryCount > 0)
+			strategyHint = 'Consider buying Technology. These help boost your strength in a number of ways.';
+		if (gameObj.round == 5 && selectedTerritory.factoryCount > 0)
+			strategyHint = 'Last round of peace! Opposing players can attack you in round 6. Get your defenses ready.';
+	}
+	terr.strategyHint = strategyHint;
 	terr.leader = terr.owner || 0;
 	if (terr.leader == 0)
 		terr.leader = terr.nation || 0;

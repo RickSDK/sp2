@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 declare var $: any;
 declare var playSound: any;
 declare var getSuperpowersData: any;
+declare var ngUnitSrc: any;
 
 @Component({
   selector: 'app-base',
@@ -26,17 +27,25 @@ export class BaseComponent implements OnInit {
 
   ngOnInit(): void { }
 
+  //-----img---
+  ngUnitSrc(piece: number, nation: number) {
+    return ngUnitSrc(piece, nation);
+  }
+  //-----ngStyles---
   ngStyleLogs(nation: number) {
     var colors = ['#ffc', '#ccf', '#ccc', '#db6', '#fcc', '#cfc', '#ffc', '#fcf', '#cff', '#666'];
     var color = colors[nation];
     return { 'background-color': color };
   }
+  //-----ngClasses---
   ngClassSegment(num: number, buttonIdx: number) {
     if (num == buttonIdx)
       return 'btn btn-primary roundButton';
     else
       return 'btn btn-secondary roundButton';
   }
+  
+  //-----views---
   initView(gameObj: any, ableToTakeThisTurn: any, currentPlayer: any, user: any) {
     this.gameObj = gameObj;
     this.ableToTakeThisTurn = ableToTakeThisTurn;

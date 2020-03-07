@@ -12,6 +12,10 @@ $light-blue: #cef;
 .darkBlue {
   color: $dark-blue;
 }
+.darkBlueBg {
+	background-color: $dark-blue;
+	color: white;
+}
 .modal-dialog {
 	border: 1px solid black;
 	box-shadow: 3px 3px 7px black;
@@ -1439,8 +1443,6 @@ h2 {
 		width: 180px;
 		height: 180px;
 	}
-	.mainPageCol {
-	}
 	.middleCol {
 		max-width: 100px;
 	}
@@ -1467,17 +1469,11 @@ h2 {
 	.hidden-lg {
 		display: none;
 	}
-	.mainPageCol {
-	}
 	.mainCtr {
 		width: 220px;
 	}
 }
 
-@media screen and (min-width: 1282px) {
-	.mainPage {
-	}
-}
 
 @media screen and (max-width: 700px) {
 	.largeDate {

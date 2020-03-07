@@ -13,7 +13,7 @@
 <!---flags--->
 <div *ngFor="let terr of gameObj.territories" id="{{'terr'+terr.id}}"
 	style="position: absolute; cursor: pointer; z-index: -4;">
-	<div><img (click)="terrClicked(territoryPopup, terr)" src="assets/graphics/images/{{terr.flag || 'flag1.gif'}}"
+	<div><img (click)="terrClicked(territoryPopup, terr, gameObj, ableToTakeThisTurn, currentPlayer, user)" src="assets/graphics/images/{{terr.flag || 'flag1.gif'}}"
 			[class]="ngClassFlag(terr)" id="{{'flag'+terr.id}}" title='{{terr.title}}' alt='{{terr.title}}'
 			style="max-width: 55px;" (mouseenter)="changeSVGColor(true, terr.id, terr.owner)"
 			(mouseleave)="changeSVGColor(false, terr.id, terr.owner)"></div>
@@ -33,7 +33,7 @@
 	</div>
 </span>
 
-<img src="assets/graphics/images/target.png" id="target" class="targetSign off">
+<img onClick="closePopup('target')" src="assets/graphics/images/target.png" id="target" class="targetSign off">
 
 <!---top bar--->
 <section *ngIf="showControls" class="gradient"
@@ -103,6 +103,31 @@
 				class="fa {{gameObj.icon}}"></i> {{gameObj.name}}</span>
 	</span>
 </div>
+<!---------- menu button-->
+<button *ngIf="showControls " id="menu1Button" ng-click="openCloseSlider('menu1')" type="button"
+	class="btn btn-primary roundButton" style="z-index: 300; position: fixed; left: -2px;"><i class="fa fa-bars"></i>
+	Menu</button>
+<!---------- players bar-->
+<div id="sidelinePopup"
+	style="cursor: pointer; position: fixed; min-width: 50px; max-width: 60px; top: 150px; left: 0; border: 1px solid black; text-align: center; box-shadow: 3px 3px 5px #000; transition: all 1s ease;">
+	<div id="playerPanel" class="roundedPanel" *ngIf="currentPlayer">
+		<div style="background-color: #444; color: white; font-size: 10px;">Players</div>
+		<div (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)"
+			*ngFor="let player of gameObj.players" style="white-space: nowrap;">
+			<i *ngIf="player.nation==currentPlayer.nation" class="fa fa-check"
+				style="font-size: 10px; color: green;"></i>
+			<img src="assets/graphics/images/flag{{player.nation}}.gif" height=30 title="{{player.userName}}">
+			<img *ngIf="player.nukes" src="assets/graphics/units/piece14.gif" height=15
+				style="margin-left: -6px; margin-right: -10px;">
+			<span style="font-size: 10px; font-weight: 700;">{{player.income}}</span>
+			<div *ngIf="player.nation==currentPlayer.nation" style="font-size: 11px;"><b>{{player.status}}</b></div>
+		</div>
+		<button *ngIf="isMobileFlg" (click)="arrowsButtonClicked()" type="button"
+			class="btn btn-secondary roundButton"><i class="fa fa-arrows-h"></i></button>
+	</div>
+</div>
+<img id="sprite" src="assets/graphics/units/piece{{spritePieceId}}u.png" style="display: none; position: absolute; left: 0; top: 200px; height: 200px;">
+
 
 <img (click)="dismissArrow()" id="arrow" src="assets/graphics/images/arrow.png"
 	style="z-index: 999; position: fixed; top: 45px; left: 100px; height: 100px; display: none;">
@@ -135,28 +160,7 @@
 		class="btn btn-primary roundButton medium">OK</button>
 	<p>
 </div>
-<button *ngIf="showControls " id="menu1Button" ng-click="openCloseSlider('menu1')" type="button"
-	class="btn btn-primary roundButton" style="z-index: 300; position: fixed; left: -2px;"><i class="fa fa-bars"></i>
-	Menu</button>
 
-<div id="sidelinePopup"
-	style="cursor: pointer; position: fixed; min-width: 50px; max-width: 60px; top: 150px; left: 0; border: 1px solid black; text-align: center; box-shadow: 3px 3px 5px #000; transition: all 1s ease;">
-	<div id="playerPanel" class="roundedPanel" *ngIf="currentPlayer">
-		<div style="background-color: #444; color: white; font-size: 10px;">Players</div>
-		<div (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)"
-			*ngFor="let player of gameObj.players" style="white-space: nowrap;">
-			<i *ngIf="player.nation==currentPlayer.nation" class="fa fa-check"
-				style="font-size: 10px; color: green;"></i>
-			<img src="assets/graphics/images/flag{{player.nation}}.gif" height=30 title="{{player.userName}}">
-			<img *ngIf="player.nukes" src="assets/graphics/units/piece14.gif" height=15
-				style="margin-left: -6px; margin-right: -10px;">
-			<span style="font-size: 10px; font-weight: 700;">{{player.income}}</span>
-			<div *ngIf="player.nation==currentPlayer.nation" style="font-size: 11px;"><b>{{player.status}}</b></div>
-		</div>
-		<button *ngIf="isMobileFlg" (click)="arrowsButtonClicked()" type="button"
-			class="btn btn-secondary roundButton"><i class="fa fa-arrows-h"></i></button>
-	</div>
-</div>
 
 <div id="popupSaving" class="popupScreen2" style="max-width: 300px;">
 	<div style="font-size: 24px; color: #007;"><i class="fa fa-spinner fa-spin"></i> <span
@@ -175,8 +179,7 @@
 	</div>
 </div>
 
-<div id="advisorPopup" *ngIf="currentPlayer" class="popupScreenNoPad"
-	style="width: 200px; z-index: 9999;">
+<div id="advisorPopup" (click)="playGameButtonPressed()" *ngIf="currentPlayer" class="popupScreenNoPad" style="width: 200px; z-index: 9999;">
 	<div ng-style="ngStyleLogs(gameObj.currentNation)" style="color: black;"><img
 			src="assets/graphics/images/flag{{currentPlayer.nation}}.gif" height=20> Military Advisor</div>
 	<img ng-if="currentPlayer.nation>0" src="assets/graphics/advisors/general{{currentPlayer.nation}}.jpg" width=100%>
@@ -184,7 +187,8 @@
 		<i class="fa fa-certificate"></i> <span id="advisorMessage"></span>
 	</div>
 	<div *ngIf="currentPlayer.news.length>0" style="border: 1px solid black; margin: 2px;">
-		<div style="background-color: #444; color: white;"><img src="assets/graphics/misc/news.png" height="20"> Diplomacy News
+		<div style="background-color: #444; color: white;"><img src="assets/graphics/misc/news.png" height="20">
+			Diplomacy News
 		</div>
 		<div *ngFor="let news of currentPlayer.news" style="border-bottom: 1px solid gray;">
 			<img src="assets/graphics/misc/news{{news.type}}.png" style="max-height: 30px; max-width: 55px;">
@@ -205,8 +209,13 @@
 		<div><img src="assets/graphics/units/piece4u.png" height=30 title="Transport"></div>
 		Transport ships move your ground units over seas.
 	</div>
-	<button (click)="playGameButtonPressed()" id="" type="button" class="btn btn-primary roundButton">Sir, Yes
+	<button id="" type="button" class="btn btn-primary roundButton">Sir, Yes
 		Sir!</button>
+</div>
+<div id="infantry3Confirm" class="popupScreen2" style="width: 300px;">
+	<div>Good job! Are you happy with your placement?</div>
+	   <button (click)="redoMoves()" type="button" class="btn btn-warning roundButton tall2"><i class="fa fa-refresh"></i> Redo</button>
+	   <button (click)="acceptInfantryPlacement()" id="" type="button" class="btn btn-success roundButton tall2"><i class="fa fa-check"></i> Yes!</button><p>
 </div>
 
 

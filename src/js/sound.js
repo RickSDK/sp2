@@ -89,6 +89,8 @@ function playVoiceSound(voiceOverId, muteSound) {
 		fileName = "startPlace3Inf.mp3";
 	if(voiceOverId==22)
 		fileName = "clickCapital.mp3";
+	if(voiceOverId==23)
+		fileName = "welcome2.mp3";
 	
 
 	if(voiceOverId==31)

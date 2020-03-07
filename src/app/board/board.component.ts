@@ -3,8 +3,8 @@ import { BaseComponent } from '../base/base.component';
 import { analyzeAndValidateNgModules } from '@angular/compiler';
 
 declare var loadSVGs: any;
-declare var getGameTerritories: any;
-declare var populateUnits: any;
+//declare var getGameTerritories: any;
+//declare var populateUnits: any;
 declare var refreshBoard: any;
 declare var refreshTerritory: any;
 declare var isMobile: any;
@@ -18,16 +18,26 @@ declare var getHostname: any;
 declare var userObjFromUser: any;
 declare var createNewGameSimple: any;
 declare var loadSinglePlayerGame: any;
-declare var displayLeaderInfo: any;
 declare var unitsForTerr: any;
 declare var playersPanelMoved: any;
 declare var saveGame: any;
 declare var scrubGameObj: any;
 declare var getYourPlayer: any;
-declare var scrollToCapital: any;
 declare var militaryAdvisorPopup: any;
 declare var closePopup: any;
 declare var getCurrentPlayer: any;
+declare var showAlertPopup: any;
+declare var getDisplayUnitCount: any;
+declare var unitOfId: any;
+declare var playSound: any;
+declare var displayFixedPopup: any;
+declare var playVoiceSound: any;
+//---board.js
+declare var displayLeaderAndAdvisorInfo: any;
+declare var getDisplayQueueFromQueue: any;
+declare var highlightCapital: any;
+//---spLib.js
+declare var scrollToCapital: any;
 
 @Component({
 	selector: 'app-board',
@@ -44,12 +54,13 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public historyRound = 1;
 	public gameObj: any;
 	public currentPlayer: any;
-	//public currentPlayer = { userName: 'Bob', money: 30, status: 'purchase', nation: 1 };
-	public yourPlayer = { userName: 'Rick', nation: 3 };
+	public yourPlayer = { userName: 'Ted', nation: 3 };
 	public ableToTakeThisTurn = true;
 	public uploadMultiplayerFlg = false;
 	public progress = 0;
 	public isMobileFlg = true;
+	public spriteInMotionFlg = false;
+	public spritePieceId = 2;
 
 	constructor() { super(); }
 
@@ -129,17 +140,21 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		///----------------------here!!!
 		this.currentPlayer = getCurrentPlayer(this.gameObj);
-		console.log('yourPlayer', this.currentPlayer);
+		console.log('currentPlayer', this.currentPlayer);
 		this.currentPlayer.news = [];
 
 		updateProgressBar(100);
 		stopSpinner();
-		this.displayHelpMessages();
+		if (this.currentPlayer.nation == this.yourPlayer.nation)
+			this.displayHelpMessages();
 	}
 	//----------------load board------------------
 	displayHelpMessages() {
 		scrollToCapital(this.yourPlayer.nation);
-		militaryAdvisorPopup('New Game! You are starting as ' + this.superpowersData.superpowers[this.yourPlayer.nation] + '. See the countries displayed on the side, to see what CPU players you will be up against.', 20);
+		if (this.gameObj.round == 1 && this.currentPlayer.placedInf < 3)
+			militaryAdvisorPopup('New Game! You are starting as ' + this.superpowersData.superpowers[this.yourPlayer.nation] + '. First place 3 infantry by clicking on your territories.', 21); //23
+		//militaryAdvisorPopup('New Game! You are starting as ' + this.superpowersData.superpowers[this.yourPlayer.nation] + '. The countries displayed on the side are your CPU players you will be up against.', 21); //23
+		//this.initializePlayer(this.currentPlayer); //<-- delete this!!
 		//sidelinePopup
 	}
 	playGameButtonPressed() {
@@ -147,7 +162,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		closePopup('advisorPopup');
 		this.initializePlayer(this.currentPlayer);
 	}
-	initializePlayer(player) {
+	initializePlayer(player: any) {
 		if (player.id != this.currentPlayer.id)
 			this.currentPlayer = player;
 		this.showControls = !player.cpu;
@@ -163,6 +178,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		//cleanupCargo();
 		scrollToCapital(player.nation);
 		//highlightCapital(player.nation);
+		player.techCount = 1;
+		this.gameObj.unitPurchases = [];
+
+
 		if (this.gameObj.gameOver) {
 			console.log('game over!!');
 			return;
@@ -233,10 +252,103 @@ export class BoardComponent extends BaseComponent implements OnInit {
 */
 
 	}
-	terrClicked(popup: any, terr: any) {
-		displayLeaderInfo(terr, this.currentPlayer, this.yourPlayer);
-		terr.units = unitsForTerr(terr, this.gameObj.units);
-		popup.show(terr, this.currentPlayer, this.gameObj);
+	terrClicked(popup: any, terr: any, gameObj: any, ableToTakeThisTurn: any, currentPlayer: any, user: any) {
+		if (this.gameObj.round == 1 && this.currentPlayer.placedInf < 3) {
+			if (terr.treatyStatus < 4 || terr.nation == 99)
+				showAlertPopup('Click on one of your ' + this.superpowersData.superpowers[this.yourPlayer.nation] + ' territories to place an infantry.', 1);
+			else {
+				this.addUnitToTerr(terr, 2, true, true);
+				this.currentPlayer.placedInf++;
+				if (this.currentPlayer.placedInf >= 3)
+					displayFixedPopup('infantry3Confirm');
+			}
+
+			return;
+		}
+		displayLeaderAndAdvisorInfo(terr, currentPlayer, this.yourPlayer, user, gameObj);
+		terr.units = unitsForTerr(terr, gameObj.units);
+		terr.displayQueue = getDisplayQueueFromQueue(terr, this.gameObj);
+		popup.show(terr, currentPlayer, gameObj, ableToTakeThisTurn, user);
+	}
+	redoMoves() {
+		
+	}
+	acceptInfantryPlacement() {
+		closePopup('infantry3Confirm');
+		highlightCapital(this.currentPlayer.nation);
+		playVoiceSound(22);
+	}
+	addUnitToTerr(terr: any, piece: number, allowMovesFlg: boolean, refreshFlg: boolean) {
+		if (piece == 52)
+			allowMovesFlg = true;
+		var nation = terr.owner;
+		var newId = this.gameObj.unitId || this.gameObj.units.length;
+		if (piece == 12) {
+			//			console.log(this.gameObj.superBCForm);
+			var unit = unitOfId(newId, nation, piece, terr.id, this.superpowersData.units, allowMovesFlg);
+			var names = ['Titan', 'Bismark', 'Enterprise', 'Cowboy', 'Terminator', 'Ball-Buster', 'Behemuth', 'Gargantia', 'TLC', 'Peacemaker', 'Bubba Gump', 'Miami Vice', 'MVP', 'The Kracken', 'Flint Beastwood', 'Rager', 'Annihilation', 'Extermination', 'Massacre', 'All-Seaing', 'Monkey-Sea Monkey-Do', 'Seaing is Believing', 'Mother of Sea'];
+			var nameId = Math.floor((Math.random() * names.length));
+			unit.sbName = names[nameId];
+			unit.att = 4 + this.gameObj.superBCForm.att;
+			unit.att2 = 4 + this.gameObj.superBCForm.att;
+			unit.def = 4 + this.gameObj.superBCForm.def;
+			unit.def2 = 4 + this.gameObj.superBCForm.def;
+			unit.numAtt = 1 + this.gameObj.superBCForm.numAtt;
+			unit.numAtt2 = 1 + this.gameObj.superBCForm.numAtt;
+			unit.numDef = 1 + this.gameObj.superBCForm.numDef;
+			unit.adCount = this.gameObj.superBCForm.adCount;
+			unit.bcHp = 1 + this.gameObj.superBCForm.hp;
+			unit.damage = 0;
+			console.log('sbc created!', unit);
+			this.gameObj.units.push(unit);
+		} else {
+			var unit = unitOfId(newId, nation, piece, terr.id, this.superpowersData.units, allowMovesFlg);
+			this.gameObj.units.push(unit);
+		}
+		this.gameObj.unitId++;
+		if (piece == 15 || piece == 19) {
+			terr.factoryCount++;
+		}
+		if (refreshFlg) {
+			refreshTerritory(terr, this.gameObj, this.superpowersData.units, this.currentPlayer, this.superpowersData.superpowers, this.yourPlayer);
+		} else {
+			terr.unitCount++;
+			terr.displayUnitCount = getDisplayUnitCount(terr, this.gameObj.fogOfWar, this.gameObj.hardFog);
+		}
+		this.annimateUnit(piece, terr);
+	}
+	annimateUnit(piece: number, terr: any) {
+		playSound('Swoosh.mp3', 0, false);
+		if (this.spriteInMotionFlg) {
+			console.log('sprite blocked!');
+			return;
+		}
+		this.spriteInMotionFlg = true;
+		this.spritePieceId = piece;
+		var e = document.getElementById('sprite');
+		if (e) {
+			e.style.display = 'block';
+			e.style.left = terr.x + 'px';
+			e.style.top = (terr.y + 100).toString() + 'px';
+			e.style.height = '100px';
+			this.zoomSprite(100);
+		}
+	}
+	zoomSprite(height: number) {
+		height -= 2;
+		var e = document.getElementById('sprite');
+		if (e) {
+			e.style.height = height + 'px';
+		}
+		if (height <= 0) {
+			this.spriteInMotionFlg = false;
+			if (e)
+				e.style.display = 'none';
+		} else {
+			setTimeout(() => {
+				this.zoomSprite(height);
+			}, 10);
+		}
 	}
 	arrowsButtonClicked() {
 		playersPanelMoved();
