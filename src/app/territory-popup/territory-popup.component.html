@@ -393,7 +393,7 @@
 										(click)="addUniToQueue(unit.id, 1)" type="button"
 										class="btn btn-secondary roundButton"><i class="fa fa-lock"
 											*ngIf="unit.locked"></i><span ng-hide="unit.locked">buy</span></button>
-									<button *ngIf="unit.id != 12" [disabled]="currentPlayer.money<unit.cost*5"
+									<button *ngIf="unit.id != 12" [disabled]="currentPlayer.money<unit.cost*2"
 										id="{{'buy5'+unit.id}}" (click)="addUniToQueue(unit.id, 5)" type="button"
 										class="btn btn-secondary roundButton">x5</button>
 								</td>

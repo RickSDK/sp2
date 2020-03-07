@@ -33,27 +33,33 @@
                 <div class="borderClass2" *ngIf="showInfoFlg">
                     Players in the game will be in one of 4 diplomacy stances. Note you can only offer one treaty
                     per turn (peace or alliance), however you can declare war as much as you want.<br>
-                    <b>Neutral:</b><br>
-                    <div>At the beginning of the game you have a neutral stance with other players. It will cost you
-                        5 coins to attack another player. However if you declare war, you can attack at no cost
-                        starting with your next turn.</div>
-
-                    <img src="assets/graphics/misc/news2.png" height=20 title="Peace"> <b>Peace Treaties:</b><br>
-                    <div *ngIf="gameObj.allowPeace">You are allowed to offer peace treaties to anyone in the game.
-                        Upon accepting, you each get 1 fighter plane placed on your capital as a sign of increased
-                        trade relations. Attacking someone you are at peace with will cost you 10 coins.</div>
-                    <div *ngIf="!gameObj.allowPeace">Peace treaties are not allowed in this game.</div>
-
-                    <img src="assets/graphics/misc/news3.png" height=20 title="Alliance"> <b>Alliances:</b><br>
-                    <div *ngIf="gameObj.allowAlliances">Maximum alliance partners in this game:
-                        {{gameObj.maxAllies}}. If you already have a peace treaty with another player, you can offer
-                        an alliance. If accepted this means you are now on the same team and can win the game
-                        together by controlling 6 of the 8 capitals.. Attacking someone you have an alliance with
-                        will cost you 15 coins.</div>
-                    <div *ngIf="!gameObj.allowAlliances">Alliances are not allowed in this game.</div>
-
-                    <img src="assets/graphics/misc/news0.png" height=20 title="War"> <b>War:</b><br>
-                    <div>Players at war can attack each other at no cost.</div>
+                    <table class="spTable" border=1 style="text-align: left;">
+                        <tr>
+                            <td>Neutral</td>
+                            <td style="text-align: left; font-size: 12px;">At the beginning of the game you have a neutral stance with other players. It will cost
+                                you
+                                5 coins to attack another player. However if you declare war, you can attack at no cost
+                                starting with your next turn.</td>
+                        </tr>
+                        <tr>
+                            <td><img src="assets/graphics/misc/news2.png" height=50 title="Peace"> Peace</td>
+                            <td style="text-align: left; font-size: 12px;">You are allowed to offer peace treaties to anyone in the game.
+                                Upon accepting, you each get 1 fighter <img src="assets/graphics/units/piece6u.png" height=20> placed on your capital as a sign of increased
+                                trade relations. Attacking someone you are at peace with will cost you 10 coins.</td>
+                        </tr>
+                        <tr>
+                            <td><img src="assets/graphics/misc/news3.png" height=50 title="Alliance"> Alliances</td>
+                            <td style="text-align: left; font-size: 12px;">Maximum alliance partners in this game:
+                                {{gameObj.maxAllies}}. If you already have a peace treaty with another player, you can offer
+                                an alliance. If accepted this means you are now on the same team and can win the game
+                                together by controlling 6 of the 8 capitals.. Attacking someone you have an alliance with
+                                will cost you 15 coins.</td>
+                        </tr>
+                        <tr>
+                            <td><img src="assets/graphics/misc/news0.png" height=50 title="War"> War</td>
+                            <td style="text-align: left; font-size: 12px;">Players at war can attack each other at no cost.</td>
+                        </tr>
+                    </table>
                 </div>
 
 
@@ -112,14 +118,14 @@
                         <td *ngIf="ableToTakeThisTurn" ng-style="ngStyleAllies(player, 'white')">
                             <button title="Offer Peace"
                                 *ngIf="player.alive && ableToTakeThisTurn && !currentPlayer.diplomacyFlg && player.treaties[currentPlayer.nation-1]!=2 && player.treaties[currentPlayer.nation-1]!=3 && player.nation != currentPlayer.nation"
-                                ng-click="offerTreaty(2, player.nation)" type="button" class="btn btn-warning roundButton"><img
-                                    src="assets/graphics/misc/news2.png" height=25>
+                                ng-click="offerTreaty(2, player.nation)" type="button"
+                                class="btn btn-warning roundButton"><img src="assets/graphics/misc/news2.png" height=25>
                                 <div style="font-size: 10px; margin-top: -2px;">Peace</div>
                             </button>
                             <button title="Offer Alliance"
                                 *ngIf="player.alive && ableToTakeThisTurn && gameObj.allowAlliances && !currentPlayer.diplomacyFlg && player.treaties[currentPlayer.nation-1]==2 && gameObj.type!='barbarian' && gameObj.type!='battlebots'"
-                                ng-click="offerTreaty(3, player.nation)" type="button" class="btn btn-success roundButton"><img
-                                    src="assets/graphics/misc/news3.png" height=25>
+                                ng-click="offerTreaty(3, player.nation)" type="button"
+                                class="btn btn-success roundButton"><img src="assets/graphics/misc/news3.png" height=25>
                                 <div style="font-size: 10px; margin-top: -2px;">Ally</div>
                             </button>
                         </td>
@@ -134,7 +140,7 @@
                         <th>Capitals</th>
                         <th>Income</th>
                     </tr>
-                    <tr *ngFor="let team of gameObj.teams" ng-style="ngStyleLogs(team.nations[0])">
+                    <tr *ngFor="let team of gameObj.teams" [ngStyle]="ngStyleLogs(team.name)">
                         <td align=center> {{team.name}}</td>
                         <td>
                             <span *ngFor="let player of gameObj.players">

@@ -32,10 +32,13 @@ declare var unitOfId: any;
 declare var playSound: any;
 declare var displayFixedPopup: any;
 declare var playVoiceSound: any;
+declare var changeClass: any;
+declare var playClick: any;
 //---board.js
 declare var displayLeaderAndAdvisorInfo: any;
 declare var getDisplayQueueFromQueue: any;
 declare var highlightCapital: any;
+declare var scrubUnitsOfPlayer: any;
 //---spLib.js
 declare var scrollToCapital: any;
 
@@ -61,6 +64,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public isMobileFlg = true;
 	public spriteInMotionFlg = false;
 	public spritePieceId = 2;
+	public technologyPurchases = [];
 
 	constructor() { super(); }
 
@@ -178,6 +182,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		//cleanupCargo();
 		scrollToCapital(player.nation);
 		//highlightCapital(player.nation);
+		player.techPurchasedThisTurn = false;
 		player.techCount = 1;
 		this.gameObj.unitPurchases = [];
 
@@ -265,13 +270,16 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 			return;
 		}
+		hideArrow();
+		if (currentPlayer.status == 'Purchase')
+			changeClass('completeTurnButton', 'glowButton');
 		displayLeaderAndAdvisorInfo(terr, currentPlayer, this.yourPlayer, user, gameObj);
 		terr.units = unitsForTerr(terr, gameObj.units);
 		terr.displayQueue = getDisplayQueueFromQueue(terr, this.gameObj);
 		popup.show(terr, currentPlayer, gameObj, ableToTakeThisTurn, user);
 	}
 	redoMoves() {
-		
+
 	}
 	acceptInfantryPlacement() {
 		closePopup('infantry3Confirm');
@@ -339,15 +347,14 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		var e = document.getElementById('sprite');
 		if (e) {
 			e.style.height = height + 'px';
-		}
-		if (height <= 0) {
-			this.spriteInMotionFlg = false;
-			if (e)
+			if (height <= 0) {
+				this.spriteInMotionFlg = false;
 				e.style.display = 'none';
-		} else {
-			setTimeout(() => {
-				this.zoomSprite(height);
-			}, 10);
+			} else {
+				setTimeout(() => {
+					this.zoomSprite(height);
+				}, 10);
+			}
 		}
 	}
 	arrowsButtonClicked() {
@@ -362,7 +369,151 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		return ngUnitSrc(piece, nation = 0);
 	}
 	completeTurnButtonPressed() {
+		if (this.gameObj.round == 1 && this.currentPlayer.placedInf < 3) {
+			showAlertPopup('Place your 3 infantry first.', 1);
+			return;
+		}
+		if (this.user.rank < 2 && this.gameObj.round == 1 && this.currentPlayer.money >= 20 && this.currentPlayer.status == 'Purchase') {
+			showAlertPopup('Conduct purchases first. Click on your capital, ' + this.superpowersData.superpowers[this.currentPlayer.nation] + '.', 1);
+			return;
+		}
+		playClick();
+		changeClass('completeTurnButton', 'btn btn-success roundButton');
+		if (this.currentPlayer.status == 'Purchase') {
+			this.currentPlayer.status = 'Attack';
+			scrubUnitsOfPlayer(this.currentPlayer, this.gameObj, this.superpowersData.units); // in case of tech
+			this.logPurchases(this.currentPlayer);
+			this.gameObj.actionButtonMessage = 'Complete Turn';
+			//saveGame(this.gameObj, this.user, this.currentPlayer);
+			//displayHelpPopupMessages();
+		}
 	}
+	logPurchases(player: any) {
+		var unitHash = {};
+		var techs = [];
+		var newPurchaseUnits = [];
+		this.technologyPurchases = [];
+		//		this.gameObj.unitPurchases.forEach(function (pUnit) {
+		for (var x = 0; x < this.gameObj.unitPurchases.length; x++) {
+			var pUnit = this.gameObj.unitPurchases[x];
+			var id = parseInt(pUnit.piece);
+			if (id != 52 && (id < 16 || id > 18))
+				newPurchaseUnits.push(pUnit);
+			if (id === 16)
+				this.purchaseTechnology(19, player);
+			if (id === 17)
+				this.purchaseTechnology(20, player);
+			if (id === 18) {
+				this.currentPlayer.techPurchasedThisTurn = true;
+				var techId = this.purchaseTechnology(0, player);
+				var tech = this.superpowersData.techs[techId - 1];
+				var i = Math.floor((tech.id - 1) / 3);
+				var techpieces = [6, 1, 5, 19, 7, 13];
+				this.technologyPurchases.push({ name: tech.name, i: i, piece: techpieces[i], desc: tech.desc });
+				techs.push(tech.name);
+			}
+			if (id == 52) {
+				//				removeEMPFromServer();
+				//				this.currentPlayer.empPurchaseRd=this.gameObj.round;
+				//				createNewUnit(pUnit, true);
+			}
+			if (unitHash[id])
+				unitHash[id]++;
+			else
+				unitHash[id] = 1;
+		}
+		//		});
+		this.gameObj.unitPurchases = newPurchaseUnits;
+		var gUnits = this.superpowersData.units;
+		var units = [];
+		var k = Object.keys(unitHash);
+		k.forEach(function (unitId) {
+			var count = unitHash[unitId];
+			var piece = gUnits[unitId];
+			if (piece.id == 18)
+				displayFixedPopup('technologyPopup');
+			units.push(count + ' ' + piece.name);
+		});
+		this.logItem(player, 'Purchases', units.join(', '));
+		console.log('!!', this.gameObj.logs);
+	}
+	logItem(player: any, type: string, message: string, details = '', terrId = 0, nation = 0, ft = '', dr = '', enemy = '') {
+		var id = this.gameObj.logId || 0;
+		id++;
+		this.gameObj.logId = id;
+		var bRounds = 0;
+		if (details && details.length > 0) {
+			var pieces = details.split('|');
+			var lid = 1;
+			var attackingUnits = this.arrayObjOfLine(pieces[0], lid);
+			lid += attackingUnits.length;
+			var defendingUnits = this.arrayObjOfLine(pieces[1], lid);
+			lid += defendingUnits.length;
+			var attackingCas = this.arrayObjOfLine(pieces[2], lid);
+			lid += attackingCas.length;
+			var defendingCas = this.arrayObjOfLine(pieces[3], lid);
+			var medicHealedCount = pieces[4];
+			if (details.length > 5)
+				bRounds = parseInt(pieces[5]);
+		}
+		var log = {
+			id: id, round: this.gameObj.round, nation: player.nation, type: type, enemy: enemy, message: message,
+			attackingUnits: attackingUnits, defendingUnits: defendingUnits, attackingCas: attackingCas, defendingCas: defendingCas,
+			medicHealedCount: medicHealedCount, bRounds: bRounds, t: terrId, o: nation, ft: ft, dr: dr
+		};
+		this.gameObj.logs.push(log);
+	}
+	arrayObjOfLine(line, id) {
+		var finList = [];
+		if (line) {
+			var units = line.split('+');
+			units.forEach(function (unit) {
+				finList.push({ id: id, piece: unit });
+				id++;
+			});
+		}
+		return finList;
+	}
+	purchaseTechnology(num: number, player: any) {
+		if (player.tech.length == 0)
+			player.tech = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false];
+		if (num == 0)
+			num = this.getRandomTech(player);
+		if (num == 0)
+			return;
+
+		player.tech[num - 1] = true;
+		this.logItem(player, 'Technology', this.superpowersData.techs[num - 1].name);
+		if (num == 17) {
+			console.log('Air defense!!!!!');
+			this.gameObj.airDefenseTech[player.nation] = true;
+			this.refreshPlayerTerritories(player);
+		}
+		return num;
+	}
+	refreshPlayerTerritories(player: any) {
+		this.gameObj.territories.forEach(function (terr) {
+			if (terr.owner == player.nation) {
+				refreshTerritory(terr);
+			}
+		});
+	}
+	getRandomTech(player) {
+		for (var x = 0; x <= 100; x++) {
+			var diceRoll = Math.floor((Math.random() * 6) + 1);
+			var tech = diceRoll * 3 - 2;
+			if (!player.tech[tech - 1])
+				return tech;
+			tech++;
+			if (!player.tech[tech - 1])
+				return tech;
+			tech++;
+			if (!player.tech[tech - 1])
+				return tech;
+		}
+		return 0;
+	}
+
 	scrollToNation(nation) {
 		scrollToCapital(nation);
 	}

@@ -313,11 +313,12 @@ function capitalXY(num) {
 	return obj;
 }
 function scrollToCapital(num) {
+	console.log('++scrollToCapital');
 	var e = document.getElementById('target');
 	if (e) {
 		e.style.display = 'block';
 		e.className = 'targetFadeOut';
-	}
+	} 
 	var x = window.pageXOffset;
 	var y = window.pageYOffset;
 	var centerXs = [0, 307, 635, 856, 1184, 993, 783, 664, 384];
@@ -357,8 +358,15 @@ function smoothScrollToCapital(num) {
 }
 function pingNation(x, y) {
 	playSound('zap.mp3');
-	fadeInDivAndPlace('target', 'targetSign', x - 103, y + 27, 2000);
-	fadeInDivAndPlace('playerTurnPopup', 'roundedPopup', x - 103, y + 125, 4000);
+	var e2 = document.getElementById('target');
+	if(e2) {
+		e2.style.left=(x- 103).toString()+'px';
+		e2.style.top=(y+27).toString()+'px';
+	}
+	changeClass('target', 'targetSign fadeOut');
+	setTimeout(function() { changeClass('target', 'targetFadeIn'); }, 100);	
+	setTimeout(function() { changeClass('target', 'targetSign fadeOut'); }, 2000);	
+	setTimeout(function() { changeClass('target', 'targetOff'); }, 2500);	
 }
 function locationOfCapital(nation) {
 	var locs = capitalLocs();

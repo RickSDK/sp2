@@ -218,6 +218,18 @@
 	   <button (click)="acceptInfantryPlacement()" id="" type="button" class="btn btn-success roundButton tall2"><i class="fa fa-check"></i> Yes!</button><p>
 </div>
 
+<div onClick="closePopup('technologyPopup')" id="technologyPopup" class="popupScreenNoPad" style="max-width: 400px;">
+	<div style="background-color: #444; color: white;">Technology Breakthrough</div>
+	<img src="assets/graphics/misc/gears.jpg" width=100%>
+	<div>Technology Aquired:</div>
+	<div *ngFor="let tech of technologyPurchases">
+		<div><img src="assets/graphics/units/piece{{tech.piece}}u.png" height=30><font size=4 color=black><b>{{tech.name}}</b></font></div>
+		<div><font size=2 color=gray><b>{{tech.desc}}</b></font></div>
+	</div>
+	   <button onClick="closePopup('technologyPopup')" type="button" class="btn btn-primary roundButton medium">OK!</button>
+</div>
+
+
 
 
 
