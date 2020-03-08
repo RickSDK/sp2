@@ -366,7 +366,7 @@ function pingNation(x, y) {
 	changeClass('target', 'targetSign fadeOut');
 	setTimeout(function() { changeClass('target', 'targetFadeIn'); }, 100);	
 	setTimeout(function() { changeClass('target', 'targetSign fadeOut'); }, 2000);	
-	setTimeout(function() { changeClass('target', 'targetOff'); }, 2500);	
+	setTimeout(function() { changeClass('target', 'offAndOut'); }, 2500);	
 }
 function locationOfCapital(nation) {
 	var locs = capitalLocs();
@@ -380,8 +380,8 @@ function popupNationMessage(nation1, msg, nation2, x, y, diploFlg) {
 	e.style.left = x + 'px';
 	e.style.top = y + 'px';
 	e.className = 'popupMsg fadeOut';
-	document.getElementById((diploFlg) ? 'popupFlag1b' : 'popupFlag1').src = 'graphics/flag' + nation1 + '.gif';
-	document.getElementById((diploFlg) ? 'popupFlag2b' : 'popupFlag2').src = 'graphics/flag' + nation2 + '.gif';
+	document.getElementById((diploFlg) ? 'popupFlag1b' : 'popupFlag1').src = 'assets/graphics/images/flag' + nation1 + '.gif';
+	document.getElementById((diploFlg) ? 'popupFlag2b' : 'popupFlag2').src = 'assets/graphics/images/flag' + nation2 + '.gif';
 	setTimeout(function () { popupMessageFadeIn(boxId); }, 100);
 	setTimeout(function () { popupMessageFadeOut(boxId); }, 3000);
 	setTimeout(function () { popupMessageOff(boxId); }, 4000);
@@ -434,7 +434,7 @@ function militaryAdvisorPopup2(message) {
 function showTreatyConfirmationPopup(message, msgId, nation) {
 	localStorage.confirmationOption = msgId;
 	document.getElementById("treatyConfirmationMessage").innerHTML = message;
-	document.getElementById("treatyFlag").src = "graphics/flag" + nation + ".gif";
+	document.getElementById("treatyFlag").src = "assets/graphics/images/flag" + nation + ".gif";
 	displayFixedPopup("treatyConfirmationPopup");
 }
 function displayTerrPopup(name, terr, moveFlg) {

@@ -2,16 +2,163 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <img src="assets/graphics/images/superpowers.png" title="Superpowers!" height=30> &nbsp;<b>logsPopup</b>
+                <img src="assets/graphics/images/superpowers.png" title="Superpowers!" height=30> &nbsp;<b>Logs</b>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center;">
+
+
+                <section>
+                    <div class="btn-group">
+                        <button (click)="segmentIdx=0" id="logType1" type="button" class="btn btn-default roundButton"
+                            [ngClass]="ngClassSegment(segmentIdx,0)"><i class="fa fa-list-ol"></i> Turn</button>
+                        <button (click)="segmentIdx=1" id="logType2" type="button" class="btn btn-default roundButton"
+                            [ngClass]="ngClassSegment(segmentIdx,1)"><i class="fa fa-globe"></i> Nation</button>
+                        <button (click)="segmentIdx=2" id="logType3" type="button" class="btn btn-default roundButton"
+                            [ngClass]="ngClassSegment(segmentIdx,2)"><i class="fa fa-pencil"></i> Notes</button>
+                    </div>
+                </section>
+                <section style="background-color: #007;" *ngIf="segmentIdx==0 && gameObj">
+                    <button [disabled]="logRound<=1" (click)="changeLogRound(-1)" type="button" class="btn btn-primary roundButton"
+                        style="width: 80px;"><i class="fa fa-arrow-left"></i></button>
+                    <span class="blueBg">{{logRound}}</span>
+                    <button [disabled]="logRound>=gameObj.round" (click)="changeLogRound(1)" type="button" class="btn btn-primary roundButton"
+                        style="width: 80px;"><i class="fa fa-arrow-right"></i></button>
+                </section>
+                <section style="background-color: #007;" *ngIf="segmentIdx==1">
+                    <button *ngFor="let player of gameObj.players" (click)="logNation=player.nation" 
+                        type="button" [ngClass]="ngClassSegment(player.nation,logNation)"><img
+                            src="assets/graphics/images/flag{{player.nation}}.gif" height="30"></button>
+                </section>
+                <section style="background-color: #007;" *ngIf="segmentIdx==2">
+                    <div style="color: white;">Use notes to remind yourself of strategy points. No one else can read
+                        your notes.</div>
+                </section>
+
+                <table border=1 class="spTable" *ngIf="gameObj">
+                    <tr>
+                        <th>Rnd</th>
+                        <th>Pl</th>
+                        <th>Action</th>
+                        <th>Details</th>
+                    </tr>
+                    <tr *ngFor="let log of gameObj.logs" [ngStyle]="ngStyleLogs(log.nation)">
+                        <!--*ngIf="ngShowLog(log)" -->
+                        <td align=center>{{log.round}} </td>
+                        <td align=center><img src="assets/graphics/images/flag{{log.nation}}.gif" height=30></td>
+                        <td align=center style="font-size: 11px; font-weight: 750;">
+                            <i class="fa fa-star" *ngIf="log.type=='Battle'"></i>
+                            <i class="fa fa-flask" *ngIf="log.type=='Technology'"></i>
+                            <i class="fa fa-handshake-o" *ngIf="log.type=='Diplomacy'"></i>
+                            <div *ngIf="log.enemy>0 || log.type=='Battle'"><img src="graphics/flag{{log.enemy}}.gif"
+                                    height=20></div>
+                            <img *ngIf="log.type=='Nuke Attack!'" src="assets/graphics/misc/nuke.png" height=40>
+                            <img *ngIf="log.type=='EMP Attack!'" src="assets/graphics/units/piece52u.png" height=40>
+                            <img *ngIf="log.type=='Strategic Bombing'" src="assets/graphics/misc/stealth.png" height=40
+                                title="Strategic Bombing" alt="Strategic Bombing">
+                            <div *ngIf="log.type!='Strategic Bombing' && log.type!='Technology' && log.type!='Diplomacy'"
+                                ng-style="ngStyleLogType(log.type)">{{log.type}}</div>
+                        </td>
+                        <td align=left>
+                            <div *ngIf="log.dr && log.dr.lostUnits+log.dr.enemyUnits>0" style="font-size: 12px;">
+                                <div style="font-size: 10px; color: #444;"><b>-Damage Report-</b></div>
+                                <table border=1 bordercolor=gray width=180
+                                    style="box-shadow: 3px 3px 3px #444; background-color: white;">
+                                    <tr>
+                                        <td class="tableRow"></td>
+                                        <td class="tableRow">Losses</td>
+                                        <td class="tableRow">Coins</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tableRow">Player</td>
+                                        <td class="tableRow">{{log.dr.lostUnits}}</td>
+                                        <td class="tableRow">{{log.dr.lostCoins}} <img src="assets/graphics/images/coin.png"
+                                                height=15></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tableRow">Enemy</td>
+                                        <td class="tableRow">{{log.dr.enemyUnits}}</td>
+                                        <td class="tableRow">{{log.dr.enemyCoins}} <img src="assets/graphics/images/coin.png"
+                                                height=15></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            &nbsp;{{log.message}}
+
+                            <div *ngIf="log.attackingUnits && log.attackingUnits.length>0">
+                                <button ng-click="showBattleDetails(log)" id="" type="button"
+                                    class="btn ptp-blue roundButton">Details</button>
+                                <div *ngIf="log.show && showLog==log.id">
+                                    <div><b>
+                                            <font color="#c00">Battle:</font>
+                                        </b></div>
+                                    &nbsp;<i style="color: red;" title="attacker" class="fa fa-bolt"></i> <span
+                                        *ngFor="let unit of log.attackingUnits"><img src="{{ngUnitSrc(unit.piece)}}"
+                                            height=15 title="{{superpowersData.units[unit.piece].name}}"></span>
+                                    <div *ngIf="log.attackingCas.length==0">
+                                        <font color=gray size=1>No Casualties</font>
+                                    </div>
+                                    <div *ngIf="log.attackingCas.length>0"><img src="assets/graphics/misc/skull.png"
+                                            height="15" title="Attacker Casualties"> <span
+                                            *ngIf="log.attackingCas.length==0">None</span>
+                                        <span *ngFor="let unit of log.attackingCas" style="opacity: .4;"
+                                            title="attacking casualties"><img src="{{ngUnitSrc(unit.piece)}}" height=15
+                                                title="{{superpowersData.units[unit.piece].name}}"></span></div>
+                                    <hr style="padding: 0px; margin: 0px;">
+                                    &nbsp;<i style="color: blue;" title="defender" class="fa fa-shield"></i> <span
+                                        *ngFor="let unit of log.defendingUnits"><img src="{{ngUnitSrc(unit.piece)}}"
+                                            height=15 title="{{superpowersData.units[unit.piece].name}}"></span>
+                                    <div *ngIf="log.defendingCas.length==0">
+                                        <font color=gray size=1>No Casualties</font>
+                                    </div>
+                                    <div *ngIf="log.defendingCas.length>0"><img src="graphics/misc/skull.png"
+                                            height="15" title="Defender Casualties">
+                                        <span *ngFor="let unit of log.defendingCas" style="opacity: .4;"
+                                            title="defending casualties"><img src="{{ngUnitSrc(unit.piece)}}" height=15
+                                                title="{{superpowersData.units[unit.piece].name}}"></span></div>
+                                    <div *ngIf="log.medicHealedCount>0">
+                                        <font color=#090>Troops Healed: {{log.medicHealedCount}}</font>
+                                    </div>
+                                    <div style="font-size: 11px;">Rounds of battle: {{log.bRounds}}</div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <table class="spTable">
+                    <tr style="background-color: #007;">
+                        <td width="*">
+                            <input style="width: 100%;" name="noteField" id="noteField" type=text placeholder="Notes"
+                                maxlength=256
+                                onkeypress="if (event.which==13) document.getElementById('noteSendButton').click()">
+                        </td>
+                        <td width=50>
+                            <button id="noteSendButton" ng-click="postNote()" type="button"
+                                class="btn btn-primary roundButton tall2"><span *ngIf="editPostMode">Edit</span><span
+                                *ngIf="!editPostMode">Add</span></button>
+                        </td>
+                    </tr>
+                </table>
+
+
+
+
+
+
+
+
 
 
             </div>
-            <div class="modal-footer">
+            <!--modal body-->
+            <div class="modal-header" style="background-color: #337ab7;  border: 0">
+                <button (click)="closeModal('#logsPopup')" type="button"
+                    class="btn btn-secondary roundButton">Close</button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
         </div>
     </div>

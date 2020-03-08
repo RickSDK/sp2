@@ -252,18 +252,18 @@ function getYourPlayer(gameObj, userName) {
 	return humanPlayer;
 }
 function highlightCapital(nation) {
-	var ids = [1,1,7,13,21,28,35,42,50];
-//	highlightTerritory(ids[nation], nation, true);
+	var ids = [1, 1, 7, 13, 21, 28, 35, 42, 50];
+	//	highlightTerritory(ids[nation], nation, true);
 	var obj = capitalXY(nation);
 	var e = document.getElementById('arrow');
-	e.style.display='block';
-	e.style.position='absolute';
-	e.style.left=(obj.x-40).toString()+'px';
-	e.style.top=(obj.y+140).toString()+'px';
+	e.style.display = 'block';
+	e.style.position = 'absolute';
+	e.style.left = (obj.x - 40).toString() + 'px';
+	e.style.top = (obj.y + 140).toString() + 'px';
 }
 
 function refreshTerritory(terr, gameObj, gUnits, currentPlayer, superpowers, yourPlayer, cleanDice = false) {
-	if(!gameObj)
+	if (!gameObj)
 		console.log('!!!! no gameObj!!');
 	var unitCount = 0;
 	var highestPiece = 0;
@@ -603,41 +603,107 @@ function refreshTerritory(terr, gameObj, gUnits, currentPlayer, superpowers, you
 		terr.title += '\n' + superBSStats;
 }
 function isUnitGoodForForm(segmentIdx, type, subType) {
-	if(segmentIdx==3 && type!=3) // special
+	if (segmentIdx == 3 && type != 3) // special
 		return true;
-	if(segmentIdx==2 && (type==3 || type==4)) // water
+	if (segmentIdx == 2 && (type == 3 || type == 4)) // water
 		return true;
-	if(segmentIdx==2 && subType=='fighter') // water
+	if (segmentIdx == 2 && subType == 'fighter') // water
 		return true;
 	return false;
 }
+function playerOfNation(nation, gameObj) {
+	for (var x = 0; x < gameObj.players.length; x++) {
+		var player = gameObj.players[x];
+		if (player.nation == nation)
+			return player;
+	}
+	return null;
+}
+function changeTreaty(p1, p2, type, gameObj, superpowers) {
+	if (!p1 || !p2)
+		return;
+	if (p1.nation == p2.nation)
+		return;
+	p1.treaties[p2.nation - 1] = type;
+	p2.treaties[p1.nation - 1] = type;
+	logDiplomacyNews(p1, p2, type);
+	var msg = '';
+	if (type == 0) {
+		msg = superpowers[p1.nation] + ' has declared war on ' + superpowers[p2.nation];
+		popupMessage(p1, msg, p2);
+	}
+	logItem(gameObj, p1, 'Diplomacy', msg);
+}
+function logDiplomacyNews(p1, p2, type) {
+	if (!p2.news)
+		p2.news = [];
+	p2.news.push({ nation: p1.nation, type: type });
+}
+function logItem(gameObj, player, type, message, details = '', terrId = 0, nation = 0, ft = '', dr = '', enemy = '') {
+	var id = gameObj.logId || 0;
+	id++;
+	gameObj.logId = id;
+	var bRounds = 0;
+	if (details && details.length > 0) {
+		var pieces = details.split('|');
+		var lid = 1;
+		var attackingUnits = arrayObjOfLine(pieces[0], lid);
+		lid += attackingUnits.length;
+		var defendingUnits = arrayObjOfLine(pieces[1], lid);
+		lid += defendingUnits.length;
+		var attackingCas = arrayObjOfLine(pieces[2], lid);
+		lid += attackingCas.length;
+		var defendingCas = arrayObjOfLine(pieces[3], lid);
+		var medicHealedCount = pieces[4];
+		if (details.length > 5)
+			bRounds = parseInt(pieces[5]);
+	}
+	var log = {
+		id: id, round: gameObj.round, nation: player.nation, type: type, enemy: enemy, message: message,
+		attackingUnits: attackingUnits, defendingUnits: defendingUnits, attackingCas: attackingCas, defendingCas: defendingCas,
+		medicHealedCount: medicHealedCount, bRounds: bRounds, t: terrId, o: nation, ft: ft, dr: dr
+	};
+	gameObj.logs.push(log);
+}
+function arrayObjOfLine(line, id) {
+	var finList = [];
+	if (line) {
+		var units = line.split('+');
+		units.forEach(function (unit) {
+			finList.push({ id: id, piece: unit });
+			id++;
+		});
+	}
+	return finList;
+}
 function getDisplayQueueFromQueue(terr, gameObj) {
-	var queue=[];
-	var pieceHash={};
+	var queue = [];
+	var pieceHash = {};
 
-	gameObj.unitPurchases.forEach(function(unit) {
-		if(unit.terr==terr.id) {
-			if(pieceHash[unit.piece]>0)
+	gameObj.unitPurchases.forEach(function (unit) {
+		if (unit.terr == terr.id) {
+			if (pieceHash[unit.piece] > 0)
 				pieceHash[unit.piece]++;
 			else
-				pieceHash[unit.piece]=1;
+				pieceHash[unit.piece] = 1;
 		}
 	});
 	var keys = Object.keys(pieceHash);
-	for(x=0;x<keys.length;x++) {
+	for (x = 0; x < keys.length; x++) {
 		var piece = keys[x];
-		queue.push({piece: piece, count: pieceHash[piece]});
+		queue.push({ piece: piece, count: pieceHash[piece] });
 	}
 	return queue;
 }
-function displayLeaderAndAdvisorInfo(terr, currentPlayer, yourPlayer, user, gameObj) {
+function updateAdvisorInfo(terr, currentPlayer, yourPlayer, user, gameObj, superpowers) {
 	var strategyHint = '';
-	if (user.rank < 2 && terr.treatyStatus==4) {
+	if (currentPlayer.status == 'Purchase' && terr.treatyStatus == 4 && user.rank <= 3) {
+		strategyHint = "Time to build troops. Buy your desired units, close this panel and then press 'Purchase Complete'.";
 		if (gameObj.round == 1 && terr.factoryCount > 0)
 			strategyHint = 'Not sure what to buy? Get tanks. They are good all-purpose units.';
 		if (gameObj.round == 2 && terr.factoryCount > 0)
 			strategyHint = 'Buying an Economic Center will boost your income.';
-		if (gameObj.round <=5 && terr.factoryCount == 0)
+		if (gameObj.round <= 5 && terr.factoryCount == 0)
 			strategyHint = 'Buying a factory will allow you to place new units here next turn.';
 		if (gameObj.round == 3 && terr.factoryCount > 0)
 			strategyHint = 'Factories purchased this turn will be available for use starting next turn.';
@@ -646,13 +712,38 @@ function displayLeaderAndAdvisorInfo(terr, currentPlayer, yourPlayer, user, game
 		if (gameObj.round == 5 && selectedTerritory.factoryCount > 0)
 			strategyHint = 'Last round of peace! Opposing players can attack you in round 6. Get your defenses ready.';
 	}
+	if (currentPlayer.status == 'Attack') {
+		if (terr.owner == 0 && !terr.capital)
+			strategyHint = 'This is a good neutral target to invade! There is no cost to attack and you receive 2 infantry and 1 tank if you win.';
+		if (terr.owner == 0 && terr.capital)
+			strategyHint = 'This capital is strongly defended but will increase our income and give us a factory if we can defeat it. Start massing troops on the border!';
+		if (gameObj.round == 5)
+			strategyHint = 'Last round before full-out war breaks out. Make sure your defenses are in place.';
+	}
+	if (terr.treatyStatus == 0 && terr.owner > 0) {
+		strategyHint = superpowers[terr.owner] + ' is a very dangerous enemy that needs to be attacked and defeated! Prepare to move troops into position.';
+	}
+	if (terr.treatyStatus == 1 && terr.owner > 0) {
+		strategyHint = superpowers[terr.owner] + ' is not to be trusted. We need to keep an eye on these guys.';
+	}
+	if (terr.treatyStatus == 2 && terr.owner > 0) {
+		strategyHint = 'We are currently at peace with ' + superpowers[terr.owner] + ', but proceed with caution. They could turn on us at any moment.';
+	}
+	if (terr.treatyStatus == 3 && terr.owner > 0) {
+		strategyHint = superpowers[terr.owner] + ' is our trust ally.';
+	}
 	terr.strategyHint = strategyHint;
+}
+function displayLeaderAndAdvisorInfo(terr, currentPlayer, yourPlayer, user, gameObj, superpowers) {
+	updateAdvisorInfo(terr, currentPlayer, yourPlayer, user, gameObj, superpowers);
 	terr.leader = terr.owner || 0;
 	if (terr.leader == 0)
 		terr.leader = terr.nation || 0;
 	if (terr.leader == 99)
 		terr.leader = 0;
 	terr.leaderPic = 'leader' + terr.leader + '.jpg';
+	if (terr.treatyStatus == 0)
+		terr.leaderPic = 'leader' + terr.leader + 'b.jpg';
 	if (terr.leader == 0)
 		terr.leaderPic = 'leaders/leader' + terr.id + '.jpg';
 	terr.leaderMessage = "";
@@ -660,13 +751,14 @@ function displayLeaderAndAdvisorInfo(terr, currentPlayer, yourPlayer, user, game
 		return;
 	terr.diplomacyFlg = (yourPlayer.nation != terr.owner && terr.owner > 0);
 	if (terr.id < 79 && terr.leader < 10) {
-		var names = [terr.name + ' Leader', 'Donald Trump', 'Angela Merkel', 'Vladimir Putin', 'Shinzo Abe', 'Xi Jinping', 'Mohammad bin Salman', 'Idi Amin', 'Michel Temer'];
+		var names = [terr.name + ' Leader', 'Donald Trump', 'Angela Merkel', 'Vladimir Putin', 'Shinzo Abe', 'Xi Jinping', 'Mohammad bin Salman', 'Idi Amin', 'Hugo Chavez'];
 		terr.leaderName = names[terr.leader];
 		if (terr.owner == currentPlayer.nation) {
-			if (currentPlayer.status == 'Attack')
-				terr.leaderMessage = "We need to expand our empire. Find a good target to attack, or press 'Complete Turn' to end your turn.";
-			else
-				terr.leaderMessage = "Time to build troops. Buy your desired units, close this panel and then press 'Purchase Complete'.";
+			terr.leaderMessage = '';
+			//			if (currentPlayer.status == 'Attack')
+			//				terr.leaderMessage = "We need to expand our empire. Find a good target to attack, or press 'Complete Turn' to end your turn.";
+			//			else
+			//				terr.leaderMessage = "Time to build troops. Buy your desired units, close this panel and then press 'Purchase Complete'.";
 		} else {
 			if (terr.nation == 0)
 				terr.leaderMessage = neutralRandomMessage(terr.id);
@@ -689,23 +781,23 @@ function neutralMessageForNation(nation) {
 		'We will not take kindly to enemy troops in our territory!',
 		'Your nation is a loser and we will really, really defeat your puny army.',
 		'We are a peaceful people, but we will not hesitate to bomb your cities and destroy you!',
-		'Do not try to take our lands. We are more powerful than you can possibly imagine!',
-		'The red sun is rising in the east. Stay out of our way if you know what is good for you.',
+		'Greetings weak opponent. We could squish you like a bug, but our excessive kindess allows us to keep you around for now.',
+		'The red sun is rising in the east. We welcome you to be inferior subjects in our divine kingdom.',
 		'The people\'s communist army will rise up with one voice and one cannon and defeat you!',
 		'Death to the infidels! Convert to our way of extreme happiness or be destroyed!',
 		'We bring good tidings and gifts to your people. Unless you anger us, then we kill you!',
-		'Soon all of the world will share in the friendship and good fortune that our tanks and bombs will bring.',
+		'Soon all of the world will share in the friendship and good fortune that our tanks and guided missiles will bring.',
 	];
 	return m[nation];
 }
 function warMessageForNation(nation) {
 	var m = [
-		'We will not take kindly to enemy troops in our territory!',
+		'We will not take kindly to enemy troops in our territory. Prepare for war!',
 		'Now you have really made me angry. You are not only a loser, but a big loser. A really, really big loser.',
-		'You do not stand a chance. We will defeat you!',
-		'The armies of mother Russia never surrender! We will defeat you even if it kills every one of us.',
-		'You have brought great dishonor to your nation and to your people. Prepare for war!',
-		'The people\'s cannon is pointed at your hearts! Surrender now or face the consequences.',
+		'Hey scumbag! It\'s over for you. You do not stand a chance. We will own you!',
+		'The armies of mother Russia never surrender! We will defeat you even if it kills every one of us!',
+		'You have brought great dishonor to your corrupt nation and to your greedy people. Prepare for defeat!',
+		'The people\'s cannon is pointed at your hearts! Surrender now or we will point it at your heads!',
 		'Prepare for jihad! We will attack you with a million strikes of total destruction.',
 		'We tried to bring peace to your nation, but have failed. Now we must kill you.',
 		'Please send us the coordinates of your leadership bunker. Guided missiles have already been launched!',

@@ -11,6 +11,7 @@ declare var getSuperpowersData: any;
 export class UnitDetailComponent implements OnInit {
     @Input('selectedUnit') selectedUnit:any;
     @Input('nation') nation:string;
+    @Input('hideUnitDetailFlg') hideUnitDetailFlg:boolean;
 
   public unit:any;
   public superpowersData:any;

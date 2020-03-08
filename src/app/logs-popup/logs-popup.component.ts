@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
 declare var getSuperpowersData: any;
@@ -8,24 +9,28 @@ declare var getSuperpowersData: any;
   templateUrl: './logs-popup.component.html',
   styleUrls: ['./logs-popup.component.scss']
 })
-export class LogsPopupComponent implements OnInit {
-  public ableToTakeThisTurn=false
-  public currentPlayer:any;
-  public gameObj:any;
-  public user:any;
-  public superpowersData:any;
+export class LogsPopupComponent extends BaseComponent implements OnInit {
+ // public ableToTakeThisTurn=false
+ // public currentPlayer:any;
+ // public gameObj:any;
+  //public user:any;
+ // public superpowersData:any;
+ public logRound = 1;
+ public logNation = 1;
+ public showLog = 1;
+ public editPostMode = false;
 
-  constructor() { }
+  constructor() { super(); }
 
   ngOnInit(): void {
-    this.superpowersData = getSuperpowersData();
+//    this.superpowersData = getSuperpowersData();
   }
-  show(gameObj, ableToTakeThisTurn, currentPlayer, user) {
-    this.gameObj = gameObj;
-    this.ableToTakeThisTurn = ableToTakeThisTurn;
-    this.currentPlayer = currentPlayer;
-    this.user = user;
-    $("#logsPopup").modal();
+  show(gameObj:any, ableToTakeThisTurn:any, currentPlayer:any, user:any) {
+    this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);
+    this.openModal('#logsPopup');
+  }
+  changeLogRound(num) {
+
   }
 
 }

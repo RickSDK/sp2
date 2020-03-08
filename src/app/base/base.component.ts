@@ -28,7 +28,7 @@ export class BaseComponent implements OnInit {
   ngOnInit(): void { }
 
   //-----img---
-  ngUnitSrc(piece: number, nation: number) {
+  ngUnitSrc(piece: number, nation=1) {
     return ngUnitSrc(piece, nation);
   }
   //-----ngStyles---
@@ -44,7 +44,7 @@ export class BaseComponent implements OnInit {
     else
       return 'btn btn-secondary roundButton';
   }
-  
+
   //-----views---
   initView(gameObj: any, ableToTakeThisTurn: any, currentPlayer: any, user: any) {
     this.gameObj = gameObj;
@@ -61,6 +61,9 @@ export class BaseComponent implements OnInit {
       playSound('open.mp3', 0, false);
     });
     $(id).modal();
+  }
+  closeModal(id: string) {
+    $(id).modal('toggle');
   }
 
 }

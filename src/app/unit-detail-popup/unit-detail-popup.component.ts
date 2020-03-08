@@ -13,6 +13,7 @@ export class UnitDetailPopupComponent implements OnInit {
   public superpowersData: any;
   public selectedUnit: any;
   public nation = 1;
+  public hideUnitDetailFlg: boolean;
 
   constructor() { }
 
@@ -21,12 +22,13 @@ export class UnitDetailPopupComponent implements OnInit {
     this.selectedUnit = this.superpowersData.units[0];
   }
 
-  show(unit) {
+  show(unit, hideUnitDetailFlg=false) {
     if (unit.piece && unit.piece > 0)
       this.selectedUnit = this.superpowersData.units[unit.piece];
     else
       this.selectedUnit = unit;
     this.nation = unit.owner || 1;
+    this.hideUnitDetailFlg = hideUnitDetailFlg;
 
     $("#unitDetailPopup").modal();
   }

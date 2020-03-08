@@ -273,7 +273,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		hideArrow();
 		if (currentPlayer.status == 'Purchase')
 			changeClass('completeTurnButton', 'glowButton');
-		displayLeaderAndAdvisorInfo(terr, currentPlayer, this.yourPlayer, user, gameObj);
+
+		refreshTerritory(terr, this.gameObj, this.superpowersData.units, this.currentPlayer, this.superpowersData.superpowers, this.yourPlayer);
+		displayLeaderAndAdvisorInfo(terr, currentPlayer, this.yourPlayer, user, gameObj, this.superpowersData.superpowers);
 		terr.units = unitsForTerr(terr, gameObj.units);
 		terr.displayQueue = getDisplayQueueFromQueue(terr, this.gameObj);
 		popup.show(terr, currentPlayer, gameObj, ableToTakeThisTurn, user);
@@ -384,7 +386,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			scrubUnitsOfPlayer(this.currentPlayer, this.gameObj, this.superpowersData.units); // in case of tech
 			this.logPurchases(this.currentPlayer);
 			this.gameObj.actionButtonMessage = 'Complete Turn';
-			//saveGame(this.gameObj, this.user, this.currentPlayer);
+			saveGame(this.gameObj, this.user, this.currentPlayer);
 			//displayHelpPopupMessages();
 		}
 	}
