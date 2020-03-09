@@ -30,7 +30,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   public ableToTakeThisTurn = false;
   public unitDetailFlg = false;
   public productionDisplayUnits = [];
-  public fortifyNation = 1;
+  public allyNation = 1;
   public allies=[];
   public loadingFlg=false;
   public loadPlanesFlg=false;
@@ -51,7 +51,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     //this.superpowersData = getSuperpowersData();
 
     this.unitDetailFlg = false;
-    this.optionType = 'none';
+    this.optionType = 'home';
     if (ableToTakeThisTurn && terr.treatyStatus == 4 && currentPlayer.status == 'Purchase') {
       if (this.selectedTerritory.nation == 99)
         this.changeProdType(2);
@@ -65,6 +65,22 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     //console.log('user', user);
     //console.log('currentPlayer', currentPlayer);
   }
+  buttonClicked(type) {
+    console.log('here!'+type);
+    this.optionType = type;
+  }
+  changeOptionType(type:string) {
+    playClick();
+    this.optionType = type;
+    //loadPlanesButtonClicked()
+    //moveButtonClicked
+    //unloadPlanesButtonClicked
+    //requestTargetButtonClicked
+//requestFortifyButtonClicked
+//tranferButtonClicked
+//requestTranferButtonClicked
+  }
+  /*
   offerTreaty(type: number) {
     playClick();
     var p2 = playerOfNation(this.selectedTerritory.owner, this.gameObj);
@@ -97,7 +113,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     changeTreaty(this.currentPlayer, p2, 0, this.gameObj, this.superpowersData.superpowers);
     refreshTerritory(this.selectedTerritory, this.gameObj, this.superpowersData.units, this.currentPlayer, this.superpowersData.superpowers, this.currentPlayer);
     displayLeaderAndAdvisorInfo(this.selectedTerritory, this.currentPlayer, this.currentPlayer, this.user, this.gameObj, this.superpowersData.superpowers);
-  }
+  }*/
   addUniToQueue(piece: number, count: number) {
     playSound('clink.wav', 0, false);
     var unit = this.superpowersData.units[piece];

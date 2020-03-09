@@ -1,0 +1,151 @@
+<!------------------action buttons----------------------------->
+<div *ngIf="ableToTakeThisTurn && !selectedTerritory.battleFlg && optionType!='battlefield'" class="terr-card">
+    <div style="color: white;">Action Panel</div>
+    <div *ngIf="currentPlayer.status != 'Purchase'" style="background-color: #ccc;">
+
+        <button *ngIf="optionType!='home' && optionType!='units'" (click)="changeOptionType('home')" id="" type="button"
+            class="btn btn-primary roundButton"><i class="fa fa-arrow-left"></i>
+            Back</button>
+
+        <!-- troop movement-->
+        <div
+            *ngIf="optionType=='home' && (selectedTerritory.treatyStatus>=3 || (selectedTerritory.nation==99 && selectedTerritory.unitCount==0))">
+            <div *ngIf="0" style="font-size: 10px;">-Troop Movement-</div>
+            <button (click)="changeOptionType('movement')" id="" type="button" class="btn btn-success roundButton"><i
+                    class="fa fa-arrow-down"></i>&nbsp; <span ng-hide="loadingFlg">Move Here</span><span
+                    *ngIf="loadingFlg" style="color: white; font-size: 14px;"><i class="fa fa-spinner fa-spin"></i>
+                    Loading...</span></button>
+            <button *ngIf="selectedTerritory.treatyStatus==4 && selectedTerritory.nation==99"
+                (click)="changeOptionType('movement')" id="" type="button" class="btn btn-success roundButton"><i
+                    class="fa fa-ship"></i>&nbsp; <span ng-hide="loadingFlg">Load Ships</span><span *ngIf="loadingFlg"
+                    style="color: white; font-size: 14px;"><i class="fa fa-spinner fa-spin"></i>
+                    Loading...</span></button>
+            <button *ngIf="selectedTerritory.bomberCount>0" (click)="changeOptionType('loadPlanes')"
+                id="loadPlaneButton" type="button" class="btn btn-success roundButton"
+                title="Each bomber can carry up to 2 infantry, plus hero units."><img
+                    src="assets/graphics/units/piece7u.png" height="20" class="shadowedWhite"> Load
+                Bombers</button>
+            <button *ngIf="selectedTerritory.cobraCount>0 " (click)="changeOptionType('loadChoppers')"
+                id="loadPlaneButton" type="button" class="btn btn-success roundButton" title=""><img
+                    src="assets/graphics/units/piece50u.png" height="20" class="shadowedWhite"> Load
+                Cobras</button>
+        </div>
+
+        <!---- attack buttons-->
+        <div
+            *ngIf="optionType=='home' && selectedTerritory.treatyStatus <= 2 && (selectedTerritory.unitCount>0 || selectedTerritory.nation<99)">
+            <div *ngIf="0" style="font-size: 10px;">-Attack-</div>
+            <button (click)="changeOptionType('attack')" type="button" class="btn btn-danger roundButton"><img
+                    src="assets/graphics/units/piece3u.png" height="30" class="shadowedWhite" /><br>Attack</button>
+            <button *ngIf="currentPlayer.hasNukesFlg" (click)="changeOptionType('nuke')" type="button"
+                class="btn btn-danger roundButton"><img src="assets/graphics/misc/nuke.png" height="30"
+                    class="shadowedWhite" /><br>Nuke</button>
+            <button *ngIf="currentPlayer.cruiseButton" (click)="changeOptionType('cruise')" type="button"
+                class="btn btn-danger roundButton"><img src="assets/graphics/units/piece9u.png" height="25"
+                    class="shadowedWhite" /><br>Cruise Missile</button>
+            <button *ngIf="currentPlayer.stratBombButton && selectedTerritory.factoryCount>0"
+                (click)="changeOptionType('bomb')" type="button" class="btn btn-danger roundButton"><img
+                    src="assets/graphics/units/piece7u.png" height="20" class="shadowedWhite" /><br>Strategic
+                Bomb</button>
+        </div>
+
+        <!---- allies buttons-->
+        <div *ngIf="optionType=='home' && (currentPlayer.hasAllies)">
+            <div style="font-size: 10px;">-Allies-</div>
+            <button *ngIf="(currentPlayer.allies.length>0 && selectedTerritory.nation<99)"
+                (click)="changeOptionType('botTarget')" type="button" class="btn btn-warning roundButton"><i
+                    class="fa fa-bullseye"></i> Target</button>
+            <button (click)="changeOptionType('botFortify')" type="button" class="btn btn-warning roundButton"><i
+                    class="fa fa-shield"></i> Fortify</button>
+            <button *ngIf="selectedTerritory.treatyStatus==4" (click)="changeOptionType('transferTo')" type="button"
+                class="btn btn-warning roundButton"><i class="fa fa-arrow-right"></i>
+                Transfer To
+                Ally</button>
+            <button *ngIf="selectedTerritory.treatyStatus==3" (click)="changeOptionType('requestTransfer')"
+                type="button" class="btn btn-warning roundButton"><i class="fa fa-arrow-down"></i>
+                Request
+                Transfer</button>
+        </div>
+
+        <!---- secondary options--------------------------->
+        <button *ngIf="optionType=='loadPlanes' && selectedTerritory.paratrooperCount>0"
+            (click)="changeOptionType('unloadPlanes')" id="loadPlaneButton" type="button"
+            class="btn btn-success roundButton"><i class="fa fa-plane"></i>
+            Un-Load All</button>
+
+        <div *ngIf="optionType=='movement' && selectedTerritory.nation==99">
+            <div>Select units to load. They will automatically be loaded onto ships.</div>
+            <button ng-click="loadButtonClicked()" type="button" class="btn btn-success roundButton"><i
+                    class="fa fa-ship"></i> Custom Load Options</button>
+        </div>
+        <div *ngIf="optionType=='attack'">
+            <button ng-click="autoAttackButtonClicked()" id="" type="button" class="btn btn-danger roundButton"><i
+                    class="fa fa-star"></i> Auto Attack</button>
+            <button ng-click="fullAttackButtonClicked()" id="" type="button" class="btn btn-danger roundButton"><i
+                    class="fa fa-bolt"></i> Full Attack</button>
+            <button (click)="infoFlg = !infoFlg" id="" type="button" class="btn btn-secondary roundButton"><i
+                    class="fa fa-info-circle"></i> Info</button>
+        </div>
+        <!------------------ally seconday buttons----------------------------->
+        <div *ngIf="optionType=='transferTo'" class="borderClass2">
+            <div>Transfer controll of this territory to an ally?</div>
+            <button *ngFor="let ally of allies" ng-click="transferToAlly(ally)" id="" type="button"
+                class="btn btn-primary roundButton"><img src="assets/graphics/images/flag{{allyNation}}.gif"
+                    height=50></button>
+            <button ng-click="requestTranferConfirmButtonClicked()" type="button" class="btn btn-success roundButton"><i
+                    class="fa fa-check"></i>Transfer!</button>
+        </div>
+        <div *ngIf="optionType=='requestTransfer'" class="borderClass2">
+            <div>Request that your ally transfer this country to you?</div>
+            <button ng-click="requestTranferConfirmButtonClicked()" type="button" class="btn btn-success roundButton"><i
+                    class="fa fa-check"></i> Give me
+                {{selectedTerritory.name}}!</button>
+        </div>
+        <div *ngIf="optionType=='botFortify'" class="borderClass2">
+            <div>Request that your ally fortify this country with troops?</div>
+            <button ng-click="changeTargetNationButtonClicked()" type="button" class="btn btn-success roundButton"><img
+                    src="assets/graphics/images/flag{{allyNation}}.gif" height=40></button>
+            <button ng-click="requestFortifyConfirmButtonClicked(1)" type="button"
+                class="btn btn-success roundButton"><i class="fa fa-check"></i> Fortify
+                {{selectedTerritory.name}}!</button>
+        </div>
+        <div *ngIf="optionType=='botTarget'" class="borderClass2">
+            <div>Request that your ally target this territory?</div>
+            <button ng-click="changeTargetNationButtonClicked()" type="button" class="btn btn-success roundButton"><img
+                    src="assets/graphics/images/flag{{allyNation}}.gif" height=40></button>
+            <button ng-click="requestFortifyConfirmButtonClicked(2)" type="button"
+                class="btn btn-success roundButton"><i class="fa fa-check"></i> Target
+                {{selectedTerritory.name}}!</button>
+        </div>
+
+        <div *ngIf="infoFlg" class="borderClass2" style="text-align: left; font-size: 12px;">
+            <div style="text-align: left;">
+                <font color=#700><b>Auto Attack:</b></font> Automatically chooses a bunch of units and
+                sends
+                them into battle.
+            </div>
+            <div>
+                <font color=#700><b>Full Attack:</b></font> Automatically chooses all available units
+                and sends
+                them into battle.
+            </div>
+            <hr>
+            <div><b>Attack Details</b></div>
+            <li> Attacks play out like a board game. Each unit rolls a dice.
+            <li> The more units you have in the battle, the more chances to hit. So if you attack with 5
+                tanks, you can get at most 5 hits per round of battle.
+            <li> To score a hit, each unit must roll their attack factor or lower:
+                <img src="assets/graphics/misc/combatBoard.png" width=100%>
+            <li> For example: Tanks attack at 3, so they need a 1,2 or 3 to hit.
+            <li> Infantry only attack at 1, so they have a 1 out of 6 chance of hitting.
+            <li> If you include your general in the battle, infantry get +1 chance of hitting.
+            <li> At the end of each round of battle, casualties for both attackers and defenders are
+                removed from the game.
+            <li> Casualties are chosen by eliminating the lowest value units first. your highest value
+                units will be the last to be killed off.
+            <li> Check each unit description for special abilities that each unit might have.
+        </div>
+
+
+    </div>
+</div>

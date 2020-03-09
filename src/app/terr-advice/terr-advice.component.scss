@@ -1,0 +1,12 @@
+.terr-card {
+    margin: 3px;
+    border: 1px solid black;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    overflow: hidden;
+    background-color: #337ab7;
+}
+.terr-card:hover{
+    box-shadow: 5px 5px 5px #000;
+    background-color: #007;
+}

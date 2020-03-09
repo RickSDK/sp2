@@ -185,6 +185,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		player.techPurchasedThisTurn = false;
 		player.techCount = 1;
 		this.gameObj.unitPurchases = [];
+		player.allies = []; //<---- figure out allies!!
 
 
 		if (this.gameObj.gameOver) {

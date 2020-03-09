@@ -13,240 +13,32 @@
 			</div>
 			<div class="modal-body" style="padding: 0; text-align: center;">
 
+				<app-terr-header [selectedTerritory]="selectedTerritory"></app-terr-header>
 
-				<!------------------unit count && Ad guns----------------------------->
-				<div style="background-color: #aaa;">
-					<table border=1 width=100%>
-						<tr>
-							<td>
-								Units: <span class="bgHighlight">{{selectedTerritory.displayUnitCount}}</span>
-							</td>
-							<td>
-								<span style="font-size: 12px;">Treaty: <span
-										class="bgHighlight">{{selectedTerritory.territoryType || 'hey'}}</span></span>
-							</td>
-							<td>
-								<i *ngIf="selectedTerritory.shieldTech" class="fa fa-shield" title="Anti-Balistics"></i>
-								<img *ngIf="selectedTerritory.adCount>=1" src="assets/graphics/units/piece13.png"
-									height=15 title="Air Defense">
-								<img *ngIf="selectedTerritory.adCount>=2" src="assets/graphics/units/piece13.png"
-									height=15 title="Air Defense">
-								<img *ngIf="selectedTerritory.adCount>=3" src="assets/graphics/units/piece13.png"
-									height=15 title="Air Defense">
-								<img *ngIf="selectedTerritory.defendingFighterId>0"
-									src="assets/graphics/units/piece{{selectedTerritory.defendingFighterId}}u.png"
-									height=15 title="Fighter Defense">
-								<span *ngIf="selectedTerritory.adCount==0">(No AD)</span>
-							</td>
-						</tr>
-					</table>
-				</div>
-				<div *ngIf="selectedTerritory.capital && selectedTerritory.id<79"
-					style="background-color: #005; color: #cef; font-size: 12px;">This is a Capital (+10 Coins)</div>
-				<!------------------attack buttons----------------------------->
-				
-    	<div *ngIf="!selectedTerritory.battleFlg && ableToTakeThisTurn && optionType!='battlefield'">
-	   	<div *ngIf="currentPlayer.status != 'Purchase'">
-		   	<button ng-hide="optionType=='none' || optionType=='units'" ng-click="topMenuButtonClicked()" id="" type="button" class="btn btn-primary roundButton"><i class="fa fa-arrow-left"></i> Back</button>
-		   	<div *ngIf="optionType=='none' || optionType=='units'">
-			   	<button *ngIf="gameObj.currentNation==selectedTerritory.owner || (selectedTerritory.nation==99 && selectedTerritory.unitCount==0) || selectedTerritory.treatyStatus==3" ng-click="moveButtonClicked()" id="" type="button" class="btn ptp-green"><i class="fa fa-arrows-alt"></i>  <span ng-hide="loadingFlg">Move Here</span><span *ngIf="loadingFlg" style="color: white; font-size: 14px;"><i class="fa fa-spinner fa-spin"></i> Loading...</span></button>
-			   	<button *ngIf="gameObj.currentNation==selectedTerritory.owner && selectedTerritory.nation==99" ng-click="moveButtonClicked(true)" id="" type="button" class="btn ptp-green"><i class="fa fa-ship"></i>  <span ng-hide="loadingFlg">Load Ships</span><span *ngIf="loadingFlg" style="color: white; font-size: 14px;"><i class="fa fa-spinner fa-spin"></i> Loading...</span></button>
-			   	<button *ngIf="loadPlanesFlg" ng-click="loadPlanesButtonClicked()" id="loadPlaneButton" type="button" class="btn ptp-green" title="Each bomber can carry up to 2 infantry, plus hero units."><img src="graphics/units/piece7u.png" height="20" class="shadowedWhite"> Load Bombers</button>
-			   	<button *ngIf="selectedTerritory.cobraCount>0 " ng-click="loadPlanesButtonClicked(true)" id="loadPlaneButton" type="button" class="btn ptp-green" title=""><img src="graphics/units/piece50u.png" height="20" class="shadowedWhite"> Load Cobras</button>
-			   	<button *ngIf="selectedTerritory.paratrooperCount>0" ng-click="unloadPlanesButtonClicked()" id="loadPlaneButton" type="button" class="btn ptp-green"><i class="fa fa-plane"></i> Un-Load All</button>
-			   	
-			   	<div style="border: 1px solid black; margin: 3px; background-color: #fcc;" ng-hide="selectedTerritory.treatyStatus==3 || selectedTerritory.treatyStatus==4">
-			   		<div style="font-size: 10px;" *ngIf="selectedTerritory.nation<99">-Attack-</div>
-				   	<button ng-hide="gameObj.currentNation==selectedTerritory.owner || (selectedTerritory.nation==99 && selectedTerritory.unitCount==0)" ng-click="attackButtonClicked()" id="attackButton" type="button" class="btn ptp-red roundButton"><img src="graphics/units/piece3u.png" height="30" class="shadowedWhite"/><br>Attack</button>
-				   	<button ng-hide="gameObj.currentNation==selectedTerritory.owner || (selectedTerritory.nation==99 && selectedTerritory.unitCount==0)" ng-click="nukeButtonClicked()" id="nukeButton" type="button" class="btn ptp-red roundButton"><img src="graphics/misc/nuke.png" height="30" class="shadowedWhite"/><br>Nuke</button>
-				   	<button *ngIf="gameObj.currentNation!=selectedTerritory.owner && selectedTerritory.nation!=99 && currentPlayer.cruiseButton" ng-click="cruiseButtonClicked()" id="cruiseButton" type="button" class="btn ptp-red roundButton"><img src="graphics/units/piece9u.png" height="25" class="shadowedWhite"/><br>Cruise Missile</button>
-				   	<button *ngIf="gameObj.currentNation!=selectedTerritory.owner && selectedTerritory.factoryCount>0" ng-click="bombButtonClicked()" id="stratBombButton" type="button" class="btn ptp-red roundButton"><img src="graphics/units/piece7u.png" height="20" class="shadowedWhite"/><br>Strategic Bomb</button>
-				   	<button *ngIf="allies.length>0 && selectedTerritory.nation<99" ng-click="requestTargetButtonClicked()" id="" type="button" class="btn ptp-red roundButton"><i class="fa fa-bullseye"></i> Target</button>
-			   	</div>
-				   	<button *ngIf="gameObj.currentNation==selectedTerritory.owner && selectedTerritory.enemyPiecesExist" ng-click="attackButtonClicked()" id="attackButton" type="button" class="btn ptp-red roundButton" style="height: 44px;"><img src="graphics/units/piece3u.png" height="30" class="shadowedWhite"/> Attack</button>
-			   	<div style="border: 1px solid black; margin: 3px; background-color: #cfc;" *ngIf="selectedTerritory.treatyStatus==3 || selectedTerritory.treatyStatus==4">
-				   	<div *ngIf="selectedTerritory.nation<99 && gameObj.maxAllies>0 && currentPlayer.allies.length>0">
-				   		<div style="font-size: 10px;">-Ally-</div>
-					   	<button *ngIf="gameObj.currentNation==selectedTerritory.owner" ng-click="tranferButtonClicked()" id="" type="button" class="btn ptp-yellow roundButton"><i class="fa fa-globe"></i> Transfer To Ally</button>
-					   	<button *ngIf="selectedTerritory.treatyStatus==3" ng-click="requestTranferButtonClicked()" id="" type="button" class="btn ptp-yellow roundButton"><i class="fa fa-globe"></i> Request Transfer</button>
-					   	<button ng-click="requestFortifyButtonClicked()" id="" type="button" class="btn ptp-yellow roundButton"><i class="fa fa-shield"></i> Fortify</button>
-					</div>
-				</div>
-			</div>
-			<div *ngIf="optionType=='movement' && selectedTerritory.nation==99">
-				<div>Select units to load. They will automatically be loaded onto ships.</div>
-			   	<button ng-click="loadButtonClicked()" id="" type="button" class="btn ptp-green"><i class="fa fa-star"></i> Custom Load Options</button>
-			</div> 
-		   	<button *ngIf="loadBoatsFlg && optionType=='movement' && 0" ng-click="loadButtonClicked()" id="" type="button" class="btn ptp-green"><i class="fa fa-star"></i> Load Heros</button>
-			<div *ngIf="optionType=='attack'">
-			   	<button ng-click="autoAttackButtonClicked()" id="" type="button" class="btn ptp-red roundButton"><i class="fa fa-star"></i> Auto Attack</button>
-			   	<button ng-click="fullAttackButtonClicked()" id="" type="button" class="btn ptp-red roundButton"><i class="fa fa-bolt"></i> Full Attack</button>
-				<button ng-click="attackInfoButtonPressed()" id="" type="button" class="btn btn-secondary roundButton"><i class="fa fa-info-circle"></i> Attack Info</button>
-	   	</div>
-		</div>
-	</div>
-				<!------------------attack buttons----------------------------->
-				<div *ngIf="optionType=='transfer'" class="borderClass">
-					<div>Transfer controll of this territory to an ally?</div>
-					<button ng-click="tranferButtonClicked()" type="button" class="btn ptp-red roundButton"><i
-							class="fa fa-times"></i> Cancel</button>
-					<button *ngFor="let ally of allies" ng-click="transferToAlly(ally)" id="" type="button"
-						class="btn btn-primary medium"><img src="graphics/flag{{ally.nation}}.gif" height=50></button>
-				</div>
-				<div *ngIf="optionType=='requestTranfer'" class="borderClass">
-					<div>Request that your ally transfer this country to you?</div>
-					<button ng-click="requestTranferButtonClicked()" type="button" class="btn ptp-red roundButton"><i
-							class="fa fa-times"></i> Cancel</button>
-					<button ng-click="requestTranferConfirmButtonClicked()" type="button" class="btn ptp-green"><i
-							class="fa fa-check"></i> Yes!</button>
-				</div>
-				<div *ngIf="optionType=='requestForitfy'" class="borderClass">
-					<div>Request that your ally fortify this country with troops?</div>
-					<button ng-click="requestFortifyButtonClicked()" type="button" class="btn ptp-red roundButton"><i
-							class="fa fa-times"></i> Cancel</button>
-					<button ng-click="changeTargetNationButtonClicked()" type="button" class="btn ptp-green"><img
-							src="graphics/flag{{fortifyNation}}.gif" height=40></button>
-					<button ng-click="requestFortifyConfirmButtonClicked(1)" type="button" class="btn ptp-green"><i
-							class="fa fa-check"></i> Yes!</button>
-				</div>
-				<div *ngIf="optionType=='requestTarget'" class="borderClass">
-					<div>Request that your ally target this territory?</div>
-					<button ng-click="requestTargetButtonClicked()" type="button" class="btn ptp-red roundButton"><i
-							class="fa fa-times"></i> Cancel</button>
-					<button ng-click="changeTargetNationButtonClicked()" type="button" class="btn ptp-green"><img
-							src="graphics/flag{{fortifyNation}}.gif" height=40></button>
-					<button ng-click="requestFortifyConfirmButtonClicked(2)" type="button" class="btn ptp-green"><i
-							class="fa fa-check"></i> Yes!</button>
-				</div>
+				<app-terr-buttons [selectedTerritory]="selectedTerritory"
+					[currentPlayer]="currentPlayer" [superpowersData]="superpowersData" [gameObj]="gameObj"
+					[user]="user" [ableToTakeThisTurn]="ableToTakeThisTurn"(messageEvent)="buttonClicked($event)"></app-terr-buttons>
 
-				<!---------- ally info -->
-				<div *ngIf="selectedTerritory.owner>0 && selectedTerritory.treatyStatus<4">
-					<table width=100% border=1 style="background-color: white;">
-						<tr>
-							<td><i *ngIf="selectedTerritory.treatyStatus==0" class="fa fa-check"
-									style="color: green; font-size: 14px;"></i> War</td>
-							<td><i *ngIf="selectedTerritory.treatyStatus==1" class="fa fa-check"
-									style="color: green; font-size: 14px;"></i> Neutral</td>
-							<td><i *ngIf="selectedTerritory.treatyStatus==2" class="fa fa-check"
-									style="color: green; font-size: 14px;"></i> Peace</td>
-							<td><i *ngIf="selectedTerritory.treatyStatus==3" class="fa fa-check"
-									style="color: green; font-size: 14px;"></i> Ally</td>
-						</tr>
-					</table>
-					<div *ngIf="selectedTerritory.treatyStatus==0" style="font-size: 14px;">You are currently at war!
+				<app-terr-units *ngIf="optionType=='home'" [selectedTerritory]="selectedTerritory"
+					[currentPlayer]="currentPlayer" [superpowersData]="superpowersData" [gameObj]="gameObj"
+					[user]="user"></app-terr-units>
+
+				<!------------------Production Queue----------------------------->
+				<div *ngIf="optionType=='home' && selectedTerritory.treatyStatus==4 && selectedTerritory.displayQueue.length>0"
+					style="background-color: #cdf; border: 1px solid black; border-radius: 5px;">
+					<div class="darkBlueBg" style="font-size: 10px;"><i class="fa fa-building-o"></i> Production
+						Queue
 					</div>
-					<div *ngIf="selectedTerritory.treatyStatus==1" style="font-size: 14px;">It will cost you 5 coins to
-						attack this turn. Optionally, you can declare war this turn, then attack for free next turn.
-					</div>
-					<div *ngIf="selectedTerritory.treatyStatus==2" style="font-size: 14px;">It will cost you 10 coins to
-						attack this turn. Optionally, you can declare war this turn, then attack for free next turn.
-					</div>
-					<div *ngIf="selectedTerritory.treatyStatus==3" style="font-size: 14px;">It will cost you 15 coins to
-						attack this turn. Optionally, you can declare war this turn, then attack for free next turn.
-					</div>
+					<span *ngIf="selectedTerritory.displayQueue.length==0">&nbsp;</span>
+					<span *ngFor="let unit of selectedTerritory.displayQueue"><img *ngIf="unit.piece>0"
+							src="{{ngUnitSrc(unit.piece, 1)}}" height=20
+							title="{{superpowersData.units[unit.piece].name}}"><span
+							*ngIf="unit.count>1">({{unit.count}})</span>
+					</span>
+					<button *ngIf="0" [disabled]="selectedTerritory.displayQueue.length==0" (click)="clearQueue()"
+						type="button" class="btn btn-secondary roundButton">Clear</button>
 				</div>
-
-				<!------------------top units----------------------------->
-				<div *ngIf="optionType=='production' || optionType=='units' || optionType=='none'" class="terr-card">
-					<div style="color: white;">{{selectedTerritory.name}} units
-						<button *ngIf="selectedTerritory.unitCount>0" (click)="unitDetailFlg=!unitDetailFlg"
-							type="button" class="btn btn-secondary roundButton"><i class="fa fa-retweet"></i></button>
-					</div>
-					<div *ngIf="ableToTakeThisTurn && selectedTerritory.id>79 && selectedTerritory.flags.length>1"
-						style="font-size: 11px;"> Multiple nations. Change View:
-						<img style="cursor: pointer;" ng-click="changeTerrFlag(nation)"
-							*ngFor="let nation of selectedTerritory.flags"
-							src="assets/graphics/images/flag{{nation}}.gif" height=30>
-					</div>
-					<div *ngIf="ableToTakeThisTurn && selectedTerritory.id <= 79 && selectedTerritory.flags.length > 1 && selectedTerritory.owner==currentPlayer.nation && currentPlayer.status=='Attack'"
-						style="font-size: 11px;"> Multiple nations. <button ng-click="attackButtonClicked()"
-							id="warButton" type="button" class="btn ptp-red roundButton">Attack!</button></div>
-
-					<div [ngStyle]="ngStyleLogs(selectedTerritory.owner)">
-						<div *ngIf="selectedTerritory.unitCount==0">-None-</div>
-						<div *ngIf="!selectedTerritory.fogOfWar">
-							<!------------------large img units----------------------------->
-							<div *ngIf="!unitDetailFlg">
-								<span *ngFor="let unit of selectedTerritory.militaryUnits2"
-									style="display: inline-block;">
-									<img *ngIf="unit.piece>0" (click)="unitDetailPopup.show(unit, true)"
-										src="{{ngUnitSrc(unit.piece, unit.owner)}}"
-										[ngStyle]="ngStyleUnitTop(optionType)" title="{{unit.name}}"
-										style="cursor: pointer;">
-									<div style="font-size: 10px;"><span
-											*ngIf="unit.amount>1">({{unit.amount}})</span>&nbsp;</div>
-								</span>
-							</div>
-							<!------------------small img units----------------------------->
-							<div *ngIf="unitDetailFlg">
-								<span *ngFor="let unit of selectedTerritory.units"
-									style="display: inline-block; margin: 2px; min-width: 40px; text-align: center;">
-									<div *ngIf="!unit.cargoOf || unit.cargoOf==0"><img
-											(click)="unitDetailPopup.show(unit, true)" *ngIf="unit.piece>0"
-											src="{{ngUnitSrc(unit.piece, unit.nation)}}"
-											style="max-height: 20px; max-width: 40px; cursor: pointer;"
-											title="{{superpowersData.units[unit.piece].name}}">
-										<img *ngFor="let cargo of unit.cargo"
-											src="images/graphics/units/piece{{cargo.piece}}u.png"
-											title="{{superpowersData.units[cargo.piece].name}}" height=10></div>
-									<img src="assets/graphics/images/flag{{unit.nation}}.gif" height="15"
-										title="{{superpowersData.superpowers[unit.owner]}}"> <i
-										class="fa fa-hourglass-half"
-										*ngIf="unit.piece==28 && gameObj.round <= unit.medicRound+1"
-										title="Medic on cooldown">{{unit.medicRound}}</i>
-								</span>
-							</div>
-						</div>
-						<!------------------fog----------------------------->
-						<div *ngIf="selectedTerritory.fogOfWar">
-							<div>-Fog of War-</div>
-							<div *ngIf="gameObj.hardFog=='Y'">
-								<button ng-click="showInfo()" id="" type="button"
-									class="btn btn-secondary roundButton"><i class="fa fa-info-circle"></i> HardCore Fog
-									of War</button>
-								<div class="borderClass2" *ngIf="infoFlg">
-									<p>In Hardcore Fog-of-war mode, you can see all troops in yours and your ally's
-										territories.</p>
-									<p>For all other territories, if you have at least 1 unit that borders the
-										territory, you can see approximate troop counts.</p>
-								</div>
-							</div>
-							<div ng-hide="gameObj.hardFog=='Y'">
-								<button ng-click="showInfo()" id="" type="button"
-									class="btn btn-secondary roundButton"><i class="fa fa-info-circle"></i> Fog of War
-									Info</button>
-								<div class="borderClass2" *ngIf="infoFlg">
-									<div>With Fog of War enemy units are hidden from view. Instead you will be given an
-										approximate size of their force, without knowing which units are present:</div>
-									<li>1 = 1 unit
-									<li>2 = 2 units
-									<li>3 = 3 units
-									<li>4+ = 4-8 units
-									<li>9+ = 9-24 units
-									<li>25+ = 25-49 units
-									<li>50+ = 50-99 units
-									<li>100+ = 100-199 units
-										<div>etc...</div>
-								</div>
-							</div>
-							<div *ngIf="selectedTerritory.piece<60">({{selectedTerritory.piece}})</div>
-						</div>
-					</div>
-					<!--colored unit section-->
-				</div>
-				<!------------------end top units----------------------------->
-
 				<!------------------Production----------------------------->
-				<!--			<div *ngIf="displayQueue.length>0 && optionType!='production'">
-					<div style="vertical-align: middle;" *ngIf="ableToTakeThisTurn">Queue: <span
-							style="border: 1px solid black; height: 15px; min-width: 15px;"><span
-								*ngIf="displayQueue.length==0">&nbsp;</span>
-							<span ng-repeat="unit in displayQueue"><img *ngIf="unit.piece>0"
-									src="{{ngUnitSrc(unit.piece, unit.nation)}}" height=15><span
-									*ngIf="unit.count>1">({{unit.count}})</span></span>
-						</span>
-					</div>
-				</div>-->
 				<div *ngIf="optionType=='production'">
 					<div style="background-color: #007; color: white;"><img src="assets/graphics/units/piece15u.png"
 							height=20> {{selectedTerritory.name}} Production</div>
@@ -436,71 +228,10 @@
 				</div>
 				<!------------------end Production----------------------------->
 
-				<!------------------leader----------------------------->
-				<div *ngIf="ableToTakeThisTurn && selectedTerritory.leaderMessage.length>0" class="terr-card">
-					<div style="color: white;"><img src="assets/graphics/images/flag{{selectedTerritory.nation}}.gif"
-							height=20>&nbsp;
-						<span
-							*ngIf="selectedTerritory.nation>0">{{superpowersData.superpowers[selectedTerritory.nation]}}
-							Leader</span>
-						<span *ngIf="selectedTerritory.nation==0">{{selectedTerritory.leaderName}} </span>
-					</div>
-					<table width=100%>
-						<tr [ngStyle]="ngStyleLogs(selectedTerritory.owner)">
-							<td>
-								<img src="assets/graphics/advisors/{{selectedTerritory.leaderPic}}"
-									style="height: 100%; max-height: 120px;" title="{{selectedTerritory.leaderName}}">
-							</td>
-							<td>
-								<div><b>{{selectedTerritory.leaderName}}</b></div>
-								<div style="font-size: 12px;">"{{selectedTerritory.leaderMessage}}"</div>
-								<div *ngIf="selectedTerritory.owner>0 && selectedTerritory.treatyStatus < 4">
-									<button *ngIf="!currentPlayer.diplomacyFlg && selectedTerritory.treatyStatus < 2"
-										(click)="offerTreaty(2)" style="font-size: 12px;" type="button"
-										class="btn btn-warning roundButton"><i class="fa fa-user-secret"></i> Offer
-										Peace</button>
-
-									<button
-										*ngIf="!currentPlayer.diplomacyFlg && selectedTerritory.treatyStatus == 2 && gameObj.allowAlliances && gameObj.type!='barbarian' && gameObj.type!='battlebots'"
-										(click)="offerTreaty(3)" style="font-size: 12px;" type="button"
-										class="btn btn-success"><i class="fa fa-user-secret"></i> Offer
-										Alliance</button>
-
-									<button *ngIf="selectedTerritory.treatyStatus > 0" style="font-size: 12px;"
-										(click)="declareWar()" type="button" class="btn btn-danger roundButton"><i
-											class="fa fa-bolt"></i>
-										Declare War!</button>
-								</div>
-								<span *ngIf="selectedTerritory.requestedHotSpot>0"
-									style="border: 1px solid black; background-color: #cfc;"
-									title="Territory Fortified"><img
-										src="assets/graphics/images/flag{{selectedTerritory.requestedHotSpot}}.gif"
-										height=15> <i class="fa fa-shield"></i></span>
-								<span *ngIf="selectedTerritory.requestedTarget>0"
-									style="border: 1px solid black; background-color: #fcc;"
-									title="Territory Targeted"><img
-										src="assets/graphics/images/flag{{selectedTerritory.requestedTarget}}.gif"
-										height=15> <i class="fa fa-bullseye"></i></span>
-							</td>
-						</tr>
-					</table>
-				</div>
-				<!------------------strategyHint----------------------------->
-				<div *ngIf="selectedTerritory.strategyHint.length>0" class="terr-card">
-					<div style="color: white;">
-						<img src="assets/graphics/images/flag{{currentPlayer.nation}}.gif" height=20>
-						{{superpowersData.superpowers[currentPlayer.nation]}} Military Advisor
-					</div>
-					<table width=100%>
-						<tr [ngStyle]="ngStyleLogs(currentPlayer.nation)">
-							<td><img src="assets/graphics/advisors/general{{currentPlayer.nation}}.jpg"
-									style="height: 100%; max-height: 70px;"></td>
-							<td style="font-size: 12px;"><i class="fa fa-flag"></i> {{selectedTerritory.strategyHint}}
-							</td>
-						</tr>
-					</table>
-				</div>
-
+				<app-terr-advice
+					*ngIf="ableToTakeThisTurn && optionType=='home' && selectedTerritory.leaderMessage.length>0"
+					[selectedTerritory]="selectedTerritory" [currentPlayer]="currentPlayer"
+					[superpowersData]="superpowersData" [gameObj]="gameObj" [user]="user"></app-terr-advice>
 
 
 

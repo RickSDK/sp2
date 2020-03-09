@@ -1,0 +1,29 @@
+<!------------------unit count && Ad guns----------------------------->
+<div style="background-color: #aaa;">
+    <table border=1 width=100%>
+        <tr>
+            <td>
+                Units: <span class="bgHighlight">{{selectedTerritory.displayUnitCount}}</span>
+            </td>
+            <td>
+                <span style="font-size: 12px;">Treaty: <span
+                        class="bgHighlight">{{selectedTerritory.territoryType || 'hey'}}</span></span>
+            </td>
+            <td>
+                <i *ngIf="selectedTerritory.shieldTech" class="fa fa-shield" title="Anti-Balistics"></i>
+                <img *ngIf="selectedTerritory.adCount>=1" src="assets/graphics/units/piece13.png" height=15
+                    title="Air Defense">
+                <img *ngIf="selectedTerritory.adCount>=2" src="assets/graphics/units/piece13.png" height=15
+                    title="Air Defense">
+                <img *ngIf="selectedTerritory.adCount>=3" src="assets/graphics/units/piece13.png" height=15
+                    title="Air Defense">
+                <img *ngIf="selectedTerritory.defendingFighterId>0"
+                    src="assets/graphics/units/piece{{selectedTerritory.defendingFighterId}}u.png" height=15
+                    title="Fighter Defense">
+                <span *ngIf="selectedTerritory.adCount==0">(No AD)</span>
+            </td>
+        </tr>
+    </table>
+</div>
+<div *ngIf="selectedTerritory.capital && selectedTerritory.id<79"
+    style="background-color: #005; color: #cef; font-size: 12px;">This is a Capital (+10 Coins)</div>

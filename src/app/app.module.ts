@@ -36,6 +36,10 @@ import { LogsPopupComponent } from './logs-popup/logs-popup.component';
 import { ChatPopupComponent } from './chat-popup/chat-popup.component';
 import { StatsPopupComponent } from './stats-popup/stats-popup.component';
 import { BaseComponent } from './base/base.component';
+import { TerrUnitsComponent } from './terr-units/terr-units.component';
+import { TerrHeaderComponent } from './terr-header/terr-header.component';
+import { TerrAdviceComponent } from './terr-advice/terr-advice.component';
+import { TerrButtonsComponent } from './terr-buttons/terr-buttons.component';
 
 @NgModule({
   declarations: [
@@ -72,7 +76,11 @@ import { BaseComponent } from './base/base.component';
     LogsPopupComponent,
     ChatPopupComponent,
     StatsPopupComponent,
-    BaseComponent
+    BaseComponent,
+    TerrUnitsComponent,
+    TerrHeaderComponent,
+    TerrAdviceComponent,
+    TerrButtonsComponent
   ],
   imports: [
     BrowserModule,
