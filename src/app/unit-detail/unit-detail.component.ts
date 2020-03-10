@@ -30,8 +30,8 @@ export class UnitDetailComponent implements OnInit {
   constructor() { console.log('constructor');  }
 
   ngOnInit(): void {
-    this.superpowersData = getSuperpowersData();
-    this.selectedUnit = this.superpowersData.units[1];
+ //   this.superpowersData = getSuperpowersData();
+//    this.selectedUnit = this.superpowersData.units[1];
   }
   ngUnitSrc(piece) {
   	return ngUnitSrc(piece, this.nation);

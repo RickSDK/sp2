@@ -28,7 +28,7 @@ export class TerrAdviceComponent implements OnInit {
   ngStyleLogs(nation: number) {
     var colors = ['#ffc', '#ccf', '#ccc', '#db6', '#fcc', '#cfc', '#ffc', '#fcf', '#cff', '#666'];
     var color = colors[nation];
-    return { 'background-color': color };
+    return { 'background-color': color, 'color': 'black' };
   }
   declareWar() {
     playClick();

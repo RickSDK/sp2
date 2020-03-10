@@ -13,14 +13,14 @@ export class TerrButtonsComponent implements OnInit {
   @Input('gameObj') gameObj: any;
   @Input('user') user: any;
   @Input('ableToTakeThisTurn') ableToTakeThisTurn: any;
+  @Input('optionType') optionType: any;
 
   @Output() messageEvent = new EventEmitter<string>();
   
   public allyNation = 1;
   public infoFlg = false;
   public loadingFlg = false;
-  public optionType = 'home';
-  public allies = [];
+   public allies = [];
 
   constructor() { }
 

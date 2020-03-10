@@ -2,20 +2,29 @@ import { Component, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
-declare var ngUnitSrc: any;
-declare var populateUnits: any;
-declare var getSuperpowersData: any;
+//declare var ngUnitSrc: any;
+//declare var populateUnits: any;
+//declare var getSuperpowersData: any;
 declare var playSound: any;
 declare var isUnitGoodForForm: any;
 declare var getDisplayQueueFromQueue: any;
 declare var playClick: any;
-declare var playerOfNation: any;
-declare var changeTreaty: any;
-declare var refreshTerritory: any;
+//declare var playerOfNation: any;
+//declare var changeTreaty: any;
+//declare var refreshTerritory: any;
 declare var showAlertPopup: any;
-declare var popupMessage: any;
-declare var logItem: any;
-declare var displayLeaderAndAdvisorInfo: any;
+//declare var popupMessage: any;
+//declare var logItem: any;
+//declare var displayLeaderAndAdvisorInfo: any;
+declare var populateHostileMessage: any;
+declare var selectAllUnits: any;
+declare var checkMovement: any;
+declare var checkSendButtonStatus: any;
+declare var selectAllButtonChecked: any;
+declare var showUnitsForMovementBG2: any;
+declare var expectedHitsFromStrength: any;
+declare var moveSelectedUnits: any;
+declare var refreshBoardFromMove: any;
 
 @Component({
   selector: 'app-territory-popup',
@@ -24,17 +33,24 @@ declare var displayLeaderAndAdvisorInfo: any;
 })
 export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   public selectedTerritory: any;
-  public currentPlayer: any;
-  public gameObj: any;
   public optionType: string;
-  public ableToTakeThisTurn = false;
-  public unitDetailFlg = false;
   public productionDisplayUnits = [];
   public allyNation = 1;
-  public allies=[];
-  public loadingFlg=false;
-  public loadPlanesFlg=false;
-  public loadBoatsFlg=false;
+  public allies = [];
+  public loadingFlg = false;
+  public loadPlanesFlg = false;
+  public loadBoatsFlg = false;
+  public hostileMessage = '';
+  public moveTerr = [];
+  public totalMoveTerrs = [];
+  public selectedUnitForm = 0;
+  public selectedFormUnit: any;
+  public totalUnitsThatCanMove = 0;
+  public expectedHits = 0;
+  public expectedLosses = 0;
+  public goButton = 'Go!';
+  public checkAllTroops = false;
+  public totalAttackStrength = 0;
 
   constructor() { super(); }
 
@@ -44,13 +60,19 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);
     $("#territoryPopup").modal();
     this.selectedTerritory = terr;
-    // this.currentPlayer = currentPlayer;
-    // this.gameObj = gameObj;
-    // this.ableToTakeThisTurn = ableToTakeThisTurn;
-    // this.user = user;
-    //this.superpowersData = getSuperpowersData();
 
-    this.unitDetailFlg = false;
+    var moveTerr = [];
+    var totalUnitsThatCanMove = 0;
+    
+    this.gameObj.territories.forEach(function (terr) {
+      totalUnitsThatCanMove += terr.movableTroopCount;
+      if (terr.movableTroopCount > 0) {
+        terr.distObj = {land: 9, air: 9, sea: 9};
+        moveTerr.push(terr);
+      }
+    });
+    this.totalUnitsThatCanMove = totalUnitsThatCanMove;
+    this.totalMoveTerrs = moveTerr;
     this.optionType = 'home';
     if (ableToTakeThisTurn && terr.treatyStatus == 4 && currentPlayer.status == 'Purchase') {
       if (this.selectedTerritory.nation == 99)
@@ -66,54 +88,65 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     //console.log('currentPlayer', currentPlayer);
   }
   buttonClicked(type) {
-    console.log('here!'+type);
+    //this event emitted from app-terr-buttons
     this.optionType = type;
+    this.hostileMessage = populateHostileMessage(type, this.selectedTerritory, this.gameObj, this.currentPlayer);
+    this.loadingFlg=true;
+    setTimeout(() => { this.showUnitsForMovementBG(); }, 20);
   }
-  changeOptionType(type:string) {
+  showUnitsForMovementBG() {
+   // var obj = showUnitsForMovementBG(this.optionType, this.gameObj.units, this.currentPlayer, this.gameObj.territories, this.selectedTerritory, 'Go', this.gameObj.round, this.currentPlayer, this.optionType);
+    var obj = showUnitsForMovementBG2(this.optionType, this.gameObj, this.currentPlayer, this.totalMoveTerrs, this.selectedTerritory);
+    this.moveTerr = obj.moveTerr;
+    this.totalUnitsThatCanMove = obj.totalUnitsThatCanMove;
+    this.loadingFlg=false;
+  }
+  changeOptionType(type: string) {
     playClick();
     this.optionType = type;
     //loadPlanesButtonClicked()
     //moveButtonClicked
     //unloadPlanesButtonClicked
     //requestTargetButtonClicked
-//requestFortifyButtonClicked
-//tranferButtonClicked
-//requestTranferButtonClicked
+    //requestFortifyButtonClicked
+    //tranferButtonClicked
+    //requestTranferButtonClicked
   }
-  /*
-  offerTreaty(type: number) {
+  ngStyleTerr = function (terr: any, idx: number) {
+    var num = terr.nation;
+    if (num > 8)
+      num = 9;
+    var colors = ['#ffc', '#ccf', '#ccc', '#ea0', '#fcc', '#cfc', '#ff7', '#fcf', '#fc0', '#cff'];
+    // if (idx%2==1)
+    // colors = ['#ffe', '#eef', '#eee', '#fb4', '#fee', '#efe', '#ffa', '#fef', '#fe0', '#eff'];
+    return { 'background-color': colors[num] };
+  }
+  selectAllUnitsForTerr(terr: any) {
+    selectAllUnits(terr, this.optionType, this.currentPlayer);
+    this.checkSendButtonStatus(null);
+  }
+  selectAllButtonChecked() {
+    this.checkAllTroops = !this.checkAllTroops;
+    selectAllButtonChecked(this.moveTerr, this.checkAllTroops, this.optionType, this.currentPlayer);
+    this.checkSendButtonStatus(null);
+  }
+  checkMovement(distObj: any, unit: any) {
+    return checkMovement(distObj, unit, this.optionType, this.currentPlayer);
+  }
+  moveTroopsButtonPressed() {
     playClick();
-    var p2 = playerOfNation(this.selectedTerritory.owner, this.gameObj);
-    var p1TopFlg = (this.currentPlayer.nation == this.gameObj.top1Nation || this.currentPlayer.nation == this.gameObj.top2Nation);
-    var p2TopFlg = (p2.nation == this.gameObj.top1Nation || p2.nation == this.gameObj.top2Nation);
-    if (p1TopFlg && p2TopFlg && type == 3) {
-      showAlertPopup('Sorry, top 2 players cannot ally.', 1);
-      return;
-    }
-    this.currentPlayer.diplomacyFlg = true;
-    this.attemptDiplomacy(this.currentPlayer, p2, type);
+    //showAlertPopup('whoa', 1);
+    moveSelectedUnits(this.moveTerr, this.selectedTerritory);
+    setTimeout(() => {
+      refreshBoardFromMove(this.moveTerr, this.selectedTerritory, this.gameObj, this.superpowersData, this.currentPlayer);
+    }, 1000);
+    
+    this.closeModal('#territoryPopup');
   }
-  attemptDiplomacy(player: any, player2: any, type: number) {
-    if (type == 2) {
-      var msg = 'Peace treaty offered to ' + this.superpowersData.superpowers[player2.nation];
-      popupMessage(player, msg, player2, true);
-      logItem(this.gameObj, player, 'Diplomacy', msg);
-      player2.offers.push(player.nation);
-    }
-    if (type == 3) {
-      var msg = 'Alliance offered to ' + this.superpowersData.superpowers[player2.nation];
-      popupMessage(player, msg, player2, true);
-      player2.offers.push(player.nation);
-      logItem(this.gameObj, player, 'Diplomacy', msg);
-    }
+  checkSendButtonStatus(unit: any) {
+    this.totalAttackStrength = checkSendButtonStatus(unit, this.moveTerr, this.optionType);
+    this.expectedHits = expectedHitsFromStrength(this.totalAttackStrength);
   }
-  declareWar() {
-    playClick();
-    var p2 = playerOfNation(this.selectedTerritory.owner, this.gameObj);
-    changeTreaty(this.currentPlayer, p2, 0, this.gameObj, this.superpowersData.superpowers);
-    refreshTerritory(this.selectedTerritory, this.gameObj, this.superpowersData.units, this.currentPlayer, this.superpowersData.superpowers, this.currentPlayer);
-    displayLeaderAndAdvisorInfo(this.selectedTerritory, this.currentPlayer, this.currentPlayer, this.user, this.gameObj, this.superpowersData.superpowers);
-  }*/
   addUniToQueue(piece: number, count: number) {
     playSound('clink.wav', 0, false);
     var unit = this.superpowersData.units[piece];

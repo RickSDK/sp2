@@ -1,7 +1,7 @@
 <!------------------action buttons----------------------------->
-<div *ngIf="ableToTakeThisTurn && !selectedTerritory.battleFlg && optionType!='battlefield'" class="terr-card">
-    <div style="color: white;">Action Panel</div>
-    <div *ngIf="currentPlayer.status != 'Purchase'" style="background-color: #ccc;">
+<div class="terr-card">
+    <div style="color: white;">Action Panel [{{optionType}}]</div>
+    <div *ngIf="currentPlayer.status != 'Purchase'" style="background-color: #ccc; color: black;">
 
         <button *ngIf="optionType!='home' && optionType!='units'" (click)="changeOptionType('home')" id="" type="button"
             class="btn btn-primary roundButton"><i class="fa fa-arrow-left"></i>
@@ -73,19 +73,10 @@
             class="btn btn-success roundButton"><i class="fa fa-plane"></i>
             Un-Load All</button>
 
-        <div *ngIf="optionType=='movement' && selectedTerritory.nation==99">
-            <div>Select units to load. They will automatically be loaded onto ships.</div>
-            <button ng-click="loadButtonClicked()" type="button" class="btn btn-success roundButton"><i
-                    class="fa fa-ship"></i> Custom Load Options</button>
-        </div>
-        <div *ngIf="optionType=='attack'">
-            <button ng-click="autoAttackButtonClicked()" id="" type="button" class="btn btn-danger roundButton"><i
-                    class="fa fa-star"></i> Auto Attack</button>
-            <button ng-click="fullAttackButtonClicked()" id="" type="button" class="btn btn-danger roundButton"><i
-                    class="fa fa-bolt"></i> Full Attack</button>
-            <button (click)="infoFlg = !infoFlg" id="" type="button" class="btn btn-secondary roundButton"><i
-                    class="fa fa-info-circle"></i> Info</button>
-        </div>
+
+        <button *ngIf="optionType=='attack'" (click)="infoFlg = !infoFlg" id="" type="button"
+            class="btn btn-secondary roundButton"><i class="fa fa-info-circle"></i> Info</button>
+
         <!------------------ally seconday buttons----------------------------->
         <div *ngIf="optionType=='transferTo'" class="borderClass2">
             <div>Transfer controll of this territory to an ally?</div>

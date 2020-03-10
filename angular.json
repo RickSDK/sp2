@@ -46,7 +46,7 @@
 		"src/js/sound.js",
 		"src/js/spLib.js",
 		"src/js/board.js",
-		"src/js/displayBoard.js",
+		"src/js/movement.js"
 		]
           },
           "configurations": {

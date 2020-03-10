@@ -1,6 +1,8 @@
 <!------------------top units----------------------------->
 <div class="terr-card">
-    <div style="color: white;">{{selectedTerritory.name}} units
+    <div>
+        <img *ngFor="let nation of selectedTerritory.flags" src="assets/graphics/images/flag{{nation}}.gif" height=30>
+        {{selectedTerritory.name}} units
         <button *ngIf="selectedTerritory.unitCount>0" (click)="unitDetailFlg=!unitDetailFlg" type="button"
             class="btn btn-secondary roundButton"><i class="fa fa-retweet"></i></button>
     </div>
@@ -13,13 +15,13 @@
         style="font-size: 11px;"> Multiple nations. <button ng-click="attackButtonClicked()" id="warButton"
             type="button" class="btnbtn-danger roundButton">Attack!</button></div>
 
-    <div [ngStyle]="ngStyleLogs(selectedTerritory.owner)">
+    <div [ngStyle]="ngStyleLogs(selectedTerritory.owner)" style="color: black;">
         <div *ngIf="selectedTerritory.unitCount==0">-None-</div>
         <div *ngIf="!selectedTerritory.fogOfWar">
-            <!------------------large img units----------------------------->
+            <!------------------large img units------------------unitDetailPopup.show(unit, true)----------->
             <div *ngIf="!unitDetailFlg">
                 <span *ngFor="let unit of selectedTerritory.militaryUnits2" style="display: inline-block;">
-                    <img *ngIf="unit.piece>0" (click)="unitDetailPopup.show(unit, true)"
+                    <img *ngIf="unit.piece>0" (click)="showUnitPopup(unit)" 
                         src="{{ngUnitSrc(unit.piece, unit.owner)}}" [ngStyle]="ngStyleUnitTop('home')"
                         title="{{unit.name}}" style="cursor: pointer;">
                     <div style="font-size: 10px;">
@@ -86,3 +88,14 @@
 <!------------------end top units----------------------------->
 
 <app-unit-detail-popup #unitDetailPopup></app-unit-detail-popup>
+
+<div id="unitPopup" class="popupScreenNoPad" style="position: absolute; min-width: 320px; cursor: auto;">
+    <div class="darkBlueBg" style="height: 44px;">Unit Detail
+        <button onClick="closePopup('unitPopup')" type="button" class="btn btn-secondary roundButton" style="float: right;"><i
+            class="fa fa-times"></i></button>
+    </div>
+    <div *ngIf="selectedUnit" style="padding: 10px;">
+        <app-unit-detail nation="1" [selectedUnit]="selectedUnit" [hideUnitDetailFlg]="true"></app-unit-detail>
+    </div>
+</div>
+

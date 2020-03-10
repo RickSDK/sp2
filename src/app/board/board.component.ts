@@ -39,6 +39,7 @@ declare var displayLeaderAndAdvisorInfo: any;
 declare var getDisplayQueueFromQueue: any;
 declare var highlightCapital: any;
 declare var scrubUnitsOfPlayer: any;
+declare var resetPlayerUnits: any;
 //---spLib.js
 declare var scrollToCapital: any;
 
@@ -157,7 +158,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		scrollToCapital(this.yourPlayer.nation);
 		if (this.gameObj.round == 1 && this.currentPlayer.placedInf < 3)
 			militaryAdvisorPopup('New Game! You are starting as ' + this.superpowersData.superpowers[this.yourPlayer.nation] + '. First place 3 infantry by clicking on your territories.', 21); //23
-		//militaryAdvisorPopup('New Game! You are starting as ' + this.superpowersData.superpowers[this.yourPlayer.nation] + '. The countries displayed on the side are your CPU players you will be up against.', 21); //23
+	
+	
+			//militaryAdvisorPopup('New Game! You are starting as ' + this.superpowersData.superpowers[this.yourPlayer.nation] + '. The countries displayed on the side are your CPU players you will be up against.', 21); //23
 		//this.initializePlayer(this.currentPlayer); //<-- delete this!!
 		//sidelinePopup
 	}
@@ -192,6 +195,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			console.log('game over!!');
 			return;
 		}
+
+		resetPlayerUnits(player, this.gameObj); //<------------------------------------------------- clean player units
+
 		if (this.gameObj.multiPlayerFlg && this.yourPlayer && this.yourPlayer.nation > 0) {
 			this.ableToTakeThisTurn = (this.user.userName == player.userName);
 		} else
@@ -217,7 +223,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 		if (player.status == gStatusPurchase && !practiceMode) {
 			this.techPurchasedThisTurn = false;
-			resetPlayerUnits(player); //<------------------------------------------------- clean player units
+			
 			setLastRoundsOfPeaceAndWar(player);
 			var numFactories = cleanUpTerritories(player, player.cpu); //<------------------ clean territories
 			if (player.cpu && player.income <= 5 && this.gameObj.round > 12 && !this.gameObj.multiPlayerFlg) {
@@ -277,7 +283,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		refreshTerritory(terr, this.gameObj, this.superpowersData.units, this.currentPlayer, this.superpowersData.superpowers, this.yourPlayer);
 		displayLeaderAndAdvisorInfo(terr, currentPlayer, this.yourPlayer, user, gameObj, this.superpowersData.superpowers);
-		terr.units = unitsForTerr(terr, gameObj.units);
+//		terr.units = unitsForTerr(terr, gameObj.units);
 		terr.displayQueue = getDisplayQueueFromQueue(terr, this.gameObj);
 		popup.show(terr, currentPlayer, gameObj, ableToTakeThisTurn, user);
 	}

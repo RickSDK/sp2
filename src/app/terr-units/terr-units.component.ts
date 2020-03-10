@@ -1,6 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 
+declare var displayFixedPopup: any;
+
 @Component({
   selector: 'app-terr-units',
   templateUrl: './terr-units.component.html',
@@ -15,6 +17,7 @@ export class TerrUnitsComponent extends BaseComponent implements OnInit {
 
   public infoFlg = false;
   public unitDetailFlg = false;
+  public selectedUnit:any;
 
   constructor() { super(); }
 
@@ -25,5 +28,9 @@ export class TerrUnitsComponent extends BaseComponent implements OnInit {
       return { 'max-width': '40px', 'max-height': '30px' };
     else
       return { 'max-width': '100px', 'max-height': '60px' };
+  }
+  showUnitPopup(unit:any) {
+    this.selectedUnit = this.superpowersData.units[unit.piece];
+    displayFixedPopup('unitPopup');
   }
 }

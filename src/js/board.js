@@ -237,6 +237,69 @@ function scrubUnitsOfPlayer(player, gameObj, gUnits) {
 	});
 	player.stratBombButton = stratBombButton;
 }
+function resetPlayerUnits(player, gameObj) {
+	console.log('resetPlayerUnits');
+	var unitCount = 0;
+	var generalFlg = false;
+	var leaderFlg = false;
+	var sbcFlg = false;
+	player.mainBaseID = 0;
+	gameObj.units.forEach(function (unit) {
+		if (unit.owner == player.nation && unit.mv > 0 && unit.hp > 0) {
+			unit.dice = [];
+			unit.moving = false;
+			unit.usedInCombat = false;
+			if (unit.type == 3)
+				unit.cargoLoadedThisTurn = 0;
+			unit.movesLeft = 2;
+			unit.movesTaken = 0;
+			unit.retreated = false;
+			unit.prevTerr = unit.terr;
+			if (unit.att > 0)
+				unitCount++;
+			if (unit.piece == 10) {
+				generalFlg = true;
+				unit.startTerr = unit.terr;
+			}
+			if (unit.type == 2)
+				unit.startTerr = unit.terr;
+			if (unit.piece == 11)
+				leaderFlg = true;
+			if (unit.piece == 10 || unit.piece == 11)
+				player.mainBaseID = unit.terr;
+			if (unit.moving)
+				unit.moving = false;
+			if (unit.piece == 12)
+				sbcFlg = true;
+	//		if (unit.cargoUnits > 0 && (unit.piece == 4 || unit.piece == 7 || unit.piece == 8))
+	//			doubleCheckCargoUnits(unit);
+//			if (unit.piece == 44)
+//				checkSealUnit(unit, player);
+console.log(unit);
+		}
+	});
+	player.sbcFlg = sbcFlg;
+	player.generalFlg = generalFlg;
+	player.leaderFlg = leaderFlg;
+	player.unitCount = unitCount;
+}
+function populateHostileMessage(type, terr, gameObj, player) {
+	var cost = costToAttack(type, terr, gameObj, player);
+	if (cost > 0)
+		return 'This will cost you ' + cost + ' coins to attack! Alternatively, you can declare war this turn and then attack for free next turn.';
+	else
+		return '';
+}
+function costToAttack(type, terr, gameObj, player) {
+	if (terr.treatyStatus == 1)
+		return 5;
+	if (terr.treatyStatus == 2)
+		return 10;
+	if (terr.treatyStatus == 3)
+		return 15;
+	return 0;
+}
+
 function getYourPlayer(gameObj, userName) {
 	var humanPlayer;
 	for (var x = 0; x < gameObj.players.length; x++) {
@@ -265,6 +328,7 @@ function highlightCapital(nation) {
 function refreshTerritory(terr, gameObj, gUnits, currentPlayer, superpowers, yourPlayer, cleanDice = false) {
 	if (!gameObj)
 		console.log('!!!! no gameObj!!');
+
 	var unitCount = 0;
 	var highestPiece = 0;
 	var adCount = 0;
@@ -309,12 +373,17 @@ function refreshTerritory(terr, gameObj, gUnits, currentPlayer, superpowers, you
 	var totalUnitCount = 0;
 	var leaderOwner = terr.owner;
 	var enemyPiecesExist = false;
+	var units = [];
+	var movableTroopCount = 0;
 	gameObj.units.forEach(function (unit) {
-		if (unit.terr == terr.id && !unit.moving) {
+		if (unit.terr == terr.id) {
+			units.push(unit);
 			if (currentPlayer && unit.owner != terr.owner && !enemyPiecesExist) {
 				if (currentPlayer.treaties[unit.owner - 1] == 0)
 					enemyPiecesExist = true;
 			}
+			if (unit.moveAtt > 0 && unit.owner == yourPlayer.nation)
+				movableTroopCount++;
 			totalUnitCount++;
 			if (unit.piece == 9)
 				battleshipAACount++;
@@ -449,14 +518,16 @@ function refreshTerritory(terr, gameObj, gUnits, currentPlayer, superpowers, you
 				unitCount++;
 		}
 	});
+	terr.units = units;
+	terr.movableTroopCount = movableTroopCount;
 	if (terr.defeatedByNation > 0 && numberVal(terr.defeatedByRound) < gameObj.round - 1) {
 		terr.defeatedByNation = 0;
 	}
 	terr.enemyPiecesExist = enemyPiecesExist;
 	terr.totalUnitCount = totalUnitCount;
 	terr.battleshipAACount = battleshipAACount;
-	if (unitOwner > 0 && terr.owner == 0)
-		terr.owner = unitOwner;
+	/*	if (unitOwner > 0 && terr.owner == 0)
+			terr.owner = unitOwner;*/
 	if (unitOwner > 0 && unitOwner != terr.owner && terr.id >= 79)
 		terr.owner = unitOwner;
 	if (factoryCount > 1 && terr.facBombed)
@@ -508,6 +579,7 @@ function refreshTerritory(terr, gameObj, gUnits, currentPlayer, superpowers, you
 	terr.cargoSpace = cargoSpace;
 	terr.attStrength = attStrength;
 	terr.defStrength = defStrength;
+	terr.expectedLosses = parseInt(terr.defStrength / 6);
 	terr.groundForce = groundForce;
 	terr.adCount = adCount;
 	terr.unitCount = unitCount;

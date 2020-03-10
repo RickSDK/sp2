@@ -15,28 +15,182 @@
 
 				<app-terr-header [selectedTerritory]="selectedTerritory"></app-terr-header>
 
-				<app-terr-buttons [selectedTerritory]="selectedTerritory"
-					[currentPlayer]="currentPlayer" [superpowersData]="superpowersData" [gameObj]="gameObj"
-					[user]="user" [ableToTakeThisTurn]="ableToTakeThisTurn"(messageEvent)="buttonClicked($event)"></app-terr-buttons>
+				<app-terr-buttons [selectedTerritory]="selectedTerritory" [currentPlayer]="currentPlayer"
+					[superpowersData]="superpowersData" [gameObj]="gameObj" [user]="user" [optionType]="optionType"
+					[ableToTakeThisTurn]="ableToTakeThisTurn" (messageEvent)="buttonClicked($event)"></app-terr-buttons>
 
 				<app-terr-units *ngIf="optionType=='home'" [selectedTerritory]="selectedTerritory"
 					[currentPlayer]="currentPlayer" [superpowersData]="superpowersData" [gameObj]="gameObj"
 					[user]="user"></app-terr-units>
 
+				<div *ngIf="optionType!='home'" class="terr-card">
+					Troop Movement [{{optionType}}]
+					<div *ngIf="loadingFlg" class="progress-bar progress-bar-info progress-bar-striped"
+						role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+						Busy...
+					</div>
+					<div *ngIf="!loadingFlg" style="background-color: #ccc; color: black;">
+						<div
+							*ngIf="(optionType=='movement' || optionType=='loadUnits') && selectedTerritory.nation==99 && selectedTerritory.unitCount>0">
+							<button *ngIf="optionType=='movement'" (click)="optionType='loadUnits'" type="button"
+								class="btn btn-success roundButton"><i class="fa fa-ship"></i> Custom Load
+								Options</button>
+							<button *ngIf="optionType=='loadUnits'" (click)="optionType='movement'" type="button"
+								class="btn btn-success roundButton"><i class="fa fa-ship"></i> Auto Load</button>
+
+							<button (click)="infoFlg = !infoFlg" type="button" class="btn btn-secondary roundButton"><i
+									class="fa fa-info-circle"></i> Info</button>
+							<div *ngIf="infoFlg" class="borderClass2">
+								<div>Cargo Limits</div>
+								<table class="spTable">
+									<tr>
+										<th>Ship</th>
+										<th>Cargo</th>
+									</tr>
+									<tr>
+										<td><img src="assets/graphics/units/piece4u.png" height=30></td>
+										<td><img src="assets/graphics/units/piece2u.png" height=30><img
+												src="assets/graphics/units/piece2u.png" height=30><img
+												src="assets/graphics/units/piece2u.png" height=30><img
+												src="assets/graphics/units/piece2u.png" height=30></td>
+									</tr>
+									<tr>
+										<td><img src="assets/graphics/units/piece4u.png" height=30></td>
+										<td><img src="assets/graphics/units/piece3u.png" height=30><img
+												src="assets/graphics/units/piece3u.png" height=30></td>
+									</tr>
+									<tr>
+										<td><img src="assets/graphics/units/piece8u.png" height=30></td>
+										<td><img src="assets/graphics/units/piece6u.png" height=30><img
+												src="assets/graphics/units/piece6u.png" height=30></td>
+									</tr>
+									<tr>
+										<td><img src="assets/graphics/units/piece12u.png" height=30></td>
+										<td><img src="assets/graphics/units/piece13u.png" height=30><img
+												src="assets/graphics/units/piece10u.png" height=30><img
+												src="assets/graphics/units/piece11u.png" height=30></td>
+									</tr>
+								</table>
+								<div> all ships can carry heros and AA guns.</div>
+							</div>
+							<div *ngIf="optionType=='movement'">Select units to load. They will automatically be loaded
+								onto ships.</div>
+							<div *ngIf="optionType=='loadUnits'">Select one ship plus cargo you want to load.</div>
+						</div>
+
+						<div *ngIf="optionType=='loadPlanes'" class="borderClass">Select units to load as paratroopers.
+							<button (click)="infoFlg = !infoFlg" type="button" class="btn ptp-gray roundButton"
+								style=""><i class="fa fa-info-circle"></i>Info</button>
+							<div *ngIf="infoFlg">Each bomber can carry up to 2 infantry, plus hero units. Only select
+								the infantry. Bombers are chosen automatically for you.</div>
+						</div>
+						totalUnitsThatCanMove: {{totalUnitsThatCanMove}} totalAttackStrength {{totalAttackStrength}}
+						<div *ngFor="let terr of moveTerr; let i = index" [ngStyle]="ngStyleTerr(terr, i)"
+							class="terrClass">
+							<div style="padding-left: 5px; font-size: 18px; font-weight: 700; text-align: left;">
+								{{terr.name}}
+
+								<!--<span>
+									<svg *ngIf="terr.svg.path.length>0" style="height: 51px; max-width: 100px;"
+										[attr.viewBox]="{{terr.svg.viewBox}}">
+										<g id="svg2{{terr.svg.id}}" fill="white" stroke="black" stroke-width="30">
+											<path [attr.d]="{{terr.svg.path}}" />
+										</g>
+									</svg>
+								</span>-->
+								<span style="float: right;">
+									<span *ngIf="terr.movableTroopCount >= 2" style="font-size: 10px;">Select All
+									</span>
+									<div *ngIf="terr.units.length>=2" class="squaredOne squaredOneGreen"
+										style="display: inline-block; padding: 0; margin: 1px;">
+										<input (click)="selectAllUnitsForTerr(terr)" type="checkbox" value="None"
+											id="{{'ter'+terr.id}}" name="check" />
+										<label for="{{'ter'+terr.id}}"></label>
+
+									</div>
+								</span>
+							</div>
+							<hr style="padding: 0; margin: 5px;">
+							terr.distObj: {{terr.distObj.land}} {{terr.distObj.air}} {{terr.distObj.sea}}
+							<div *ngFor="let unit of terr.units" style="display: inline-block;">
+								<span *ngIf="checkMovement(terr.distObj, unit)">
+									<div (click)="checkSendButtonStatus(unit)" class="squaredOne"
+										style="display: inline-block; padding: 0; margin: 1px;">
+										<input type="checkbox" value="None" id="{{'unit'+unit.id}}" name="check" />
+										<label for="{{'unit'+unit.id}}"></label>
+									</div> <i class="fa fa-hourglass-half"
+										*ngIf="unit.piece==28 && gameObj.round-1 == unit.medicRound"></i>
+									<span style="margin-right: 10px;"> <img *ngIf="unit.piece>0"
+											ng-click="unitPopup(unit.piece)"
+											src="{{ngUnitSrc(unit.piece, unit.nation)}}" height=20
+											title="{{unit.name}}"><span *ngIf="unit.cargoOf>0">(c)</span><span
+											*ngFor="let cargo of unit.cargo"><img src="{{ngUnitSrc(cargo.piece)}}"
+												height=10></span></span>
+								</span>
+							</div>
+							<div *ngIf="selectedUnitForm==terr.id"
+								style="margin-top: 5px; border: 1px solid gray; display: block; white-space: nowrap;">
+								({{selectedFormUnit.max}})
+								<img ng-if="1" ng-click="unitPopup(2)" src="{{ngUnitSrc(selectedFormUnit.piece, 1)}}"
+									style="max-height: 30px; max-width: 40px;">
+								<button disabled id="unitCountToOne" ng-click="unitCountToZero(terr)" type="button"
+									class="btn btn-primary tight roundButton"><i
+										class="fa fa-fast-backward"></i></button>
+								<button disabled id="unitCountDown" ng-click="unitCountDownF(terr)" type="button"
+									class="btn btn-primary tight roundButton"><i class="fa fa-backward"></i></button>
+								<button id="unitCountUp" ng-click="unitCountUpF(terr)" type="button"
+									class="btn btn-primary tight roundButton"><i class="fa fa-forward"></i></button>
+								<button id="unitCountToMax" ng-click="setUnitCountToMax(terr)" type="button"
+									class="btn btn-primary tight roundButton"><i
+										class="fa fa-fast-forward"></i></button>
+								<span
+									style="background-color: white; border: 1px solid black; font-size: 18px; padding: 1px;">{{selectedFormUnit.num}}</span>
+							</div>
+
+						</div> <!-- each terr-->
+						<div *ngIf="hostileMessage.length>0 && totalUnitsThatCanMove>0"
+							style="background-color: yellow; color: red; font-weight: 700;"><i class="fa fa-exclamation-triangle"></i> {{hostileMessage}}</div>
+						<div *ngIf="totalUnitsThatCanMove==0" style="background-color: yellow; border: 1px solid red;">
+							<div style="color: red; font-weight: 700;"><i class="fa fa-exclamation-triangle"></i> None
+								of your units can reach {{selectedTerritory.name}}!</div>
+							<div ng-show="gameObj.round<6 && !gameObj.multiPlayerFlg">This may be due to all your units
+								having used up their moves for this turn. Click 'Complete Turn' to move to next turn.
+							</div>
+						</div>
+						<div>
+							<button *ngIf="optionType=='attack'" ng-click="autoButtonPressed()" type="button"
+								class="btn btn-secondary roundButton"><i class="fa fa-check-square-o"></i> Auto</button>
+							<button (click)="selectAllButtonChecked()" type="button"
+								class="btn btn-secondary roundButton"><i class="fa fa-check-square-o"></i> All</button>
+							<button (click)="moveTroopsButtonPressed()" [disabled]="totalAttackStrength==0" type="button"
+								class="btn btn-success roundButton" style="min-width: 120px; height: 50px;"><i
+									class="fa fa-arrow-right"></i> Go</button>
+
+						</div>
+						<div *ngIf="optionType=='attack' || optionType=='nuke'" style="font-size: 12px;">
+							Expected Hits: <span class="highlightField">{{expectedHits}}</span>
+							Expected Losses: <span class="highlightField">{{selectedTerritory.expectedLosses}}</span>
+						</div>
+
+
+					</div>
+				</div>
 				<!------------------Production Queue----------------------------->
 				<div *ngIf="optionType=='home' && selectedTerritory.treatyStatus==4 && selectedTerritory.displayQueue.length>0"
-					style="background-color: #cdf; border: 1px solid black; border-radius: 5px;">
-					<div class="darkBlueBg" style="font-size: 10px;"><i class="fa fa-building-o"></i> Production
+					class="terr-card">
+					<div style="font-size: 10px; color: white;"><i class="fa fa-building-o"></i> Production
 						Queue
 					</div>
-					<span *ngIf="selectedTerritory.displayQueue.length==0">&nbsp;</span>
-					<span *ngFor="let unit of selectedTerritory.displayQueue"><img *ngIf="unit.piece>0"
-							src="{{ngUnitSrc(unit.piece, 1)}}" height=20
-							title="{{superpowersData.units[unit.piece].name}}"><span
-							*ngIf="unit.count>1">({{unit.count}})</span>
-					</span>
-					<button *ngIf="0" [disabled]="selectedTerritory.displayQueue.length==0" (click)="clearQueue()"
-						type="button" class="btn btn-secondary roundButton">Clear</button>
+					<div style="background-color: white;">
+						<span *ngIf="selectedTerritory.displayQueue.length==0">&nbsp;</span>
+						<span *ngFor="let unit of selectedTerritory.displayQueue"><img *ngIf="unit.piece>0"
+								src="{{ngUnitSrc(unit.piece, 1)}}" height=20
+								title="{{superpowersData.units[unit.piece].name}}"><span
+								*ngIf="unit.count>1">({{unit.count}})</span>
+						</span>
+						<button *ngIf="0" [disabled]="selectedTerritory.displayQueue.length==0" (click)="clearQueue()"
+							type="button" class="btn btn-secondary roundButton">Clear</button>
+					</div>
 				</div>
 				<!------------------Production----------------------------->
 				<div *ngIf="optionType=='production'">
