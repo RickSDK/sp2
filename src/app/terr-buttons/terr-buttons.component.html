@@ -110,24 +110,13 @@
         </div>
 
         <div *ngIf="infoFlg" class="borderClass2" style="text-align: left; font-size: 12px;">
-            <div style="text-align: left;">
-                <font color=#700><b>Auto Attack:</b></font> Automatically chooses a bunch of units and
-                sends
-                them into battle.
-            </div>
-            <div>
-                <font color=#700><b>Full Attack:</b></font> Automatically chooses all available units
-                and sends
-                them into battle.
-            </div>
-            <hr>
             <div><b>Attack Details</b></div>
             <li> Attacks play out like a board game. Each unit rolls a dice.
             <li> The more units you have in the battle, the more chances to hit. So if you attack with 5
                 tanks, you can get at most 5 hits per round of battle.
-            <li> To score a hit, each unit must roll their attack factor or lower:
+            <li> To score a hit, each unit must roll their attack factor or lower. See the board below as an example:
                 <img src="assets/graphics/misc/combatBoard.png" width=100%>
-            <li> For example: Tanks attack at 3, so they need a 1,2 or 3 to hit.
+            <li> Notice, tanks attack at 3, so they need a 1,2 or 3 to hit.
             <li> Infantry only attack at 1, so they have a 1 out of 6 chance of hitting.
             <li> If you include your general in the battle, infantry get +1 chance of hitting.
             <li> At the end of each round of battle, casualties for both attackers and defenders are

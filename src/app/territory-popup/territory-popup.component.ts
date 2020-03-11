@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
@@ -32,6 +32,7 @@ declare var refreshBoardFromMove: any;
   styleUrls: ['./territory-popup.component.scss']
 })
 export class TerritoryPopupComponent extends BaseComponent implements OnInit {
+  @Output() messageEvent = new EventEmitter<string>();
   public selectedTerritory: any;
   public optionType: string;
   public productionDisplayUnits = [];
@@ -63,11 +64,11 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
 
     var moveTerr = [];
     var totalUnitsThatCanMove = 0;
-    
+
     this.gameObj.territories.forEach(function (terr) {
       totalUnitsThatCanMove += terr.movableTroopCount;
       if (terr.movableTroopCount > 0) {
-        terr.distObj = {land: 9, air: 9, sea: 9};
+        terr.distObj = { land: 9, air: 9, sea: 9 };
         moveTerr.push(terr);
       }
     });
@@ -87,23 +88,27 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     //console.log('user', user);
     //console.log('currentPlayer', currentPlayer);
   }
+  moveSpriteBetweenTerrs(obj: any) {
+    this.messageEvent.emit(obj);
+  }
   buttonClicked(type) {
     //this event emitted from app-terr-buttons
     this.optionType = type;
     this.hostileMessage = populateHostileMessage(type, this.selectedTerritory, this.gameObj, this.currentPlayer);
-    this.loadingFlg=true;
+    this.loadingFlg = true;
     setTimeout(() => { this.showUnitsForMovementBG(); }, 20);
   }
   showUnitsForMovementBG() {
-   // var obj = showUnitsForMovementBG(this.optionType, this.gameObj.units, this.currentPlayer, this.gameObj.territories, this.selectedTerritory, 'Go', this.gameObj.round, this.currentPlayer, this.optionType);
+    // var obj = showUnitsForMovementBG(this.optionType, this.gameObj.units, this.currentPlayer, this.gameObj.territories, this.selectedTerritory, 'Go', this.gameObj.round, this.currentPlayer, this.optionType);
     var obj = showUnitsForMovementBG2(this.optionType, this.gameObj, this.currentPlayer, this.totalMoveTerrs, this.selectedTerritory);
     this.moveTerr = obj.moveTerr;
     this.totalUnitsThatCanMove = obj.totalUnitsThatCanMove;
-    this.loadingFlg=false;
+    this.loadingFlg = false;
   }
   changeOptionType(type: string) {
     playClick();
     this.optionType = type;
+
     //loadPlanesButtonClicked()
     //moveButtonClicked
     //unloadPlanesButtonClicked
@@ -136,17 +141,22 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   moveTroopsButtonPressed() {
     playClick();
     //showAlertPopup('whoa', 1);
-    moveSelectedUnits(this.moveTerr, this.selectedTerritory);
+    var obj = moveSelectedUnits(this.moveTerr, this.selectedTerritory);
     setTimeout(() => {
       refreshBoardFromMove(this.moveTerr, this.selectedTerritory, this.gameObj, this.superpowersData, this.currentPlayer);
     }, 1000);
-    
+    if(this.moveTerr.length>0) {
+      this.moveSpriteBetweenTerrs(obj);
+
+    }
+  
     this.closeModal('#territoryPopup');
   }
   checkSendButtonStatus(unit: any) {
     this.totalAttackStrength = checkSendButtonStatus(unit, this.moveTerr, this.optionType);
     this.expectedHits = expectedHitsFromStrength(this.totalAttackStrength);
   }
+  /*
   addUniToQueue(piece: number, count: number) {
     playSound('clink.wav', 0, false);
     var unit = this.superpowersData.units[piece];
@@ -201,7 +211,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     this.gameObj.unitPurchases = newUnits;
     this.selectedTerritory.displayQueue = getDisplayQueueFromQueue(this.selectedTerritory, this.gameObj);
   }
-
+*/
   changeProdType(segmentIdx: number) {
     this.segmentIdx = segmentIdx;
     this.productionDisplayUnits = [];

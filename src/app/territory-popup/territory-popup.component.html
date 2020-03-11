@@ -15,7 +15,7 @@
 
 				<app-terr-header [selectedTerritory]="selectedTerritory"></app-terr-header>
 
-				<app-terr-buttons [selectedTerritory]="selectedTerritory" [currentPlayer]="currentPlayer"
+				<app-terr-buttons *ngIf="ableToTakeThisTurn && currentPlayer.status!='Purchase'" [selectedTerritory]="selectedTerritory" [currentPlayer]="currentPlayer"
 					[superpowersData]="superpowersData" [gameObj]="gameObj" [user]="user" [optionType]="optionType"
 					[ableToTakeThisTurn]="ableToTakeThisTurn" (messageEvent)="buttonClicked($event)"></app-terr-buttons>
 
@@ -23,8 +23,8 @@
 					[currentPlayer]="currentPlayer" [superpowersData]="superpowersData" [gameObj]="gameObj"
 					[user]="user"></app-terr-units>
 
-				<div *ngIf="optionType!='home'" class="terr-card">
-					Troop Movement [{{optionType}}]
+				<div *ngIf="ableToTakeThisTurn && optionType!='home' && currentPlayer.status!='Purchase'" class="terr-card">
+					Select Troops [{{optionType}}]
 					<div *ngIf="loadingFlg" class="progress-bar progress-bar-info progress-bar-striped"
 						role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
 						Busy...
@@ -149,22 +149,26 @@
 
 						</div> <!-- each terr-->
 						<div *ngIf="hostileMessage.length>0 && totalUnitsThatCanMove>0"
-							style="background-color: yellow; color: red; font-weight: 700;"><i class="fa fa-exclamation-triangle"></i> {{hostileMessage}}</div>
+							style="background-color: yellow; color: red; font-weight: 700;"><i
+								class="fa fa-exclamation-triangle"></i> {{hostileMessage}}</div>
 						<div *ngIf="totalUnitsThatCanMove==0" style="background-color: yellow; border: 1px solid red;">
 							<div style="color: red; font-weight: 700;"><i class="fa fa-exclamation-triangle"></i> None
 								of your units can reach {{selectedTerritory.name}}!</div>
-							<div ng-show="gameObj.round<6 && !gameObj.multiPlayerFlg">This may be due to all your units
+							<div *ngIf="gameObj.round<6 && !gameObj.multiPlayerFlg" style="font-size: 12px;">This may be
+								due to all your units
 								having used up their moves for this turn. Click 'Complete Turn' to move to next turn.
 							</div>
 						</div>
 						<div>
-							<button *ngIf="optionType=='attack'" ng-click="autoButtonPressed()" type="button"
-								class="btn btn-secondary roundButton"><i class="fa fa-check-square-o"></i> Auto</button>
+							<button *ngIf="optionType=='attack'" [disabled]="totalUnitsThatCanMove==0"
+								ng-click="autoButtonPressed()" type="button" class="btn btn-secondary roundButton"><i
+									class="fa fa-check-square-o"></i> Auto</button>
 							<button (click)="selectAllButtonChecked()" type="button"
-								class="btn btn-secondary roundButton"><i class="fa fa-check-square-o"></i> All</button>
-							<button (click)="moveTroopsButtonPressed()" [disabled]="totalAttackStrength==0" type="button"
-								class="btn btn-success roundButton" style="min-width: 120px; height: 50px;"><i
-									class="fa fa-arrow-right"></i> Go</button>
+								[disabled]="totalUnitsThatCanMove==0" class="btn btn-secondary roundButton"><i
+									class="fa fa-check-square-o"></i> All</button>
+							<button (click)="moveTroopsButtonPressed()" [disabled]="totalAttackStrength==0"
+								type="button" class="btn btn-success roundButton"
+								style="min-width: 120px; height: 50px;"><i class="fa fa-arrow-right"></i> Go</button>
 
 						</div>
 						<div *ngIf="optionType=='attack' || optionType=='nuke'" style="font-size: 12px;">
@@ -175,6 +179,10 @@
 
 					</div>
 				</div>
+				
+
+
+
 				<!------------------Production Queue----------------------------->
 				<div *ngIf="optionType=='home' && selectedTerritory.treatyStatus==4 && selectedTerritory.displayQueue.length>0"
 					class="terr-card">
@@ -188,199 +196,16 @@
 								title="{{superpowersData.units[unit.piece].name}}"><span
 								*ngIf="unit.count>1">({{unit.count}})</span>
 						</span>
-						<button *ngIf="0" [disabled]="selectedTerritory.displayQueue.length==0" (click)="clearQueue()"
-							type="button" class="btn btn-secondary roundButton">Clear</button>
 					</div>
 				</div>
-				<!------------------Production----------------------------->
-				<div *ngIf="optionType=='production'">
-					<div style="background-color: #007; color: white;"><img src="assets/graphics/units/piece15u.png"
-							height=20> {{selectedTerritory.name}} Production</div>
 
 
-					<!---------technology--------->
-					<div *ngIf="selectedTerritory.factoryCount>0"
-						style="background-color: #cdf; border: 1px solid black; border-radius: 5px;">
-						<div class="darkBlueBg" style="font-size: 10px;"><i class="fa fa-flask"></i> Technology</div>
-						<table class="spTable">
-							<tr>
-								<td>
-									<button [disabled]="currentPlayer.money<10 || currentPlayer.abFlg"
-										*ngIf="!currentPlayer.tech[18]" (click)="addUniToQueue(16,1)" type="button"
-										class="btn btn-primary roundButton" title="Anti-Balistics"><i
-											class="fa fa-shield"></i></button>
-									<div *ngIf="currentPlayer.tech[18]" style="font-size: 18px;"><i class="fa fa-check"
-											style="color: green;"></i><i class="fa fa-shield"></i></div>
-									<div style="font-size: 8px;">Anti-Balistics</div>
-								</td>
-								<td>
-									<button [disabled]="currentPlayer.money<10 || currentPlayer.railFlg"
-										*ngIf="!currentPlayer.tech[19]" (click)="addUniToQueue(17,1)" type="button"
-										class="btn btn-primary roundButton" title="Railway"><i
-											class="fa fa-train"></i></button>
-									<div *ngIf="currentPlayer.tech[19]" style="font-size: 18px;"><i class="fa fa-check"
-											style="color: green;"></i><i class="fa fa-train"></i></div>
-									<div style="font-size: 8px;">Railway</div>
-								</td>
-								<td>
-									<button [disabled]="currentPlayer.money<10" *ngIf="currentPlayer.techCount<18"
-										(click)="addUniToQueue(18,1)" type="button"
-										class="btn btn-primary roundButton"><i class="fa fa-flask"></i>
-										Research ({{currentPlayer.techCount}})</button>
-									<div *ngIf="currentPlayer.techCount>=18" style="font-size: 18px;"><i
-											class="fa fa-check" style="color: green;"></i><i class="fa fa-flask"></i>
-									</div>
-									<div style="font-size: 8px;">Technology</div>
-								</td>
-								<td>
-									<button (click)="infoFlg=!infoFlg" type="button"
-										class="btn btn-secondary roundButton"><i class="fa fa-info-circle"></i></button>
-									<div style="font-size: 8px;">Info</div>
-								</td>
-							</tr>
-						</table>
-						<div class="borderClass2" *ngIf="infoFlg">
-							<i class="fa fa-flask"></i> <b>Technology:</b> You can purchase upgrades or fund research
-							for 10 coins each. See the Technology tab at the top of the board for more info.
-						</div>
-					</div>
-					<!---------queue--------->
-					<div style="background-color: #cdf; border: 1px solid black; border-radius: 5px;">
-						<div class="darkBlueBg" style="font-size: 10px;"><i class="fa fa-building-o"></i> Production
-							Queue
-						</div>
-						<img src="assets/graphics/units/piece15u.png" height=20 title="Queue">: <span
-							style="border: 1px solid black; height: 15px; min-width: 15px;"><span
-								*ngIf="selectedTerritory.displayQueue.length==0">&nbsp;</span>
-							<span *ngFor="let unit of selectedTerritory.displayQueue"><img *ngIf="unit.piece>0"
-									src="{{ngUnitSrc(unit.piece, 1)}}" height=15><span
-									*ngIf="unit.count>1">({{unit.count}})</span></span>
-						</span>
-						<button [disabled]="selectedTerritory.displayQueue.length==0" (click)="clearQueue()"
-							type="button" class="btn btn-secondary roundButton">Clear</button>
-					</div>
-					<!---------purchase form--------->
-					<div class="btn-group" *ngIf="selectedTerritory.factoryCount>0">
-						<button (click)="changeProdType(0)" [ngClass]="ngClassSegment(segmentIdx,0)" type="button"
-							class="btn btn-default"><i class="fa fa-truck"></i> Ground</button>
-						<button (click)="changeProdType(1)" [ngClass]="ngClassSegment(segmentIdx,1)" type="button"
-							class="btn btn-default"><i class="fa fa-fighter-jet"></i> Air</button>
-						<button (click)="changeProdType(2)" [ngClass]="ngClassSegment(segmentIdx,2)" type="button"
-							class="btn btn-default"><i class="fa fa-anchor"></i> Sea</button>
-						<button *ngIf="gameObj.restrict_units_flg !='Y' && user.rank>=0" (click)="changeProdType(3)"
-							[ngClass]="ngClassSegment(segmentIdx,3)" type="button" class="btn btn-default"><i
-								class="fa fa-star"></i> Sp</button>
-					</div>
-					<div *ngIf="segmentIdx==2 && selectedTerritory.id<79" style="padding: 20px; color: #800;">
-						<i class="fa fa-exclamation-triangle"></i> Click on sea zones to build new ships</div>
-					<div *ngIf="segmentIdx!=2 || selectedTerritory.id>=79" class="listborder">
-						<table class="spTable">
-							<tr>
-								<td></td>
-								<td style="min-width: 25px;" align=center><img src="assets/graphics/images/coin.png"
-										height=20 title="cost"></td>
-								<td style="min-width: 25px;" align=center>
-									<font color=black><i class="fa fa-arrows-alt" title="Movement"></i></font>
-								</td>
-								<td style="min-width: 25px;" align=center>
-									<font color=#900><i class="fa fa-bolt" title="Attack"></i></font>
-								</td>
-								<td style="min-width: 25px;" align=center>
-									<font color=blue><i class="fa fa-shield" title="Defend"></i></font>
-								</td>
-								<td></td>
-							</tr>
-							<tr *ngFor="let unit of productionDisplayUnits">
-								<td style="font-size: 8px;" align=center>
-									<img (click)="unitDetailPopup.show(unit, true)" src="{{ngUnitSrc(unit.id, 1)}}"
-										style="max-width: 60px; max-height: 40px; cursor: pointer;"
-										title="{{unit.name}}"><br>{{unit.name}}</td>
-								<td align=center>
-									<font color=#c80><b>{{unit.cost}}</b></font>
-								</td>
-								<td align=center>
-									<font color=black>{{unit.move}}</font>
-								</td>
-								<td align=center>
-									<font color=#900>{{unit.att}} <span *ngIf="unit.numAtt>1">x
-											{{unit.numAtt}}</span></font>
-								</td>
-								<td align=center>
-									<font color=blue>{{unit.def}}</font>
-								</td>
-								<td>
-									<button [disabled]="currentPlayer.money<unit.cost" id="{{'buy'+unit.id}}"
-										(click)="addUniToQueue(unit.id, 1)" type="button"
-										class="btn btn-secondary roundButton"><i class="fa fa-lock"
-											*ngIf="unit.locked"></i><span ng-hide="unit.locked">buy</span></button>
-									<button *ngIf="unit.id != 12" [disabled]="currentPlayer.money<unit.cost*2"
-										id="{{'buy5'+unit.id}}" (click)="addUniToQueue(unit.id, 5)" type="button"
-										class="btn btn-secondary roundButton">x5</button>
-								</td>
-							</tr>
-							<!------factory-->
-							<tr *ngIf="selectedTerritory.factoryCount==0 && selectedTerritory.id<79">
-								<td style="font-size: 8px;" align=center><img
-										(click)="unitDetailPopup.show(superpowersData.units[15], true)"
-										src="{{ngUnitSrc(15, 1)}}"
-										style="max-width: 60px; max-height: 40px; cursor: pointer;"
-										title="Factory"><br>Factory</td>
-								<td align=center>
-									<font color=#c80>15</font>
-								</td>
-								<td align=center>
-									<font color=black>0</font>
-								</td>
-								<td align=center>
-									<font color=#900>0</font>
-								</td>
-								<td align=center>
-									<font color=blue>0</font>
-								</td>
-								<td>
-									<button [disabled]="currentPlayer.money<15" id="buy15"
-										(click)="addUniToQueue(15, 1)" type="button"
-										class="btn btn-secondary roundButton">buy</button>
-								</td>
-							</tr>
-							<!------emp-->
-							<tr *ngIf="segmentIdx==2 && selectedTerritory.id<79 && gameObj.mmFlg"
-								class="tableRowClickable2">
-								<td style="font-size: 8px;" align=center><img ng-click="unitPopup(52)"
-										src="assets/graphics/units/piece52u.png"
-										style="max-width: 40px; max-height: 40px;" title="EMP Blast"><br>EMP</td>
-								<td align=center>
-									<font color=#c80><b>0</b></font>
-								</td>
-								<td align=center>
-									<font color=black>1</font>
-								</td>
-								<td align=center>
-									<font color=#900>36</font>
-								</td>
-								<td align=center>
-									<font color=blue>-</font>
-								</td>
-								<td>
-									<button id="buyEMP" ng-click="buyEmp()" type="button"
-										class="btn btn-secondary roundButton">buy</button>
-								</td>
-							</tr>
-						</table>
-						<div *ngIf="selectedTerritory.facBombedFlg && segmentIdx==0"><img
-								src="assets/graphics/units/piece103.gif" height=20 title="Repair bombed factory"> <i
-								class="fa fa-arrow-right"></i>
-							<img src="assets/graphics/units/piece15.gif" height=20 title="Repair bombed factory">
-							<font color=#fc0>15</font> <button id="" ng-click="addUniToQueue(19, 1)" type="button"
-								class="btn btn-secondary roundButton">buy</button>
-						</div>
-						<div style="padding: 10px;">
-							<img src="assets/graphics/images/coin.png" height=30 title="coins"> Coins: <span
-								class="money">{{currentPlayer.money}}</span>
-						</div>
-					</div>
-				</div>
-				<!------------------end Production----------------------------->
+				<app-terr-purchase *ngIf="optionType=='production'"[selectedTerritory]="selectedTerritory" [currentPlayer]="currentPlayer"
+				[superpowersData]="superpowersData" [gameObj]="gameObj" [user]="user" [optionType]="optionType"
+				[ableToTakeThisTurn]="ableToTakeThisTurn" [productionDisplayUnits]="productionDisplayUnits" [allowEcoCenterFlg]="selectedTerritory.factoryCount==1"></app-terr-purchase>
+
+
+
 
 				<app-terr-advice
 					*ngIf="ableToTakeThisTurn && optionType=='home' && selectedTerritory.leaderMessage.length>0"

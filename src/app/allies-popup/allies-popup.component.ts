@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
+declare var closePopup: any;
+declare var offerTreaty: any;
 
 @Component({
   selector: 'app-allies-popup',
@@ -18,7 +20,10 @@ export class AlliesPopupComponent extends BaseComponent implements OnInit {
 
   show(gameObj:any, ableToTakeThisTurn:any, currentPlayer:any, user:any) {
     this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);
+    closePopup('diplomacyWarningPopup');
     this.openModal('#alliesPopup');
   }
-
+  offerTreaty(type:number, nation:number) {
+    offerTreaty(type, nation, this.gameObj, this.currentPlayer, this.superpowersData);
+  }
 }

@@ -374,9 +374,13 @@ function dayOfMonth(day, str) {
 	return parts.join('/');
 }
 function drawSPGraph(stats, type, id) {
-	if(!stats)
-		return;
+	if(!stats) {
+		console.log('no stats found!');
+		stats = [];
+	}
+	
 	var c = document.getElementById(id);
+	
 	if(c) {
 		c.width  = 640;
 		c.height = 240;
@@ -398,8 +402,9 @@ function drawSPGraph(stats, type, id) {
 		var hiLow = findHiLowSP(stats, type);
 		drawLeftLabels(ctx, hiLow.hi, hiLow.low, leftEdge, rightEdge, c.height);
 		getBottomLabelsSP(ctx, 1, leftEdge, rightEdge, c.height, stats);
-		drawGamesSP(ctx, hiLow, leftEdge, rightEdge, c.height-20, rounds, type);
-	}
+		if(rounds.length>0)
+			drawGamesSP(ctx, hiLow, leftEdge, rightEdge, c.height-20, rounds, type);
+	} 
 }
 function drawGraph(games, type) {
 	if(!games)

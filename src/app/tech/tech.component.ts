@@ -9,6 +9,7 @@ export class TechComponent implements OnInit {
   @Input('tech') tech:any;
   @Input('descFlg') descFlg:any;
   @Input('adminFlg') adminFlg:any;
+  @Input('gameObj') gameObj:any;
   
   constructor() { }
 

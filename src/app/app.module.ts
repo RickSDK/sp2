@@ -40,6 +40,7 @@ import { TerrUnitsComponent } from './terr-units/terr-units.component';
 import { TerrHeaderComponent } from './terr-header/terr-header.component';
 import { TerrAdviceComponent } from './terr-advice/terr-advice.component';
 import { TerrButtonsComponent } from './terr-buttons/terr-buttons.component';
+import { TerrPurchaseComponent } from './terr-purchase/terr-purchase.component';
 
 @NgModule({
   declarations: [
@@ -80,7 +81,8 @@ import { TerrButtonsComponent } from './terr-buttons/terr-buttons.component';
     TerrUnitsComponent,
     TerrHeaderComponent,
     TerrAdviceComponent,
-    TerrButtonsComponent
+    TerrButtonsComponent,
+    TerrPurchaseComponent
   ],
   imports: [
     BrowserModule,

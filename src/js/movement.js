@@ -19,16 +19,23 @@ function selectAllButtonChecked(moveTerr, checkFlg, optionType, currentPlayer) {
 
 }
 function moveSelectedUnits(moveTerr, selectedTerritory) {
+    var terr1Id = 1;
+    var piece = 3;
     for (var x = 0; x < moveTerr.length; x++) {
         var terr = moveTerr[x];
         for (var u = 0; u < terr.units.length; u++) {
             var unit = terr.units[u];
 
             var e = document.getElementById('unit' + unit.id);
-            if (e && e.checked)
+            if (e && e.checked) {
+                terr1Id = unit.terr;
+                piece = unit.piece;
                 unit.terr = selectedTerritory.id;
+                unit.movesLeft = 0;
+            }
         }
     }
+    return { t1: terr1Id, t2: selectedTerritory.id, id: piece };
 }
 function refreshBoardFromMove(moveTerr, selectedTerritory, gameObj, superpowersData, currentPlayer) {
     for (var x = 0; x < moveTerr.length; x++) {

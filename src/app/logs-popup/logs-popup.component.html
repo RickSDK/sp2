@@ -12,23 +12,31 @@
 
                 <section>
                     <div class="btn-group">
-                        <button (click)="segmentIdx=0" id="logType1" type="button" class="btn btn-default roundButton"
+                        <button (click)="changeIdx(0)" id="logType1" type="button" class="btn btn-default roundButton"
                             [ngClass]="ngClassSegment(segmentIdx,0)"><i class="fa fa-list-ol"></i> Turn</button>
-                        <button (click)="segmentIdx=1" id="logType2" type="button" class="btn btn-default roundButton"
+                        <button (click)="changeIdx(1)" id="logType2" type="button" class="btn btn-default roundButton"
                             [ngClass]="ngClassSegment(segmentIdx,1)"><i class="fa fa-globe"></i> Nation</button>
-                        <button (click)="segmentIdx=2" id="logType3" type="button" class="btn btn-default roundButton"
+                        <button (click)="changeIdx(2)" id="logType3" type="button" class="btn btn-default roundButton"
                             [ngClass]="ngClassSegment(segmentIdx,2)"><i class="fa fa-pencil"></i> Notes</button>
                     </div>
                 </section>
                 <section style="background-color: #007;" *ngIf="segmentIdx==0 && gameObj">
-                    <button [disabled]="logRound<=1" (click)="changeLogRound(-1)" type="button" class="btn btn-primary roundButton"
-                        style="width: 80px;"><i class="fa fa-arrow-left"></i></button>
-                    <span class="blueBg">{{logRound}}</span>
-                    <button [disabled]="logRound>=gameObj.round" (click)="changeLogRound(1)" type="button" class="btn btn-primary roundButton"
-                        style="width: 80px;"><i class="fa fa-arrow-right"></i></button>
+                    <button [disabled]="logRound<=1" (click)="filterLogsForRound(1)" type="button"
+                        class="btn btn-primary roundButton"><i
+                            class="fa fa-fast-backward"></i></button>
+                    <button [disabled]="logRound<=1" (click)="changeLogRound(-1)" type="button"
+                        class="btn btn-primary roundButton" style="width: 80px;"><i
+                            class="fa fa-arrow-left"></i></button>
+                    <span class="blueBg">{{logRound}} <span style="font-size: 12px;">of {{gameObj.round}}</span></span>
+                    <button [disabled]="logRound>=gameObj.round" (click)="changeLogRound(1)" type="button"
+                        class="btn btn-primary roundButton" style="width: 80px;"><i
+                            class="fa fa-arrow-right"></i></button>
+                    <button [disabled]="logRound>=gameObj.round" (click)="filterLogsForRound(gameObj.round)" type="button"
+                        class="btn btn-primary roundButton"><i
+                            class="fa fa-fast-forward"></i></button>
                 </section>
                 <section style="background-color: #007;" *ngIf="segmentIdx==1">
-                    <button *ngFor="let player of gameObj.players" (click)="logNation=player.nation" 
+                    <button *ngFor="let player of gameObj.players" (click)="filterLogsForNation(player.nation)"
                         type="button" [ngClass]="ngClassSegment(player.nation,logNation)"><img
                             src="assets/graphics/images/flag{{player.nation}}.gif" height="30"></button>
                 </section>
@@ -44,7 +52,7 @@
                         <th>Action</th>
                         <th>Details</th>
                     </tr>
-                    <tr *ngFor="let log of gameObj.logs" [ngStyle]="ngStyleLogs(log.nation)">
+                    <tr *ngFor="let log of displayLogs" [ngStyle]="ngStyleLogs(log.nation)">
                         <!--*ngIf="ngShowLog(log)" -->
                         <td align=center>{{log.round}} </td>
                         <td align=center><img src="assets/graphics/images/flag{{log.nation}}.gif" height=30></td>
@@ -74,14 +82,14 @@
                                     <tr>
                                         <td class="tableRow">Player</td>
                                         <td class="tableRow">{{log.dr.lostUnits}}</td>
-                                        <td class="tableRow">{{log.dr.lostCoins}} <img src="assets/graphics/images/coin.png"
-                                                height=15></td>
+                                        <td class="tableRow">{{log.dr.lostCoins}} <img
+                                                src="assets/graphics/images/coin.png" height=15></td>
                                     </tr>
                                     <tr>
                                         <td class="tableRow">Enemy</td>
                                         <td class="tableRow">{{log.dr.enemyUnits}}</td>
-                                        <td class="tableRow">{{log.dr.enemyCoins}} <img src="assets/graphics/images/coin.png"
-                                                height=15></td>
+                                        <td class="tableRow">{{log.dr.enemyCoins}} <img
+                                                src="assets/graphics/images/coin.png" height=15></td>
                                     </tr>
                                 </table>
                             </div>
@@ -137,7 +145,7 @@
                         <td width=50>
                             <button id="noteSendButton" ng-click="postNote()" type="button"
                                 class="btn btn-primary roundButton tall2"><span *ngIf="editPostMode">Edit</span><span
-                                *ngIf="!editPostMode">Add</span></button>
+                                    *ngIf="!editPostMode">Add</span></button>
                         </td>
                     </tr>
                 </table>

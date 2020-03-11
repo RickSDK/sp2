@@ -1,31 +1,40 @@
 import { Component, OnInit } from '@angular/core';
+import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
-declare var getSuperpowersData: any;
+declare var drawSPGraph: any;
 
 @Component({
   selector: 'app-stats-popup',
   templateUrl: './stats-popup.component.html',
   styleUrls: ['./stats-popup.component.scss']
 })
-export class StatsPopupComponent implements OnInit {
-  public ableToTakeThisTurn=false
-  public currentPlayer:any;
-  public gameObj:any;
-  public user:any;
-  public superpowersData:any;
+export class StatsPopupComponent extends BaseComponent implements OnInit {
+  public numTeams = 1;
 
-  constructor() { }
+  constructor() { super(); }
 
   ngOnInit(): void {
-    this.superpowersData = getSuperpowersData();
   }
-  show(gameObj, ableToTakeThisTurn, currentPlayer, user) {
-    this.gameObj = gameObj;
-    this.ableToTakeThisTurn = ableToTakeThisTurn;
-    this.currentPlayer = currentPlayer;
-    this.user = user;
-    $("#statsPopup").modal();
+  show(gameObj: any, ableToTakeThisTurn: any, currentPlayer: any, user: any) {
+    this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);
+    var numTeams = 0;
+    this.gameObj.teams.forEach(function (team) {
+      if (team.income > 0)
+        numTeams++;
+    });
+    this.numTeams = numTeams;
+    this.openModal('#statsPopup');
+    setTimeout(() => {
+      this.drawGraphs();
+    }, 100);
+ //   drawSPGraph(this.gameObj.statsObj, 1, 'teamCanvas');
+ //   drawSPGraph(this.gameObj.statsObj, 2, 'playersCanvas');
+
+  }
+  drawGraphs() {
+    drawSPGraph(this.gameObj.statsObj, 1, 'teamCanvas');
+    drawSPGraph(this.gameObj.statsObj, 2, 'playersCanvas');
   }
 
 }
