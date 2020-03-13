@@ -73,16 +73,16 @@ function purchaseCPUUnits(player, gameObj, superpowersData) {
         player.money += 10;
     var capital = gameObj.territories[capitalId - 1];
     var waterway = gameObj.territories[capital.water - 1];
-    if (num == 2 && waterway && waterway.id>0) {
+    if (num == 2 && waterway && waterway.id > 0) {
         addUniToQueue(4, 1, superpowersData, player, gameObj, waterway);
         addUniToQueue(5, 1, superpowersData, player, gameObj, waterway);
     }
     if (num == 3 && player.income > 40)
         addUniToQueue(9, 1, superpowersData, player, gameObj, terr1);
-    if (num == 4 && waterway && waterway.id>0) {
+    if (num == 4 && waterway && waterway.id > 0) {
         addUniToQueue(4, 1, superpowersData, player, gameObj, waterway);
     }
-    if (num == 5 && player.income > 30 && waterway && waterway.id>0)
+    if (num == 5 && player.income > 30 && waterway && waterway.id > 0)
         addUniToQueue(8, 1, superpowersData, player, gameObj, waterway);
 
     if (num == 6) {
@@ -106,14 +106,14 @@ function checkForAllyTerritoryRequests(player, gameObj, superpowersData) {
     player.territories.forEach(function (terr) {
         if (terr.requestTransfer && terr.requestTransfer > 0) {
             if (terr.treatyStatus == 3) {
-                transferControlOfTerr(terr, terr.requestTransfer, gameObj);
+                transferControlOfTerr(terr, terr.requestTransfer, gameObj, currentPlayer, superpowersData, yourPlayer);
                 logItem(gameObj, player, 'Transfer', terr.name + ' transferred to ' + superpowersData.superpowers[terr.requestTransfer]);
             }
             terr.requestTransfer = 0;
         }
     });
 }
-function transferControlOfTerr(terr, nation, gameObj) {
+function transferControlOfTerr(terr, nation, gameObj, currentPlayer, superpowersData, yourPlayer) {
     terr.owner = nation;
     gameObj.units.forEach(function (unit) {
         if (unit.terr == terr.id) {
@@ -124,7 +124,7 @@ function transferControlOfTerr(terr, nation, gameObj) {
             }
         }
     });
-    refreshTerritory(terr);
+    refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPlayer)
 }
 
 function addComputerFactory(player, superpowersData, gameObj) {
@@ -184,4 +184,71 @@ function getRequestedHotSpot(player, gameObj) {
             player.requestedHotSpot = 0;
     }
     return hotSpot;
+}
+//---------------------------------------------------------------
+//              Move
+//---------------------------------------------------------------
+function moveCPUUnits(player, gameObj, superpowersData) {
+    console.log('moveCPUUnits');
+    if (gameObj.allowPeace && !player.alliesMaxed && gameObj.round < 6)
+        checkDiplomacy(player, gameObj);
+    else if (gameObj.allowAlliances && !player.alliesMaxed)
+        checkDiplomacy(player, gameObj);
+
+    if (player.primaryTargetId > 0) {
+        //       advanceMainBaseNew(player, player.primaryTargetId);
+        //      advanceUnitsToFront(player, player.primaryTargetId);
+    } else {
+        //      advanceMainBaseNew(player, player.secondaryTargetId);
+        //      moveUnitsIntoHotSpot(player, player.hotSpotId);
+        //      advanceUnitsToFront(player, player.secondaryTargetId);
+    }
+    var obj = spreadOutUnits(player, gameObj, superpowersData);
+    return obj;
+}
+function checkDiplomacy(player, gameObj) {
+    var num = Math.floor((Math.random() * gameObj.players.length));
+    /*  
+      if(!attemptDiplomacy(player, num++))
+          if(!attemptDiplomacy(player, num++))
+              if(!attemptDiplomacy(player, num++))
+                  if(!attemptDiplomacy(player, num++))
+                      attemptDiplomacy(player, num);
+      */
+}
+function spreadOutUnits(player, gameObj, superpowersData) {
+    var obj = { t1: 0, t2: 0, id: 0 };
+    player.territories.forEach(function (terr) {
+        if (terr.id < 79 && terr.groundForce >= 4 && !terr.generalFlg && !terr.leaderFlg && numberVal(terr.defeatedByNation) == 0 && terr.land.length > 0) {
+            for (var x = 0; x < terr.land.length; x++) {
+                var toId = terr.land[x];
+                var toTerr = gameObj.territories[toId - 1];
+                if (toTerr.owner == player.nation && numberVal(toTerr.defeatedByNation) == 0 && !toTerr.nuked) {
+                    if (toTerr.unitCount * 1 < terr.unitCount) {
+                        obj = moveAFewUnitsFromTerrToTerr(terr, toTerr, player, gameObj);
+                    }
+                }
+            }
+        }
+    });
+    return obj;
+}
+function refreshPlayerTerritories(gameObj, player, superpowersData) {
+    player.territories.forEach(function (terr) {
+        refreshTerritory(terr, gameObj, player, superpowersData, player);
+    });
+}
+function moveAFewUnitsFromTerrToTerr(terr, toTerr, player, gameObj) {
+    var count = 0;
+    var obj = { t1: 0, t2: 0, id: 0 };
+    gameObj.units.forEach(function (unit) {
+        if (unit.owner == player.nation && unit.att > 0 && unit.movesLeft > 0 && unit.terr == terr.id) {
+            if (count++ < 3) {
+                unit.terr = toTerr.id;
+                unit.movesLeft = 0;
+                obj = { t1: terr.id, t2: toTerr.id, id: unit.piece };
+            }
+        }
+    });
+    return obj;
 }

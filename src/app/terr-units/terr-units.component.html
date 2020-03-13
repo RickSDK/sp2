@@ -22,7 +22,7 @@
             <div *ngIf="!unitDetailFlg">
                 <span *ngFor="let unit of selectedTerritory.militaryUnits2" style="display: inline-block;">
                     <img *ngIf="unit.piece>0" (click)="showUnitPopup(unit)" 
-                        src="{{ngUnitSrc(unit.piece, unit.owner)}}" [ngStyle]="ngStyleUnitTop('home')"
+                        src="{{ngUnitSrc(unit.piece, unit.owner)}}" [ngStyle]="ngStyleUnitTop(currentPlayer.status)"
                         title="{{unit.name}}" style="cursor: pointer;">
                     <div style="font-size: 10px;">
                         <span *ngIf="unit.amount>1">({{unit.amount}})</span>
@@ -89,7 +89,7 @@
 
 <app-unit-detail-popup #unitDetailPopup></app-unit-detail-popup>
 
-<div id="unitPopup" class="popupScreenNoPad" style="position: absolute; min-width: 320px; cursor: auto;">
+<div id="unitPopup" class="popupScreenNoPad" style="z-index: 9999; position: absolute; min-width: 320px; cursor: auto;">
     <div class="darkBlueBg" style="height: 44px;">Unit Detail
         <button onClick="closePopup('unitPopup')" type="button" class="btn btn-secondary roundButton" style="float: right;"><i
             class="fa fa-times"></i></button>
@@ -98,4 +98,3 @@
         <app-unit-detail nation="1" [selectedUnit]="selectedUnit" [hideUnitDetailFlg]="true"></app-unit-detail>
     </div>
 </div>
-

@@ -7,7 +7,7 @@
     <div *ngIf="selectedTerritory.factoryCount>0"
         style="background-color: #cdf; border: 1px solid black; border-radius: 5px;">
         <div class="darkBlueBg" style="font-size: 10px;"><i class="fa fa-flask"></i> Technology</div>
-        <table class="spTable">
+        <table class="spTable" style="color: black;">
             <tr>
                 <td>
                     <button [disabled]="currentPlayer.money<10 || currentPlayer.abFlg" *ngIf="!currentPlayer.tech[18]"
@@ -94,8 +94,8 @@
                 <td></td>
             </tr>
             <tr *ngFor="let unit of productionDisplayUnits">
-                <td style="font-size: 8px;" align=center>
-                    <img (click)="unitDetailPopup.show(unit, true)" src="{{ngUnitSrc(unit.id, 1)}}"
+                <td style="font-size: 8px;" align=center> 
+                    <img (click)="showUnitPopup(unit)" src="{{ngUnitSrc(unit.id, 1)}}"
                         style="max-width: 60px; max-height: 40px; cursor: pointer;"
                         title="{{unit.name}}"><br>{{unit.name}}</td>
                 <td align=center>
@@ -121,9 +121,9 @@
                 </td>
             </tr>
             <!------factory-->
-            <tr *ngIf="selectedTerritory.factoryCount==0 && selectedTerritory.id<79">
+            <tr *ngIf="selectedTerritory.factoryCount==0 && selectedTerritory.id<79 && allowFactoryFlg">
                 <td style="font-size: 8px;" align=center><img
-                        (click)="unitDetailPopup.show(superpowersData.units[15], true)" src="{{ngUnitSrc(15, 1)}}"
+                        (click)="showUnitPopup({piece: 15})" src="{{ngUnitSrc(15, 1)}}"
                         style="max-width: 60px; max-height: 40px; cursor: pointer;" title="Factory"><br>Factory</td>
                 <td align=center>
                     <font color=#c80>15</font>
@@ -180,3 +180,13 @@
 <!------------------end Production----------------------------->
 
 <app-unit-detail-popup #unitDetailPopup></app-unit-detail-popup>
+
+<div id="unitPopup2" class="popupScreenNoPad" style="z-index: 9999; position: absolute; min-width: 320px; cursor: auto;">
+    <div class="darkBlueBg" style="height: 44px;">Unit Detail
+        <button onClick="closePopup('unitPopup2')" type="button" class="btn btn-secondary roundButton" style="float: right;"><i
+            class="fa fa-times"></i></button>
+    </div>
+    <div *ngIf="selectedUnit" style="padding: 10px;">
+        <app-unit-detail nation="1" [selectedUnit]="selectedUnit" [hideUnitDetailFlg]="true"></app-unit-detail>
+    </div>
+</div>

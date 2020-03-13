@@ -29,7 +29,6 @@ export class UnitDetailPopupComponent implements OnInit {
       this.selectedUnit = unit;
     this.nation = unit.owner || 1;
     this.hideUnitDetailFlg = hideUnitDetailFlg;
-
     $("#unitDetailPopup").modal();
   }
 

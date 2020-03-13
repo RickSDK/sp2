@@ -61,27 +61,27 @@
 
 <!---------- ally info -->
 <div *ngIf="selectedTerritory.owner>0 && selectedTerritory.treatyStatus<4">
-    <table width=100% border=1 style="background-color: white;">
+    <table width=100% border=1 style="font-size: 12px;">
         <tr>
-            <td style="background-color: red;"><i *ngIf="selectedTerritory.treatyStatus==0" class="fa fa-check"
+            <td [style.background-color] = "selectedTerritory.treatyStatus==0?'red':'#ccc'"><i *ngIf="selectedTerritory.treatyStatus==0" class="fa fa-check"
                     style="color: green; font-size: 14px;"></i> War</td>
-            <td style="background-color: orange;"><i *ngIf="selectedTerritory.treatyStatus==1" class="fa fa-check"
-                    style="color: green; font-size: 14px;"></i> Neutral</td>
-            <td style="background-color: yellow;"><i *ngIf="selectedTerritory.treatyStatus==2" class="fa fa-check"
+            <td [style.background-color] = "selectedTerritory.treatyStatus==1?'orange':'#ccc'"><i *ngIf="selectedTerritory.treatyStatus==1" class="fa fa-check"
+                    style="color: green; font-size: 14px;"></i> Non-Aggression</td>
+            <td [style.background-color] = "selectedTerritory.treatyStatus==2?'yellow':'#ccc'"><i *ngIf="selectedTerritory.treatyStatus==2" class="fa fa-check"
                     style="color: green; font-size: 14px;"></i> Peace</td>
-            <td style="background-color: green;"><i *ngIf="selectedTerritory.treatyStatus==3" class="fa fa-check"
+            <td [style.background-color] = "selectedTerritory.treatyStatus==3?'green':'#ccc'"><i *ngIf="selectedTerritory.treatyStatus==3" class="fa fa-check"
                     style="color: green; font-size: 14px;"></i> Ally</td>
         </tr>
     </table>
-    <div *ngIf="selectedTerritory.treatyStatus==0" style="font-size: 14px;">You are currently at war!
+    <div *ngIf="selectedTerritory.treatyStatus==0" style="font-size: 13px; color: gray;">You are currently at war!
     </div>
-    <div *ngIf="selectedTerritory.treatyStatus==1" style="font-size: 14px;">It will cost you 5 coins to
+    <div *ngIf="selectedTerritory.treatyStatus==1" style="font-size: 13px; color: gray;">It will cost you 5 coins to
         attack this turn. Optionally, you can declare war this turn, then attack for free next turn.
     </div>
-    <div *ngIf="selectedTerritory.treatyStatus==2" style="font-size: 14px;">It will cost you 10 coins to
+    <div *ngIf="selectedTerritory.treatyStatus==2" style="font-size: 13px; color: gray;">It will cost you 10 coins to
         attack this turn. Optionally, you can declare war this turn, then attack for free next turn.
     </div>
-    <div *ngIf="selectedTerritory.treatyStatus==3" style="font-size: 14px;">It will cost you 15 coins to
+    <div *ngIf="selectedTerritory.treatyStatus==3" style="font-size: 13px; color: gray;">It will cost you 15 coins to
         attack this turn. Optionally, you can declare war this turn, then attack for free next turn.
     </div>
 </div>

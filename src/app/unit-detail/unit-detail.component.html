@@ -1,4 +1,5 @@
-<div class="headline">{{selectedUnit.name}}</div>
+<div class="headline">{{selectedUnit.name}} <sup style="color: yellow; font-size: 12px;">[{{selectedUnit.id}}]</sup>
+</div>
 <div class="container-fluid" style="text-align: center;">
 	<div class="row">
 		<div class="col-sm-6" style="line-height: 200px; vertical-align: middle;">
@@ -6,7 +7,7 @@
 		</div>
 		<div class="col-sm-6">
 			<div class="borderClass3">
-				<div class="blueBgWhite">{{selectedUnit.name}} stats</div>
+				<div class="blueBgWhite">{{selectedUnit.name}} stats </div>
 				<table align=center>
 					<tr>
 						<td align=right>Type:</td>
@@ -27,7 +28,8 @@
 					<tr>
 						<td align=right>Attack:</td>
 						<td><i class="fa fa-bolt" title="Attack"></i></td>
-						<td>
+						<td *ngIf="selectedUnit.id==14">12 hits!</td>
+						<td *ngIf="selectedUnit.id!=14">
 							<img *ngIf="selectedUnit.att>0" title="{{selectedUnit.att}}"
 								src="assets/graphics/dice/diceh{{selectedUnit.att}}.png" height="30">
 							<img *ngIf="selectedUnit.numAtt>1" title="{{selectedUnit.att}}"
@@ -52,28 +54,16 @@
 								src="assets/graphics/dice/diceh{{selectedUnit.def}}.png" height="30">
 						</td>
 					</tr>
+					<tr>
+						<td>Target</td>
+						<td><i style="color: red;" class="fa fa-bullseye" title="Target"></i></td>
+						<td style="font-size: 12px;">
+							{{getTargetDesc(selectedUnit.target)}}
+						</td>
+					</tr>
 				</table>
 
-				<div *ngIf="!selectedUnit.target || selectedUnit.target.length==0"><i style="color: red;"
-						class="fa fa-bullseye" title="Target"></i><b>Target:</b> Targets all units.</div>
-				<div *ngIf="selectedUnit.target=='vehicles'"><i style="color: red;" class="fa fa-bullseye"
-						title="Target"></i><b>Target:</b> Targets tanks and artillery first on offense and defense.
-				</div>
-				<div *ngIf="selectedUnit.target=='soldierOnly'"><i style="color: red;" class="fa fa-bullseye"
-						title="Target"></i><b>Target:</b> Can only hit soldier class units</div>
-				<div *ngIf="selectedUnit.target=='noplanes'"><i style="color: red;" class="fa fa-bullseye"
-						title="Target"></i><b>Target:</b> Cannot hit planes</div>
-				<div *ngIf="selectedUnit.target=='kamakazi'"><i style="color: red;" class="fa fa-bullseye"
-						title="Target"></i><b>Target:</b> Targets transports, planes and vehicles only.</div>
-				<div *ngIf="selectedUnit.target=='planes'"><i style="color: red;" class="fa fa-bullseye"
-						title="Target"></i><b>Target:</b> Targets planes first, but can hit any unit.</div>
-				<div *ngIf="selectedUnit.target=='planesTanks'"><i style="color: red;" class="fa fa-bullseye"
-						title="Target"></i><b>Target:</b> Targets planes, tanks and artillery first, but can hit any
-					unit.</div>
-				<div *ngIf="selectedUnit.target=='hijacker'"><i style="color: red;" class="fa fa-bullseye"
-						title="Target"></i><b>Target:</b> Targets planes and vehicles only.</div>
-				<div *ngIf="selectedUnit.id==13"><i style="color: red;" class="fa fa-bullseye"
-						title="Target"></i><b>Target:</b> Planes & Choppers only.</div>
+
 				<div *ngIf="selectedUnit.returnFlg && selectedUnit.type==1"><b>* Range Attacker.</b></div>
 				<div *ngIf="selectedUnit.spotterReq"><b>** Spotter required</b></div>
 			</div>

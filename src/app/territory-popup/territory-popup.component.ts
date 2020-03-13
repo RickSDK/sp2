@@ -2,29 +2,21 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
-//declare var ngUnitSrc: any;
-//declare var populateUnits: any;
-//declare var getSuperpowersData: any;
 declare var playSound: any;
 declare var isUnitGoodForForm: any;
-declare var getDisplayQueueFromQueue: any;
 declare var playClick: any;
-//declare var playerOfNation: any;
-//declare var changeTreaty: any;
-//declare var refreshTerritory: any;
-declare var showAlertPopup: any;
-//declare var popupMessage: any;
-//declare var logItem: any;
-//declare var displayLeaderAndAdvisorInfo: any;
 declare var populateHostileMessage: any;
 declare var selectAllUnits: any;
 declare var checkMovement: any;
 declare var checkSendButtonStatus: any;
 declare var selectAllButtonChecked: any;
 declare var showUnitsForMovementBG2: any;
-declare var expectedHitsFromStrength: any;
 declare var moveSelectedUnits: any;
 declare var refreshBoardFromMove: any;
+declare var whiteoutScreen: any;
+declare var shakeScreen: any;
+declare var autoButtonPressed: any;
+declare var getSelectedUnits: any;
 
 @Component({
   selector: 'app-territory-popup',
@@ -51,7 +43,13 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   public expectedLosses = 0;
   public goButton = 'Go!';
   public checkAllTroops = false;
-  public totalAttackStrength = 0;
+  //battle board
+  public displayBattle: any;
+//  public displayBattle = {
+  //  generalUnit: 3, hijackerUnit: 6, medicHealedCount: 1, subsDove: 1, airDefenseUnits: [], phase: 1,
+    //attNation: 1, attHits: 1, attackUnits: [], defendingUnits: [], defHits: 1, defNation: 3
+ // };
+  public boardCols = [1, 2, 3, 4, 5];
 
   constructor() { super(); }
 
@@ -61,7 +59,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);
     $("#territoryPopup").modal();
     this.selectedTerritory = terr;
-
+    this.expectedHits = 0;
     var moveTerr = [];
     var totalUnitsThatCanMove = 0;
 
@@ -84,6 +82,9 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     }
 
     console.log(terr.name, terr);
+
+
+
     //console.log('ableToTakeThisTurn', ableToTakeThisTurn);
     //console.log('user', user);
     //console.log('currentPlayer', currentPlayer);
@@ -94,17 +95,18 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   buttonClicked(type) {
     //this event emitted from app-terr-buttons
     this.optionType = type;
+    this.expectedHits = 0;
     this.hostileMessage = populateHostileMessage(type, this.selectedTerritory, this.gameObj, this.currentPlayer);
     this.loadingFlg = true;
     setTimeout(() => { this.showUnitsForMovementBG(); }, 20);
   }
   showUnitsForMovementBG() {
-    // var obj = showUnitsForMovementBG(this.optionType, this.gameObj.units, this.currentPlayer, this.gameObj.territories, this.selectedTerritory, 'Go', this.gameObj.round, this.currentPlayer, this.optionType);
     var obj = showUnitsForMovementBG2(this.optionType, this.gameObj, this.currentPlayer, this.totalMoveTerrs, this.selectedTerritory);
     this.moveTerr = obj.moveTerr;
     this.totalUnitsThatCanMove = obj.totalUnitsThatCanMove;
     this.loadingFlg = false;
   }
+  /*
   changeOptionType(type: string) {
     playClick();
     this.optionType = type;
@@ -116,102 +118,97 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     //requestFortifyButtonClicked
     //tranferButtonClicked
     //requestTranferButtonClicked
-  }
-  ngStyleTerr = function (terr: any, idx: number) {
-    var num = terr.nation;
-    if (num > 8)
-      num = 9;
-    var colors = ['#ffc', '#ccf', '#ccc', '#ea0', '#fcc', '#cfc', '#ff7', '#fcf', '#fc0', '#cff'];
-    // if (idx%2==1)
-    // colors = ['#ffe', '#eef', '#eee', '#fb4', '#fee', '#efe', '#ffa', '#fef', '#fe0', '#eff'];
-    return { 'background-color': colors[num] };
-  }
+  }*/
+
+
+
   selectAllUnitsForTerr(terr: any) {
+    playClick();
     selectAllUnits(terr, this.optionType, this.currentPlayer);
     this.checkSendButtonStatus(null);
   }
   selectAllButtonChecked() {
+    playClick();
     this.checkAllTroops = !this.checkAllTroops;
     selectAllButtonChecked(this.moveTerr, this.checkAllTroops, this.optionType, this.currentPlayer);
     this.checkSendButtonStatus(null);
   }
-  checkMovement(distObj: any, unit: any) {
-    return checkMovement(distObj, unit, this.optionType, this.currentPlayer);
+  autoButtonPressed() {
+    playClick();
+    autoButtonPressed(this.selectedTerritory, this.moveTerr);
+    this.checkSendButtonStatus(null);
+  }
+  checkMovement(distObj: any, unit: any, optionType: string) {
+    return checkMovement(distObj, unit, optionType, this.currentPlayer);
   }
   moveTroopsButtonPressed() {
     playClick();
-    //showAlertPopup('whoa', 1);
-    var obj = moveSelectedUnits(this.moveTerr, this.selectedTerritory);
-    setTimeout(() => {
-      refreshBoardFromMove(this.moveTerr, this.selectedTerritory, this.gameObj, this.superpowersData, this.currentPlayer);
-    }, 1000);
-    if(this.moveTerr.length>0) {
-      this.moveSpriteBetweenTerrs(obj);
-
+    if (this.optionType == 'movement') {
+      var obj = moveSelectedUnits(this.moveTerr, this.selectedTerritory);
+      setTimeout(() => {
+        refreshBoardFromMove(this.moveTerr, this.selectedTerritory, this.gameObj, this.superpowersData, this.currentPlayer);
+      }, 1000);
+      if (this.moveTerr.length > 0) {
+        this.moveSpriteBetweenTerrs(obj);
+      }
     }
-  
+    if (this.optionType == 'attack') {
+      this.setupAttackBoard();
+      return;
+    }
+    if (this.optionType == 'nuke') {
+      whiteoutScreen();
+      playSound('tornado.mp3');
+      playSound('bomb4.mp3');
+    }
+    if (this.optionType == 'cruise') {
+      shakeScreen();
+      playSound('raid.mp3');
+    }
     this.closeModal('#territoryPopup');
   }
+  setupAttackBoard() {
+    this.displayBattle = {
+      generalUnit: 0,
+      hijackerUnit: 0,
+      medicHealedCount: 0,
+      subsDove: 0,
+      airDefenseUnits: [],
+      phase: 1,
+      attNation: this.currentPlayer.nation,
+      attHits: 0,
+      attackUnits: [],
+      defendingUnits: [],
+      defHits: 0,
+      defNation: this.selectedTerritory.owner,
+      militaryMessage: 'do somethingX!',
+    };
+    var defendingUnits = [];
+    this.selectedTerritory.units.forEach(unit => {
+      if (unit.owner != this.currentPlayer.nation) {
+        unit.dice = [];
+        var numDef = unit.numDef || 1;
+        for(var i=0; i<numDef; i++)
+          unit.dice.push('dice.png');
+        defendingUnits.push(unit);
+      }
+    });
+    this.displayBattle.defendingUnits = defendingUnits;
+    this.displayBattle.attackUnits = getSelectedUnits(this.moveTerr);
+    this.optionType = 'battle';
+
+  }
   checkSendButtonStatus(unit: any) {
-    this.totalAttackStrength = checkSendButtonStatus(unit, this.moveTerr, this.optionType);
-    this.expectedHits = expectedHitsFromStrength(this.totalAttackStrength);
-  }
-  /*
-  addUniToQueue(piece: number, count: number) {
-    playSound('clink.wav', 0, false);
-    var unit = this.superpowersData.units[piece];
-    var cost = unit.cost;
 
-    for (var x = 0; x < count; x++) {
-      if (this.currentPlayer.money - cost >= 0) {
-        this.currentPlayer.money -= cost;
-        var id = this.gameObj.unitPurchases.length + 1;
-        this.gameObj.unitPurchases.push({ id: id, terr: this.selectedTerritory.id, piece: piece });
-      }
-    }
-    if (piece == 16)
-      this.currentPlayer.abFlg = true;
-    if (piece == 17)
-      this.currentPlayer.railFlg = true;
-    if (piece == 18)
-      this.currentPlayer.techCount++;
-    this.selectedTerritory.displayQueue = getDisplayQueueFromQueue(this.selectedTerritory, this.gameObj);
+    var obj = checkSendButtonStatus(unit, this.moveTerr, this.optionType, this.selectedTerritory, this.currentPlayer);
+    this.expectedHits = obj.expectedHits;
+    this.expectedLosses = this.selectedTerritory.expectedLosses;
+    if (this.optionType == 'cruise')
+      this.expectedLosses = 0;
+    if (this.optionType == 'nuke')
+      this.expectedLosses = obj.numNukes;
   }
-  clearQueue() {
-    playSound('clink.wav', 0, false);
-    var newUnits = [];
-    var terrId = this.selectedTerritory.id;
-    var units = this.superpowersData.units;
-    var money = this.currentPlayer.money;
 
-    for (var x = 0; x < this.gameObj.unitPurchases.length; x++) {
-      var purchUnit = this.gameObj.unitPurchases[x];
-      if (purchUnit.terr == terrId) {
-        var unit = units[purchUnit.piece];
-        money += unit.cost;
-        if (purchUnit.piece == 16)
-          this.currentPlayer.abFlg = false;
-        if (purchUnit.piece == 17)
-          this.currentPlayer.railFlg = false;
-        if (purchUnit.piece == 18)
-          this.currentPlayer.techCount--;
-        if (purchUnit.piece == 52)
-          this.currentPlayer.empCount++;
-        if (purchUnit.piece == 12) {
-          this.currentPlayer.money += this.gameObj.superBCForm.cost - 15;
-          this.currentPlayer.battleshipCost = 0;
-          this.gameObj.superBCForm.cost = 0;
-        }
-      } else {
-        newUnits.push(purchUnit);
-      }
-    }
-
-    this.currentPlayer.money = money;
-    this.gameObj.unitPurchases = newUnits;
-    this.selectedTerritory.displayQueue = getDisplayQueueFromQueue(this.selectedTerritory, this.gameObj);
-  }
-*/
   changeProdType(segmentIdx: number) {
     this.segmentIdx = segmentIdx;
     this.productionDisplayUnits = [];
@@ -251,8 +248,6 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     if (isUnitGoodForForm(this.segmentIdx, unit.type, unit.subType))
       this.productionDisplayUnits.push(unit);
   }
-
-
   ngStyleUnitTop(optionType) {
     if (optionType == 'production')
       return { 'max-width': '40px', 'max-height': '30px' };

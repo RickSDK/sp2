@@ -5,6 +5,7 @@ declare var playSound: any;
 declare var getDisplayQueueFromQueue: any;
 declare var isUnitGoodForForm: any;
 declare var addUniToQueue: any;
+declare var displayFixedPopup: any;
 
 @Component({
   selector: 'app-terr-purchase',
@@ -21,7 +22,8 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
   @Input('optionType') optionType: any;
   @Input('productionDisplayUnits') productionDisplayUnits: any;
   @Input('allowEcoCenterFlg') allowEcoCenterFlg: any;
- 
+  @Input('allowFactoryFlg') allowFactoryFlg: any;
+
   constructor() { super(); }
 
   ngOnInit(): void {
@@ -30,11 +32,14 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
     playSound('clink.wav');
     if (piece == 19)
       this.allowEcoCenterFlg = false;
+    if (piece == 15)
+      this.allowFactoryFlg = false;
     addUniToQueue(piece, count, this.superpowersData, this.currentPlayer, this.gameObj, this.selectedTerritory);
   }
   clearQueue() {
     playSound('clink.wav', 0, false);
-    this.allowEcoCenterFlg = this.selectedTerritory.factoryCount==1;
+    this.allowEcoCenterFlg = this.selectedTerritory.factoryCount == 1;
+    this.allowFactoryFlg = this.selectedTerritory.factoryCount == 0;
     var newUnits = [];
     var terrId = this.selectedTerritory.id;
     var units = this.superpowersData.units;
@@ -106,5 +111,10 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
     var unit = this.superpowersData.units[id];
     if (isUnitGoodForForm(this.segmentIdx, unit.type, unit.subType))
       this.productionDisplayUnits.push(unit);
+  }
+  showUnitPopup(unit: any) {
+    let piece = unit.piece || unit.id;
+    this.selectedUnit = this.superpowersData.units[piece];
+    displayFixedPopup('unitPopup2');
   }
 }

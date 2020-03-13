@@ -15,22 +15,15 @@ export class TerrUnitsComponent extends BaseComponent implements OnInit {
   @Input('gameObj') gameObj: any;
   @Input('user') user: any;
 
-  public infoFlg = false;
-  public unitDetailFlg = false;
-  public selectedUnit:any;
-
   constructor() { super(); }
 
   ngOnInit(): void {
   }
-  ngStyleUnitTop(optionType) {
-    if (optionType == 'production')
+  
+  ngStyleUnitTop(status) {
+    if (status == 'Purchase')
       return { 'max-width': '40px', 'max-height': '30px' };
     else
       return { 'max-width': '100px', 'max-height': '60px' };
-  }
-  showUnitPopup(unit:any) {
-    this.selectedUnit = this.superpowersData.units[unit.piece];
-    displayFixedPopup('unitPopup');
   }
 }

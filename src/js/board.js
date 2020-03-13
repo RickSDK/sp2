@@ -269,6 +269,7 @@ function resetPlayerUnits(player, gameObj) {
 	var generalFlg = false;
 	var leaderFlg = false;
 	var sbcFlg = false;
+	var stratBombButton = false;
 	player.mainBaseID = 0;
 	gameObj.units.forEach(function (unit) {
 		if (unit.owner == player.nation && unit.mv > 0 && unit.hp > 0) {
@@ -297,60 +298,63 @@ function resetPlayerUnits(player, gameObj) {
 				unit.moving = false;
 			if (unit.piece == 12)
 				sbcFlg = true;
+			if (unit.piece == 7)
+				stratBombButton = true;
 			//		if (unit.cargoUnits > 0 && (unit.piece == 4 || unit.piece == 7 || unit.piece == 8))
 			//			doubleCheckCargoUnits(unit);
 			//			if (unit.piece == 44)
 			//				checkSealUnit(unit, player);
 		}
 	});
+	player.stratBombButton = stratBombButton;
 	player.sbcFlg = sbcFlg;
 	player.generalFlg = generalFlg;
 	player.leaderFlg = leaderFlg;
 	player.unitCount = unitCount;
 	addTechForPlayer(player);
-//	setLastRoundsOfPeaceAndWar(player, gameObj);
+	//	setLastRoundsOfPeaceAndWar(player, gameObj);
 }
 function setLastRoundsOfPeaceAndWar(player, gameObj) {
-	gameObj.players.forEach(function(p) {
-		var treaty = player.treaties[p.nation-1];
-		if(treaty>=1)
-			player.lastRoundsOfPeace[p.nation-1]=gameObj.round;
+	gameObj.players.forEach(function (p) {
+		var treaty = player.treaties[p.nation - 1];
+		if (treaty >= 1)
+			player.lastRoundsOfPeace[p.nation - 1] = gameObj.round;
 		else
-			player.lastRoundsOfWar[p.nation-1]=gameObj.round;
+			player.lastRoundsOfWar[p.nation - 1] = gameObj.round;
 	});
 }
 function cleanUpTerritories(player, cleanFlg, gameObj) {
-	var numFactories=0;
-	var biggestForce=0;
-	var mainBase=0;
-	var territories=[];
-	gameObj.territories.forEach(function(terr) {
-		if(terr.attackedByNation==player.nation)
-			terr.attackedByNation=0;
-		if(terr.defeatedByNation==player.nation) {
-			terr.defeatedByNation=0;
-			terr.defeatedByRound=0;
+	var numFactories = 0;
+	var biggestForce = 0;
+	var mainBase = 0;
+	var territories = [];
+	gameObj.territories.forEach(function (terr) {
+		if (terr.attackedByNation == player.nation)
+			terr.attackedByNation = 0;
+		if (terr.defeatedByNation == player.nation) {
+			terr.defeatedByNation = 0;
+			terr.defeatedByRound = 0;
 		}
-		if(terr.owner==player.nation) {
-			if(terr.attackedByNation>0)
-				terr.attackedByNation=0; // needed in case planes attack
-			if(terr.nuked && cleanFlg)
-				terr.nuked=false;
-			if(terr.bombed && cleanFlg)
-				terr.bombed=false;
-//			refreshTerritory(terr);
-			numFactories+=terr.factoryCount;
-			if(terr.attStrength>biggestForce && terr.id<79) {
-				mainBase=terr.id;
-				biggestForce=terr.attStrength;
+		if (terr.owner == player.nation) {
+			if (terr.attackedByNation > 0)
+				terr.attackedByNation = 0; // needed in case planes attack
+			if (terr.nuked && cleanFlg)
+				terr.nuked = false;
+			if (terr.bombed && cleanFlg)
+				terr.bombed = false;
+			//			refreshTerritory(terr);
+			numFactories += terr.factoryCount;
+			if (terr.attStrength > biggestForce && terr.id < 79) {
+				mainBase = terr.id;
+				biggestForce = terr.attStrength;
 			}
-				
+
 			territories.push(terr);
 		}
 	});
-	if(player.mainBaseID==0 && mainBase>0)
-		player.mainBaseID=mainBase;
-	player.territories=territories;
+	if (player.mainBaseID == 0 && mainBase > 0)
+		player.mainBaseID = mainBase;
+	player.territories = territories;
 	return numFactories;
 }
 function addIncomeForPlayer(player, gameObj) {
@@ -625,10 +629,30 @@ function highlightCapital(nation) {
 	e.style.left = (obj.x - 40).toString() + 'px';
 	e.style.top = (obj.y + 140).toString() + 'px';
 }
-
-function refreshTerritory(terr, gameObj, gUnits, currentPlayer, superpowers, yourPlayer, cleanDice = false) {
+function whiteoutScreen() {
+	var e = document.getElementById('whiteOut');
+	if(e) {
+		e.className='on';
+		e.style.display='block';
+		e.style.transition='all 1s ease';
+		setTimeout(function() { e.className='fadeOut'; }, 100);
+		setTimeout(function() { e.style.display='none'; }, 1100);
+	}
+}
+function shakeScreen() {
+	windowScrollBy(10, 10);
+	setTimeout(function() { windowScrollBy(-10, -10); }, 50);
+	setTimeout(function() { windowScrollBy(10, 10); }, 100);
+	setTimeout(function() { windowScrollBy(-10, -10); }, 150);
+}
+function windowScrollBy(x, y) {
+	window.scrollBy(x, y);
+}
+function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPlayer) {
 	if (!gameObj)
 		console.log('!!!! no gameObj!!');
+	if (!superpowersData)
+		console.log('!!!! no superpowersData!!');
 
 	var unitCount = 0;
 	var highestPiece = 0;
@@ -697,8 +721,8 @@ function refreshTerritory(terr, gameObj, gUnits, currentPlayer, superpowers, you
 				includesCargoFlg = true;
 			if (currentPlayer && unit.type == 3 && unit.owner == currentPlayer.nation)
 				gameObj.loadBoatsFlg = true;
-			if (cleanDice)
-				unit.dice = [];
+			//			if (cleanDice)
+			//				unit.dice = [];
 			if (unit.def > 0)
 				pieces.push(unit.piece);
 			if (terr.id < 79 && unit.cargoOf && unit.cargoOf > 0)
@@ -708,13 +732,13 @@ function refreshTerritory(terr, gameObj, gUnits, currentPlayer, superpowers, you
 
 			var sp = '';
 			if (unit.owner != terr.owner)
-				sp = ' (' + superpowers[unit.owner] + ')';
-			var unitName = gUnits[unit.piece].name + sp;
+				sp = ' (' + superpowersData.superpowers[unit.owner] + ')';
+			var unitName = superpowersData.units[unit.piece].name + sp;
 			var count = unitHash[unitName] || 0;
 			count++;
 			unitHash[unitName] = count;
 
-			var unitName2 = gUnits[unit.piece].name;
+			var unitName2 = superpowersData.units[unit.piece].name;
 			var count2 = unitIdHash[unit.piece] || 0;
 			count2++;
 			unitIdHash[unit.piece] = count2;
@@ -847,7 +871,7 @@ function refreshTerritory(terr, gameObj, gUnits, currentPlayer, superpowers, you
 	for (x = 0; x < keys2.length; x++) {
 		var piece = keys2[x];
 		var amount = unitIdHash[piece];
-		militaryUnits.push({ 'name': gUnits[piece].name, amount: amount, piece: piece, owner: leaderOwner });
+		militaryUnits.push({ 'name': superpowersData.units[piece].name, amount: amount, piece: piece, owner: leaderOwner });
 	}
 	var keys3 = Object.keys(flagHash);
 	var flags = [];
@@ -1057,7 +1081,6 @@ function arrayObjOfLine(line, id) {
 	return finList;
 }
 function addUniToQueue(piece, count, superpowersData, currentPlayer, gameObj, selectedTerritory) {
-	console.log('addUniToQueue', superpowersData);
 	var unit = superpowersData.units[piece];
 	var cost = unit.cost;
 
@@ -1265,7 +1288,7 @@ function getTerritoryType(player, terr) {
 			if (status == 0)
 				territoryType = 'War!';
 			if (status == 1)
-				territoryType = 'Non-Agression';
+				territoryType = 'Non-Aggression';
 			if (status == 2)
 				territoryType = 'Peace';
 			if (status > 2)

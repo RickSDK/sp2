@@ -77,7 +77,8 @@ export class UnitsPopupComponent extends BaseComponent implements OnInit {
   	this.selectUnit(this.unitList[0]);
   }
   selectUnit(unit) {
-  	this.selectedUnit=unit;
+	  this.selectedUnit=unit;
+	  this.selectedUnit.targetDesc = 'whoa';
   	this.loadStrategyItems(this.selectedUnit.id);
   }
   ngUnitSrc(piece, nation=0) {

@@ -12,6 +12,11 @@ $light-blue: #cef;
 .darkBlue {
   color: $dark-blue;
 }
+.bgHighlight {
+	background-color: $light-blue; padding-left: 3px; padding-right: 3px; color: black;
+	font-weight: 700;
+}
+
 .darkBlueBg {
 	background-color: $dark-blue;
 	color: white;
@@ -393,9 +398,6 @@ margin: 1px;
     text-align: center;
     padding: 15px 7px;
     border-radius: 10px;
-}
-.bgHighlight {
-	background-color: $light-blue; padding-left: 3px; padding-right: 3px; color: black;
 }
 .borderClass {
 	border: 1px solid gray; padding: 5px; margin: 5px; background-color: #aaa; color: black;

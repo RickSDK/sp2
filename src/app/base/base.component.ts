@@ -4,6 +4,7 @@ declare var $: any;
 declare var playSound: any;
 declare var getSuperpowersData: any;
 declare var ngUnitSrc: any;
+declare var displayFixedPopup: any;
 
 @Component({
   selector: 'app-base',
@@ -19,6 +20,8 @@ export class BaseComponent implements OnInit {
   public segmentIdx = 0;
   public adminFlg = false;
   public infoFlg = false;
+  public selectedUnit: any;
+  public unitDetailFlg = false;
 
   constructor() {
     this.superpowersData = getSuperpowersData();
@@ -28,7 +31,7 @@ export class BaseComponent implements OnInit {
   ngOnInit(): void { }
 
   //-----img---
-  ngUnitSrc(piece: number, nation=1) {
+  ngUnitSrc(piece: number, nation = 1) {
     return ngUnitSrc(piece, nation);
   }
   //-----ngStyles---
@@ -65,5 +68,9 @@ export class BaseComponent implements OnInit {
   closeModal(id: string) {
     $(id).modal('toggle');
   }
-
+  showUnitPopup(unit: any) {
+    let piece = unit.piece || unit.id;
+    this.selectedUnit = this.superpowersData.units[piece];
+    displayFixedPopup('unitPopup');
+  }
 }

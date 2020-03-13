@@ -43,9 +43,13 @@
 				class="fa fa-home"></i></button></a>
 	<button id="" (click)="gameInfoPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button"
 		class="btn btn-primary roundButton"><i class="fa fa-info-circle"></i></button>
-	<button *ngIf="ableToTakeThisTurn && gameObj.actionButtonMessage.length>0" (click)="completeTurnButtonPressed()"
+	<button *ngIf="ableToTakeThisTurn && gameObj.actionButtonMessage.length>0 && !hideActionButton" (click)="completeTurnButtonPressed()"
 		id="completeTurnButton" type="button"
 		class="btn btn-success roundButton">{{gameObj.actionButtonMessage}}</button>
+	<button *ngIf="ableToTakeThisTurn && hideActionButton" (click)="redoPurchase()"
+		 type="button" class="btn btn-success roundButton"><i class="fa fa-refresh"></i> Redo</button>
+	<button *ngIf="ableToTakeThisTurn && hideActionButton" (click)="hideActionButton=!hideActionButton"
+		type="button" class="btn btn-success roundButton"><i class="fa fa-arrow-right"></i>Advance</button>
 	<img (click)="scrollToNation(currentPlayer.nation)"
 		src="assets/graphics/images/flag{{currentPlayer.nation || 1}}.gif" height=42
 		title="{{superpowersData.superpowers[gameObj.currentNation]}}" style="cursor: pointer;">
@@ -53,7 +57,7 @@
 	<span style="background-color: #ccc; color: black; font-size: 14px; padding: 3px;">
 		<span *ngIf="currentPlayer.status == 'Purchase'"><img src="assets/graphics/images/coin.png" height=30
 				title="coins">{{currentPlayer.money}} </span>
-		<span *ngIf="currentPlayer.status != 'Purchase'"><i class="fa fa-bolt"></i> {{currentPlayer.status}}!</span>
+		<span *ngIf="currentPlayer.status != 'Purchase'"> {{currentPlayer.status}}</span>
 	</span>
 	<span *ngIf="currentPlayer.nation != yourPlayer.nation">
 		<img (click)="scrollToNation(yourPlayer.nation)" src="assets/graphics/images/flag{{yourPlayer.nation || 1}}.gif"
@@ -65,7 +69,8 @@
 <div
 	style="z-index: 201; opacity: .75; background-color: gray; text-align: center;  position: fixed; top: 45px; width: 100%; height: 55px;">
 	<span *ngIf="!showControls" style="color: white; font-size: 24px;"><i class="fa fa-spinner fa-spin"></i>&nbsp;
-		<span *ngIf="loadingFlg">Loading...</span><span *ngIf="allowBotToAct"><i class="fa fa-android"></i> Computer taking
+		<span *ngIf="loadingFlg">Loading...</span><span *ngIf="allowBotToAct"><i class="fa fa-android"></i> Computer
+			taking
 			turn...</span>
 	</span></div>
 <!---second bar--->
@@ -96,8 +101,8 @@
 			style="line-height: 14px;"><i class="fa fa-volume-up"></i><br><span
 				style="font-size: 10px;">Sound</span></button>
 		<button id="" (click)="computerGo()" type="button" class="btn btn-secondary tight roundButton"
-			style="line-height: 14px;"><i class="fa fa-android"></i><br><span
-				style="font-size: 10px;">CPU Go</span></button>
+			style="line-height: 14px;"><i class="fa fa-android"></i><br><span style="font-size: 10px;">CPU
+				Go</span></button>
 	</span>
 </div>
 <!---third bar--->
@@ -118,14 +123,15 @@
 <div id="sidelinePopup"
 	style="cursor: pointer; position: fixed; min-width: 50px; max-width: 60px; top: 150px; left: 0; border: 1px solid black; text-align: center; box-shadow: 3px 3px 5px #000; transition: all 1s ease;">
 	<div id="playerPanel" class="roundedPanel" *ngIf="currentPlayer">
-		<div style="background-color: #444; color: white; font-size: 10px;">Players</div>
+		<div (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)"
+			style="background-color: #444; color: white; font-size: 10px;">Players</div>
 		<div (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)"
 			*ngFor="let player of gameObj.players" style="white-space: nowrap;">
 			<i *ngIf="player.nation==currentPlayer.nation" class="fa fa-check"
 				style="font-size: 10px; color: green;"></i>
 			<img src="assets/graphics/images/flag{{player.nation}}.gif" height=30 title="{{player.userName}}">
 			<img *ngIf="player.nukes" src="assets/graphics/units/piece14.gif" height=15
-				style="margin-left: -6px; margin-right: -10px;">
+				style="margin-left: -4px; margin-right: -6px;">
 			<span style="font-size: 10px; font-weight: 700;">{{player.income}}</span>
 			<div *ngIf="player.nation==currentPlayer.nation" style="font-size: 11px;"><b>{{player.status}}</b></div>
 		</div>
@@ -133,6 +139,21 @@
 			class="btn btn-secondary roundButton"><i class="fa fa-arrows-h"></i></button>
 	</div>
 </div>
+
+
+<div id="purchaseSideBar" (click)="showPanelsFlg = !showPanelsFlg" *ngIf="showPanelsFlg"
+	style="cursor: pointer; position: fixed; min-width: 50px; max-width: 60px; top: 360px; left: 0; border: 1px solid black; text-align: center; box-shadow: 3px 3px 5px #000; transition: all 1s ease;">
+	<div class="roundedPanel" *ngIf="currentPlayer">
+		<div style="background-color: #444; color: white; font-size: 10px;">Purchases</div>
+		<img *ngFor="let unit of gameObj.unitPurchases" src="{{ngUnitSrc(unit.piece)}}"
+			style="max-height: 18px; max-width: 30px;">
+
+	</div>
+</div>
+
+<button *ngIf="!showPanelsFlg" type="button" style="position: fixed; bottom: 0;"
+	(click)="showPanelsFlg = !showPanelsFlg" class="btn btn-secondary roundButton"><i class="fa fa-eye"></i></button>
+
 <img id="sprite" src="assets/graphics/units/piece{{spritePieceId}}u.png"
 	style="display: none; position: absolute; left: 0; top: 200px; height: 200px;">
 
@@ -256,6 +277,9 @@
 			class="fa fa-check"></i> End Turn</button>
 	<p>
 </div>
+
+<div id="whiteOut" style="width: 100%; height: 100%; position: fixed; top: 0; left: 0; background-color: white; display: none;"></div>
+
 
 
 
