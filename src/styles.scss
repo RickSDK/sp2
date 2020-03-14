@@ -585,6 +585,19 @@ margin: 1px;
     box-shadow: 5px 5px 5px #000;
     background-color: #007;
 }
+.terr-card2 {
+    margin: 3px;
+    border: 1px solid black;
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    overflow: hidden;
+	background-color: #ccc;
+	color: black;
+}
+.terr-card2:hover{
+    box-shadow: 5px 5px 5px #000;
+    background-color: white;
+}
 .popupScreenNoPad {
     display: none;
     position: fixed;

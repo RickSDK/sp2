@@ -50,6 +50,8 @@ declare var scrollToCapital: any;
 declare var purchaseCPUUnits: any;
 declare var moveCPUUnits: any;
 declare var refreshPlayerTerritories: any;
+//---combat.js
+declare var playSoundForPiece: any;
 
 @Component({
 	selector: 'app-board',
@@ -211,9 +213,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	startTheTurn() {
 		console.log('startTheTurn', this.currentPlayer);
-		if (!this.currentPlayer.cpu && this.yourPlayer && this.yourPlayer.nation && this.yourPlayer.nation == this.currentPlayer.nation)
-			this.checkForMessages();
-		else
+//		if (!this.currentPlayer.cpu && this.yourPlayer && this.yourPlayer.nation && this.yourPlayer.nation == this.currentPlayer.nation)
+//			this.checkForMessages();
+//		else
 			this.initializePlayer();
 	}
 	checkForMessages() {
@@ -510,7 +512,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.spriteObj = { top1: terr.y, left1: terr.x, top2: t2.y, left2: t2.x };
 		this.spriteInMotionFlg = true;
 		this.spritePieceId = obj.id;
-		this.playSoundForPiece(obj.id);
+		playSoundForPiece(obj.id, this.superpowersData);
 		var e = document.getElementById('sprite');
 		if (e) {
 			e.style.display = 'block';
@@ -519,25 +521,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			e.style.height = '30px';
 			this.moveSprite(100);
 		}
-	}
-	playSoundForPiece(piece: number) {
-		var unit = this.superpowersData.units[piece];
-		if (unit.type == 2)
-			playSound('fighter.mp3');
-		if (unit.type == 3)
-			playSound('foghorn.wav');
-		if (unit.subType == 'soldier')
-			playSound('marching.wav');
-		if (unit.subType == 'chopper')
-			playSound('chopper.mp3');
-		if (unit.subType == 'vehicle')
-			playSound('vehicles.mp3');
-		if (unit.subType == 'hero')
-			playSound('yes.mp3');
-		if (unit.subType == 'seal')
-			playSound('mp5.mp3');
-		if (unit.id == 47 || unit.id == 52)
-			playSound('shock.mp3');
 	}
 	moveSprite(amount: number) {
 		amount -= 1;

@@ -96,20 +96,6 @@ function expectedHitsFromStrength(strength) {
     else
         return (strength / 6).toFixed(1);
 }
-/*
-function checkSendButtonStatus(unit, moveTerr, optionType) {
-    var totalStrength = 0;
-    for (var x = 0; x < moveTerr.length; x++) {
-        var terr = moveTerr[x];
-        terr.units.forEach(function (unit) {
-            var e = document.getElementById('unit' + unit.id);
-            if (e && e.checked)
-                totalStrength += unit.att;
-        });
-    }
-    return totalStrength;
-}
-*/
 function showUnitsForMovementBG2(optionType, gameObj, currentPlayer, totalMoveTerrs, selectedTerritory) {
     var moveTerr = [];
     var totalUnitsThatCanMove = 0;
@@ -248,11 +234,17 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
                     }
                     if (selectedTerritory.id >= 79 && optionType == 'movement') {
                         if (transportCargo > selectedTerritory.transportSpace) {
-                            showAlertPopup('Not enough room on your transports. Removing items.', 1);
+                            if (selectedTerritory.transportSpace > 0)
+                                showAlertPopup('Not enough room on your transports. Removing items.', 1);
+                            else
+                                showAlertPopup('No transports there!', 1);
                             e.checked = false;
                         }
                         if (carrierCargo > selectedTerritory.carrierSpace) {
+                            if (selectedTerritory.carrierSpace > 0)
                             showAlertPopup('Not enough room on your carriers. Removing fighters.', 1);
+                        else
+                            showAlertPopup('No carriers there!', 1);
                             e.checked = false;
                         }
                     }
@@ -308,14 +300,26 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
         if (e && !e.checked)
             e.checked = true;
     }
-    expectedHits = expectedHitsFromHits(expectedHits);
-
-    if (numNukes > 0) {
-        expectedHits = nukeHitsForTerr(selectedTerritory, player) * numNukes;
-        if (expectedHits == 0)
-            showAlertPopup('This territory is too heavily defended for your nukes! Find a better target or get your nukes upgraded through technology.', 1);
+    //-----------------recheck
+    var units = [];
+    for (var x = 0; x < moveTerr.length; x++) {
+        var ter = moveTerr[x];
+        for (var i = 0; i < ter.units.length; i++) {
+            var unit = ter.units[i];
+            var e = document.getElementById('unit' + unit.id);
+            if (e && e.checked) {
+                units.push(unit);
+            }
+        }
     }
-    return { expectedHits: expectedHits, numNukes: numNukes, numUnits: numUnits };
+    var defendingUnits = [];
+    selectedTerritory.units.forEach(unit => {
+        defendingUnits.push(unit);
+    });
+
+    var obj = getBattleAnalysis({ attackUnits: units, defendingUnits: defendingUnits }, selectedTerritory, player);
+
+    return obj;
 }
 function expectedHitsFromHits(num) {
     if (num >= 18)
@@ -396,7 +400,7 @@ function getSelectedUnits(moveTerr) {
             var e = document.getElementById('unit' + unit.id);
             if (e && e.checked) {
                 unit.dice = [];
-                for(var i=0; i<unit.numAtt; i++)
+                for (var i = 0; i < unit.numAtt; i++)
                     unit.dice.push('dice.png');
                 units.push(unit);
             }

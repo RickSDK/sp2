@@ -17,6 +17,14 @@ declare var whiteoutScreen: any;
 declare var shakeScreen: any;
 declare var autoButtonPressed: any;
 declare var getSelectedUnits: any;
+//battle.js
+declare var getBattleAnalysis: any;
+declare var highlightTheseUnits: any;
+declare var playSoundForPiece: any;
+declare var rollAttackDice: any;
+declare var rollDefenderDice: any;
+declare var removeCasualties: any;
+declare var battleCompleted: any;
 
 @Component({
   selector: 'app-territory-popup',
@@ -43,12 +51,14 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   public expectedLosses = 0;
   public goButton = 'Go!';
   public checkAllTroops = false;
+  public autoCompleteFlg = false;
   //battle board
   public displayBattle: any;
-//  public displayBattle = {
+
+  //  public displayBattle = {
   //  generalUnit: 3, hijackerUnit: 6, medicHealedCount: 1, subsDove: 1, airDefenseUnits: [], phase: 1,
-    //attNation: 1, attHits: 1, attackUnits: [], defendingUnits: [], defHits: 1, defNation: 3
- // };
+  //attNation: 1, attHits: 1, attackUnits: [], defendingUnits: [], defHits: 1, defNation: 3
+  // };
   public boardCols = [1, 2, 3, 4, 5];
 
   constructor() { super(); }
@@ -88,6 +98,10 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     //console.log('ableToTakeThisTurn', ableToTakeThisTurn);
     //console.log('user', user);
     //console.log('currentPlayer', currentPlayer);
+  }
+  autoCompletePressed() {
+    playClick();
+    this.autoCompleteFlg = !this.autoCompleteFlg;
   }
   moveSpriteBetweenTerrs(obj: any) {
     this.messageEvent.emit(obj);
@@ -132,11 +146,13 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     this.checkAllTroops = !this.checkAllTroops;
     selectAllButtonChecked(this.moveTerr, this.checkAllTroops, this.optionType, this.currentPlayer);
     this.checkSendButtonStatus(null);
+    this.moveTroopsButtonPressed();
   }
   autoButtonPressed() {
     playClick();
     autoButtonPressed(this.selectedTerritory, this.moveTerr);
     this.checkSendButtonStatus(null);
+    this.moveTroopsButtonPressed();
   }
   checkMovement(distObj: any, unit: any, optionType: string) {
     return checkMovement(distObj, unit, optionType, this.currentPlayer);
@@ -175,34 +191,110 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       subsDove: 0,
       airDefenseUnits: [],
       phase: 1,
+      round: 0,
       attNation: this.currentPlayer.nation,
       attHits: 0,
       attackUnits: [],
       defendingUnits: [],
       defHits: 0,
       defNation: this.selectedTerritory.owner,
-      militaryMessage: 'do somethingX!',
+      allowGeneralRetreat: true,
+      allowRetreat: true,
+      militaryMessage: '',
+      defender: this.selectedTerritory.owner,
+      attacker: this.currentPlayer.nation,
+      bonusUnitsFlg: (this.selectedTerritory.owner == 0 && !this.selectedTerritory.capital)
     };
     var defendingUnits = [];
     this.selectedTerritory.units.forEach(unit => {
       if (unit.owner != this.currentPlayer.nation) {
         unit.dice = [];
         var numDef = unit.numDef || 1;
-        for(var i=0; i<numDef; i++)
+        for (var i = 0; i < numDef; i++)
           unit.dice.push('dice.png');
         defendingUnits.push(unit);
       }
     });
     this.displayBattle.defendingUnits = defendingUnits;
     this.displayBattle.attackUnits = getSelectedUnits(this.moveTerr);
+    this.displayBattle.militaryObj = getBattleAnalysis(this.displayBattle, this.selectedTerritory, this.currentPlayer);
+    var att = this.arrayOfPieces(this.displayBattle.attackUnits);
+    var def = this.arrayOfPieces(this.displayBattle.defendingUnits);
+    this.displayBattle.battleDetails = att + '|' + def;
     this.optionType = 'battle';
+    console.log(this.displayBattle.militaryObj);
+    playSoundForPiece(this.displayBattle.militaryObj.pieceId, this.superpowersData);
 
+  }
+  arrayOfPieces(units) {
+    var list = [];
+    units.forEach(unit => {
+      list.push(unit.piece);
+    });
+    return list.join('+');
+  }
+  fightButtonPressed() {
+    removeCasualties(this.displayBattle);
+    this.displayBattle.phase = 2;
+    playSound('9mm.mp3');
+    this.prepareForAttacker();
+    setTimeout(() => {
+      this.attackerRolls();
+    }, 1200);
+  }
+  prepareForAttacker() {
+    this.changeDiceUnitsToImg(this.displayBattle.attackUnits, 'spin.gif');
+    this.changeDiceUnitsToImg(this.displayBattle.defendingUnits, 'dice.png');
+
+  }
+  attackerRolls() {
+    rollAttackDice(this.displayBattle);
+    this.changeDiceUnitsToImg(this.displayBattle.defendingUnits, 'spin.gif');
+    setTimeout(() => {
+      this.rollDefenderDice()
+    }, 1200);
+  }
+  rollDefenderDice() {
+    rollDefenderDice(this.displayBattle);
+    this.displayBattle.phase = 3;
+    this.displayBattle.round++;
+    this.displayBattle.militaryObj = getBattleAnalysis(this.displayBattle, this.selectedTerritory, this.currentPlayer);
+    console.log('rollDefenderDice', this.displayBattle.militaryObj);
+    if (!this.displayBattle.militaryObj.battleInProgress)
+      battleCompleted(this.displayBattle, this.selectedTerritory, this.currentPlayer, this.moveTerr, this.gameObj, this.superpowersData);
+
+  }
+  removeCasualties() {
+    playClick();
+    removeCasualties(this.displayBattle);
+    this.displayBattle.phase = 1;
+  }
+  changeDiceUnitsToImg(units: any, image: string) {
+    units.forEach(unit => {
+      for (var x = 0; x < unit.dice.length; x++) {
+        unit.dice[x] = [image];
+      }
+    });
+  }
+  addMoreButtonClicked() {
+    playClick();
+    this.optionType = 'attack';
+    setTimeout(() => {
+      highlightTheseUnits(this.moveTerr, this.displayBattle.attackUnits);
+      this.checkSendButtonStatus(null);
+    }, 250);
+  }
+  fightButtonClass() {
+    if (this.displayBattle && this.displayBattle.militaryObj && this.displayBattle.militaryObj.allowAttackFlg)
+      return 'btn btn-danger roundButton glowRed';
+    else
+      return 'btn btn-danger roundButton';
   }
   checkSendButtonStatus(unit: any) {
 
     var obj = checkSendButtonStatus(unit, this.moveTerr, this.optionType, this.selectedTerritory, this.currentPlayer);
     this.expectedHits = obj.expectedHits;
-    this.expectedLosses = this.selectedTerritory.expectedLosses;
+    this.expectedLosses = obj.expectedLosses;
     if (this.optionType == 'cruise')
       this.expectedLosses = 0;
     if (this.optionType == 'nuke')

@@ -22,10 +22,7 @@ export class LogsPopupComponent extends BaseComponent implements OnInit {
   }
   show(gameObj: any, ableToTakeThisTurn: any, currentPlayer: any, user: any) {
     this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);
-    var round = gameObj.round;
-    if (round > 1 && gameObj.currentNation == gameObj.players[0].nation)
-      round--;
-    this.filterLogsForRound(round);
+    this.filterLogsForRound(gameObj.round);
     this.openModal('#logsPopup');
   }
   changeIdx(num: number) {
@@ -46,6 +43,8 @@ export class LogsPopupComponent extends BaseComponent implements OnInit {
         displayLogs.push(log);
     });
     this.displayLogs = displayLogs;
+    if (round > 1 && displayLogs.length == 0)
+      this.filterLogsForRound(round - 1);
   }
   filterLogsForNation(nation: number) {
     this.logNation = nation;
@@ -56,5 +55,8 @@ export class LogsPopupComponent extends BaseComponent implements OnInit {
     });
     this.displayLogs = displayLogs;
   }
-
+  showBattleDetails(log) {
+    console.log(log);
+    this.showLog = log.id;
+  }
 }

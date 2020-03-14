@@ -22,8 +22,7 @@
                 </section>
                 <section style="background-color: #007;" *ngIf="segmentIdx==0 && gameObj">
                     <button [disabled]="logRound<=1" (click)="filterLogsForRound(1)" type="button"
-                        class="btn btn-primary roundButton"><i
-                            class="fa fa-fast-backward"></i></button>
+                        class="btn btn-primary roundButton"><i class="fa fa-fast-backward"></i></button>
                     <button [disabled]="logRound<=1" (click)="changeLogRound(-1)" type="button"
                         class="btn btn-primary roundButton" style="width: 80px;"><i
                             class="fa fa-arrow-left"></i></button>
@@ -31,9 +30,8 @@
                     <button [disabled]="logRound>=gameObj.round" (click)="changeLogRound(1)" type="button"
                         class="btn btn-primary roundButton" style="width: 80px;"><i
                             class="fa fa-arrow-right"></i></button>
-                    <button [disabled]="logRound>=gameObj.round" (click)="filterLogsForRound(gameObj.round)" type="button"
-                        class="btn btn-primary roundButton"><i
-                            class="fa fa-fast-forward"></i></button>
+                    <button [disabled]="logRound>=gameObj.round" (click)="filterLogsForRound(gameObj.round)"
+                        type="button" class="btn btn-primary roundButton"><i class="fa fa-fast-forward"></i></button>
                 </section>
                 <section style="background-color: #007;" *ngIf="segmentIdx==1">
                     <button *ngFor="let player of gameObj.players" (click)="filterLogsForNation(player.nation)"
@@ -60,8 +58,8 @@
                             <i class="fa fa-star" *ngIf="log.type=='Battle'"></i>
                             <i class="fa fa-flask" *ngIf="log.type=='Technology'"></i>
                             <i class="fa fa-handshake-o" *ngIf="log.type=='Diplomacy'"></i>
-                            <div *ngIf="log.enemy>0 || log.type=='Battle'"><img src="graphics/flag{{log.enemy}}.gif"
-                                    height=20></div>
+                            <div *ngIf="log.enemy>0 || log.type=='Battle'"><img
+                                    src="assets/graphics/images/flag{{log.enemy}}.gif" height=20></div>
                             <img *ngIf="log.type=='Nuke Attack!'" src="assets/graphics/misc/nuke.png" height=40>
                             <img *ngIf="log.type=='EMP Attack!'" src="assets/graphics/units/piece52u.png" height=40>
                             <img *ngIf="log.type=='Strategic Bombing'" src="assets/graphics/misc/stealth.png" height=40
@@ -96,13 +94,16 @@
                             &nbsp;{{log.message}}
 
                             <div *ngIf="log.attackingUnits && log.attackingUnits.length>0">
-                                <button ng-click="showBattleDetails(log)" id="" type="button"
+                                <button (click)="showBattleDetails(log)" id="" type="button"
                                     class="btn ptp-blue roundButton">Details</button>
-                                <div *ngIf="log.show && showLog==log.id">
+                                <div *ngIf="showLog==log.id">
                                     <div><b>
                                             <font color="#c00">Battle:</font>
                                         </b></div>
-                                    &nbsp;<i style="color: red;" title="attacker" class="fa fa-bolt"></i> <span
+
+
+
+                                    <img src="assets/graphics/images/flag{{log.nation}}.gif" height="20"> <span
                                         *ngFor="let unit of log.attackingUnits"><img src="{{ngUnitSrc(unit.piece)}}"
                                             height=15 title="{{superpowersData.units[unit.piece].name}}"></span>
                                     <div *ngIf="log.attackingCas.length==0">
@@ -115,13 +116,14 @@
                                             title="attacking casualties"><img src="{{ngUnitSrc(unit.piece)}}" height=15
                                                 title="{{superpowersData.units[unit.piece].name}}"></span></div>
                                     <hr style="padding: 0px; margin: 0px;">
-                                    &nbsp;<i style="color: blue;" title="defender" class="fa fa-shield"></i> <span
+
+                                    <img src="assets/graphics/images/flag{{log.enemy}}.gif" height="20"> <span
                                         *ngFor="let unit of log.defendingUnits"><img src="{{ngUnitSrc(unit.piece)}}"
                                             height=15 title="{{superpowersData.units[unit.piece].name}}"></span>
                                     <div *ngIf="log.defendingCas.length==0">
                                         <font color=gray size=1>No Casualties</font>
                                     </div>
-                                    <div *ngIf="log.defendingCas.length>0"><img src="graphics/misc/skull.png"
+                                    <div *ngIf="log.defendingCas.length>0"><img src="assets/graphics/misc/skull.png"
                                             height="15" title="Defender Casualties">
                                         <span *ngFor="let unit of log.defendingCas" style="opacity: .4;"
                                             title="defending casualties"><img src="{{ngUnitSrc(unit.piece)}}" height=15

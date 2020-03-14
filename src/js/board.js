@@ -701,7 +701,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	var units = [];
 	var movableTroopCount = 0;
 	gameObj.units.forEach(function (unit) {
-		if (unit.terr == terr.id) {
+		if (unit.terr == terr.id && !unit.dead) {
 			units.push(unit);
 			if (currentPlayer && unit.owner != terr.owner && !enemyPiecesExist) {
 				if (currentPlayer.treaties[unit.owner - 1] == 0)
