@@ -1,3 +1,366 @@
+function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPlayer) {
+	if (!gameObj)
+		console.log('!!!! no gameObj!!');
+	if (!superpowersData || !superpowersData.superpowers)
+		console.log('!!!! no superpowersData!!');
+
+	var unitCount = 0;
+	var highestPiece = 0;
+	var adCount = 0;
+	terr.generalFlg = false;
+	terr.leaderFlg = false;
+	var attStrength = 0;
+	var defStrength = 0;
+	var cargoUnits = 0;
+	var cargoSpace = 0;
+	var amphibAtt = 0;
+	var factoryCount = 0;
+	var superBC = false;
+	var shipAttack = 0;
+	var shipDefense = 0;
+	var transportCount = 0;
+	var transportCargo = 0;
+	var transportSpace = 0;
+	var carrierCargo = 0;
+	var carrierSpace = 0;
+	var destroyerCount = 0;
+	var bomberCount = 0;
+	var paratrooperCount = 0;
+	var infParatrooperCount = 0;
+	var cargoTypeUnits = 0; // groundUnits & fighters
+	var unloadedCargo = [];
+	var strandedCargo = [];
+	var superBSStats = '';
+	var defendingFighterId = 0;
+	var battleshipAACount = 0;
+	var cobraCount = 0;
+
+	var unitHash = {};
+	var unitIdHash = {};
+	var flagHash = {};
+	flagHash[terr.owner] = 1;
+	var pieces = [];
+	var nukeCount = 0;
+	var unitOwner = 0;
+	var groundForce = 0;
+	var anyPiece = 0;
+	var includesCargoFlg = false;
+	var totalUnitCount = 0;
+	var leaderOwner = terr.owner;
+	var enemyPiecesExist = false;
+	var units = [];
+	var movableTroopCount = 0;
+	gameObj.units.forEach(function (unit) {
+		if (unit.terr == terr.id && !unit.dead) {
+			units.push(unit);
+			if (currentPlayer && unit.owner != terr.owner && !enemyPiecesExist) {
+				if (currentPlayer.treaties[unit.owner - 1] == 0)
+					enemyPiecesExist = true;
+			}
+			if (unit.moveAtt > 0 && unit.owner == yourPlayer.nation)
+				movableTroopCount++;
+			totalUnitCount++;
+			if (unit.piece == 9)
+				battleshipAACount++;
+			if (unit.subType == 'fighter')
+				defendingFighterId = unit.piece;
+			if (unit.piece > anyPiece)
+				anyPiece = unit.piece;
+			flagHash[unit.owner] = 1;
+			if (unit.cargoOf && unit.cargoOf > 0)
+				includesCargoFlg = true;
+			if (currentPlayer && unit.type == 3 && unit.owner == currentPlayer.nation)
+				gameObj.loadBoatsFlg = true;
+			//			if (cleanDice)
+			//				unit.dice = [];
+			if (unit.def > 0)
+				pieces.push(unit.piece);
+			if (terr.id < 79 && unit.cargoOf && unit.cargoOf > 0)
+				paratrooperCount++;
+			if (terr.id < 79 && unit.cargoOf && unit.cargoOf > 0 && unit.piece == 2)
+				infParatrooperCount++;
+
+			var sp = '';
+			if (unit.owner != terr.owner)
+				sp = ' (' + superpowersData.superpowers[unit.owner] + ')';
+			var unitName = superpowersData.units[unit.piece].name + sp;
+			var count = unitHash[unitName] || 0;
+			count++;
+			unitHash[unitName] = count;
+
+			var unitName2 = superpowersData.units[unit.piece].name;
+			var count2 = unitIdHash[unit.piece] || 0;
+			count2++;
+			unitIdHash[unit.piece] = count2;
+
+			attStrength += unit.att;
+			defStrength += unit.def;
+			if (unitOwner > 0 && unitOwner != terr.owner && unit.owner == terr.owner)
+				unitOwner = terr.owner;
+			if (unitOwner == 0)
+				unitOwner = unit.owner;
+			if (unit.piece == 50)
+				cobraCount++;
+			if (unit.piece == 7 || unit.piece == 50)
+				bomberCount++;
+			if (unit.piece == 12) {
+				superBC = true;
+				adCount += unit.adCount;
+				var stats = [];
+				stats.push('Name: ' + unit.sbName || unit.name);
+				stats.push('Attack: ' + unit.att);
+				stats.push('Defend: ' + unit.def);
+				stats.push('# att: ' + unit.numAtt);
+				stats.push('# def: ' + unit.numDef);
+				stats.push('Air Defense: ' + unit.adCount);
+				stats.push('HP: ' + unit.bcHp);
+				stats.push('Damage: ' + unit.damage);
+				superBSStats = stats.join('\n');
+			}
+			if (unit.piece == 2 || unit.piece == 3)
+				groundForce += unit.att;
+			if (isUnitAirDefense(unit))
+				adCount++;
+			if (unit.piece == 40)
+				adCount++; // 2 for this piece
+			if (unit.piece == 15 || unit.piece == 19)
+				factoryCount++;
+			if (unit.piece == 4) {
+				transportCount++;
+				transportSpace += 4;
+			}
+			if (unit.piece == 45) {
+				transportCount++;
+				transportSpace += 4;
+			}
+			if (unit.piece == 49) {
+				transportCount++;
+				transportSpace++;
+			}
+			if (unit.piece == 8 && unit.owner == terr.owner) {
+				carrierSpace += 2;
+			}
+			if (unit.subType == 'fighter' && unit.owner == terr.owner)
+				carrierCargo++;
+			if (unit.subType == 'vehicle')
+				transportCargo += 2;
+			if (unit.subType == 'soldier')
+				transportCargo++;
+			if (unit.piece > highestPiece && (terr.nation < 99 || unit.type == 3 || unit.type == 4))
+				highestPiece = unit.piece;
+			if (terr.nation == 99) {
+				if (unit.subType == 'fighter' && unit.cargoOf > 0) {
+					var carrierTerr = getTerrOfUnitId(unit.cargoOf, gameObj);
+					if (carrierTerr > 0 && unit.terr != carrierTerr) {
+	//					showAlertPopup('Unloaded Fighter. Fixing.');
+						unit.terr = carrierTerr;
+					}
+				}
+				if (unit.type == 1 || unit.subType == 'fighter') {
+					cargoTypeUnits++;
+					if (unit.terr == terr.id)
+						strandedCargo.push(unit);
+				}
+				if (unit.type == 1 || unit.type == 2) {
+					if (numberVal(unit.cargoOf) == 0) {
+						unloadedCargo.push(unit);
+					}
+				}
+				if (unit.type == 3)
+					cargoSpace += unit.cargoSpace;
+				if (unit.type == 3 || unit.type == 2) {
+					shipAttack += unit.att;
+					shipDefense += unit.def;
+				}
+				if (unit.type == 1) {
+					amphibAtt += unit.att;
+					cargoUnits += unit.cargoUnits;
+				}
+			}
+			if (unit.piece == 27)
+				destroyerCount++;
+			if (unit.piece == 14)
+				nukeCount++;
+			if (unit.piece == 10)
+				terr.generalFlg = true;
+			if (unit.piece == 28)
+				includesCargoFlg = true; //show medic details
+			if (unit.piece == 11) {
+				leaderOwner = unit.owner;
+				terr.leaderFlg = true;
+			}
+			if (unit.piece != 13 && unit.piece != 15 && unit.piece != 19 && unit.piece != 44)
+				unitCount++;
+		}
+	});
+	units.sort(function(a,b) { return a.piece - b.piece; });
+	terr.units = units;
+	terr.movableTroopCount = movableTroopCount;
+	if (terr.defeatedByNation > 0 && numberVal(terr.defeatedByRound) < gameObj.round - 1) {
+		terr.defeatedByNation = 0;
+	}
+	terr.enemyPiecesExist = enemyPiecesExist;
+	terr.totalUnitCount = totalUnitCount;
+	terr.battleshipAACount = battleshipAACount;
+	/*	if (unitOwner > 0 && terr.owner == 0)
+			terr.owner = unitOwner;*/
+	if (unitOwner > 0 && unitOwner != terr.owner && terr.id >= 79)
+		terr.owner = unitOwner;
+	if (factoryCount > 1 && terr.facBombed)
+		terr.facBombed = false;
+	if (gameObj.airDefenseTech[terr.owner] && terr.id < 79)
+		adCount++;
+	terr.defendingUnits = pieces.join('+');
+	var results = [];
+	var militaryUnits = [];
+	var keys = Object.keys(unitHash);
+	for (x = 0; x < keys.length; x++) {
+		var piece = keys[x];
+		results.push(unitHash[piece] + ' ' + piece);
+	}
+	var keys2 = Object.keys(unitIdHash);
+	for (x = 0; x < keys2.length; x++) {
+		var piece = keys2[x];
+		var amount = unitIdHash[piece];
+		militaryUnits.push({ 'name': superpowersData.units[piece].name, amount: amount, piece: piece, owner: leaderOwner });
+	}
+	var keys3 = Object.keys(flagHash);
+	var flags = [];
+	for (x = 0; x < keys3.length; x++) {
+		var k = keys3[x];
+		flags.push(k);
+	}
+	terr.cobraCount = cobraCount;
+	terr.flags = flags;
+	terr.showUnitDetailFlg = (includesCargoFlg || flags.length > 1);
+	terr.cargoTypeUnits = cargoTypeUnits;
+	terr.unloadedCargo = unloadedCargo;
+	terr.infParatrooperCount = infParatrooperCount;
+	terr.paratrooperCount = paratrooperCount;
+	terr.transportCargo = transportCargo;
+	terr.transportSpace = transportSpace;
+	terr.carrierCargo = carrierCargo;
+	terr.carrierSpace = carrierSpace;
+	terr.destroyerCount = destroyerCount;
+	terr.superBC = superBC;
+
+	terr.nukeCount = nukeCount;
+	terr.shipAttack = shipAttack;
+	terr.shipDefense = shipDefense;
+	terr.transportCount = transportCount;
+	terr.factoryCount = factoryCount;
+	terr.bomberCount = bomberCount;
+	terr.amphibAtt = amphibAtt;
+	terr.cargoUnits = cargoUnits;
+	terr.cargoSpace = cargoSpace;
+	terr.attStrength = attStrength;
+	terr.defStrength = defStrength;
+	terr.expectedLosses = parseInt(terr.defStrength / 6);
+	terr.groundForce = groundForce;
+	terr.adCount = adCount;
+	terr.unitCount = unitCount;
+
+	var status = 1;
+	if (yourPlayer && yourPlayer.nation > 0)
+		status = treatyStatus(yourPlayer, terr.owner);
+
+	var showDetailsFlg = (gameObj.fogOfWar != 'Y' || status > 2);
+
+	if (strandedCargo.length == 0)
+		terr.strandedCargo = [];
+	if (terr.id >= 79 && terr.cargoTypeUnits > 0) {
+		if (terr.cargoTypeUnits == terr.unitCount)
+			terr.strandedCargo = strandedCargo;
+		else if (terr.cargoUnits > terr.cargoSpace)
+			terr.strandedCargo = strandedCargo;
+	}
+	var flag = flagOfOwner(terr.owner, terr, showDetailsFlg, totalUnitCount, terr.defeatedByNation, terr.nuked, terr.attackedByNation);
+	terr.flag = flag;
+	if (gameObj.historyMode) {
+		terr.flag = flagOfOwner(terr.histOwner, terr, false, totalUnitCount, terr.histDefeatedByNation, terr.histNuked, terr.attackedByNation);
+		return;
+	}
+
+	var userName = 'Neutral';
+	if (terr.owner > 0) {
+		var player = playerOfNation(terr.owner, gameObj);
+		if (!gameObj.multiPlayerFlg && !player.cpu && gameObj.currentNation == terr.owner) {
+			status = 3; // all humans can see
+		}
+		if (player && player.userName) {
+			userName = player.userName;
+			terr.shieldTech = player.tech[18];
+		}
+		if (!player.tech[2])
+			defendingFighterId = 0;
+
+		cleanupTerr(terr, player);
+	}
+
+	terr.fogOfWar = (gameObj.fogOfWar == 'Y' && numberVal(status) < 3);
+	if (terr.fogOfWar)
+		results = ['-fog of war-'];
+	var unitStr = (terr.unitCount == 1) ? 'unit' : 'units';
+	if (factoryCount == 0 && defendingFighterId > 0)
+		defendingFighterId = 0;
+	terr.defendingFighterId = defendingFighterId;
+	terr.militaryUnits = results;
+	terr.militaryUnits2 = militaryUnits;
+	if (terr.factoryCount == 1) {
+		if (adCount == 0)
+			highestPiece = 100;
+		if (adCount == 1)
+			highestPiece = 101;
+		if (adCount == 2)
+			highestPiece = 102;
+		if (adCount > 2)
+			highestPiece = 104;
+	}
+	if (terr.factoryCount > 1) {
+		if (adCount == 0)
+			highestPiece = 110;
+		if (adCount == 1)
+			highestPiece = 111;
+		if (adCount == 2)
+			highestPiece = 112;
+		if (adCount > 2)
+			highestPiece = 113;
+	}
+	if (terr.facBombed)
+		highestPiece = 103;
+	if (terr.superBC)
+		highestPiece = 12;
+	if (highestPiece == 0)
+		highestPiece = anyPiece;
+	if (highestPiece == 0 && terr.unitCount > 0) {
+		highestPiece = (terr.nation < 99) ? 2 : 4;
+		console.log('ERROR!!!!! highestPiece==0!!', terr);
+	}
+	terr.piece = highestPiece;
+	var obj = getTerritoryType(yourPlayer, terr);
+	terr.territoryType = obj.territoryType;
+	terr.treatyStatus = obj.status;
+	terr.treatyStatusAtStart = obj.statusAtStart;
+	terr.isAlly = obj.isAlly;
+	terr.enemyForce = getEnemyForceForTerr(terr, gameObj);
+	terr.displayUnitCount = getDisplayUnitCount(terr, gameObj.fogOfWar, gameObj.hardFog)
+	var titleUnitCount = unitCount;
+	if (terr.fogOfWar)
+		titleUnitCount = terr.displayUnitCount;
+	terr.title = terr.name + ' (' + titleUnitCount + ' ' + unitStr + ')\n-' + userName + '-\n' + results.join('\n');
+	if (superBC)
+		terr.title += '\n' + superBSStats;
+}
+function alliesFromTreaties(player) {
+	var allies=[];
+	var nation=0;
+	player.treaties.forEach(function(t) {
+		nation++;
+		if(t==3 && nation!=player.nation)
+			allies.push(nation);
+	});
+	return allies;
+}
 function hideArrow() {
 	var e = document.getElementById('arrow');
 	if (e && e.style.display == 'block')
@@ -212,7 +575,7 @@ function scrubUnitsOfPlayer(player, gameObj, gUnits) {
 			if (unit.piece == 2 && player.tech[17]) {
 				unit.moveAtt = 2;
 			}
-			if (unit.type == 1 && player.tech[19]) { // railway
+			if (unit.type == 1 && player.tech[19] && unit.mv2 > 0) { // railway
 				unit.mv = unit.mv2 + 1;
 			}
 			//----- old
@@ -350,6 +713,7 @@ function cleanUpTerritories(player, cleanFlg, gameObj) {
 			}
 
 			territories.push(terr);
+			checkCargoForTerr(terr, gameObj);
 		}
 	});
 	if (player.mainBaseID == 0 && mainBase > 0)
@@ -422,6 +786,7 @@ function addIncomeForPlayer(player, gameObj) {
 		ecoTechCount++;
 	if (player.tech[11])
 		ecoTechCount++;
+	player.ecoTechCount = ecoTechCount;
 	income += 5 * ecoTechCount;
 	player.bombedCount = bombedCount;
 	player.economicCount = economicCount;
@@ -589,18 +954,29 @@ function getDamageReport(player, gameObj, superpowersData) {
 	return { lostUnits: lostUnits, lostCoins: lostCoins, enemyUnits: enemyUnits, enemyCoins: enemyCoins };
 }
 function populateHostileMessage(type, terr, gameObj, player) {
-	var cost = costToAttack(type, terr, gameObj, player);
-	if (cost > 0)
-		return 'This will cost you ' + cost + ' coins to attack! Alternatively, you can declare war this turn and then attack for free next turn.';
-	else
+	if (terr.defeatedByNation == player.nation && terr.defeatedByRound == gameObj.round) {
+		return "This territory has just been conquered.";
+	}
+	if (terr.attackedByNation == player.nation && terr.attackedRound == gameObj.round) {
+		return "This territory has already been attacked.";
+	}
+	if (terr.owner == player.nation)
+		return '';
+	var cost = costToAttack(terr);
+	if (cost > 0) {
+		if (terr.treatyStatus == 0)
+			return 'This will cost you ' + cost + ' coins to attack, because you were not at war at the beginning of the turn. You can attack for free next turn.';
+		else
+			return 'This will cost you ' + cost + ' coins to attack! Alternatively, you can declare war this turn and then attack for free next turn.';
+	} else
 		return '';
 }
-function costToAttack(type, terr, gameObj, player) {
-	if (terr.treatyStatus == 1)
+function costToAttack(terr) {
+	if (terr.treatyStatusAtStart == 1)
 		return 5;
-	if (terr.treatyStatus == 2)
+	if (terr.treatyStatusAtStart == 2)
 		return 10;
-	if (terr.treatyStatus == 3)
+	if (terr.treatyStatusAtStart == 3)
 		return 15;
 	return 0;
 }
@@ -631,373 +1007,45 @@ function highlightCapital(nation) {
 }
 function whiteoutScreen() {
 	var e = document.getElementById('whiteOut');
-	if(e) {
-		e.className='on';
-		e.style.display='block';
-		e.style.transition='all 1s ease';
-		setTimeout(function() { e.className='fadeOut'; }, 100);
-		setTimeout(function() { e.style.display='none'; }, 1100);
+	if (e) {
+		e.className = 'on';
+		e.style.display = 'block';
+		e.style.transition = 'all 1s ease';
+		setTimeout(function () { e.className = 'fadeOut'; }, 100);
+		setTimeout(function () { e.style.display = 'none'; }, 1100);
 	}
 }
 function shakeScreen() {
 	windowScrollBy(10, 10);
-	setTimeout(function() { windowScrollBy(-10, -10); }, 50);
-	setTimeout(function() { windowScrollBy(10, 10); }, 100);
-	setTimeout(function() { windowScrollBy(-10, -10); }, 150);
+	setTimeout(function () { windowScrollBy(-10, -10); }, 50);
+	setTimeout(function () { windowScrollBy(10, 10); }, 100);
+	setTimeout(function () { windowScrollBy(-10, -10); }, 150);
 }
 function windowScrollBy(x, y) {
 	window.scrollBy(x, y);
 }
-function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPlayer) {
-	if (!gameObj)
-		console.log('!!!! no gameObj!!');
-	if (!superpowersData)
-		console.log('!!!! no superpowersData!!');
-
-	var unitCount = 0;
-	var highestPiece = 0;
-	var adCount = 0;
-	terr.generalFlg = false;
-	terr.leaderFlg = false;
-	var attStrength = 0;
-	var defStrength = 0;
-	var cargoUnits = 0;
-	var cargoSpace = 0;
-	var amphibAtt = 0;
-	var factoryCount = 0;
-	var superBC = false;
-	var shipAttack = 0;
-	var shipDefense = 0;
-	var transportCount = 0;
-	var transportCargo = 0;
-	var transportSpace = 0;
-	var carrierCargo = 0;
-	var carrierSpace = 0;
-	var destroyerCount = 0;
-	var bomberCount = 0;
-	var paratrooperCount = 0;
-	var infParatrooperCount = 0;
-	var cargoTypeUnits = 0; // groundUnits & fighters
-	var unloadedCargo = [];
-	var strandedCargo = [];
-	var superBSStats = '';
-	var defendingFighterId = 0;
-	var battleshipAACount = 0;
-	var cobraCount = 0;
-
-	var unitHash = {};
-	var unitIdHash = {};
-	var flagHash = {};
-	flagHash[terr.owner] = 1;
-	var pieces = [];
-	var nukeCount = 0;
-	var unitOwner = 0;
-	var groundForce = 0;
-	var anyPiece = 0;
-	var includesCargoFlg = false;
-	var totalUnitCount = 0;
-	var leaderOwner = terr.owner;
-	var enemyPiecesExist = false;
-	var units = [];
-	var movableTroopCount = 0;
+function getTerrOfUnitId(id, gameObj) {
+	var terrId = 0;
 	gameObj.units.forEach(function (unit) {
-		if (unit.terr == terr.id && !unit.dead) {
-			units.push(unit);
-			if (currentPlayer && unit.owner != terr.owner && !enemyPiecesExist) {
-				if (currentPlayer.treaties[unit.owner - 1] == 0)
-					enemyPiecesExist = true;
-			}
-			if (unit.moveAtt > 0 && unit.owner == yourPlayer.nation)
-				movableTroopCount++;
-			totalUnitCount++;
-			if (unit.piece == 9)
-				battleshipAACount++;
-			if (unit.subType == 'fighter')
-				defendingFighterId = unit.piece;
-			if (unit.piece > anyPiece)
-				anyPiece = unit.piece;
-			flagHash[unit.owner] = 1;
-			if (unit.cargoOf && unit.cargoOf > 0)
-				includesCargoFlg = true;
-			if (currentPlayer && unit.type == 3 && unit.owner == currentPlayer.nation)
-				gameObj.loadBoatsFlg = true;
-			//			if (cleanDice)
-			//				unit.dice = [];
-			if (unit.def > 0)
-				pieces.push(unit.piece);
-			if (terr.id < 79 && unit.cargoOf && unit.cargoOf > 0)
-				paratrooperCount++;
-			if (terr.id < 79 && unit.cargoOf && unit.cargoOf > 0 && unit.piece == 2)
-				infParatrooperCount++;
-
-			var sp = '';
-			if (unit.owner != terr.owner)
-				sp = ' (' + superpowersData.superpowers[unit.owner] + ')';
-			var unitName = superpowersData.units[unit.piece].name + sp;
-			var count = unitHash[unitName] || 0;
-			count++;
-			unitHash[unitName] = count;
-
-			var unitName2 = superpowersData.units[unit.piece].name;
-			var count2 = unitIdHash[unit.piece] || 0;
-			count2++;
-			unitIdHash[unit.piece] = count2;
-
-			attStrength += unit.att;
-			defStrength += unit.def;
-			if (unitOwner > 0 && unitOwner != terr.owner && unit.owner == terr.owner)
-				unitOwner = terr.owner;
-			if (unitOwner == 0)
-				unitOwner = unit.owner;
-			if (unit.piece == 50)
-				cobraCount++;
-			if (unit.piece == 7 || unit.piece == 50)
-				bomberCount++;
-			if (unit.piece == 12) {
-				superBC = true;
-				adCount += unit.adCount;
-				var stats = [];
-				stats.push('Name: ' + unit.sbName || unit.name);
-				stats.push('Attack: ' + unit.att);
-				stats.push('Defend: ' + unit.def);
-				stats.push('# att: ' + unit.numAtt);
-				stats.push('# def: ' + unit.numDef);
-				stats.push('Air Defense: ' + unit.adCount);
-				stats.push('HP: ' + unit.bcHp);
-				stats.push('Damage: ' + unit.damage);
-				superBSStats = stats.join('\n');
-			}
-			if (unit.piece == 2 || unit.piece == 3)
-				groundForce += unit.att;
-			if (isUnitAirDefense(unit))
-				adCount++;
-			if (unit.piece == 40)
-				adCount++; // 2 for this piece
-			if (unit.piece == 15 || unit.piece == 19)
-				factoryCount++;
-			if (unit.piece == 4) {
-				transportCount++;
-				transportSpace += 4;
-			}
-			if (unit.piece == 45) {
-				transportCount++;
-				transportSpace += 4;
-			}
-			if (unit.piece == 49) {
-				transportCount++;
-				transportSpace++;
-			}
-			if (unit.piece == 8 && unit.owner == terr.owner) {
-				carrierSpace += 2;
-			}
-			if (unit.subType == 'fighter' && unit.owner == terr.owner)
-				carrierCargo++;
-			if (unit.subType == 'vehicle')
-				transportCargo += 2;
-			if (unit.subType == 'soldier')
-				transportCargo++;
-			if (unit.piece > highestPiece && (terr.nation < 99 || unit.type == 3 || unit.type == 4))
-				highestPiece = unit.piece;
-			if (terr.nation == 99) {
-				if (unit.subType == 'fighter' && unit.cargoOf > 0) {
-					var carrierTerr = getTerrOfUnitId(unit.cargoOf);
-					if (carrierTerr > 0 && unit.terr != carrierTerr) {
-						showAlertPopup('Unloaded Fighter. Fixing.');
-						unit.terr = carrierTerr;
-					}
-				}
-				if (unit.type == 1 || unit.subType == 'fighter') {
-					cargoTypeUnits++;
-					if (unit.terr == terr.id)
-						strandedCargo.push(unit);
-				}
-				if (unit.type == 1 || unit.type == 2) {
-					if (numberVal(unit.cargoOf) == 0) {
-						unloadedCargo.push(unit);
-					}
-				}
-				if (unit.type == 3)
-					cargoSpace += unit.cargoSpace;
-				if (unit.type == 3 || unit.type == 2) {
-					shipAttack += unit.att;
-					shipDefense += unit.def;
-				}
-				if (unit.type == 1) {
-					amphibAtt += unit.att;
-					cargoUnits += unit.cargoUnits;
-				}
-			}
-			if (unit.piece == 27)
-				destroyerCount++;
-			if (unit.piece == 14)
-				nukeCount++;
-			if (unit.piece == 10)
-				terr.generalFlg = true;
-			if (unit.piece == 28)
-				includesCargoFlg = true; //show medic details
-			if (unit.piece == 11) {
-				leaderOwner = unit.owner;
-				terr.leaderFlg = true;
-			}
-			if (unit.piece != 13 && unit.piece != 15 && unit.piece != 19 && unit.piece != 44)
-				unitCount++;
-		}
+		if (unit.id == id)
+			terrId = unit.terr;
 	});
-	terr.units = units;
-	terr.movableTroopCount = movableTroopCount;
-	if (terr.defeatedByNation > 0 && numberVal(terr.defeatedByRound) < gameObj.round - 1) {
-		terr.defeatedByNation = 0;
-	}
-	terr.enemyPiecesExist = enemyPiecesExist;
-	terr.totalUnitCount = totalUnitCount;
-	terr.battleshipAACount = battleshipAACount;
-	/*	if (unitOwner > 0 && terr.owner == 0)
-			terr.owner = unitOwner;*/
-	if (unitOwner > 0 && unitOwner != terr.owner && terr.id >= 79)
-		terr.owner = unitOwner;
-	if (factoryCount > 1 && terr.facBombed)
-		terr.facBombed = false;
-	if (gameObj.airDefenseTech[terr.owner] && terr.id < 79)
-		adCount++;
-	terr.defendingUnits = pieces.join('+');
-	var results = [];
-	var militaryUnits = [];
-	var keys = Object.keys(unitHash);
-	for (x = 0; x < keys.length; x++) {
-		var piece = keys[x];
-		results.push(unitHash[piece] + ' ' + piece);
-	}
-	var keys2 = Object.keys(unitIdHash);
-	for (x = 0; x < keys2.length; x++) {
-		var piece = keys2[x];
-		var amount = unitIdHash[piece];
-		militaryUnits.push({ 'name': superpowersData.units[piece].name, amount: amount, piece: piece, owner: leaderOwner });
-	}
-	var keys3 = Object.keys(flagHash);
-	var flags = [];
-	for (x = 0; x < keys3.length; x++) {
-		var k = keys3[x];
-		flags.push(k);
-	}
-	terr.cobraCount = cobraCount;
-	terr.flags = flags;
-	terr.showUnitDetailFlg = (includesCargoFlg || flags.length > 1);
-	terr.cargoTypeUnits = cargoTypeUnits;
-	terr.unloadedCargo = unloadedCargo;
-	terr.infParatrooperCount = infParatrooperCount;
-	terr.paratrooperCount = paratrooperCount;
-	terr.transportCargo = transportCargo;
-	terr.transportSpace = transportSpace;
-	terr.carrierCargo = carrierCargo;
-	terr.carrierSpace = carrierSpace;
-	terr.destroyerCount = destroyerCount;
-	terr.superBC = superBC;
-
-	terr.nukeCount = nukeCount;
-	terr.shipAttack = shipAttack;
-	terr.shipDefense = shipDefense;
-	terr.transportCount = transportCount;
-	terr.factoryCount = factoryCount;
-	terr.bomberCount = bomberCount;
-	terr.amphibAtt = amphibAtt;
-	terr.cargoUnits = cargoUnits;
-	terr.cargoSpace = cargoSpace;
-	terr.attStrength = attStrength;
-	terr.defStrength = defStrength;
-	terr.expectedLosses = parseInt(terr.defStrength / 6);
-	terr.groundForce = groundForce;
-	terr.adCount = adCount;
-	terr.unitCount = unitCount;
-
-	var status = 1;
-	if (yourPlayer && yourPlayer.nation > 0)
-		status = treatyStatus(yourPlayer, terr.owner);
-
-	var showDetailsFlg = (gameObj.fogOfWar != 'Y' || status > 2);
-
-	if (strandedCargo.length == 0)
-		terr.strandedCargo = [];
-	if (terr.id >= 79 && terr.cargoTypeUnits > 0) {
-		if (terr.cargoTypeUnits == terr.unitCount)
-			terr.strandedCargo = strandedCargo;
-		else if (terr.cargoUnits > terr.cargoSpace)
-			terr.strandedCargo = strandedCargo;
-	}
-	var flag = flagOfOwner(terr.owner, terr, showDetailsFlg, totalUnitCount, terr.defeatedByNation, terr.nuked, terr.attackedByNation);
-	terr.flag = flag;
-	if (gameObj.historyMode) {
-		terr.flag = flagOfOwner(terr.histOwner, terr, false, totalUnitCount, terr.histDefeatedByNation, terr.histNuked, terr.attackedByNation);
-		return;
-	}
-
-	var userName = 'Neutral';
-	if (terr.owner > 0) {
-		var player = playerOfNation(terr.owner, gameObj);
-		if (!gameObj.multiPlayerFlg && !player.cpu && gameObj.currentNation == terr.owner) {
-			status = 3; // all humans can see
+	return terrId;
+}
+function checkCargoForTerr(terr, gameObj) {
+	for (var x = 0; x < terr.units.length; x++) {
+		var unit = terr.units[x];
+		if (unit.cargo && unit.cargo.length > 0) {
+			cargo = [];
+			for (var c = 0; c < unit.cargo.length; c++) {
+				var cargoUnit = unit.cargo[c];
+				var tid = getTerrOfUnitId(cargoUnit.id, gameObj);
+				if (tid == unit.terr)
+					cargo.push(cargoUnit);
+			}
+			unit.cargo = cargo;
 		}
-		if (player && player.userName) {
-			userName = player.userName;
-			terr.shieldTech = player.tech[18];
-		}
-		if (!player.tech[2])
-			defendingFighterId = 0;
-
-		cleanupTerr(terr, player);
 	}
-
-	terr.fogOfWar = (gameObj.fogOfWar == 'Y' && numberVal(status) < 3);
-	if (terr.fogOfWar)
-		results = ['-fog of war-'];
-	var unitStr = (terr.unitCount == 1) ? 'unit' : 'units';
-	if (factoryCount == 0 && defendingFighterId > 0)
-		defendingFighterId = 0;
-	terr.defendingFighterId = defendingFighterId;
-	terr.militaryUnits = results;
-	terr.militaryUnits2 = militaryUnits;
-	if (terr.factoryCount == 1) {
-		if (adCount == 0)
-			highestPiece = 100;
-		if (adCount == 1)
-			highestPiece = 101;
-		if (adCount == 2)
-			highestPiece = 102;
-		if (adCount > 2)
-			highestPiece = 104;
-	}
-	if (terr.factoryCount > 1) {
-		if (adCount == 0)
-			highestPiece = 110;
-		if (adCount == 1)
-			highestPiece = 111;
-		if (adCount == 2)
-			highestPiece = 112;
-		if (adCount > 2)
-			highestPiece = 113;
-	}
-	if (terr.facBombed)
-		highestPiece = 103;
-	if (terr.superBC)
-		highestPiece = 12;
-	if (highestPiece == 0)
-		highestPiece = anyPiece;
-	if (highestPiece == 0 && terr.unitCount > 0) {
-		highestPiece = (terr.nation < 99) ? 2 : 4;
-		console.log('ERROR!!!!! highestPiece==0!!', terr);
-	}
-	terr.piece = highestPiece;
-	var obj = getTerritoryType(yourPlayer, terr);
-	terr.territoryType = obj.territoryType;
-	terr.treatyStatus = obj.status;
-	terr.isAlly = obj.isAlly;
-	terr.enemyForce = getEnemyForceForTerr(terr, gameObj);
-	terr.displayUnitCount = getDisplayUnitCount(terr, gameObj.fogOfWar, gameObj.hardFog)
-	var titleUnitCount = unitCount;
-	if (terr.fogOfWar)
-		titleUnitCount = terr.displayUnitCount;
-	terr.title = terr.name + ' (' + titleUnitCount + ' ' + unitStr + ')\n-' + userName + '-\n' + results.join('\n');
-	if (superBC)
-		terr.title += '\n' + superBSStats;
 }
 function isUnitGoodForForm(segmentIdx, type, subType) {
 	if (segmentIdx == 3 && type != 3) // special
@@ -1119,6 +1167,7 @@ function getDisplayQueueFromQueue(terr, gameObj) {
 	return queue;
 }
 function updateAdvisorInfo(terr, currentPlayer, user, gameObj, superpowers) {
+
 	var strategyHint = '';
 	if (currentPlayer.status == 'Purchase' && terr.treatyStatus == 4 && user.rank <= 3) {
 		strategyHint = "Time to build troops. Buy your desired units, close this panel and then press 'Purchase Complete'.";
@@ -1155,6 +1204,9 @@ function updateAdvisorInfo(terr, currentPlayer, user, gameObj, superpowers) {
 	if (terr.treatyStatus == 3 && terr.owner > 0) {
 		strategyHint = superpowers[terr.owner] + ' is our trust ally.';
 	}
+	var hostileMessage = populateHostileMessage('home', terr, gameObj, currentPlayer);
+	if (hostileMessage.length > 0)
+		strategyHint = hostileMessage;
 	terr.strategyHint = strategyHint;
 }
 function displayLeaderAndAdvisorInfo(terr, currentPlayer, yourPlayer, user, gameObj, superpowers) {
@@ -1221,7 +1273,7 @@ function warMessageForNation(nation) {
 		'The armies of mother Russia never surrender! We will defeat you even if it kills every one of us!',
 		'You have brought great dishonor to your corrupt nation and to your greedy people. Prepare for defeat!',
 		'The people\'s cannon is pointed at your hearts! Surrender now or we will point it at your heads!',
-		'Prepare for jihad! We will attack you with a million strikes of total destruction.',
+		'Prepare for jihad! First we will attack you with a million strikes of total destruction. Then we will make more threats!',
 		'We tried to bring peace to your nation, but have failed. Now we must kill you.',
 		'Please send us the coordinates of your leadership bunker. Guided missiles have already been launched!',
 	];
@@ -1281,9 +1333,12 @@ function getTerritoryType(player, terr) {
 	var territoryType = 'n/a';
 	var isAlly = false;
 	var status = -1;
+	var statusAtStart = -1;
 	if (player) {
 		if (terr.owner > 0 && (terr.nation < 99 || terr.unitCount > 0)) {
 			status = treatyStatus(player, terr.owner);
+			if (player.treatiesAtStart && player.treatiesAtStart.length >= player.nation && player.nation > 0)
+				statusAtStart = player.treatiesAtStart[player.nation - 1];
 			isAlly = (status >= 3);
 			if (status == 0)
 				territoryType = 'War!';
@@ -1303,7 +1358,7 @@ function getTerritoryType(player, terr) {
 		if (terr.nation > 0 && terr.nation < 99 && terr.owner == 0)
 			territoryType = 'Independent';
 	}
-	var obj = { territoryType: territoryType, isAlly: isAlly, status: status };
+	var obj = { territoryType: territoryType, isAlly: isAlly, status: status, statusAtStart: statusAtStart };
 	return obj;
 }
 function playerOfNation(nation, gameObj) {

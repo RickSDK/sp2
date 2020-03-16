@@ -1,21 +1,19 @@
 <!------------------action buttons----------------------------->
 <div class="terr-card">
-    <div style="color: white;">Action Panel [{{optionType}}]</div>
+    <div style="color: white;">Action Panel</div>
     <div *ngIf="currentPlayer.status != 'Purchase'" style="background-color: #ccc; color: black;">
-
-        <button *ngIf="optionType!='home' && optionType!='units'" (click)="changeOptionType('home')" id="" type="button"
-            class="btn btn-primary roundButton"><i class="fa fa-arrow-left"></i>
-            Back</button>
+        <div *ngIf="hostileMessage.length>0" style="background-color: yellow; color: red; font-weight: 700;"><i
+                class="fa fa-exclamation-triangle"></i> {{hostileMessage}}</div>
 
         <!-- troop movement-->
         <div
-            *ngIf="optionType=='home' && (selectedTerritory.treatyStatus>=3 || (selectedTerritory.nation==99 && selectedTerritory.unitCount==0))">
+            *ngIf="(selectedTerritory.treatyStatus>=3 || (selectedTerritory.nation==99 && selectedTerritory.unitCount==0))">
             <div *ngIf="0" style="font-size: 10px;">-Troop Movement-</div>
-            <button (click)="changeOptionType('movement')" id="" type="button" class="btn btn-success roundButton"><i
+            <button [disabled]="optionType=='movement'" (click)="changeOptionType('movement')" type="button" class="btn btn-success roundButton"><i
                     class="fa fa-arrow-down"></i>&nbsp; <span ng-hide="loadingFlg">Move Here</span><span
                     *ngIf="loadingFlg" style="color: white; font-size: 14px;"><i class="fa fa-spinner fa-spin"></i>
                     Loading...</span></button>
-            <button *ngIf="selectedTerritory.treatyStatus==4 && selectedTerritory.nation==99"
+            <button [disabled]="optionType=='movement'" *ngIf="selectedTerritory.treatyStatus==4 && selectedTerritory.nation==99"
                 (click)="changeOptionType('movement')" id="" type="button" class="btn btn-success roundButton"><i
                     class="fa fa-ship"></i>&nbsp; <span ng-hide="loadingFlg">Load Ships</span><span *ngIf="loadingFlg"
                     style="color: white; font-size: 14px;"><i class="fa fa-spinner fa-spin"></i>
@@ -33,24 +31,23 @@
 
         <!---- attack buttons-->
         <div
-            *ngIf="optionType=='home' && selectedTerritory.treatyStatus <= 2 && (selectedTerritory.unitCount>0 || selectedTerritory.nation<99)">
+            *ngIf="selectedTerritory.treatyStatus <= 2 && (selectedTerritory.unitCount>0 || selectedTerritory.nation<99)">
             <div *ngIf="0" style="font-size: 10px;">-Attack-</div>
-            <button (click)="changeOptionType('attack')" type="button" class="btn btn-danger roundButton">
+            <button (click)="changeOptionType('attack')" [disabled]="optionType=='attack'" type="button" class="btn btn-danger roundButton">
                 <i class="fa fa-crosshairs" style="font-size: 28px;"></i><br>Attack</button>
-            <button *ngIf="currentPlayer.nukes" (click)="changeOptionType('nuke')" type="button"
+            <button *ngIf="currentPlayer.nukes" [disabled]="optionType=='nuke'" (click)="changeOptionType('nuke')" type="button"
                 class="btn btn-danger roundButton"><img src="assets/graphics/misc/nuke.png" height="30"
                     class="shadowedWhite" /><br>Nuke</button>
-            <button *ngIf="currentPlayer.cruiseButton" (click)="changeOptionType('cruise')" type="button"
+            <button *ngIf="currentPlayer.cruiseButton" [disabled]="optionType=='cruise'" (click)="changeOptionType('cruise')" type="button"
                 class="btn btn-danger roundButton"><img src="assets/graphics/misc/cruiseMissile.png" height="30"
-                class="shadowedWhite"/>
+                    class="shadowedWhite" />
                 <br>Cruise Missile</button>
-            <button *ngIf="selectedTerritory.factoryCount>0"
-                (click)="changeOptionType('bomb')" type="button" class="btn btn-danger roundButton">
-                <img src="assets/graphics/units/piece7u.png" height="30" class="shadowedWhite"/>
+            <button *ngIf="selectedTerritory.factoryCount>0" [disabled]="optionType=='bomb'" (click)="changeOptionType('bomb')" type="button"
+                class="btn btn-danger roundButton">
+                <img src="assets/graphics/units/piece7u.png" height="30" class="shadowedWhite" />
                 <br>Strategic
                 Bomb</button>
         </div>
-
         <!---- allies buttons-->
         <div *ngIf="optionType=='home' && (currentPlayer.hasAllies)">
             <div style="font-size: 10px;">-Allies-</div>
@@ -77,7 +74,7 @@
 
 
         <button *ngIf="optionType=='attack'" (click)="infoFlg = !infoFlg" id="" type="button"
-            class="btn btn-secondary roundButton"><i class="fa fa-info-circle"></i> Info</button>
+            class="btn btn-secondary roundButton"><i class="fa fa-info-circle"></i> Battle Info</button>
 
         <!------------------ally seconday buttons----------------------------->
         <div *ngIf="optionType=='transferTo'" class="borderClass2">
@@ -127,6 +124,7 @@
                 units will be the last to be killed off.
             <li> Check each unit description for special abilities that each unit might have.
         </div>
+        <div *ngIf="optionType!='home'" class="blueBgWhite">{{optionType}}</div>
 
 
     </div>

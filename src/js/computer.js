@@ -252,3 +252,304 @@ function moveAFewUnitsFromTerrToTerr(terr, toTerr, player, gameObj) {
     });
     return obj;
 }
+function findPrimaryTarget(gameObj, player) {
+    if (player.requestedTarget && player.requestedTarget > 0)
+        return player.requestedTarget;
+    var target = 0;
+    if (player.nation == 1)
+        target = findNextPrimaryTargetForPlayer(player, [1, 2, 3, 4, 5], gameObj);
+    if (player.nation == 2)
+        target = findNextPrimaryTargetForPlayer(player, [7, 12, 8, 9, 62], gameObj);
+    if (player.nation == 3)
+        target = findNextPrimaryTargetForPlayer(player, [13, 14, 15, 16, 17, 18, 19, 20], gameObj);
+    if (player.nation == 4)
+        target = findNextPrimaryTargetForPlayer(player, [21, 24, 25, 23, 22], gameObj);
+    if (player.nation == 5)
+        target = findNextPrimaryTargetForPlayer(player, [28, 70, 29, 30, 31, 34], gameObj);
+    if (player.nation == 6)
+        target = findNextPrimaryTargetForPlayer(player, [35, 37, 40, 41, 36, 38, 39], gameObj);
+    if (player.nation == 7)
+        target = findNextPrimaryTargetForPlayer(player, [42, 44, 43, 45, 46, 47, 48, 49], gameObj);
+    if (player.nation == 8)
+        target = findNextPrimaryTargetForPlayer(player, [50, 55, 54, 53, 52, 51], gameObj);
+    return target;
+}
+function findNextPrimaryTargetForPlayer(player, ids, gameObj) {
+    for (var x = 0; x < ids.length; x++) {
+        var terr = gameObj.territories[ids[x] - 1];
+        if (terr.owner != player.nation) {
+            return ids[x];
+        }
+    }
+    return 0;
+}
+function findSecondaryTarget(gameObj, player) {
+    var targets = [1, 7, 13, 21, 28, 35, 42, 50];
+    var min = 7;
+    var minId = 0;
+    for (var x = 0; x < targets.length; x++) {
+        var t = gameObj.territories[targets[x] - 1];
+        if (t.owner != player.nation && okToAttack(player, t, gameObj)) {
+            var dist = landDistFromTerr(player.mainBaseID, t.id, 0, gameObj);
+            if (dist < min) {
+                min = dist;
+                minId = t.id;
+            }
+            if (dist <= 3) {
+                player.secondaryTargetId = t.id;
+                return t.id;
+            }
+        }
+    }
+    return minId;
+}
+function findFortification(gameObj, player) {
+    if (player.requestedHotSpot && player.requestedHotSpot > 0)
+        return player.requestedHotSpot;
+    if (player.primaryTargetId > 0) {
+        var target = findClosestTerr(gameObj, player, player.primaryTargetId);
+        if (target > 0)
+            return target;
+    }
+    if (player.secondaryTargetId > 0) {
+        var target = findClosestTerr(gameObj, player, player.secondaryTargetId);
+        if (target > 0)
+            return target;
+    }
+    return player.mainBaseID;
+}
+function findClosestTerr(gameObj, player, primaryTargetId) {
+    var min = 9;
+    var minId = 0;
+    player.territories.forEach(function (terr) {
+        var dist = landDistFromTerr(terr.id, primaryTargetId, 0, gameObj);
+        if (dist < min) {
+            min = dist;
+            minId = terr.id;
+        }
+    });
+    return minId;
+}
+function okToAttack(player, terr, gameObj) {
+    if (terr.owner == 0)
+        return true;
+    if (terr.nation == 99 && terr.unitCount == 0)
+        return true;
+    if (player.nation == terr.owner)
+        return false;
+    if (gameObj.round < gameObj.attack)
+        return false;
+    if (gameObj.round == gameObj.attack) {
+        if (player.attackFlg)
+            return false;
+        var p2 = playerOfNation(terr.owner);
+        if (p2 && p2.defenseFlg)
+            return false;
+    }
+    if (terr.treatyStatus >= 2) {
+        return false;
+    }
+    return true;
+}
+function landDistFromTerr(terr1Id, terr2Id, dist, gameObj) {
+    if (terr1Id == 0 || terr2Id == 0) {
+        console.log('Whoa! landDistFromTerr');
+        return;
+    }
+    if (terr1Id == terr2Id)
+        return dist;
+    dist++;
+    if (dist >= 7)
+        return 7;
+
+    var terr = gameObj.territories[terr1Id - 1];
+    if (!terr)
+        return;
+    var min = 9;
+    if (!terr.land) {
+        return min;
+    }
+    terr.land.forEach(function (id) {
+        var d = landDistFromTerr(id, terr2Id, dist, gameObj)
+        if (d < min)
+            min = d;
+    });
+    return min;
+}
+function attemptToAttack(targetId, currentPlayer, gameObj) {
+
+    /*   var terr = gameObj.territories[targetId - 1];
+       terr.land.forEach(function (t) {
+           //       console.log(id, t);
+       });*/
+    var min = 5;
+    var closestTerr;
+    currentPlayer.territories.forEach(function (terr) {
+        var dist = landDistFromTerr(terr.id, targetId, 0, gameObj);
+        if (dist < min) {
+            min = dist;
+            closestTerr = terr;
+        }
+    });
+    var defendingTerr;
+    if (closestTerr && closestTerr.land.length > 0) {
+        closestTerr.land.forEach(function (t) {
+            var dist = landDistFromTerr(t, targetId, 0, gameObj);
+            if (dist < min) {
+                var ter = gameObj.territories[t - 1];
+                if (okToAttack(currentPlayer, ter, gameObj)) {
+                    min = dist;
+                    defendingTerr = ter;
+                }
+            }
+        });
+    }
+    return stageAttackBetweenTerritories(closestTerr, defendingTerr, currentPlayer);
+}
+function stageAttackBetweenTerritories(terr1, terr2, currentPlayer, limit = 99) {
+    var attackUnits = [];
+    var defUnits = [];
+    var attId = 0;
+    var defId = 0
+    var pieceId = 2;
+    if (terr1 && terr2) {
+        attId = terr1.id;
+        defId = terr2.id;
+        artCount = 0;
+        spotterCount = 0;
+        terr1.units.forEach(function (unit) {
+            if (unit.att > 0 && unit.mv > 0 && unit.movesLeft > 0 && unit.owner == currentPlayer.nation && limit > 0) {
+                var artFlg = isArtillery(unit);
+                if (artFlg && artCount >= spotterCount)
+                    return;
+                if (artFlg)
+                    artCount++;
+                else
+                    spotterCount++;
+                limit -= unit.att;
+                attackUnits.push(unit);
+                pieceId = unit.piece;
+            }
+        });
+        terr2.units.forEach(function (unit) {
+            if (unit.def > 0 && unit.mv > 0) {
+                defUnits.push(unit);
+            }
+        });
+    }
+    return { attackUnits: attackUnits, defUnits: defUnits, t1: attId, t2: defId, id: pieceId, terr: terr2, attTerr: terr1 };
+
+}
+function findGoodTargetForTerr(terr1, currentPlayer, gameObj) {
+    if (!terr1 || !terr1.land || terr1.land.length == 0)
+        return null;
+    var terr2;
+    terr1.land.forEach(function (t) {
+        var ter = gameObj.territories[t - 1];
+        if (okToAttack(currentPlayer, ter, gameObj))
+            terr2 = ter;
+    });
+    return terr2;
+}
+function fortifyThisTerritory(player, gameObj) {
+    var terr1 = gameObj.territories[player.hotSpotId - 1];
+    terr1.land.forEach(function (t) {
+        var ter = gameObj.territories[t - 1];
+        if (ter.owner == player.nation) {
+            var x = 0;
+            ter.units.forEach(function (unit) {
+                if (unit.att > 0 && unit.mv > 0 && unit.movesLeft > 0 && unit.owner == player.nation && x++ > 2)
+                    unit.terr = player.hotSpotId;
+            });
+        }
+    });
+}
+function findMainBaseTarget(gameObj, player) {
+    var terr1 = gameObj.territories[player.mainBaseID - 1];
+    var terr2 = findGoodTargetForTerr(terr1, player, gameObj);
+    return stageAttackBetweenTerritories(terr1, terr2, player, 99);
+}
+function findAmphibiousAttacks(gameObj, player) {
+    var obj = stageAttackBetweenTerritories(null, null, player, 0);
+    player.territories.forEach(function (terr) {
+        if (terr.transportSpace > 0 && (terr.id == 101 || terr.id == 110 || terr.id == 112 || terr.id == 141 || terr.id == 131 || terr.id == 118 || terr.id == 96 || terr.id == 98)) {
+            var homeBase = gameObj.territories[terr.homeBase - 1];
+            if (homeBase.groundForce > 0 && homeBase.owner == player.nation) {
+                obj = attemptAmbibiousLanding(player, homeBase, terr.enemyWater, terr.enemyZone, terr, gameObj, obj);
+                if (obj.t1 == 0)
+                    obj = attemptAmbibiousLanding(player, homeBase, terr.enemyWater2, terr.enemyZone2, terr, gameObj);
+            }
+        }
+    });
+    return obj;
+}
+function attemptAmbibiousLanding(player, homeBase, enemyWaterId, enemyZoneId, homeWaterTerr, gameObj, obj) {
+    var enemyWaterTerr = gameObj.territories[enemyWaterId - 1];
+    var enemyLandTerr = gameObj.territories[enemyZoneId - 1];
+    if (enemyWaterTerr.shipDefense > 0 && gameObj.round <= 6)
+        return obj;
+    if (enemyLandTerr.defStrength > homeBase.attStrength)
+        return obj;
+    if (enemyLandTerr.defStrength > homeWaterTerr.transportCount * 4)
+        return obj;
+
+    if (okToAttack(player, enemyLandTerr, gameObj)) {
+        obj = getAmphibiousAttackObj(player, homeBase, enemyWaterTerr, enemyLandTerr, homeWaterTerr, gameObj, obj);
+        return obj;
+    }
+    return obj;
+}
+function getAmphibiousAttackObj(player, homeBase, enemyWaterTerr, enemyLandTerr, homeWaterTerr, gameObj, obj) {
+    var attackUnits = [];
+    var defUnits = [];
+    var defSeaUnits = [];
+    var attackFleet = [];
+    var pieceId = 4;
+    var cargoSpace = homeWaterTerr.cargoSpace;
+
+    enemyLandTerr.units.forEach(function (unit) {
+        if (unit.def > 0) {
+            defUnits.push(unit);
+        }
+    });
+    enemyWaterTerr.units.forEach(function (unit) {
+        if (unit.type > 1) {
+            defSeaUnits.push(unit);
+        }
+    });
+    homeWaterTerr.units.forEach(function (unit) {
+        if (unit.owner == player.nation) {
+            attackFleet.push(unit);
+            if (enemyWaterTerr.unitCount == 0)
+                unit.terr = enemyWaterTerr.id;
+        }
+    });
+    homeBase.units.forEach(function (unit) {
+        if (unit.terr == homeBase.id && unit.att > 0 && unit.mv > 0 && unit.movesLeft > 0 && !unit.moving && (unit.piece == 2 || unit.piece == 3)) {
+            if (cargoSpace - unit.cargoUnits >= 0) {
+                attackUnits.push(unit);
+                pieceId = unit.piece;
+                cargoSpace -= unit.cargoUnits;
+            }
+        }
+    });
+
+    if (homeWaterTerr.shipAttack > enemyWaterTerr.shipDefense * 2 && attackUnits.length > 0 && attackFleet.length > 0 && attackUnits.length >= enemyLandTerr.unitCount) {
+        obj = stageAttackBetweenTerritories(homeBase, enemyLandTerr, player);
+        return {
+            attackUnits: attackUnits,
+            defUnits: defUnits,
+            t1: homeBase.id,
+            t2: enemyLandTerr.id,
+            id: pieceId,
+            terr: enemyLandTerr,
+            attTerr: homeBase,
+            ampFlg: enemyWaterTerr.unitCount > 0,
+            ampAttTerr: homeWaterTerr,
+            ampDefTerr: enemyWaterTerr,
+            ampAttUnits: attackFleet,
+            ampDefUnits: defSeaUnits
+        };
+    }
+    return obj;
+}

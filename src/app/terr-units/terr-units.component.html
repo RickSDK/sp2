@@ -39,7 +39,7 @@
                             *ngIf="unit.piece>0" src="{{ngUnitSrc(unit.piece, unit.nation)}}"
                             style="max-height: 20px; max-width: 40px; cursor: pointer;"
                             title="{{superpowersData.units[unit.piece].name}}">
-                        <img *ngFor="let cargo of unit.cargo" src="images/graphics/units/piece{{cargo.piece}}u.png"
+                        <img *ngFor="let cargo of unit.cargo" src="assets/graphics/units/piece{{cargo.piece}}u.png"
                             title="{{superpowersData.units[cargo.piece].name}}" height=10></div>
                     <img src="assets/graphics/images/flag{{unit.nation}}.gif" height="15"
                         title="{{superpowersData.superpowers[unit.owner]}}"> <i class="fa fa-hourglass-half"

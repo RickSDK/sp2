@@ -33,7 +33,7 @@ export class TerrAdviceComponent implements OnInit {
     playClick();
     var p2 = playerOfNation(this.selectedTerritory.owner, this.gameObj);
     changeTreaty(this.currentPlayer, p2, 0, this.gameObj, this.superpowersData.superpowers);
-    refreshTerritory(this.selectedTerritory, this.gameObj, this.superpowersData.units, this.currentPlayer, this.superpowersData.superpowers, this.currentPlayer);
+    refreshTerritory(this.selectedTerritory, this.gameObj, this.currentPlayer, this.superpowersData, this.currentPlayer);
     displayLeaderAndAdvisorInfo(this.selectedTerritory, this.currentPlayer, this.currentPlayer, this.user, this.gameObj, this.superpowersData.superpowers);
   }
   offerTreaty(type: number) {

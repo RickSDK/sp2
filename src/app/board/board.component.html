@@ -288,7 +288,7 @@
 <app-leader-message-popup #leaderMessagePopup></app-leader-message-popup>
 <app-loading-popup #loadingPopup></app-loading-popup>
 <app-message-popup #messagePopup></app-message-popup>
-<app-territory-popup #territoryPopup (messageEvent)="moveSpriteBetweenTerrs($event)"></app-territory-popup>
+<app-territory-popup #territoryPopup (messageEvent)="moveSpriteBetweenTerrs($event)" (battleHappened)="battleHappened($event)"></app-territory-popup>
 
 <app-game-info-popup #gameInfoPopup></app-game-info-popup>
 <app-game-players-popup #gamePlayersPopup></app-game-players-popup>

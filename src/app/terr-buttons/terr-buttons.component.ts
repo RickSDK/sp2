@@ -1,6 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 declare var playClick: any;
+declare var allowHostileAct: any;
+declare var populateHostileMessage: any;
+
 @Component({
   selector: 'app-terr-buttons',
   templateUrl: './terr-buttons.component.html',
@@ -14,13 +17,14 @@ export class TerrButtonsComponent implements OnInit {
   @Input('user') user: any;
   @Input('ableToTakeThisTurn') ableToTakeThisTurn: any;
   @Input('optionType') optionType: any;
+  @Input('hostileMessage') hostileMessage: any;
 
   @Output() messageEvent = new EventEmitter<string>();
-  
+
   public allyNation = 1;
   public infoFlg = false;
   public loadingFlg = false;
-   public allies = [];
+  public allies = [];
 
   constructor() { }
 
@@ -28,7 +32,9 @@ export class TerrButtonsComponent implements OnInit {
   }
   changeOptionType(type: string) {
     playClick();
-    this.optionType = type;
-    this.messageEvent.emit(type); 
+    if (allowHostileAct(type, this.selectedTerritory, this.currentPlayer, this.gameObj)) {
+      this.optionType = type;
+      this.messageEvent.emit(type);
+    }
   }
 }

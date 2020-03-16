@@ -1,4 +1,4 @@
-<div style="padding-left: 5px; font-size: 18px; font-weight: 700; text-align: left;">
+<!--<div style="padding-left: 5px; font-size: 18px; font-weight: 700; text-align: left;">
     {{terr.name}}
     <span style="float: right;">
         <span *ngIf="terr.movableTroopCount >= 2" style="font-size: 10px;">Select All
@@ -14,7 +14,7 @@
 </div>
 <hr style="padding: 0; margin: 5px;">
 <div *ngFor="let unit of terr.units" style="display: inline-block;">
-    <span *ngIf="checkMovement(terr.distObj, unit, optionType)">
+    <span *ngIf="checkMovement(terr.distObj, unit, optionType, currentPlayer, terr)">
         <div (click)="checkSendButtonStatus(unit)" class="squaredOne"
             style="display: inline-block; padding: 0; margin: 1px;">
             <input type="checkbox" value="None" id="{{'unit'+unit.id}}" name="check" />
@@ -47,3 +47,4 @@
     <span
         style="background-color: white; border: 1px solid black; font-size: 18px; padding: 1px;">{{selectedFormUnit.num}}</span>
 </div>
+-->

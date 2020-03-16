@@ -52,7 +52,7 @@ export class TerrTroopSelectComponent extends BaseComponent implements OnInit {
   constructor() { super(); }
 
   ngOnInit(): void {
-  }
+  }/*
   selectAllUnitsForTerr(terr: any) {
    // playClick();
    // selectAllUnits(terr, this.optionType, this.currentPlayer);
@@ -66,11 +66,11 @@ export class TerrTroopSelectComponent extends BaseComponent implements OnInit {
   }
   autoButtonPressed() {
     playClick();
-    autoButtonPressed(this.selectedTerritory, this.moveTerr);
+    autoButtonPressed(this.selectedTerritory, this.moveTerr, this.optionType, this.currentPlayer);
     this.checkSendButtonStatus(null);
   }
-  checkMovement(distObj: any, unit: any, optionType: string) {
-    return checkMovement(distObj, unit, optionType, this.currentPlayer);
+  checkMovement(distObj: any, unit: any, optionType: string, player:any, terr: any) {
+    return checkMovement(distObj, unit, optionType, player, this.selectedTerritory);
   }
   moveTroopsButtonPressed() {
     playClick();
@@ -111,5 +111,5 @@ export class TerrTroopSelectComponent extends BaseComponent implements OnInit {
     if (this.optionType == 'nuke')
       this.expectedLosses = obj.numNukes;
   }
-
+*/
 }

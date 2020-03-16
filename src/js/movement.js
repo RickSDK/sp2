@@ -1,8 +1,63 @@
+
+function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
+    //   if (unit.owner != currentPlayer.nation)
+    //       return false;
+    if (optionType == 'cruise') {
+        if (distObj.air > 1)
+            return false;
+        if (unit.piece != 5 && unit.piece != 9 && unit.piece != 12 && unit.piece != 39)
+            return false;
+        if (unit.piece != 39 && !currentPlayer.tech[7])
+            return false;
+
+        return true;
+    }
+    if (unit.movesLeft == 0)
+        return false;
+    if (unit.mv == 0)
+        return false;
+    if (optionType == 'attack' && unit.piece == 14)
+        return false;
+    if (optionType == 'nuke' && unit.subType != 'missile')
+        return false;
+    if (optionType == 'loadPlanes') {
+        if (unit.type == 1 && (!unit.cargoOf || unit.cargoOf == 0))
+            return true;
+        else
+            return false;
+    }
+    if (optionType == 'loadUnits') {
+        if (distObj.air == 0)
+            return true;
+    }
+    if (unit.type == 1 && unit.terr >= 79) {
+        if (distObj.air == 1)
+            return true;
+        else
+            return false;
+    }
+    if (optionType == 'movement' && unit.type == 1 && toTerr.nation == 99 && distObj.air > 1) {
+        return false; // cargo
+    }
+    if (optionType == 'movement' && unit.type == 2 && toTerr.nation == 99 && unit.cargoOf > 0) {
+        return false; // fighters
+    }
+    if (optionType == 'movement' && distObj.land == 0)
+        return false;
+    var movement = (optionType == 'attack' || optionType == 'bomb' || optionType == 'nuke') ? unit.moveAtt : unit.mv;
+    if (unit.type == 1 && distObj.land <= movement)
+        return true;
+    if ((unit.type == 2 || unit.type == 4 || unit.subType == 'missile') && distObj.air <= movement)
+        return true;
+    if (unit.type == 3 && distObj.sea <= movement - numberVal(unit.movesTaken))
+        return true;
+    return false;
+}
 function selectAllUnits(terr, optionType, currentPlayer) {
     var checked = document.getElementById('ter' + terr.id).checked;
     for (var x = 0; x < terr.units.length; x++) {
         var unit = terr.units[x];
-        var cm = checkMovement(terr.distObj, unit, optionType, currentPlayer);
+        var cm = checkMovement(terr.distObj, unit, optionType, currentPlayer, terr);
         var e = document.getElementById('unit' + unit.id);
         if (e && cm && unit.piece != 13)
             e.checked = checked;
@@ -32,10 +87,59 @@ function moveSelectedUnits(moveTerr, selectedTerritory) {
                 piece = unit.piece;
                 unit.terr = selectedTerritory.id;
                 unit.movesLeft = 0;
+                if ((unit.type == 1 || unit.type == 2) && selectedTerritory.nation == 99)
+                    findTransportForThisCargo(unit, selectedTerritory);
+                if (unit.cargo && unit.cargo.length > 0)
+                    moveCargoWithThisUnit(unit, terr);
             }
         }
     }
     return { t1: terr1Id, t2: selectedTerritory.id, id: piece };
+}
+function moveCargoWithThisUnit(unit, terr) {
+    for (var u = 0; u < terr.units.length; u++) {
+        var cargo = terr.units[u];
+        if (cargo.cargoOf && cargo.cargoOf == unit.id) {
+            cargo.terr = unit.terr;
+        }
+    }
+}
+function findTransportForThisCargo(unit, terr) {
+    unit.movesLeft = 2;
+    if (unit.piece == 10 || unit.piece == 11 || unit.piece == 13) {
+        var bestShip;
+        for (var u = 0; u < terr.units.length; u++) {
+            var ship = terr.units[u];
+            if (ship.type == 3 && (!bestShip || ship.cas > bestShip.cas))
+                bestShip = ship;
+        }
+        loadThisUnitOntoThisTransport(unit, bestShip);
+        return;
+    }
+    for (var u = 0; u < terr.units.length; u++) {
+        var transport = terr.units[u];
+        if (transport.piece != 8 && unit.type == 1 && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits) {
+            loadThisUnitOntoThisTransport(unit, transport);
+            return;
+        }
+    }
+    for (var u = 0; u < terr.units.length; u++) {
+        var transport = terr.units[u];
+        if (transport.piece == 8 && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits) {
+            loadThisUnitOntoThisTransport(unit, transport);
+            return;
+        }
+    }
+}
+function loadThisUnitOntoThisTransport(unit, transport) {
+    if (!transport.cargoLoadedThisTurn)
+        transport.cargoLoadedThisTurn = 0;
+    transport.cargoUnits += unit.cargoUnits;
+    transport.cargoLoadedThisTurn += unit.cargoUnits;
+    unit.cargoOf = transport.id;
+    if (!transport.cargo)
+        transport.cargo = [];
+    transport.cargo.push({ id: unit.id, piece: unit.piece, cargoUnits: unit.cargoUnits });
 }
 function refreshBoardFromMove(moveTerr, selectedTerritory, gameObj, superpowersData, currentPlayer) {
     for (var x = 0; x < moveTerr.length; x++) {
@@ -43,52 +147,6 @@ function refreshBoardFromMove(moveTerr, selectedTerritory, gameObj, superpowersD
         refreshTerritory(terr, gameObj, currentPlayer, superpowersData, currentPlayer);
     }
     refreshTerritory(selectedTerritory, gameObj, currentPlayer, superpowersData, currentPlayer);
-}
-function checkMovement(distObj, unit, optionType, currentPlayer) {
-    //   if (unit.owner != currentPlayer.nation)
-    //       return false;
-    if (optionType == 'cruise') {
-        if (distObj.air > 1)
-            return false;
-        if (unit.piece != 5 && unit.piece != 9 && unit.piece != 12 && unit.piece != 39)
-            return false;
-        if (unit.piece != 39 && !currentPlayer.tech[7])
-            return false;
-
-        return true;
-    }
-    if (unit.movesLeft == 0)
-        return false;
-    if (optionType == 'attack' && unit.piece == 14)
-        return false;
-    if (optionType == 'nuke' && unit.subType != 'missile')
-        return false;
-    if (optionType == 'loadPlanes') {
-        if (unit.type == 1 && (!unit.cargoOf || unit.cargoOf == 0))
-            return true;
-        else
-            return false;
-    }
-    if (optionType == 'loadUnits') {
-        if (distObj.air == 0)
-            return true;
-    }
-    if (unit.type == 1 && unit.terr >= 79) {
-        if (distObj.air == 1)
-            return true;
-        else
-            return false;
-    }
-    if (optionType == 'movement' && distObj.land == 0)
-        return false;
-    var movement = (optionType == 'attack' || optionType == 'bomb' || optionType == 'nuke') ? unit.moveAtt : unit.mv;
-    if (unit.type == 1 && distObj.land <= movement)
-        return true;
-    if ((unit.type == 2 || unit.type == 4 || unit.subType == 'missile') && distObj.air <= movement)
-        return true;
-    if (unit.type == 3 && distObj.sea <= movement - numberVal(unit.movesTaken))
-        return true;
-    return false;
 }
 function expectedHitsFromStrength(strength) {
     if (strength >= 18)
@@ -106,7 +164,7 @@ function showUnitsForMovementBG2(optionType, gameObj, currentPlayer, totalMoveTe
         terr.distObj = distanceBetweenTerrs(terr, selectedTerritory, maxDist, 0, 0, 0, allyHash, gameObj.territories);
         var moveUnits = 0;
         terr.units.forEach(function (unit) {
-            if (checkMovement(terr.distObj, unit, optionType, currentPlayer))
+            if (checkMovement(terr.distObj, unit, optionType, currentPlayer, selectedTerritory))
                 moveUnits++;
         });
         totalUnitsThatCanMove += moveUnits;
@@ -115,7 +173,37 @@ function showUnitsForMovementBG2(optionType, gameObj, currentPlayer, totalMoveTe
     }
     return { totalUnitsThatCanMove: totalUnitsThatCanMove, moveTerr: moveTerr };
 }
-
+function countNumberUnitsChecked(terr, unit, currentPlayer) {
+    var max = 0;
+    var count = 0;
+    for (var i = 0; i < terr.units.length; i++) {
+        var u = terr.units[i];
+        if (u.piece == unit.piece) {
+            max++;
+            var e = document.getElementById('unit' + u.id);
+            if (e && e.checked)
+                count++;
+        }
+    }
+    return { count: count, max: max };
+}
+function checkThisNumberBoxesForUnit(piece, num, terr) {
+    var totalChecked = 0;
+    for (var i = 0; i < terr.units.length; i++) {
+        var u = terr.units[i];
+        if (u.piece == piece) {
+            var e = document.getElementById('unit' + u.id);
+            if (e) {
+                if (e.checked && totalChecked >= num)
+                    e.checked = false;
+                else if (!e.checked && totalChecked < num)
+                    e.checked = true;
+                if (e.checked)
+                    totalChecked++;
+            }
+        }
+    }
+}
 function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, player) {
     var transportCargo = selectedTerritory.transportCargo;
     var carrierCargo = selectedTerritory.carrierCargo;
@@ -156,7 +244,7 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
             var e = document.getElementById('unit' + unit.id);
             if (e) {
                 if (e && checkAGroundUnitID.length == 0 && !e.checked && unit.piece == 2 && unit.terr == artTerr) {
-                    var cm = checkMovement(ter.distObj, unit);
+                    var cm = checkMovement(ter.distObj, unit, optionType, player, ter);
                     if (cm)
                         checkAGroundUnitID = 'unit' + unit.id;
                 }
@@ -242,9 +330,9 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
                         }
                         if (carrierCargo > selectedTerritory.carrierSpace) {
                             if (selectedTerritory.carrierSpace > 0)
-                            showAlertPopup('Not enough room on your carriers. Removing fighters.', 1);
-                        else
-                            showAlertPopup('No carriers there!', 1);
+                                showAlertPopup('Not enough room on your carriers. Removing fighters.', 1);
+                            else
+                                showAlertPopup('No carriers there!', 1);
                             e.checked = false;
                         }
                     }
@@ -282,10 +370,6 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
         var numSelected = 0;
         if (selectedUnitCounts[u.piece] && selectedUnitCounts[u.piece] > 0)
             numSelected = selectedUnitCounts[u.piece];
-        //      disableButton('unitCountToOne', numSelected<=0);
-        //      disableButton('unitCountDown', numSelected<=0);
-        //      disableButton('unitCountUp', selectedUnitCounts[u.piece]==totalUnitCounts[u.piece]);
-        //      disableButton('unitCountToMax', selectedUnitCounts[u.piece]==totalUnitCounts[u.piece]);
     }
 
     if (specOpsUnit && optionType == 'attack' && spotterCount == 0) {
@@ -318,6 +402,10 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
     });
 
     var obj = getBattleAnalysis({ attackUnits: units, defendingUnits: defendingUnits }, selectedTerritory, player);
+    if (optionType == 'cruise')
+        obj.expectedLosses = 0;
+    if (optionType == 'nuke')
+        obj.expectedLosses = units.length;
 
     return obj;
 }
@@ -349,7 +437,7 @@ function nukeHitsForTerr(terr, player) {
     }
     return finalHits;
 }
-function autoButtonPressed(selectedTerritory, moveTerr) {
+function autoButtonPressed(selectedTerritory, moveTerr, optionType, player) {
     var checked = true;
     var attStrength = 0;
     var defStrength = selectedTerritory.defStrength * 1.2 + 10;
@@ -363,7 +451,7 @@ function autoButtonPressed(selectedTerritory, moveTerr) {
         for (var x = 0; x < terr.units.length; x++) {
             var unit = terr.units[x];
             var e = document.getElementById('unit' + unit.id);
-            var cm = checkMovement(terr.distObj, unit);
+            var cm = checkMovement(terr.distObj, unit, optionType, player, terr);
             if (e && cm && unit.piece != 13) {
                 var infNeeded = false;
                 var groundUnitsNeeded = false;
@@ -407,4 +495,30 @@ function getSelectedUnits(moveTerr) {
         }
     });
     return units;
+}
+function verifyUnitsAreLegal(units) {
+    if (units.length == 0) {
+        showAlertPopup('No units selected!', 1);
+        return false;
+    }
+    var artillery = 0;
+    var spotters = 0;
+    units.forEach(function (unit) {
+        if (isArtillery(unit))
+            artillery++;
+        else
+            if (unit.type == 1)
+                spotters++;
+    });
+    if (artillery > spotters) {
+        showAlertPopup('You need '+ (artillery-spotters) + ' more infantry or spotters for your artillery!', 1);
+        return false;
+    }
+    return true;
+}
+function isArtillery(unit) {
+    if (unit.piece == 1 || unit.piece == 24 || unit.piece == 33 || unit.piece == 38)
+        return true;
+    else
+        return false;
 }

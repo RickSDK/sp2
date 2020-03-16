@@ -52,7 +52,7 @@
         <div class="darkBlueBg" style="font-size: 10px;"><i class="fa fa-building-o"></i> Production
             Queue
         </div>
-        <img src="assets/graphics/units/piece15u.png" height=20 title="Queue">: <span
+        <span
             style="border: 1px solid black; height: 15px; min-width: 15px;"><span
                 *ngIf="selectedTerritory.displayQueue.length==0">&nbsp;</span>
             <span *ngFor="let unit of selectedTerritory.displayQueue"><img *ngIf="unit.piece>0"
@@ -60,7 +60,7 @@
                     *ngIf="unit.count>1">({{unit.count}})</span></span>
         </span>
         <button [disabled]="selectedTerritory.displayQueue.length==0" (click)="clearQueue()" type="button"
-            class="btn btn-secondary roundButton">Clear</button>
+            class="btn btn-secondary roundButton"><i class="fa fa-times"></i> Clear</button>
     </div>
     <!---------purchase form--------->
     <div class="btn-group" *ngIf="selectedTerritory.factoryCount>0">

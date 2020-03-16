@@ -13,8 +13,14 @@
 				</button>
 			</div>
 			<div class="modal-body" style="padding: 0; text-align: center;">
+				<div *ngIf="0" class="borderClass2">
+					<div>optionType {{optionType}}</div>
+					<div>attackedByNation {{selectedTerritory.attackedByNation}}</div>
+					<div>defeatedByNation {{selectedTerritory.defeatedByNation}}</div>
+					<div>attackedRound {{selectedTerritory.attackedRound}}</div>
+					<div>defeatedByRound {{selectedTerritory.defeatedByRound}}</div>
+				</div>
 
-				optionType {{optionType}}
 				<app-terr-header [selectedTerritory]="selectedTerritory"></app-terr-header>
 
 				<div *ngIf="displayBattle && optionType == 'battle'">
@@ -36,89 +42,104 @@
 							src="assets/graphics/units/piece5u.png" height=20> Remaining Subs dove to avoid planes.
 					</div>
 
-
-					<div style="border: 1px solid black; background-color: #fc0;">
-						<div style="font-size: 11px;">Air Defense <span
-								*ngIf="displayBattle.airDefenseUnits.length==0">(none)</span></div>
-						<div *ngIf="displayBattle.airDefenseUnits.length>0">
-							<div style="display: inline-block;" *ngFor="let unit of displayBattle.airDefenseUnits">
-								<img *ngIf="unit.piece>0" src="{{ngUnitSrc(unit.piece, unit.nation)}}" height=20><br>
-								<img *ngFor="let dice of unit.dice" src="assets/graphics/dice/{{dice}}" height=20
-									width=20>
-							</div>
-						</div>
-					</div>
-
-					<table border=1 width=100%>
-						<tr style="background-color: #fcc;">
-							<td colspan=5><img src="assets/graphics/images/flag{{displayBattle.attNation}}.gif"
-									height=20>
-								<font color=red><b>Attacking Forces</b></font> <span
-									*ngIf="displayBattle.phase>2 || displayBattle.attHits>0">(hits: <span
-										class="bgHighlight">{{displayBattle.attHits}}</span>)</span>
-							</td>
-						</tr>
-						<tr style="background-color: #fcc;">
-							<td *ngFor="let i of boardCols">
-								<div *ngFor="let unit of displayBattle.attackUnits" style="display: inline-block;">
-									<span *ngIf="unit.att==i || i==5 && unit.att==6">
-										<img *ngIf="unit.piece>0" src="{{ngUnitSrc(unit.piece, unit.nation)}}" height=20
-											title="{{unit.name}}"><br>
-										<span *ngIf="displayBattle.phase > 1">
+					<div style="padding: 3px;">
+						<!--battle board-->
+						<table border=1 width=100% align=center
+							style="box-shadow: 3px 3px 3px #444; border-radius: 5px;">
+							<tr [ngStyle]="ngStyleLogs(displayBattle.defNation)">
+								<td colspan=5>
+									<div style="font-size: 11px;">Air Defense <span
+											*ngIf="displayBattle.airDefenseUnits.length==0">(none)</span>
+									</div>
+									<div *ngIf="displayBattle.airDefenseUnits.length>0">
+										<div style="display: inline-block;"
+											*ngFor="let unit of displayBattle.airDefenseUnits">
+											<img *ngIf="unit.piece>0" src="{{ngUnitSrc(unit.piece, unit.nation)}}"
+												height=20><br>
 											<img *ngFor="let dice of unit.dice" src="assets/graphics/dice/{{dice}}"
-												height=20 width=20></span>
-									</span>
-								</div>
-							</td>
-						</tr>
-						<tr style="font-weight: 900; color: gray;">
-							<td>1</td>
-							<td>2</td>
-							<td>3</td>
-							<td>4</td>
-							<td>5+</td>
-						</tr>
-						<tr style="background-color: #ccf;" *ngIf="selectedTerritory.fogOfWar">
-							<td colspan=5>-Fog of War-</td>
-						</tr>
-						<tr style="background-color: #ccf;" *ngIf="!selectedTerritory.fogOfWar">
-							<td *ngFor="let i of boardCols">
-								<div *ngFor="let unit of displayBattle.defendingUnits" style="display: inline-block;">
-									<span *ngIf="unit.def==i || i==5 && unit.def==6">
-										<img *ngIf="unit.piece>0" src="{{ngUnitSrc(unit.piece, unit.nation)}}" height=20
-											title="{{unit.name}}"><br>
-										<span *ngIf="displayBattle.phase > 1">
-											<img *ngFor="let dice of unit.dice" src="assets/graphics/dice/{{dice}}"
-												height=20 width=20></span>
-									</span>
-								</div>
-							</td>
-						</tr>
-						<tr style="background-color: #ccf;">
-							<td colspan=5><img src="assets/graphics/images/flag{{displayBattle.defNation}}.gif"
-									height=20>
-								<font color=blue><b>Defending Forces</b></font> <span
-									*ngIf="displayBattle.phase>2 || displayBattle.defHits>0"> (hits: <span
-										class="bgHighlight">{{displayBattle.defHits}}</span>)</span>
-							</td>
-						</tr>
-					</table>
+												height=20 width=20>
+										</div>
+									</div>
+								</td>
+							</tr>
+							<tr [ngStyle]="ngStyleLogs(displayBattle.attNation)">
+								<td colspan=5><img src="assets/graphics/images/flag{{displayBattle.attNation}}.gif"
+										height=20>
+									<font color=red><b>Attacking Forces</b></font> <span
+										*ngIf="displayBattle.phase>2 || displayBattle.attHits>0">(hits: <span
+											class="bgHighlight">{{displayBattle.attHits}}</span>)</span>
+								</td>
+							</tr>
+							<tr [ngStyle]="ngStyleLogs(displayBattle.attNation)">
+								<td *ngFor="let i of boardCols">
+									<div *ngFor="let unit of displayBattle.attackUnits" style="display: inline-block;">
+										<span *ngIf="unit.att==i || i==5 && unit.att==6">
+											<img *ngIf="unit.piece>0" src="{{ngUnitSrc(unit.piece, unit.nation)}}"
+												height=20 title="{{unit.name}}"><br>
+											<span *ngIf="displayBattle.phase > 1">
+												<img *ngFor="let dice of unit.dice" src="assets/graphics/dice/{{dice}}"
+													height=20 width=20></span>
+										</span>
+									</div>
+								</td>
+							</tr>
+							<tr style="font-weight: 900; color: white; background-color: #777;">
+								<td>1</td>
+								<td>2</td>
+								<td>3</td>
+								<td>4</td>
+								<td>5+</td>
+							</tr>
+							<tr [ngStyle]="ngStyleLogs(displayBattle.defNation)" *ngIf="selectedTerritory.fogOfWar">
+								<td colspan=5>-Fog of War-</td>
+							</tr>
+							<tr [ngStyle]="ngStyleLogs(displayBattle.defNation)" *ngIf="!selectedTerritory.fogOfWar">
+								<td *ngFor="let i of boardCols">
+									<div *ngFor="let unit of displayBattle.defendingUnits"
+										style="display: inline-block;">
+										<span *ngIf="unit.def==i || i==5 && unit.def==6">
+											<img *ngIf="unit.piece>0" src="{{ngUnitSrc(unit.piece, unit.nation)}}"
+												height=20 title="{{unit.name}}"><br>
+											<span *ngIf="displayBattle.phase > 1">
+												<img *ngFor="let dice of unit.dice" src="assets/graphics/dice/{{dice}}"
+													height=20 width=20></span>
+										</span>
+									</div>
+								</td>
+							</tr>
+							<tr [ngStyle]="ngStyleLogs(displayBattle.defNation)">
+								<td colspan=5><img src="assets/graphics/images/flag{{displayBattle.defNation}}.gif"
+										height=20>
+									<font color=blue><b>Defending Forces</b></font> <span
+										*ngIf="displayBattle.phase>2 || displayBattle.defHits>0"> (hits: <span
+											class="bgHighlight">{{displayBattle.defHits}}</span>)</span>
+								</td>
+							</tr>
+						</table>
+					</div> <!-- battle board-->
+
 					<div *ngIf="!displayBattle.militaryObj.battleInProgress" class="terr-card2">
 						<div class="darkBlueBg">Battle Completed</div>
 						<div style="font-size: 32px;" [style.color]="displayBattle.militaryObj.wonFlg?'green':'red'">
 							{{displayBattle.militaryObj.battleMessage}}</div>
-						<div class="borderClass3">
-							<div class="darkBlueBg">Casualties</div>
-							<div><img src="assets/graphics/images/flag{{displayBattle.attacker}}.gif" height="20">
-								&nbsp;<span *ngFor="let piece of displayBattle.attCasualties" style="opacity: .5;"
-									title="attacking casualties"><img src="{{ngUnitSrc(piece)}}" height=15
-										title="{{superpowersData.units[piece].name}}"></span>
+
+						<div>
+							<div class="borderClass3">
+								<div class="darkBlueBg">Casualties</div>
+								<div><img src="assets/graphics/images/flag{{displayBattle.attacker}}.gif" height="20">
+									&nbsp;<span *ngFor="let piece of displayBattle.attCasualties" style="opacity: .5;"
+										title="attacking casualties"><img src="{{ngUnitSrc(piece)}}" height=15
+											title="{{superpowersData.units[piece].name}}"></span>
+								</div>
+								<div><img src="assets/graphics/images/flag{{displayBattle.defender}}.gif" height="20">
+									&nbsp;<span *ngFor="let piece of displayBattle.defCasualties" style="opacity: .5;"
+										title="attacking casualties"><img src="{{ngUnitSrc(piece)}}" height=15
+											title="{{superpowersData.units[piece].name}}"></span>
+								</div>
 							</div>
-							<div><img src="assets/graphics/images/flag{{displayBattle.defender}}.gif" height="20">
-								&nbsp;<span *ngFor="let piece of displayBattle.defCasualties" style="opacity: .5;"
-									title="attacking casualties"><img src="{{ngUnitSrc(piece)}}" height=15
-										title="{{superpowersData.units[piece].name}}"></span>
-							</div>
+							<div style="display: inline-flex; vertical-align: top;">
+								<button (click)="closeModal('#territoryPopup')" type="button"
+									class="btn btn-primary roundButton tall">OK</button></div>
 						</div>
 						<div *ngIf="displayBattle.bonusUnitsFlg && displayBattle.militaryObj.wonFlg"
 							style="font-size: 12px;"><i class="fa fa-trophy"></i> You have been awarded troops:
@@ -126,11 +147,9 @@
 							<img src="assets/graphics/units/piece2u.png" height="20">
 							<img src="assets/graphics/units/piece3u.png" height="20">
 						</div>
-						<button (click)="closeModal('#territoryPopup')" type="button"
-							class="btn btn-primary roundButton tall">OK</button>
 					</div>
 					<div *ngIf="displayBattle.militaryObj.battleInProgress && displayBattle.phase != 2">
-						<div *ngIf="displayBattle.bonusUnitsFlg" class="borderClass2" style="font-size: 12px;"><i
+						<div *ngIf="displayBattle.bonusUnitsFlg" class="borderClass3" style="font-size: 12px;"><i
 								class="fa fa-trophy"></i> You will be awarded troops if you win:
 							<img src="assets/graphics/units/piece2u.png" height="20">
 							<img src="assets/graphics/units/piece2u.png" height="20">
@@ -164,8 +183,8 @@
 							class="btn btn-primary roundButton"><i class="fa fa-heartbeat"></i> Remove
 							Casualties</button>
 						<button *ngIf="displayBattle.round>0 && displayBattle.allowRetreat" id="retreatButton"
-							ng-click="retreatButtonPressed()" type="button" class="btn btn-primary roundButton"><i
-								class="fa fa-flag"></i> Retreat</button>
+							(click)="retreatButtonPressed()" type="button" class="btn btn-primary roundButton"><i
+								class="fa fa-flag"></i> Retreat!</button>
 						<button *ngIf="displayBattle.round>0 && displayBattle.militaryObj.includesGeneral"
 							ng-click="pullUnitsButtonPressed(1)" type="button" class="btn btn-warning roundButton"><i
 								class="fa fa-arrow-left"></i> Pull General</button>
@@ -184,8 +203,8 @@
 
 						<span *ngIf="displayBattle.round==0">
 							<div class="squaredOne" style="display: inline-block; padding: 0; margin: 1px;">
-								<input (click)="autoCompletePressed()" type="checkbox" value="None" id="finalAttackBox"
-									name="check" />
+								<input [checked]="autoCompleteFlg" (click)="autoCompletePressed()" type="checkbox"
+									value="None" id="finalAttackBox" name="check" />
 								<label for="finalAttackBox"></label>
 							</div> <span style="font-size: 10px;">Auto</span>
 						</span>
@@ -206,7 +225,8 @@
 					*ngIf="ableToTakeThisTurn && currentPlayer.status!='Purchase' && optionType != 'battle'"
 					[selectedTerritory]="selectedTerritory" [currentPlayer]="currentPlayer"
 					[superpowersData]="superpowersData" [gameObj]="gameObj" [user]="user" [optionType]="optionType"
-					[ableToTakeThisTurn]="ableToTakeThisTurn" (messageEvent)="buttonClicked($event)"></app-terr-buttons>
+					[ableToTakeThisTurn]="ableToTakeThisTurn" [hostileMessage]="hostileMessage"
+					(messageEvent)="buttonClicked($event)"></app-terr-buttons>
 
 				<app-terr-units *ngIf="optionType=='home' || optionType=='production'"
 					[selectedTerritory]="selectedTerritory" [currentPlayer]="currentPlayer"
@@ -240,33 +260,36 @@
 										<th>Cargo</th>
 									</tr>
 									<tr>
-										<td><img src="assets/graphics/units/piece4u.png" height=30></td>
-										<td><img src="assets/graphics/units/piece2u.png" height=30><img
-												src="assets/graphics/units/piece2u.png" height=30><img
-												src="assets/graphics/units/piece2u.png" height=30><img
-												src="assets/graphics/units/piece2u.png" height=30></td>
+										<td><img src="assets/graphics/units/piece4u.png" height=20 title="Transports">
+										</td>
+										<td><img src="assets/graphics/units/piece2u.png" height=20><img
+												src="assets/graphics/units/piece2u.png" height=20><img
+												src="assets/graphics/units/piece2u.png" height=20><img
+												src="assets/graphics/units/piece2u.png" height=20></td>
 									</tr>
 									<tr>
-										<td><img src="assets/graphics/units/piece4u.png" height=30></td>
-										<td><img src="assets/graphics/units/piece3u.png" height=30><img
-												src="assets/graphics/units/piece3u.png" height=30></td>
+										<td><img src="assets/graphics/units/piece4u.png" height=20 title="Transports">
+										</td>
+										<td><img src="assets/graphics/units/piece3u.png" height=20><img
+												src="assets/graphics/units/piece3u.png" height=20></td>
 									</tr>
 									<tr>
-										<td><img src="assets/graphics/units/piece8u.png" height=30></td>
-										<td><img src="assets/graphics/units/piece6u.png" height=30><img
-												src="assets/graphics/units/piece6u.png" height=30></td>
+										<td><img src="assets/graphics/units/piece8u.png" height=20
+												title="Aircraft Carriers"></td>
+										<td><img src="assets/graphics/units/piece6u.png" height=20><img
+												src="assets/graphics/units/piece6u.png" height=20></td>
 									</tr>
 									<tr>
-										<td><img src="assets/graphics/units/piece12u.png" height=30></td>
-										<td><img src="assets/graphics/units/piece13u.png" height=30><img
-												src="assets/graphics/units/piece10u.png" height=30><img
-												src="assets/graphics/units/piece11u.png" height=30></td>
+										<td>*<img src="assets/graphics/units/piece12u.png" height=20 title="All ships">
+										</td>
+										<td><img src="assets/graphics/units/piece13u.png" height=20><img
+												src="assets/graphics/units/piece10u.png" height=20><img
+												src="assets/graphics/units/piece11u.png" height=20></td>
 									</tr>
 								</table>
-								<div> all ships can carry heros and AA guns.</div>
+								<div> *all ships can carry heros and AA guns.</div>
 							</div>
-							<div *ngIf="optionType=='movement'">Select units to load. They will automatically be loaded
-								onto ships.</div>
+							<div *ngIf="optionType=='movement'">Select units to load, then press 'Go'</div>
 							<div *ngIf="optionType=='loadUnits'">Select one ship plus cargo you want to load.</div>
 						</div>
 
@@ -296,38 +319,35 @@
 							</div>
 							<hr style="padding: 0; margin: 5px;">
 							<div *ngFor="let unit of terr.units" style="display: inline-block;">
-								<span *ngIf="checkMovement(terr.distObj, unit, optionType)">
-									<div (click)="checkSendButtonStatus(unit)" class="squaredOne"
+								<span *ngIf="checkMovement(terr.distObj, unit, optionType, currentPlayer, terr)">
+									<div (click)="checkSendButtonStatus(unit, terr)" class="squaredOne"
 										style="display: inline-block; padding: 0; margin: 1px;">
 										<input type="checkbox" value="None" id="{{'unit'+unit.id}}" name="check" />
 										<label for="{{'unit'+unit.id}}"></label>
 									</div> <i class="fa fa-hourglass-half"
 										*ngIf="unit.piece==28 && gameObj.round-1 == unit.medicRound"></i>
 									<span style="margin-right: 10px;"> <img *ngIf="unit.piece>0"
-											ng-click="unitPopup(unit.piece)"
 											src="{{ngUnitSrc(unit.piece, unit.nation)}}" height=20
 											title="{{unit.name}}"><span *ngIf="unit.cargoOf>0">(c)</span><span
 											*ngFor="let cargo of unit.cargo"><img src="{{ngUnitSrc(cargo.piece)}}"
 												height=10></span></span>
 								</span>
 							</div>
-							<div *ngIf="selectedUnitForm==terr.id"
+							<div *ngIf="selectedUnitTerr.max>4 && selectedUnitTerr.terrId==terr.id"
 								style="margin-top: 5px; border: 1px solid gray; display: block; white-space: nowrap;">
-								({{selectedFormUnit.max}})
-								<img ng-if="1" ng-click="unitPopup(2)" src="{{ngUnitSrc(selectedFormUnit.piece, 1)}}"
-									style="max-height: 30px; max-width: 40px;">
-								<button disabled id="unitCountToOne" ng-click="unitCountToZero(terr)" type="button"
+								<button [disabled]="selectedUnitTerr.count==0" (click)="checkboxAmountOfUnit(0, terr)" type="button"
 									class="btn btn-primary tight roundButton"><i
 										class="fa fa-fast-backward"></i></button>
-								<button disabled id="unitCountDown" ng-click="unitCountDownF(terr)" type="button"
+								<button [disabled]="selectedUnitTerr.count==0" (click)="checkboxAmountOfUnit(selectedUnitTerr.count-1, terr)" type="button"
 									class="btn btn-primary tight roundButton"><i class="fa fa-backward"></i></button>
-								<button id="unitCountUp" ng-click="unitCountUpF(terr)" type="button"
+								<img src="{{ngUnitSrc(selectedUnitTerr.piece, 1)}}"
+									style="max-height: 30px; max-width: 40px;">
+								<span class="bgHighlight">{{selectedUnitTerr.count}} <font color=gray>/ {{selectedUnitTerr.max}}</font></span>
+								<button [disabled]="selectedUnitTerr.count==selectedUnitTerr.max" (click)="checkboxAmountOfUnit(selectedUnitTerr.count+1, terr)" type="button"
 									class="btn btn-primary tight roundButton"><i class="fa fa-forward"></i></button>
-								<button id="unitCountToMax" ng-click="setUnitCountToMax(terr)" type="button"
+								<button [disabled]="selectedUnitTerr.count==selectedUnitTerr.max" (click)="checkboxAmountOfUnit(selectedUnitTerr.max, terr)" type="button"
 									class="btn btn-primary tight roundButton"><i
 										class="fa fa-fast-forward"></i></button>
-								<span
-									style="background-color: white; border: 1px solid black; font-size: 18px; padding: 1px;">{{selectedFormUnit.num}}</span>
 							</div>
 
 						</div> <!-- each terr-->
@@ -335,29 +355,42 @@
 							style="background-color: yellow; color: red; font-weight: 700;"><i
 								class="fa fa-exclamation-triangle"></i> {{hostileMessage}}</div>
 						<div *ngIf="totalUnitsThatCanMove==0" style="background-color: yellow; border: 1px solid red;">
-							<div style="color: red; font-weight: 700;"><i class="fa fa-exclamation-triangle"></i> None
-								of your units can reach {{selectedTerritory.name}}!</div>
+							<div style="color: red;"><b><i class="fa fa-exclamation-triangle"></i> None
+									of your units can reach {{selectedTerritory.name}}!</b>
+								<button (click)="infoFlg=!infoFlg" type="button"
+									class="btn btn-secondary roundButton"><i class="fa fa-info-circle"></i>
+									Help</button>
+								<div *ngIf="infoFlg" class="borderClass2" style="text-align: left;">
+									Reasons why you might not be able reach this territory:<br>
+									<ol>
+										<li>It's too far away.</li>
+										<li>All your units have used their moves this turn.</li>
+										<li>Land units must be transported across sea zones using transport ships.</li>
+									</ol>
+									Try moving units closer or click 'Complete Turn' and try again next turn.
+								</div>
+							</div>
 							<div *ngIf="gameObj.round<6 && !gameObj.multiPlayerFlg" style="font-size: 12px;">This may be
 								due to all your units
 								having used up their moves for this turn. Click 'Complete Turn' to move to next turn.
 							</div>
 						</div>
-						<div>
+						<div *ngIf="battleAnalysisObj">
 							<button *ngIf="optionType=='attack'" [disabled]="totalUnitsThatCanMove==0"
 								(click)="autoButtonPressed()" type="button" class="btn btn-secondary roundButton"><i
 									class="fa fa-check-square-o"></i> Auto</button>
-							<button (click)="selectAllButtonChecked()" type="button"
+							<button *ngIf="totalUnitsThatCanMove>0" (click)="selectAllButtonChecked()" type="button"
 								[disabled]="totalUnitsThatCanMove==0" class="btn btn-secondary roundButton"><i
 									class="fa fa-check-square-o"></i> All</button>
-							<button (click)="moveTroopsButtonPressed()" [disabled]="expectedHits==0" type="button"
-								class="btn btn-success roundButton" style="min-width: 120px; height: 50px;"><i
-									class="fa fa-arrow-right"></i> Go</button>
+							<button (click)="moveTroopsButtonPressed()" [disabled]="battleAnalysisObj.expectedHits==0"
+								type="button" class="btn btn-success roundButton"
+								style="min-width: 120px; height: 50px;"><i class="fa fa-arrow-right"></i> Go</button>
 
 						</div>
-						<div *ngIf="optionType=='attack' || optionType=='cruise' || optionType=='nuke'"
+						<div *ngIf="battleAnalysisObj && totalUnitsThatCanMove>0 && (optionType=='attack' || optionType=='cruise' || optionType=='nuke')"
 							style="font-size: 12px;">
-							Expected Hits: <span class="highlightField">{{expectedHits}}</span>
-							Expected Losses: <span class="highlightField">{{expectedLosses}}</span>
+							Expected Hits: <span class="highlightField">{{battleAnalysisObj.expectedHits}}</span>
+							Expected Losses: <span class="highlightField">{{battleAnalysisObj.expectedLosses}}</span>
 						</div>
 
 

@@ -451,8 +451,7 @@ function terrDoesBorder(t1, t2) {
 			return true;
 	}
 	return false;
-}
-function distanceBetweenTerrs(terr1, terr2, max, land, air, sea, allyHash, territories) {
+}function distanceBetweenTerrs(terr1, terr2, max, land, air, sea, allyHash, territories) {
 	if (terr1.id == terr2.id)
 		return { land: land, air: air, sea: sea };
 
@@ -550,6 +549,7 @@ function numberOfUnitsThatCanReach(distObj, tUnits, optionType) {
 	});
 	return num;
 }
+/*
 function checkMovement(distObj, unit, optionType) {
 	if (optionType == 'loadPlanes') {
 		if (unit.type == 1 && (!unit.cargoOf || unit.cargoOf == 0))
@@ -580,5 +580,5 @@ function checkMovement(distObj, unit, optionType) {
 		return true;
 	return false;
 }
-
+*/
 

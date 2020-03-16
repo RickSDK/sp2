@@ -764,6 +764,20 @@ margin: 1px;
 	opacity: 1;
 	display: block;
 }
+@-webkit-keyframes fadeoutCss {
+    0% {opacity:1;}
+    100% {opacity:0;}
+}
+@keyframes fadeoutCss {
+    0% {opacity:1;}
+    100% {opacity:0;}
+}
+.fadeoutCss {
+  opacity:0;
+  -moz-animation   : fadeoutCss 1s linear;
+  -webkit-animation: fadeoutCss 1s linear;
+  animation        : fadeoutCss 1s linear;
+}
 .fadeIn {
 	opacity: 1;
 	display: block;
