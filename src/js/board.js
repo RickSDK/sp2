@@ -3,6 +3,10 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 		console.log('!!!! no gameObj!!');
 	if (!superpowersData || !superpowersData.superpowers)
 		console.log('!!!! no superpowersData!!');
+	if(!terr) {
+		console.log('refreshTerritory: no terr!');
+		return;
+	}
 
 	var unitCount = 0;
 	var highestPiece = 0;
@@ -49,9 +53,11 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	var leaderOwner = terr.owner;
 	var enemyPiecesExist = false;
 	var units = [];
+	var unitUniqueHash = {};
 	var movableTroopCount = 0;
 	gameObj.units.forEach(function (unit) {
-		if (unit.terr == terr.id && !unit.dead) {
+		if (unit.terr == terr.id && !unit.dead && !unitUniqueHash[unit.id]) {
+			unitUniqueHash[unit.id]=true;
 			units.push(unit);
 			if (currentPlayer && unit.owner != terr.owner && !enemyPiecesExist) {
 				if (currentPlayer.treaties[unit.owner - 1] == 0)
@@ -795,7 +801,7 @@ function addIncomeForPlayer(player, gameObj) {
 	player.nukes = false;
 	player.sat = player.tech[18];
 	gameObj.units.forEach(function (unit) {
-		if (unit.owner == player.nation && unit.mv > 0 && unit.hp > 0) {
+		if (unit.owner == player.nation && unit.mv > 0 && !unit.dead) {
 			if (unit.piece == 14)
 				player.nukes = true;
 			units++;
@@ -1064,7 +1070,7 @@ function playerOfNation(nation, gameObj) {
 	}
 	return null;
 }
-function changeTreaty(p1, p2, type, gameObj, superpowers) {
+function changeTreaty(p1, p2, type, gameObj, superpowers, cost=0) {
 	if (!p1 || !p2)
 		return;
 	if (p1.nation == p2.nation)
@@ -1077,7 +1083,10 @@ function changeTreaty(p1, p2, type, gameObj, superpowers) {
 		msg = superpowers[p1.nation] + ' has declared war on ' + superpowers[p2.nation];
 		popupMessage(p1, msg, p2);
 	}
-	logItem(gameObj, p1, 'Diplomacy', msg);
+	if(cost>0) {
+		logItem(gameObj, p1, 'War!', cost+' coin pentalty paid to declare war on '+superpowers[p2.nation]+'!');
+	} else
+		logItem(gameObj, p1, 'Diplomacy', msg);
 }
 function removeAlliancesForNation(nation, gameObj) {
 	gameObj.players.forEach(function (player) {
@@ -1338,7 +1347,8 @@ function getTerritoryType(player, terr) {
 		if (terr.owner > 0 && (terr.nation < 99 || terr.unitCount > 0)) {
 			status = treatyStatus(player, terr.owner);
 			if (player.treatiesAtStart && player.treatiesAtStart.length >= player.nation && player.nation > 0)
-				statusAtStart = player.treatiesAtStart[player.nation - 1];
+				statusAtStart = player.treatiesAtStart[terr.owner - 1];
+
 			isAlly = (status >= 3);
 			if (status == 0)
 				territoryType = 'War!';
@@ -1362,6 +1372,10 @@ function getTerritoryType(player, terr) {
 	return obj;
 }
 function playerOfNation(nation, gameObj) {
+	if(!gameObj || !gameObj.players) {
+		console.log('!!!!whoa playerOfNation!!!');
+		return;
+	}
 	for (var x = 0; x < gameObj.players.length; x++) {
 		var player = gameObj.players[x];
 		if (player.nation == nation)

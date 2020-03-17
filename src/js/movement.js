@@ -415,7 +415,7 @@ function expectedHitsFromHits(num) {
     else
         return (num / 6).toFixed(1);
 }
-function nukeHitsForTerr(terr, player) {
+function nukeHitsForTerr(terr, player, gameObj) {
     var hits = 12;
     if (player.tech[4])
         hits += 3;
@@ -426,7 +426,7 @@ function nukeHitsForTerr(terr, player) {
         adCount = 3;
     var blocked = adCount * 2;
     if (terr.owner > 0) {
-        var defender = playerOfNation(terr.owner);
+        var defender = playerOfNation(terr.owner, gameObj);
         if (defender.tech[18])
             blocked *= 2;
     }

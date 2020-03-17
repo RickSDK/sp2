@@ -201,7 +201,7 @@
 							(click)="fightButtonPressed()" type="button" [ngClass]="fightButtonClass()"
 							style="height: 60px; width: 100px;"><i class="fa fa-crosshairs"></i> Fight!</button>
 
-						<span *ngIf="displayBattle.round==0">
+						<span>
 							<div class="squaredOne" style="display: inline-block; padding: 0; margin: 1px;">
 								<input [checked]="autoCompleteFlg" (click)="autoCompletePressed()" type="checkbox"
 									value="None" id="finalAttackBox" name="check" />
@@ -320,9 +320,9 @@
 							<hr style="padding: 0; margin: 5px;">
 							<div *ngFor="let unit of terr.units" style="display: inline-block;">
 								<span *ngIf="checkMovement(terr.distObj, unit, optionType, currentPlayer, terr)">
-									<div (click)="checkSendButtonStatus(unit, terr)" class="squaredOne"
+									<div class="squaredOne"
 										style="display: inline-block; padding: 0; margin: 1px;">
-										<input type="checkbox" value="None" id="{{'unit'+unit.id}}" name="check" />
+										<input (click)="checkSendButtonStatus(unit, terr)" type="checkbox" value="None" id="{{'unit'+unit.id}}" name="check" />
 										<label for="{{'unit'+unit.id}}"></label>
 									</div> <i class="fa fa-hourglass-half"
 										*ngIf="unit.piece==28 && gameObj.round-1 == unit.medicRound"></i>
@@ -333,7 +333,7 @@
 												height=10></span></span>
 								</span>
 							</div>
-							<div *ngIf="selectedUnitTerr.max>4 && selectedUnitTerr.terrId==terr.id"
+							<div *ngIf="selectedUnitTerr && selectedUnitTerr.max>4 && selectedUnitTerr.terrId==terr.id"
 								style="margin-top: 5px; border: 1px solid gray; display: block; white-space: nowrap;">
 								<button [disabled]="selectedUnitTerr.count==0" (click)="checkboxAmountOfUnit(0, terr)" type="button"
 									class="btn btn-primary tight roundButton"><i

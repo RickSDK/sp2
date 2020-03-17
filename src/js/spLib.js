@@ -313,7 +313,6 @@ function capitalXY(num) {
 	return obj;
 }
 function scrollToCapital(num) {
-	console.log('++scrollToCapital');
 	var e = document.getElementById('target');
 	if (e) {
 		e.style.display = 'block';

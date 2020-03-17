@@ -18,11 +18,11 @@
 			id="{{'flag'+terr.id}}" title='{{terr.title}}' alt='{{terr.title}}' style="max-width: 55px;"
 			(mouseenter)="changeSVGColor(true, terr.id, terr.owner)"
 			(mouseleave)="changeSVGColor(false, terr.id, terr.owner)"></div>
-	<div style="padding-top: 0px; margin-top: -6px" *ngIf="terr.nation<99"><span
+	<div style="padding-top: 0px; margin-top: -6px; width: 60px; white-space: nowrap;" *ngIf="terr.nation<99"><span
 			class="boardBlack">{{terr.displayUnitCount}}</span><img *ngIf="terr.piece>0"
 			src="{{ngUnitSrc(terr.piece, terr.owner)}}" title="{{terr.piece}}"
 			style="max-height: 18px; max-width: 24px;"></div>
-	<div style="padding-top: 0px; margin-top: -6px" *ngIf="terr.nation==99 && terr.totalUnitCount>0"><img
+	<div style="padding-top: 0px; margin-top: -6px;" *ngIf="terr.nation==99 && terr.totalUnitCount>0"><img
 			*ngIf="terr.piece>0" src="{{ngUnitSrc(terr.piece, terr.owner)}}" title="{{terr.piece}}"
 			style="max-height: 22px; max-width: 45px;"></div>
 </div>

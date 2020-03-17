@@ -56,7 +56,9 @@ export class LogsPopupComponent extends BaseComponent implements OnInit {
     this.displayLogs = displayLogs;
   }
   showBattleDetails(log) {
-    console.log(log);
-    this.showLog = log.id;
+    if (this.showLog == log.id)
+      this.showLog = 0;
+    else
+      this.showLog = log.id;
   }
 }

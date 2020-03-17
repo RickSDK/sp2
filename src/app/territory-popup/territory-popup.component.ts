@@ -54,10 +54,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   public moveTerr = [];
   public totalMoveTerrs = [];
   public selectedUnitTerr: any;
-  //public selectedUnitForm = 0;
-  //public selectedFormUnit: any;
   public totalUnitsThatCanMove = 0;
-  //  public goButton = 'Go!';
   public checkAllTroops = false;
   public autoCompleteFlg = false;
   public battleAnalysisObj: any;
@@ -180,7 +177,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     if (this.optionType == 'attack') {
       var attackUnits = getSelectedUnits(this.moveTerr);
       if (verifyUnitsAreLegal(attackUnits)) {
-        this.displayBattle = initializeBattle(this.currentPlayer, this.selectedTerritory, attackUnits);
+        this.displayBattle = initializeBattle(this.currentPlayer, this.selectedTerritory, attackUnits, this.gameObj);
         this.optionType = 'battle';
         playSoundForPiece(this.displayBattle.militaryObj.pieceId, this.superpowersData);
       }
@@ -204,12 +201,12 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     this.battleHappened.emit('yes');
     this.displayBattle.phase = 1;
     playSound('AirHorn.mp3');
-    startBattle(this.selectedTerritory, this.currentPlayer, this.gameObj);
+    startBattle(this.selectedTerritory, this.currentPlayer, this.gameObj, this.superpowersData);
     this.beginNextRoundOfBattle();
   }
   beginNextRoundOfBattle() {
     if (this.displayBattle.round > 0)
-      removeCasualties(this.displayBattle);
+      removeCasualties(this.displayBattle, this.gameObj, this.currentPlayer);
     this.displayBattle.round++;
 
     this.displayBattle.phase = 2;
@@ -240,7 +237,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   }
   removeCasualties() {
     playClick();
-    removeCasualties(this.displayBattle);
+    removeCasualties(this.displayBattle, this.gameObj, this.currentPlayer);
     this.displayBattle.phase = 1;
   }
   changeDiceUnitsToImg(units: any, image: string) {
@@ -272,7 +269,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       return 'btn btn-danger roundButton';
   }
   checkSendButtonStatus(unit: any, terr = null) {
-    this.battleAnalysisObj = checkSendButtonStatus(unit, this.moveTerr, this.optionType, this.selectedTerritory, this.currentPlayer);
+    this.battleAnalysisObj = checkSendButtonStatus(unit, this.moveTerr, this.optionType, this.selectedTerritory, this.currentPlayer, this.gameObj);
     this.selectedUnitTerr = { piece: 1, terrId: 1, max: 0, count: 0 };
     if (terr) {
       var obj = countNumberUnitsChecked(terr, unit, this.currentPlayer);
@@ -282,6 +279,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   checkboxAmountOfUnit(num: number, terr: any) {
     this.selectedUnitTerr.count = num;
     checkThisNumberBoxesForUnit(this.selectedUnitTerr.piece, num, terr);
+    this.battleAnalysisObj = checkSendButtonStatus(null, this.moveTerr, this.optionType, this.selectedTerritory, this.currentPlayer, this.gameObj);
   }
 
   changeProdType(segmentIdx: number) {

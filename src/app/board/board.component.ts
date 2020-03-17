@@ -57,6 +57,8 @@ declare var stageAttackBetweenTerritories: any;
 declare var fortifyThisTerritory: any;
 declare var findMainBaseTarget: any;
 declare var findAmphibiousAttacks: any;
+declare var respositionMainBase: any;
+declare var recallBoats: any;
 
 //---combat.js
 declare var playSoundForPiece: any;
@@ -220,6 +222,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.gameObj.turnId = nextPlayer.id;
 	}
 	loadCurrentPlayer() {
+		this.gameObj.turnId = 3; //<--- test
 		this.currentPlayer = getCurrentPlayer(this.gameObj);
 		this.gameObj.currentNation = this.currentPlayer.nation;
 		if (!this.currentPlayer.news)
@@ -259,7 +262,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.allowBotToAct = true;
 		this.showControls = false;
 		cleanUpTerritories(this.currentPlayer, this.currentPlayer.cpu, this.gameObj);
-		console.log('----------->computerGo', this.currentPlayer.nation, this.currentPlayer.status);
 		if (this.currentPlayer.status == 'Purchase')
 			this.currentPlayer.status = 'Waiting';
 
@@ -277,67 +279,73 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	computerPurchase() {
 		purchaseCPUUnits(this.currentPlayer, this.gameObj, this.superpowersData);
 		this.currentPlayer.status = 'Purchase';
-		this.warAudio.play();
+//		this.warAudio.play();
 		setTimeout(() => {
-			this.completingPurchases();
+//			this.completingPurchases();
 		}, 1500);
 	}
 	computerAttack() {
+		var testAttack = false;
 		this.currentPlayer.primaryTargetId = findPrimaryTarget(this.gameObj, this.currentPlayer);
 		this.currentPlayer.secondaryTargetId = findSecondaryTarget(this.gameObj, this.currentPlayer);
 		this.currentPlayer.hotSpotId = findFortification(this.gameObj, this.currentPlayer);
-
 		if (this.currentPlayer.primaryTargetId > 0)
 			this.attemptToAttack(this.currentPlayer.primaryTargetId);
 
 		if (this.gameObj.round != 6) {
 			var obj = findAmphibiousAttacks(this.gameObj, this.currentPlayer);
-			this.doThisBattle(obj);
-			if (obj.ampFlg) {
-				this.doThisBattle({ attackUnits: obj.ampAttUnits, defUnits: obj.ampDefUnits, t1: obj.ampAttTerr.id, t2: obj.ampDefTerr.id, id: 2, terr: obj.ampDefTerr, attTerr: obj.ampAttTerr });
+			if (obj) {
+				this.doThisBattle(obj);
+				if (obj && obj.ampFlg) {
+					this.doThisBattle({ attackUnits: obj.ampAttUnits, defUnits: obj.ampDefUnits, t1: obj.ampAttTerr.id, t2: obj.ampDefTerr.id, id: 2, terr: obj.ampDefTerr, attTerr: obj.ampAttTerr });
+				}
+				refreshTerritory(obj.ampAttTerr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
+				refreshTerritory(obj.ampDefTerr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 			}
-			refreshTerritory(obj.ampAttTerr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
-			refreshTerritory(obj.ampDefTerr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 		}
-
 		if (this.currentPlayer.primaryTargetId != this.currentPlayer.mainBaseId) {
 			var obj = findMainBaseTarget(this.gameObj, this.currentPlayer);
 			this.doThisBattle(obj);
 		}
 		if (this.currentPlayer.secondaryTargetId > 0)
 			this.attemptToAttack(this.currentPlayer.secondaryTargetId);
+
 		this.attackFromAllTerritories();
 
-		this.showControls = true;//<---testing only!!
-		//		this.currentPlayer.status = 'Move';
-		setTimeout(() => {
-			//			this.computerMove();
-		}, 1500);
-
+		if (testAttack) {
+			this.showControls = true;//<---testing only!!
+		} else {
+			this.currentPlayer.status = 'Move';
+			setTimeout(() => {
+				this.computerMove();
+			}, 1500);
+		}
 	}
 	attackFromAllTerritories() {
-		this.currentPlayer.territories.forEach(terr1 => {
+		for (var x = 0; x < this.currentPlayer.territories.length; x++) {
+			var terr1 = this.currentPlayer.territories[x];
 			var terr2 = findGoodTargetForTerr(terr1, this.currentPlayer, this.gameObj);
 			if (terr2) {
-				var obj = stageAttackBetweenTerritories(terr1, terr2, this.currentPlayer, terr2.defStrength + 6);
+				var obj = stageAttackBetweenTerritories(terr1, terr2, this.currentPlayer, terr2.defStrength + 10);
 				this.doThisBattle(obj);
 			}
-		});
+		}
 	}
 	attemptToAttack(id: number) {
 		var obj = attemptToAttack(id, this.currentPlayer, this.gameObj);
+		console.log('attack', id, obj);
 		this.doThisBattle(obj);
 	}
 	doThisBattle(obj: any) {
-		if (obj.attackUnits.length > obj.defUnits.length) {
+		if (obj && obj.attackUnits && obj.attackUnits.length > 0) {
 			this.moveSpriteBetweenTerrs(obj);
-			this.displayBattle = initializeBattle(this.currentPlayer, obj.terr, obj.attackUnits);
-			startBattle(obj.terr, this.currentPlayer, this.gameObj);
+			this.displayBattle = initializeBattle(this.currentPlayer, obj.terr, obj.attackUnits, this.gameObj);
+			startBattle(obj.terr, this.currentPlayer, this.gameObj, this.superpowersData);
 			this.computerBattleRound(obj);
 		}
 	}
 	computerBattleRound(obj: any) {
-		removeCasualties(this.displayBattle);
+		removeCasualties(this.displayBattle, this.gameObj, this.currentPlayer, false, this.superpowersData);
 		this.displayBattle.round++;
 		rollAttackDice(this.displayBattle);
 		rollDefenderDice(this.displayBattle, obj.terr, this.currentPlayer, [obj.attTerr], this.gameObj, this.superpowersData);
@@ -347,22 +355,30 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	computerMove() {
 		this.warAudio.pause();
 
+		recallBoats(this.gameObj, this.currentPlayer);
+
 		if (this.currentPlayer.hotSpotId > 0)
 			fortifyThisTerritory(this.currentPlayer, this.gameObj);
 
-		//		this.showControls = true;//<---delete!!
-		//		return;
 		var obj = moveCPUUnits(this.currentPlayer, this.gameObj, this.superpowersData);
 		if (obj.t1 > 0)
 			this.moveSpriteBetweenTerrs(obj);
 
-		this.currentPlayer.status = 'Place Units';
+		respositionMainBase(this.currentPlayer, this.gameObj);
+
 
 		refreshPlayerTerritories(this.gameObj, this.currentPlayer, this.superpowersData);
 
-		setTimeout(() => {
-			this.placeUnitsAndEndTurn();
-		}, 1500);
+
+
+		if (0) {
+			this.showControls = true;//<---testing!!
+		} else {
+			this.currentPlayer.status = 'Place Units';
+			setTimeout(() => {
+				this.placeUnitsAndEndTurn();
+			}, 1500);
+		}
 
 	}
 	initializePlayer() {
@@ -382,7 +398,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	initializePlayerForAttack() {
 		this.gameObj.actionButtonMessage = 'Complete Turn';
-		console.log('initializePlayerForAttack');
 		//displayHelpPopupMessages();
 		if (this.allowBotToAct)
 			this.computerGo();
@@ -394,7 +409,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.hideActionButton = false;
 		player.carrierAddedFlg = false;
 		this.showControls = !player.cpu;
-		console.log('+++-------------------------player: ', this.superpowersData.superpowers[player.nation]);
+		console.log('=======================' + this.superpowersData.superpowers[player.nation] + '==============');
 		player.diplomacyFlg = false;
 		player.diplomacyWarningFlg = false;
 		player.generalIsCargo = false;
@@ -420,7 +435,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (player.cpu && player.income <= 5 && this.gameObj.round > 12 && !this.gameObj.multiPlayerFlg) {
 			numFactories = 0;
 		}
-		console.log('numFactories', numFactories);
 		if (this.gameObj.multiPlayerFlg && this.yourPlayer && this.yourPlayer.nation > 0) {
 			this.ableToTakeThisTurn = (this.user.userName == player.userName);
 		} else
@@ -449,14 +463,16 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.placeUnitsAndEndTurn();
 			return;
 		}
-		//cleanupTreaties(player);
-		//checkTreatyOffers(player, player.cpu);
+		this.checkTreatyOffers(player);
 
 		//	if (this.gameObj.multiPlayerFlg && this.gameObj.turboFlg && !this.ableToTakeThisTurn)
 		//		startUpBackgroundViewer();
 		if (player.cpu)
 			this.computerGo();
 
+	}
+	checkTreatyOffers(player) {
+		console.log('checkTreatyOffers', player.offers, this.ableToTakeThisTurn);
 	}
 	terrClicked(popup: any, terr: any, gameObj: any, ableToTakeThisTurn: any, currentPlayer: any, user: any) {
 		if (!this.showControls) {
@@ -512,7 +528,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (piece == 52)
 			allowMovesFlg = true;
 		var nation = terr.owner;
-		var newId = this.gameObj.unitId || this.gameObj.units.length;
+		var newId = this.gameObj.unitId;
+		this.gameObj.unitId++;
 		if (piece == 12) {
 			//			console.log(this.gameObj.superBCForm);
 			var unit = unitOfId(newId, nation, piece, terr.id, this.superpowersData.units, allowMovesFlg);
@@ -535,7 +552,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			var unit = unitOfId(newId, nation, piece, terr.id, this.superpowersData.units, allowMovesFlg);
 			this.gameObj.units.push(unit);
 		}
-		this.gameObj.unitId++;
 		if (piece == 15 || piece == 19) {
 			terr.factoryCount++;
 		}
@@ -728,7 +744,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		var damageReport = getDamageReport(this.currentPlayer, this.gameObj, this.superpowersData);
 		this.currentPlayer.status = 'Waiting';
 		logItem(this.gameObj, this.currentPlayer, 'Turn Completed', this.currentPlayer.income + ' Coins Collected.', '', '', '', '', damageReport);
-		console.log('end it!', damageReport);
 		this.advanceToNextPlayer();
 		this.loadCurrentPlayer();
 		stopSpinner();
