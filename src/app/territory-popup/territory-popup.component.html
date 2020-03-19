@@ -418,9 +418,8 @@
 					[currentPlayer]="currentPlayer" [superpowersData]="superpowersData" [gameObj]="gameObj"
 					[user]="user" [optionType]="optionType" [ableToTakeThisTurn]="ableToTakeThisTurn"
 					[productionDisplayUnits]="productionDisplayUnits"
-					[allowEcoCenterFlg]="selectedTerritory.factoryCount==1"
-					[allowFactoryFlg]="selectedTerritory.factoryCount==0"></app-terr-purchase>
-
+					[allowFactoryFlg]="allowFactoryFlg"></app-terr-purchase>
+					
 				<app-terr-advice
 					*ngIf="ableToTakeThisTurn && optionType=='home' && selectedTerritory.leaderMessage.length>0"
 					[selectedTerritory]="selectedTerritory" [currentPlayer]="currentPlayer"

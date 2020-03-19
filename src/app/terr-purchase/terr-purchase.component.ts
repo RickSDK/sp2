@@ -6,6 +6,7 @@ declare var getDisplayQueueFromQueue: any;
 declare var isUnitGoodForForm: any;
 declare var addUniToQueue: any;
 declare var displayFixedPopup: any;
+declare var isFactoryAllowedOnTerr: any;
 
 @Component({
   selector: 'app-terr-purchase',
@@ -21,25 +22,28 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
   @Input('ableToTakeThisTurn') ableToTakeThisTurn: any;
   @Input('optionType') optionType: any;
   @Input('productionDisplayUnits') productionDisplayUnits: any;
-  @Input('allowEcoCenterFlg') allowEcoCenterFlg: any;
   @Input('allowFactoryFlg') allowFactoryFlg: any;
+  // public allowEcoCenterFlg = true;
+  //  public allowFactoryFlg = true;
 
   constructor() { super(); }
 
   ngOnInit(): void {
   }
+  initChild(terr: any) {
+    this.allowFactoryFlg = isFactoryAllowedOnTerr(terr, this.gameObj);
+    this.segmentIdx = (terr.nation<99)?0:2;
+    this.changeProdType(this.segmentIdx);
+  }
+
   addUniToQueue(piece: number, count: number) {
     playSound('clink.wav');
-    if (piece == 19)
-      this.allowEcoCenterFlg = false;
-    if (piece == 15)
+    if (piece == 15 || piece == 19)
       this.allowFactoryFlg = false;
     addUniToQueue(piece, count, this.superpowersData, this.currentPlayer, this.gameObj, this.selectedTerritory);
   }
   clearQueue() {
     playSound('clink.wav', 0, false);
-    this.allowEcoCenterFlg = this.selectedTerritory.factoryCount == 1;
-    this.allowFactoryFlg = this.selectedTerritory.factoryCount == 0;
     var newUnits = [];
     var terrId = this.selectedTerritory.id;
     var units = this.superpowersData.units;
@@ -68,6 +72,7 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
       }
     }
 
+    this.allowFactoryFlg = this.selectedTerritory.factoryCount<2;
     this.currentPlayer.money = money;
     this.gameObj.unitPurchases = newUnits;
     this.selectedTerritory.displayQueue = getDisplayQueueFromQueue(this.selectedTerritory, this.gameObj);
@@ -76,7 +81,7 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
   changeProdType(segmentIdx: number) {
     this.segmentIdx = segmentIdx;
     this.productionDisplayUnits = [];
-    if (this.selectedTerritory.nation < 99 && this.selectedTerritory.factoryCount == 0)
+    if (this.selectedTerritory.factoryCount == 0)
       return;
     if (segmentIdx == 0) { //ground
       this.productionDisplayUnits.push(this.superpowersData.units[1]);

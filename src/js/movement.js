@@ -16,9 +16,11 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
         return false;
     if (unit.mv == 0)
         return false;
-    if (optionType == 'attack' && unit.piece == 14)
+    if (optionType == 'attack' && unit.subType == 'missile')
         return false;
     if (optionType == 'nuke' && unit.subType != 'missile')
+        return false;
+    if (optionType == 'bomb' && unit.piece != 7)
         return false;
     if (optionType == 'loadPlanes') {
         if (unit.type == 1 && (!unit.cargoOf || unit.cargoOf == 0))
@@ -72,6 +74,23 @@ function selectAllButtonChecked(moveTerr, checkFlg, optionType, currentPlayer) {
         selectAllUnits(terr, optionType, currentPlayer);
     }
 
+}
+function packageSelectedUnits(moveTerr, selectedTerritory) {
+    var terr1Id = 1;
+    var piece = 3;
+    for (var x = 0; x < moveTerr.length; x++) {
+        var terr = moveTerr[x];
+        for (var u = 0; u < terr.units.length; u++) {
+            var unit = terr.units[u];
+
+            var e = document.getElementById('unit' + unit.id);
+            if (e && e.checked) {
+                terr1Id = unit.terr;
+                piece = unit.piece;
+             }
+        }
+    }
+    return { t1: terr1Id, t2: selectedTerritory.id, id: piece };
 }
 function moveSelectedUnits(moveTerr, selectedTerritory) {
     var terr1Id = 1;
@@ -157,9 +176,16 @@ function expectedHitsFromStrength(strength) {
 function showUnitsForMovementBG2(optionType, gameObj, currentPlayer, totalMoveTerrs, selectedTerritory) {
     var moveTerr = [];
     var totalUnitsThatCanMove = 0;
+    var maxDist = 8;
+    if (optionType == 'nuke')
+        maxDist = 5;
+    if (optionType == 'attack' || optionType == 'bomb')
+        maxDist = 4;
+    if (optionType == 'cruise')
+        maxDist = 2;
+
     for (var x = 0; x < totalMoveTerrs.length; x++) {
         var terr = totalMoveTerrs[x];
-        var maxDist = 9;
         var allyHash = {};
         terr.distObj = distanceBetweenTerrs(terr, selectedTerritory, maxDist, 0, 0, 0, allyHash, gameObj.territories);
         var moveUnits = 0;
@@ -204,7 +230,7 @@ function checkThisNumberBoxesForUnit(piece, num, terr) {
         }
     }
 }
-function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, player) {
+function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, player, gameObj) {
     var transportCargo = selectedTerritory.transportCargo;
     var carrierCargo = selectedTerritory.carrierCargo;
     var numUnits = 0;
@@ -401,7 +427,7 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
         defendingUnits.push(unit);
     });
 
-    var obj = getBattleAnalysis({ attackUnits: units, defendingUnits: defendingUnits }, selectedTerritory, player);
+    var obj = getBattleAnalysis({ attackUnits: units, defendingUnits: defendingUnits }, selectedTerritory, player, gameObj);
     if (optionType == 'cruise')
         obj.expectedLosses = 0;
     if (optionType == 'nuke')
@@ -427,7 +453,7 @@ function nukeHitsForTerr(terr, player, gameObj) {
     var blocked = adCount * 2;
     if (terr.owner > 0) {
         var defender = playerOfNation(terr.owner, gameObj);
-        if (defender.tech[18])
+        if (defender && defender.tech && defender.tech[18])
             blocked *= 2;
     }
     var finalHits = hits - blocked;
@@ -511,7 +537,7 @@ function verifyUnitsAreLegal(units) {
                 spotters++;
     });
     if (artillery > spotters) {
-        showAlertPopup('You need '+ (artillery-spotters) + ' more infantry or spotters for your artillery!', 1);
+        showAlertPopup('You need ' + (artillery - spotters) + ' more infantry or spotters for your artillery!', 1);
         return false;
     }
     return true;

@@ -43,13 +43,13 @@
 				class="fa fa-home"></i></button></a>
 	<button id="" (click)="gameInfoPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button"
 		class="btn btn-primary roundButton"><i class="fa fa-info-circle"></i></button>
-	<button *ngIf="ableToTakeThisTurn && gameObj.actionButtonMessage.length>0 && !hideActionButton" (click)="completeTurnButtonPressed()"
-		id="completeTurnButton" type="button"
+	<button *ngIf="ableToTakeThisTurn && gameObj.actionButtonMessage.length>0 && !hideActionButton"
+		(click)="completeTurnButtonPressed()" id="completeTurnButton" type="button"
 		class="btn btn-success roundButton">{{gameObj.actionButtonMessage}}</button>
-	<button *ngIf="ableToTakeThisTurn && hideActionButton" (click)="redoPurchase()"
-		 type="button" class="btn btn-success roundButton"><i class="fa fa-refresh"></i> Redo</button>
-	<button *ngIf="ableToTakeThisTurn && hideActionButton" (click)="hideActionButton=!hideActionButton"
-		type="button" class="btn btn-success roundButton"><i class="fa fa-arrow-right"></i>Advance</button>
+	<button *ngIf="ableToTakeThisTurn && hideActionButton" (click)="redoPurchase()" type="button"
+		class="btn btn-success roundButton"><i class="fa fa-refresh"></i> Redo</button>
+	<button *ngIf="ableToTakeThisTurn && hideActionButton" (click)="completeTurnButtonPressed()" type="button"
+		class="btn btn-success roundButton"><i class="fa fa-arrow-right"></i> End Turn</button>
 	<img (click)="scrollToNation(currentPlayer.nation)"
 		src="assets/graphics/images/flag{{currentPlayer.nation || 1}}.gif" height=42
 		title="{{superpowersData.superpowers[gameObj.currentNation]}}" style="cursor: pointer;">
@@ -101,7 +101,8 @@
 			style="line-height: 14px;"><i class="fa fa-volume-up"></i><br><span
 				style="font-size: 10px;">Sound</span></button>
 		<button id="" (click)="computerGo()" type="button" class="btn btn-secondary tight roundButton"
-			style="line-height: 14px;"><i class="fa fa-android"></i><br><span style="font-size: 10px;">CPU
+			style="line-height: 14px;"><i class="fa fa-android"></i><br><span style="font-size: 10px;"><span
+					*ngIf="haltActionFlg"><i class="fa fa-bug"></i></span>CPU
 				Go</span></button>
 	</span>
 </div>
@@ -154,8 +155,6 @@
 <button *ngIf="!showPanelsFlg" type="button" style="position: fixed; bottom: 0;"
 	(click)="showPanelsFlg = !showPanelsFlg" class="btn btn-secondary roundButton"><i class="fa fa-eye"></i></button>
 
-<img id="sprite" src="assets/graphics/units/piece{{spritePieceId}}u.png"
-	style="display: none; position: absolute; left: 0; top: 200px; height: 200px;">
 
 
 <img (click)="dismissArrow()" id="arrow" src="assets/graphics/images/arrow.png"
@@ -216,29 +215,6 @@
 	<div style="padding: 3px;">
 		<i class="fa fa-certificate"></i> <span id="advisorMessage"></span>
 	</div>
-	<div *ngIf="currentPlayer.news.length>0" style="border: 1px solid black; margin: 2px;">
-		<div style="background-color: #444; color: white;"><img src="assets/graphics/misc/news.png" height="20">
-			Diplomacy News
-		</div>
-		<div *ngFor="let news of currentPlayer.news" style="border-bottom: 1px solid gray;">
-			<img src="assets/graphics/misc/news{{news.type}}.png" style="max-height: 30px; max-width: 55px;">
-			newsMessage[news.type] <img src="assets/graphics/images/flag{{news.nation}}.gif" height=30>
-		</div>
-	</div>
-	<div *ngIf="currentPlayer.botRequests" style="border: 1px solid black; margin: 2px;">
-		<div style="background-color: #444; color: white;"> Ally Requests</div>
-		<div *ngFor="let botRequests of currentPlayer.botRequests" style="border-bottom: 1px solid gray;">
-			<img src="assets/graphics/flag{{botRequests.fromN}}.gif" height="20">
-			<span *ngIf="botRequests.type==1">Fortify</span>
-			<span *ngIf="botRequests.type==2">Attack</span>
-			{{gameObj.territories[botRequests.terr-1].name}}!
-		</div>
-	</div>
-	<div *ngIf="gameObj.transportFlg">
-		<hr>
-		<div><img src="assets/graphics/units/piece4u.png" height=30 title="Transport"></div>
-		Transport ships move your ground units over seas.
-	</div>
 	<button id="" type="button" class="btn btn-primary roundButton">Sir, Yes
 		Sir!</button>
 </div>
@@ -278,17 +254,23 @@
 	<p>
 </div>
 
-<div id="whiteOut" style="width: 100%; height: 100%; position: fixed; top: 0; left: 0; background-color: white; display: none;"></div>
+<div id="whiteOut"
+	style="width: 100%; height: 100%; position: fixed; top: 0; left: 0; background-color: white; display: none;"></div>
 
 
+<img id="sprite" src="assets/graphics/units/piece{{spritePieceId}}u.png"
+	style="display: none; position: absolute; left: 0; top: 200px; height: 200px;">
 
+<img id="nukeSprite" src="assets/graphics/anim/nuke{{nukeFrameNum}}.png"
+	style="display: block; position: absolute; left: -200px; top: 200px; height: 200px;">
 
 
 
 <app-leader-message-popup #leaderMessagePopup></app-leader-message-popup>
 <app-loading-popup #loadingPopup></app-loading-popup>
 <app-message-popup #messagePopup></app-message-popup>
-<app-territory-popup #territoryPopup (messageEvent)="moveSpriteBetweenTerrs($event)" (battleHappened)="battleHappened($event)"></app-territory-popup>
+<app-territory-popup #territoryPopup (messageEvent)="moveSpriteBetweenTerrs($event)"
+	(battleHappened)="battleHappened($event)"></app-territory-popup>
 
 <app-game-info-popup #gameInfoPopup></app-game-info-popup>
 <app-game-players-popup #gamePlayersPopup></app-game-players-popup>
@@ -299,3 +281,4 @@
 <app-chat-popup #chatPopup></app-chat-popup>
 <app-stats-popup #statsPopup></app-stats-popup>
 <app-audio-popup #audioPopup></app-audio-popup>
+<app-diplomacy-popup #diplomacyPopup (messageEvent)="diplomacyDone($event)"></app-diplomacy-popup>

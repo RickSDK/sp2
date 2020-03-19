@@ -549,36 +549,5 @@ function numberOfUnitsThatCanReach(distObj, tUnits, optionType) {
 	});
 	return num;
 }
-/*
-function checkMovement(distObj, unit, optionType) {
-	if (optionType == 'loadPlanes') {
-		if (unit.type == 1 && (!unit.cargoOf || unit.cargoOf == 0))
-			return true;
-		else
-			return false;
-	}
-	if (optionType == 'cruise') {
-		if (distObj.air == 1)
-			return true;
-	}
-	if (optionType == 'loadUnits') {
-		if (distObj.air == 0)
-			return true;
-	}
-	if (unit.type == 1 && unit.terr >= 79) {
-		if (distObj.air == 1)
-			return true;
-		else
-			return false;
-	}
-	var movement = (optionType == 'attack' || optionType == 'bomb' || optionType == 'nuke') ? unit.moveAtt : unit.mv;
-	if (unit.type == 1 && distObj.land <= movement)
-		return true;
-	if ((unit.type == 2 || unit.type == 4 || unit.subType == 'missile') && distObj.air <= movement)
-		return true;
-	if (unit.type == 3 && distObj.sea <= movement - numberVal(unit.movesTaken))
-		return true;
-	return false;
-}
-*/
+
 

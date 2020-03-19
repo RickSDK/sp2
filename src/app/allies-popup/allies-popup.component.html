@@ -83,7 +83,7 @@
                                 src="assets/graphics/misc/news3.png" height=30 title="Alliance"><br>Ally</th>
                         <th *ngIf="ableToTakeThisTurn" style="text-align: center;">Offer</th>
                     </tr>
-                    <tr *ngFor="let player of gameObj.players" [ngStyle]="ngStyleLogs(player.nation)">
+                    <tr *ngFor="let player of displayPlayers" [ngStyle]="ngStyleLogs(player.team)">
                         <td align=center>
                             <i class="fa fa-check" style="font-size: 20px; color: green;"
                                 *ngIf="gameObj.gameOver && player.wonFlg" title="Victory!"></i>
@@ -146,7 +146,7 @@
                         <th>Capitals</th>
                         <th>Income</th>
                     </tr>
-                    <tr *ngFor="let team of gameObj.teams" [ngStyle]="ngStyleLogs(team.name)">
+                    <tr *ngFor="let team of displayTeams" [ngStyle]="ngStyleLogs(team.name)">
                         <td align=center> {{team.name}}</td>
                         <td>
                             <span *ngFor="let player of gameObj.players">

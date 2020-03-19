@@ -1,5 +1,7 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
+import { TerrButtonsComponent } from '../terr-buttons/terr-buttons.component';
+import { TerrPurchaseComponent } from '../terr-purchase/terr-purchase.component';
 
 declare var $: any;
 declare var playSound: any;
@@ -27,12 +29,17 @@ declare var removeCasualties: any;
 declare var battleCompleted: any;
 declare var initializeBattle: any;
 declare var startBattle: any;
+declare var markCasualties: any;
 //board.js
 declare var checkCargoForTerr: any;
+declare var isFactoryAllowedOnTerr: any;
+declare var checkWaterForFactory: any;
 //movement.js
 declare var countNumberUnitsChecked: any;
 declare var checkThisNumberBoxesForUnit: any;
 declare var verifyUnitsAreLegal: any;
+declare var packageSelectedUnits: any;
+declare var nukeBattleCompleted: any;
 
 @Component({
   selector: 'app-territory-popup',
@@ -42,6 +49,8 @@ declare var verifyUnitsAreLegal: any;
 export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   @Output() messageEvent = new EventEmitter<string>();
   @Output() battleHappened = new EventEmitter<string>();
+  @ViewChild(TerrButtonsComponent) terrButtonsComp: TerrButtonsComponent;
+  @ViewChild(TerrPurchaseComponent) terrPurchaseComp: TerrPurchaseComponent;
   public selectedTerritory: any;
   public optionType: string;
   public productionDisplayUnits = [];
@@ -62,6 +71,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   //battle board
   public displayBattle: any;
   public boardCols = [1, 2, 3, 4, 5];
+  public allowFactoryFlg = true;
 
   constructor() { super(); }
 
@@ -71,7 +81,6 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);
     $("#territoryPopup").modal();
     this.selectedTerritory = terr;
-    // this.expectedHits = 0;
     var moveTerr = [];
     var totalUnitsThatCanMove = 0;
 
@@ -86,7 +95,12 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     this.totalUnitsThatCanMove = totalUnitsThatCanMove;
     this.totalMoveTerrs = moveTerr;
     this.optionType = 'home';
-    if (ableToTakeThisTurn && terr.treatyStatus == 4 && currentPlayer.status == 'Purchase') {
+
+    terr.facFlg = (terr.treatyStatus == 4 && terr.nation < 99);
+    if (terr.nation == 99)
+      terr.facFlg = checkWaterForFactory(terr, currentPlayer.nation, gameObj);
+
+    if (ableToTakeThisTurn && currentPlayer.status == 'Purchase' && terr.facFlg) {
       if (this.selectedTerritory.nation == 99)
         this.changeProdType(2);
       else
@@ -95,19 +109,27 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     }
     this.checkSendButtonStatus(null);
     checkCargoForTerr(terr, gameObj);
-    console.log(terr.name, terr);
+    this.allowFactoryFlg = isFactoryAllowedOnTerr(terr, this.gameObj);
+    console.log(terr.name, this.allowFactoryFlg, terr);
+
+    if (this.terrButtonsComp)
+      this.terrButtonsComp.initChild();
+    if (this.terrPurchaseComp)
+      this.terrPurchaseComp.initChild(terr);
   }
   autoCompletePressed() {
     playClick();
     this.autoCompleteFlg = !this.autoCompleteFlg;
   }
+  moveSpriteFromTerrToTerr(terr1: any, terr2: any, piece: number) {
+    this.moveSpriteBetweenTerrs({ t1: terr1.id, t2: terr2.id, id: piece });
+  }
   moveSpriteBetweenTerrs(obj: any) {
+    //{ t1: terr1.id, t2: terr2.id, id: piece }
     this.messageEvent.emit(obj);
   }
   buttonClicked(type) {
     //this event emitted from app-terr-buttons
-    //    this.hostileMessage = populateHostileMessage(type, this.selectedTerritory, this.gameObj, this.currentPlayer);
-    //    if (allowHostileAct(type, this.selectedTerritory, this.currentPlayer, this.gameObj)) {
     this.optionType = type;
     this.loadingFlg = true;
     this.checkSendButtonStatus(null);
@@ -124,21 +146,6 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     this.loadingFlg = false;
     this.checkSendButtonStatus(null);
   }
-  /*
-  changeOptionType(type: string) {
-    playClick();
-    this.optionType = type;
-
-    //loadPlanesButtonClicked()
-    //moveButtonClicked
-    //unloadPlanesButtonClicked
-    //requestTargetButtonClicked
-    //requestFortifyButtonClicked
-    //tranferButtonClicked
-    //requestTranferButtonClicked
-  }*/
-
-
 
   selectAllUnitsForTerr(terr: any) {
     playClick();
@@ -184,9 +191,11 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       return;
     }
     if (this.optionType == 'nuke') {
-      whiteoutScreen();
       playSound('tornado.mp3');
-      playSound('bomb4.mp3');
+      var obj = packageSelectedUnits(this.moveTerr, this.selectedTerritory);
+      obj.nukeFlg = true;
+      this.moveSpriteBetweenTerrs(obj);
+      this.landTheNuke();
     }
     if (this.optionType == 'cruise') {
       shakeScreen();
@@ -195,7 +204,20 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     this.closeModal('#territoryPopup');
   }
 
+  landTheNuke() {
+    var attackUnits = getSelectedUnits(this.moveTerr);
+    var battle = initializeBattle(this.currentPlayer, this.selectedTerritory, attackUnits, this.gameObj);
+    startBattle(this.selectedTerritory, this.currentPlayer, this.gameObj, this.superpowersData);
+    this.selectedTerritory.nuked=true;
+    battle.attHits = battle.militaryObj.expectedHits;
+    battle.defHits = attackUnits.length;
+    markCasualties(battle);
+    nukeBattleCompleted(battle, this.selectedTerritory, this.currentPlayer, this.moveTerr, this.gameObj, this.superpowersData);
 
+    //rollAttackDice(this.displayBattle);
+    //rollDefenderDice(battle, this.selectedTerritory, this.currentPlayer, this.moveTerr, this.gameObj, this.superpowersData);
+   console.log(battle);
+  }
   fightButtonPressed() {
     //emit 
     this.battleHappened.emit('yes');
@@ -206,7 +228,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   }
   beginNextRoundOfBattle() {
     if (this.displayBattle.round > 0)
-      removeCasualties(this.displayBattle, this.gameObj, this.currentPlayer);
+      removeCasualties(this.displayBattle, this.gameObj, this.currentPlayer, false, this.superpowersData);
     this.displayBattle.round++;
 
     this.displayBattle.phase = 2;
@@ -237,7 +259,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   }
   removeCasualties() {
     playClick();
-    removeCasualties(this.displayBattle, this.gameObj, this.currentPlayer);
+    removeCasualties(this.displayBattle, this.gameObj, this.currentPlayer, false, this.superpowersData);
     this.displayBattle.phase = 1;
   }
   changeDiceUnitsToImg(units: any, image: string) {

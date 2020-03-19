@@ -52,12 +52,15 @@
                     </tr>
                     <tr *ngFor="let log of displayLogs" [ngStyle]="ngStyleLogs(log.nation)">
                         <!--*ngIf="ngShowLog(log)" -->
-                        <td align=center>{{log.round}} </td>
+                        <td align=center>{{log.round}}</td>
                         <td align=center><img src="assets/graphics/images/flag{{log.nation}}.gif" height=30></td>
                         <td align="center" style="font-size: 11px; font-weight: 750;">
                             <i class="fa fa-star" *ngIf="log.type=='Battle'"></i>
                             <i class="fa fa-flask" *ngIf="log.type=='Technology'"></i>
                             <i class="fa fa-handshake-o" *ngIf="log.type=='Diplomacy'"></i>
+
+
+
                             <div *ngIf="log.enemy>0 || log.type=='Battle'"><img
                                     src="assets/graphics/images/flag{{log.enemy}}.gif" height=20></div>
                             <img *ngIf="log.type=='Nuke Attack!'" src="assets/graphics/misc/nuke.png" height=40>
@@ -68,6 +71,8 @@
                                 ng-style="ngStyleLogType(log.type)">{{log.type}}</div>
                         </td>
                         <td>
+                            <img *ngIf="log.o>0" src="assets/graphics/images/flag{{log.o}}.gif" height=20>
+
                             <div *ngIf="log.dr && log.dr.lostUnits+log.dr.enemyUnits>0" style="font-size: 12px;">
                                 <div style="font-size: 10px; color: #444;"><b>-Damage Report-</b></div>
                                 <table border=1 bordercolor=gray width=180 align="center"

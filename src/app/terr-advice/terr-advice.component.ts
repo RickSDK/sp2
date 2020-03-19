@@ -1,11 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-declare var playClick: any;
-declare var playerOfNation: any;
-declare var changeTreaty: any;
+declare var declareWarOnNation: any;
+declare var offerTreatyToNation: any;
 declare var refreshTerritory: any;
 declare var displayLeaderAndAdvisorInfo: any;
-declare var offerTreaty: any;
 
 
 @Component({
@@ -19,7 +17,7 @@ export class TerrAdviceComponent implements OnInit {
   @Input('superpowersData') superpowersData: any;
   @Input('gameObj') gameObj: any;
   @Input('user') user: any;
-  
+
   constructor() { }
 
   ngOnInit(): void {
@@ -30,13 +28,11 @@ export class TerrAdviceComponent implements OnInit {
     return { 'background-color': color, 'color': 'black' };
   }
   declareWar() {
-    playClick();
-    var p2 = playerOfNation(this.selectedTerritory.owner, this.gameObj);
-    changeTreaty(this.currentPlayer, p2, 0, this.gameObj, this.superpowersData.superpowers);
+    declareWarOnNation(this.selectedTerritory.owner, this.gameObj, this.currentPlayer, this.superpowersData)
     refreshTerritory(this.selectedTerritory, this.gameObj, this.currentPlayer, this.superpowersData, this.currentPlayer);
     displayLeaderAndAdvisorInfo(this.selectedTerritory, this.currentPlayer, this.currentPlayer, this.user, this.gameObj, this.superpowersData.superpowers);
   }
   offerTreaty(type: number) {
-    offerTreaty(type, this.selectedTerritory.owner, this.gameObj, this.currentPlayer, this.superpowersData);
+    offerTreatyToNation(this.selectedTerritory.owner, this.gameObj, this.currentPlayer, this.superpowersData);
   }
 }

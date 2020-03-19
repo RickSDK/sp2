@@ -3,7 +3,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 		console.log('!!!! no gameObj!!');
 	if (!superpowersData || !superpowersData.superpowers)
 		console.log('!!!! no superpowersData!!');
-	if(!terr) {
+	if (!terr) {
 		console.log('refreshTerritory: no terr!');
 		return;
 	}
@@ -57,7 +57,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	var movableTroopCount = 0;
 	gameObj.units.forEach(function (unit) {
 		if (unit.terr == terr.id && !unit.dead && !unitUniqueHash[unit.id]) {
-			unitUniqueHash[unit.id]=true;
+			unitUniqueHash[unit.id] = true;
 			units.push(unit);
 			if (currentPlayer && unit.owner != terr.owner && !enemyPiecesExist) {
 				if (currentPlayer.treaties[unit.owner - 1] == 0)
@@ -127,8 +127,6 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 				groundForce += unit.att;
 			if (isUnitAirDefense(unit))
 				adCount++;
-			if (unit.piece == 40)
-				adCount++; // 2 for this piece
 			if (unit.piece == 15 || unit.piece == 19)
 				factoryCount++;
 			if (unit.piece == 4) {
@@ -158,7 +156,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 				if (unit.subType == 'fighter' && unit.cargoOf > 0) {
 					var carrierTerr = getTerrOfUnitId(unit.cargoOf, gameObj);
 					if (carrierTerr > 0 && unit.terr != carrierTerr) {
-	//					showAlertPopup('Unloaded Fighter. Fixing.');
+						//					showAlertPopup('Unloaded Fighter. Fixing.');
 						unit.terr = carrierTerr;
 					}
 				}
@@ -199,7 +197,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 				unitCount++;
 		}
 	});
-	units.sort(function(a,b) { return a.piece - b.piece; });
+	units.sort(function (a, b) { return a.piece - b.piece; });
 	terr.units = units;
 	terr.movableTroopCount = movableTroopCount;
 	if (terr.defeatedByNation > 0 && numberVal(terr.defeatedByRound) < gameObj.round - 1) {
@@ -208,14 +206,10 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	terr.enemyPiecesExist = enemyPiecesExist;
 	terr.totalUnitCount = totalUnitCount;
 	terr.battleshipAACount = battleshipAACount;
-	/*	if (unitOwner > 0 && terr.owner == 0)
-			terr.owner = unitOwner;*/
 	if (unitOwner > 0 && unitOwner != terr.owner && terr.id >= 79)
 		terr.owner = unitOwner;
 	if (factoryCount > 1 && terr.facBombed)
 		terr.facBombed = false;
-	if (gameObj.airDefenseTech[terr.owner] && terr.id < 79)
-		adCount++;
 	terr.defendingUnits = pieces.join('+');
 	var results = [];
 	var militaryUnits = [];
@@ -297,6 +291,8 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 			userName = player.userName;
 			terr.shieldTech = player.tech[18];
 		}
+		if (player.tech[18])
+			adCount++;
 		if (!player.tech[2])
 			defendingFighterId = 0;
 
@@ -358,11 +354,11 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 		terr.title += '\n' + superBSStats;
 }
 function alliesFromTreaties(player) {
-	var allies=[];
-	var nation=0;
-	player.treaties.forEach(function(t) {
+	var allies = [];
+	var nation = 0;
+	player.treaties.forEach(function (t) {
 		nation++;
-		if(t==3 && nation!=player.nation)
+		if (t == 3 && nation != player.nation)
 			allies.push(nation);
 	});
 	return allies;
@@ -407,12 +403,65 @@ function playersPanelMoved() {
 			e.style.left = '0';
 	}
 }
+function isFactoryAllowedOnTerr(terr, gameObj) {
+	var flg = isFactoryInQueue(terr.id, gameObj);
+	return (!flg && terr.factoryCount < 2);
+}
+function isFactoryInQueue(terrId, gameObj) {
+	for (var x = 0; x < gameObj.unitPurchases.length; x++) {
+		var purchUnit = gameObj.unitPurchases[x];
+		if (purchUnit.terr == terrId) {
+			if (purchUnit.piece == 15 || purchUnit.piece == 19)
+				return true;
+		}
+	}
+	return false;
+}
+function checkWaterForFactory(terr, nation, gameObj) {
+	var borders = terr.borders.split('+');
+	for (var x = 0; x < terr.borders.length; x++) {
+		var id = numberVal(borders[x]);
+		if (id > 0) {
+			var ter = gameObj.territories[id - 1];
+			if (ter.owner == nation && ter.factoryCount > 0)
+				return true;
+		}
+	}
+	return false;
+}
+function acceptOfferFromNation(player, nation, gameObj, superpowersData) {
+	var player2 = playerOfNation(nation, gameObj);
+	var status = player.treaties[nation - 1];
+	var treatyStatus = (status < 2) ? 2 : 3;
+	changeTreaty(player, player2, treatyStatus, gameObj, superpowersData);
+}
+function rejectOfferFromNation(player, nation, gameObj) {
+	playSound('click.mp3');
+	var player2 = playerOfNation(nation, gameObj);
+	logDiplomacyNews(player, player2, 4);
+	logItem(gameObj, player, 'Diplomacy', 'Treaty from ' + player2.userName + ' rejected.', '', 0, nation);
+}
+function dropAllyOfNation(player, nation, gameObj, superpowersData) {
+	var player2 = playerOfNation(nation, gameObj);
+	logDiplomacyNews(player, player2, 1);
+	changeTreaty(player, player2, 1, gameObj, superpowersData);
+}
+function offerTreatyToNation(nation, gameObj, currentPlayer, superpowersData) {
+	var status = currentPlayer.treaties[nation - 1];
+	var treatyStatus = (status < 2) ? 2 : 3;
+	offerTreaty(treatyStatus, nation, gameObj, currentPlayer, superpowersData);
+}
+function declareWarOnNation(nation, gameObj, player, superpowersData) {
+	playClick();
+	var p2 = playerOfNation(nation, gameObj);
+	changeTreaty(player, p2, 0, gameObj, superpowersData);
+}
 function offerTreaty(type, nation, gameObj, currentPlayer, superpowersData) {
 	playClick();
 	var p2 = playerOfNation(nation, gameObj);
 	var p1TopFlg = (currentPlayer.nation == gameObj.top1Nation || currentPlayer.nation == gameObj.top2Nation);
 	var p2TopFlg = (p2.nation == gameObj.top1Nation || p2.nation == gameObj.top2Nation);
-	if (p1TopFlg && p2TopFlg && type == 3) {
+	if (p1TopFlg && p2TopFlg && type == 3 && !currentPlayer.cpu) {
 		showAlertPopup('Sorry, top 2 players cannot ally.', 1);
 		return;
 	}
@@ -431,6 +480,25 @@ function attemptDiplomacy(player, player2, type, superpowersData, gameObj) {
 		popupMessage(player, msg, player2, true);
 		player2.offers.push(player.nation);
 		logItem(gameObj, player, 'Diplomacy', msg);
+	}
+}
+function addPeaceFighter(player, gameObj, superpowersData) {
+	var peaceFighters = player.peaceFighters || 0;
+	peaceFighters++;
+	if (peaceFighters <= gameObj.players.length - 1) {
+		var terr1 = capitalOfPlayer(player, gameObj);
+		if (terr1) {
+			player.peaceFighters = peaceFighters;
+			addNewUnitToBoard(gameObj, terr1, 6, superpowersData);
+			refreshTerritory(terr1, gameObj, player, superpowersData, player);
+		}
+	}
+}
+function capitalOfPlayer(player, gameObj) {
+	for (var x = 0; x < gameObj.territories.length; x++) {
+		var terr = gameObj.territories[x];
+		if (terr.capital && terr.nation < 99 && terr.owner == player.nation && terr.nation == player.nation)
+			return terr;
 	}
 }
 function getCurrentPlayer(gameObj) {
@@ -681,9 +749,14 @@ function resetPlayerUnits(player, gameObj) {
 	player.leaderFlg = leaderFlg;
 	player.unitCount = unitCount;
 	addTechForPlayer(player);
-	//	setLastRoundsOfPeaceAndWar(player, gameObj);
+	setLastRoundsOfPeaceAndWar(player, gameObj);
 }
 function setLastRoundsOfPeaceAndWar(player, gameObj) {
+	if (!player.lastRoundsOfPeace || player.lastRoundsOfPeace.length < 8)
+		player.lastRoundsOfPeace = [1, 1, 1, 1, 1, 1, 1, 1];
+	if (!player.lastRoundsOfWar || player.lastRoundsOfWar.length < 8)
+		player.lastRoundsOfWar = [1, 1, 1, 1, 1, 1, 1, 1];
+
 	gameObj.players.forEach(function (p) {
 		var treaty = player.treaties[p.nation - 1];
 		if (treaty >= 1)
@@ -809,9 +882,10 @@ function addIncomeForPlayer(player, gameObj) {
 	});
 	player.units = units;
 	addTechForPlayer(player);
-	figureOutTeams(player, gameObj);
+	figureOutTeams(gameObj);
+	registerTeamStats(player, gameObj);
 }
-function figureOutTeams(player, gameObj) {
+function figureOutTeams(gameObj) {
 	var currentTurn = -1;
 	var nextTurn = -1;
 	var teamNum = 0;
@@ -839,7 +913,6 @@ function figureOutTeams(player, gameObj) {
 		capitals[team - 1] += pl1.cap;
 	}
 	checkGameTeams(incomes, capitals, gameObj);
-	registerTeamStats(player, gameObj);
 }
 function registerTeamStats(player, gameObj) {
 	if (!gameObj.statsObj)
@@ -968,7 +1041,7 @@ function populateHostileMessage(type, terr, gameObj, player) {
 	}
 	if (terr.owner == player.nation)
 		return '';
-	var cost = costToAttack(terr);
+	var cost = costToAttack(terr, player);
 	if (cost > 0) {
 		if (terr.treatyStatus == 0)
 			return 'This will cost you ' + cost + ' coins to attack, because you were not at war at the beginning of the turn. You can attack for free next turn.';
@@ -977,12 +1050,13 @@ function populateHostileMessage(type, terr, gameObj, player) {
 	} else
 		return '';
 }
-function costToAttack(terr) {
-	if (terr.treatyStatusAtStart == 1)
+function costToAttack(terr, player) {
+	var status = treatyStatus(player, terr.owner);
+	if (status == 1)
 		return 5;
-	if (terr.treatyStatusAtStart == 2)
+	if (status == 2)
 		return 10;
-	if (terr.treatyStatusAtStart == 3)
+	if (status == 3)
 		return 15;
 	return 0;
 }
@@ -1070,7 +1144,7 @@ function playerOfNation(nation, gameObj) {
 	}
 	return null;
 }
-function changeTreaty(p1, p2, type, gameObj, superpowers, cost=0) {
+function changeTreaty(p1, p2, type, gameObj, superpowersData, cost = 0) {
 	if (!p1 || !p2)
 		return;
 	if (p1.nation == p2.nation)
@@ -1080,13 +1154,32 @@ function changeTreaty(p1, p2, type, gameObj, superpowers, cost=0) {
 	logDiplomacyNews(p1, p2, type);
 	var msg = '';
 	if (type == 0) {
-		msg = superpowers[p1.nation] + ' has declared war on ' + superpowers[p2.nation];
-		popupMessage(p1, msg, p2);
+		msg = superpowersData.superpowers[p1.nation] + ' has declared war on ' + superpowersData.superpowers[p2.nation];
 	}
-	if(cost>0) {
-		logItem(gameObj, p1, 'War!', cost+' coin pentalty paid to declare war on '+superpowers[p2.nation]+'!');
+	if (type == 1) {
+		playSound('CrowdBoo.mp3');
+		msg = superpowersData.superpowers[p1.nation] + ' has dropped ' + superpowersData.superpowers[p2.nation] + ' from the alliance.';
+	}
+	if (type == 2) {
+		playSound('bell.mp3');
+		msg = superpowersData.superpowers[p1.nation] + ' has signed a peace treaty with ' + superpowersData.superpowers[p2.nation];
+		addPeaceFighter(p1, gameObj, superpowersData);
+		addPeaceFighter(p2, gameObj, superpowersData);
+	}
+	if (type == 3) {
+		playSound('tada.mp3');
+		msg = superpowersData.superpowers[p1.nation] + ' has formed an alliance with ' + superpowersData.superpowers[p2.nation];
+	}
+
+	if (cost > 0) {
+		var sta = p1.treatiesAtStart[p2.nation - 1];
+		console.log('+++treatiesAtStart', sta);
+		p1.treatiesAtStart[p2.nation - 1] = 0;
+		logItem(gameObj, p1, 'War!', cost + ' coin penalty paid to declare war on ' + superpowersData.superpowers[p2.nation] + '!', '', 0, p2.nation);
 	} else
-		logItem(gameObj, p1, 'Diplomacy', msg);
+		logItem(gameObj, p1, 'Diplomacy', msg, '', 0, p2.nation);
+
+	popupMessage(p1, msg, p2);
 }
 function removeAlliancesForNation(nation, gameObj) {
 	gameObj.players.forEach(function (player) {
@@ -1211,11 +1304,11 @@ function updateAdvisorInfo(terr, currentPlayer, user, gameObj, superpowers) {
 		strategyHint = 'We are currently at peace with ' + superpowers[terr.owner] + ', but proceed with caution. They could turn on us at any moment.';
 	}
 	if (terr.treatyStatus == 3 && terr.owner > 0) {
-		strategyHint = superpowers[terr.owner] + ' is our trust ally.';
+		strategyHint = superpowers[terr.owner] + ' is our trusted ally.';
 	}
-	var hostileMessage = populateHostileMessage('home', terr, gameObj, currentPlayer);
-	if (hostileMessage.length > 0)
-		strategyHint = hostileMessage;
+	//	var hostileMessage = populateHostileMessage('home', terr, gameObj, currentPlayer);
+	//	if (hostileMessage.length > 0)
+	//		strategyHint = hostileMessage;
 	terr.strategyHint = strategyHint;
 }
 function displayLeaderAndAdvisorInfo(terr, currentPlayer, yourPlayer, user, gameObj, superpowers) {
@@ -1372,7 +1465,7 @@ function getTerritoryType(player, terr) {
 	return obj;
 }
 function playerOfNation(nation, gameObj) {
-	if(!gameObj || !gameObj.players) {
+	if (!gameObj || !gameObj.players) {
 		console.log('!!!!whoa playerOfNation!!!');
 		return;
 	}

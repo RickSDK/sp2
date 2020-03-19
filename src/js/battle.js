@@ -52,10 +52,10 @@ function arrayOfPieces(units) {
     return list.join('+');
 }
 function startBattle(terr, player, gameObj, superpowersData) {
-    var cost = costToAttack(terr);
+    var cost = costToAttack(terr, player);
     if (cost > 0) {
         var p2 = playerOfNation(terr.owner, gameObj);
-        changeTreaty(player, p2, 0, gameObj, superpowersData.superpowers, cost);
+        changeTreaty(player, p2, 0, gameObj, superpowersData, cost);
         player.treatiesAtStart[p2.nation - 1] = 0;
         player.money -= cost;
     }
@@ -70,6 +70,12 @@ function isUnitOkToDefend(unit) {
 }
 function isUnitOkToAttack(unit, nation) {
     if (unit.att > 0 && unit.mv > 0 && unit.movesLeft > 0 && unit.owner == nation && unit.subType != 'missile')
+        return true;
+    else
+        return false;
+}
+function isUnitOkToMove(unit, nation) {
+    if (unit.att > 0 && unit.mv > 0 && unit.movesLeft > 0 && unit.owner == nation)
         return true;
     else
         return false;
@@ -331,52 +337,64 @@ function removeCasualties(battle, gameObj, player, finalFlg, superpowersData) {
         if (unit.dead) {
             battle.attCasualties.push(unit.piece);
             if (unit.piece == 10 || unit.piece == 11)
-                logItem(gameObj, player, 'Hero Killed', superpowersData.superpowers[unit.owner] +' '+unit.name + ' killed!');
+                logItem(gameObj, player, 'Hero Killed', superpowersData.superpowers[unit.owner] + ' ' + unit.name + ' killed!');
         } else if (!unit.returnFlg)
             attackUnits.push(unit);
     });
-    if(!finalFlg)
+    if (!finalFlg)
         battle.attackUnits = attackUnits;
     var defendingUnits = [];
     battle.defendingUnits.forEach(unit => {
         if (unit.dead) {
             battle.defCasualties.push(unit.piece);
             if (unit.piece == 10 || unit.piece == 11)
-                logItem(gameObj, player, 'Hero Killed', superpowersData.superpowers[unit.owner] +' '+unit.name + ' killed!');
+                logItem(gameObj, player, 'Hero Killed', superpowersData.superpowers[unit.owner] + ' ' + unit.name + ' killed!');
         } else
             defendingUnits.push(unit);
     });
-    if(!finalFlg)
+    if (!finalFlg)
         battle.defendingUnits = defendingUnits;
 }
-/*function addFinalCasualtiesToList(battle) {
-    if (!battle.attCasualties)
-        battle.attCasualties = [];
-    if (!battle.defCasualties)
-        battle.defCasualties = [];
-    battle.attackUnits.forEach(unit => {
-        if (unit.dead)
-            battle.attCasualties.push(unit.piece);
+function nukeBattleCompleted(displayBattle, selectedTerritory, currentPlayer, moveTerr, gameObj, superpowersData) {
+    removeCasualties(displayBattle, gameObj, selectedTerritory, true, superpowersData);
+    var units = [];
+    gameObj.units.forEach(function (unit) {
+        if (!unit.dead)
+            units.push(unit);
     });
-    battle.defendingUnits.forEach(unit => {
-        if (unit.dead)
-            battle.defCasualties.push(unit.piece);
+    gameObj.units = units;
+    moveTerr.forEach(function (terr) {
+        refreshTerritory(terr, gameObj, currentPlayer, superpowersData, currentPlayer);
     });
-}*/
+    
+    var hits = displayBattle.defCasualties.length;
+    var losses = displayBattle.attCasualties.length;
+    var msg = selectedTerritory.name+' nuked! '+hits+' casualties.';
+    displayBattle.round = 1;
+    logItem(gameObj, currentPlayer, 'Nuke Attack!', msg, displayBattle.battleDetails + '|' + displayBattle.attCasualties.join('+') + '|' + displayBattle.defCasualties.join('+') + '|' + displayBattle.medicHealedCount + '|' + displayBattle.round, selectedTerritory.id, selectedTerritory.owner, '', '', displayBattle.defender);
+    popupNationMessage(currentPlayer.nation, msg, selectedTerritory.owner, selectedTerritory.x, selectedTerritory.y);
+    setTimeout(() => {
+        refreshTerritory(selectedTerritory, gameObj, currentPlayer, superpowersData, currentPlayer);
+    }, 1500);
+}
 function battleCompleted(displayBattle, selectedTerritory, currentPlayer, moveTerr, gameObj, superpowersData) {
     removeCasualties(displayBattle, gameObj, selectedTerritory, true, superpowersData);
- //   addFinalCasualtiesToList(displayBattle);
+    //   addFinalCasualtiesToList(displayBattle);
     if (displayBattle.militaryObj.wonFlg) {
         selectedTerritory.defeatedByNation = currentPlayer.nation;
         selectedTerritory.defeatedByRound = gameObj.round;
         transferControlOfTerr(selectedTerritory, currentPlayer.nation);
-        playVoiceSound(71 + Math.floor((Math.random() * 6)));
+        if (!currentPlayer.cpu)
+            playVoiceSound(71 + Math.floor((Math.random() * 6)));
         displayBattle.attackUnits.forEach(function (unit) {
             if (unit.type != 2 && !unit.returnFlg)
                 unit.terr = selectedTerritory.id;
         });
-    } else
-        playVoiceSound(81 + Math.floor((Math.random() * 2)));
+    } else {
+        if (!currentPlayer.cpu)
+            playVoiceSound(81 + Math.floor((Math.random() * 2)));
+    }
+
 
     if (displayBattle.bonusUnitsFlg && displayBattle.militaryObj.wonFlg) {
         addNewUnitToBoard(gameObj, selectedTerritory, 2, superpowersData);

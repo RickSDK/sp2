@@ -2,18 +2,17 @@
 <div class="terr-card">
     <div style="color: white;">Action Panel</div>
     <div *ngIf="currentPlayer.status != 'Purchase'" style="background-color: #ccc; color: black;">
-        <div *ngIf="hostileMessage.length>0" style="background-color: yellow; color: red; font-weight: 700;"><i
-                class="fa fa-exclamation-triangle"></i> {{hostileMessage}}</div>
-
         <!-- troop movement-->
         <div
             *ngIf="(selectedTerritory.treatyStatus>=3 || (selectedTerritory.nation==99 && selectedTerritory.unitCount==0))">
             <div *ngIf="0" style="font-size: 10px;">-Troop Movement-</div>
-            <button [disabled]="optionType=='movement'" (click)="changeOptionType('movement')" type="button" class="btn btn-success roundButton"><i
-                    class="fa fa-arrow-down"></i>&nbsp; <span ng-hide="loadingFlg">Move Here</span><span
-                    *ngIf="loadingFlg" style="color: white; font-size: 14px;"><i class="fa fa-spinner fa-spin"></i>
+            <button [disabled]="optionType=='movement'" (click)="changeOptionType('movement')" type="button"
+                class="btn btn-success roundButton"><i class="fa fa-arrow-down"></i>&nbsp; <span
+                    ng-hide="loadingFlg">Move Here</span><span *ngIf="loadingFlg"
+                    style="color: white; font-size: 14px;"><i class="fa fa-spinner fa-spin"></i>
                     Loading...</span></button>
-            <button [disabled]="optionType=='movement'" *ngIf="selectedTerritory.treatyStatus==4 && selectedTerritory.nation==99"
+            <button [disabled]="optionType=='movement'"
+                *ngIf="selectedTerritory.treatyStatus==4 && selectedTerritory.nation==99"
                 (click)="changeOptionType('movement')" id="" type="button" class="btn btn-success roundButton"><i
                     class="fa fa-ship"></i>&nbsp; <span ng-hide="loadingFlg">Load Ships</span><span *ngIf="loadingFlg"
                     style="color: white; font-size: 14px;"><i class="fa fa-spinner fa-spin"></i>
@@ -27,43 +26,97 @@
                 id="loadPlaneButton" type="button" class="btn btn-success roundButton" title=""><img
                     src="assets/graphics/units/piece50u.png" height="20" class="shadowedWhite"> Load
                 Cobras</button>
+            <button *ngIf="currentPlayer.allies.length>0 && selectedTerritory.nation<99"
+                (click)="alliesInfoButtonClicked()" type="button" class="btn btn-warning roundButton">
+                <i class="fa fa-users"></i> Allies</button>
         </div>
 
         <!---- attack buttons-->
         <div
             *ngIf="selectedTerritory.treatyStatus <= 2 && (selectedTerritory.unitCount>0 || selectedTerritory.nation<99)">
             <div *ngIf="0" style="font-size: 10px;">-Attack-</div>
-            <button (click)="changeOptionType('attack')" [disabled]="optionType=='attack'" type="button" class="btn btn-danger roundButton">
-                <i class="fa fa-crosshairs" style="font-size: 28px;"></i><br>Attack</button>
-            <button *ngIf="currentPlayer.nukes" [disabled]="optionType=='nuke'" (click)="changeOptionType('nuke')" type="button"
-                class="btn btn-danger roundButton"><img src="assets/graphics/misc/nuke.png" height="30"
-                    class="shadowedWhite" /><br>Nuke</button>
-            <button *ngIf="currentPlayer.cruiseButton" [disabled]="optionType=='cruise'" (click)="changeOptionType('cruise')" type="button"
-                class="btn btn-danger roundButton"><img src="assets/graphics/misc/cruiseMissile.png" height="30"
-                    class="shadowedWhite" />
-                <br>Cruise Missile</button>
-            <button *ngIf="selectedTerritory.factoryCount>0" [disabled]="optionType=='bomb'" (click)="changeOptionType('bomb')" type="button"
+            <button (click)="changeOptionType('attack')" [disabled]="optionType=='attack'" type="button"
                 class="btn btn-danger roundButton">
+                <i class="fa fa-crosshairs" style="font-size: 28px;"></i><br>Attack</button>
+            <button *ngIf="currentPlayer.nukes" [disabled]="optionType=='nuke'" (click)="changeOptionType('nuke')"
+                type="button" class="btn btn-danger roundButton"><img src="assets/graphics/misc/nuke.png" height="30"
+                    class="shadowedWhite" /><br>Nuke</button>
+            <button *ngIf="currentPlayer.cruiseButton" [disabled]="optionType=='cruise'"
+                (click)="changeOptionType('cruise')" type="button" class="btn btn-danger roundButton"><img
+                    src="assets/graphics/misc/cruiseMissile.png" height="30" class="shadowedWhite" />
+                <br>Cruise Missile</button>
+            <button *ngIf="selectedTerritory.factoryCount>0" [disabled]="optionType=='bomb'"
+                (click)="changeOptionType('bomb')" type="button" class="btn btn-danger roundButton">
                 <img src="assets/graphics/units/piece7u.png" height="30" class="shadowedWhite" />
                 <br>Strategic
                 Bomb</button>
+            <button *ngIf="currentPlayer.allies.length>0 && selectedTerritory.nation<99"
+                (click)="alliesInfoButtonClicked()" type="button" class="btn btn-warning roundButton">
+                <i class="fa fa-users"></i> Allies</button>
         </div>
         <!---- allies buttons-->
-        <div *ngIf="optionType=='home' && (currentPlayer.hasAllies)">
+        <div *ngIf="showAlliesButtonsIdx == selectedTerritory.id && selectedTerritory.nation<99" class="borderClass3">
             <div style="font-size: 10px;">-Allies-</div>
-            <button *ngIf="(currentPlayer.allies.length>0 && selectedTerritory.nation<99)"
-                (click)="changeOptionType('botTarget')" type="button" class="btn btn-warning roundButton"><i
-                    class="fa fa-bullseye"></i> Target</button>
-            <button (click)="changeOptionType('botFortify')" type="button" class="btn btn-warning roundButton"><i
-                    class="fa fa-shield"></i> Fortify</button>
-            <button *ngIf="selectedTerritory.treatyStatus==4" (click)="changeOptionType('transferTo')" type="button"
-                class="btn btn-warning roundButton"><i class="fa fa-arrow-right"></i>
-                Transfer To
-                Ally</button>
-            <button *ngIf="selectedTerritory.treatyStatus==3" (click)="changeOptionType('requestTransfer')"
-                type="button" class="btn btn-warning roundButton"><i class="fa fa-arrow-down"></i>
-                Request
-                Transfer</button>
+            <button *ngIf="selectedTerritory.treatyStatus==0" (click)="secondaryIndex=1" type="button"
+                class="btn btn-warning roundButton"><i class="fa fa-bullseye"></i> Target</button>
+            <button *ngIf="selectedTerritory.treatyStatus>2" (click)="secondaryIndex=2" type="button"
+                class="btn btn-warning roundButton"><i class="fa fa-shield"></i> Fortify</button>
+            <button *ngIf="selectedTerritory.treatyStatus==4 && selectedTerritory.owner != selectedTerritory.nation"
+                (click)="secondaryIndex=3" type="button" class="btn btn-warning roundButton"><i
+                    class="fa fa-arrow-right"></i>
+                Transfer To Ally</button>
+            <button *ngIf="selectedTerritory.treatyStatus==3 && selectedTerritory.owner != selectedTerritory.nation"
+                (click)="secondaryIndex=4" type="button" class="btn btn-warning roundButton"><i class="fa fa-globe"></i>
+                Request Transfer</button>
+
+            <!------------------ally seconday buttons----------------------------->
+            <div *ngIf="secondaryIndex==3" class="borderClass2">
+                <div>Transfer controll of this territory to an ally?</div>
+                <button (click)="cycleAllies()" id="" type="button" class="btn btn-primary roundButton"><img
+                        src="assets/graphics/images/flag{{allyNation}}.gif" height=50></button>
+                <button (click)="tranferConfirmButtonClicked()" type="button" class="btn btn-success roundButton"><i
+                        class="fa fa-check"></i>Transfer!</button>
+                <div style="font-size: 12px;">Note: Allies cannot transfer any of their original territories.</div>
+            </div>
+            <div *ngIf="secondaryIndex==4" class="borderClass2">
+                <div *ngIf="selectedTerritory.requestTransfer == currentPlayer.nation"><i class="fa fa-globe"></i>
+                    Transfer Request Sent!</div>
+                <div *ngIf="selectedTerritory.requestTransfer != currentPlayer.nation">
+                    <div>Request that your ally transfer this country to you?</div>
+                    <button (click)="requestTranferConfirmButtonClicked()" type="button"
+                        class="btn btn-success roundButton"><i class="fa fa-check"></i> Give me
+                        {{selectedTerritory.name}}!</button>
+                    <div style="font-size: 12px;">Note: Allies cannot transfer any of their original territories.</div>
+                </div>
+
+            </div>
+            <div *ngIf="secondaryIndex==2" class="borderClass2">
+                <div *ngIf="selectedTerritory.requestedHotSpot == currentPlayer.nation"><i class="fa fa-shield"></i>
+                    Fortify Request Sent!</div>
+                <div *ngIf="selectedTerritory.requestedHotSpot != currentPlayer.nation">
+                    <div>Request that your ally fortify this country with troops?</div>
+                    <button (click)="cycleAllies()" id="" type="button" class="btn btn-primary roundButton"><img
+                            src="assets/graphics/images/flag{{allyNation}}.gif" height=50></button>
+                    <button (click)="requestFortifyButtonClicked()" type="button" class="btn btn-success roundButton"><i
+                            class="fa fa-check"></i> Fortify
+                        {{selectedTerritory.name}}!</button>
+                    <div style="font-size: 12px;">Note: You can only fortify one territory at a time.</div>
+                </div>
+            </div>
+            <div *ngIf="secondaryIndex==1" class="borderClass2">
+                <div *ngIf="selectedTerritory.requestedTarget == currentPlayer.nation"><i class="fa fa-target"></i>
+                    Target Request Sent!</div>
+                <div *ngIf="selectedTerritory.requestedTarget != currentPlayer.nation">
+                    <div>Request that your ally target this territory?</div>
+                    <button (click)="cycleAllies()" id="" type="button" class="btn btn-primary roundButton"><img
+                            src="assets/graphics/images/flag{{allyNation}}.gif" height=50></button>
+                    <button ng-click="requestTargetButtonClicked()" type="button" class="btn btn-success roundButton"><i
+                            class="fa fa-check"></i> Target
+                        {{selectedTerritory.name}}!</button>
+                    <div style="font-size: 12px;">Note: You can only target one territory at a time.</div>
+                </div>
+            </div>
+
         </div>
 
         <!---- secondary options--------------------------->
@@ -76,37 +129,6 @@
         <button *ngIf="optionType=='attack'" (click)="infoFlg = !infoFlg" id="" type="button"
             class="btn btn-secondary roundButton"><i class="fa fa-info-circle"></i> Battle Info</button>
 
-        <!------------------ally seconday buttons----------------------------->
-        <div *ngIf="optionType=='transferTo'" class="borderClass2">
-            <div>Transfer controll of this territory to an ally?</div>
-            <button *ngFor="let ally of allies" ng-click="transferToAlly(ally)" id="" type="button"
-                class="btn btn-primary roundButton"><img src="assets/graphics/images/flag{{allyNation}}.gif"
-                    height=50></button>
-            <button ng-click="requestTranferConfirmButtonClicked()" type="button" class="btn btn-success roundButton"><i
-                    class="fa fa-check"></i>Transfer!</button>
-        </div>
-        <div *ngIf="optionType=='requestTransfer'" class="borderClass2">
-            <div>Request that your ally transfer this country to you?</div>
-            <button ng-click="requestTranferConfirmButtonClicked()" type="button" class="btn btn-success roundButton"><i
-                    class="fa fa-check"></i> Give me
-                {{selectedTerritory.name}}!</button>
-        </div>
-        <div *ngIf="optionType=='botFortify'" class="borderClass2">
-            <div>Request that your ally fortify this country with troops?</div>
-            <button ng-click="changeTargetNationButtonClicked()" type="button" class="btn btn-success roundButton"><img
-                    src="assets/graphics/images/flag{{allyNation}}.gif" height=40></button>
-            <button ng-click="requestFortifyConfirmButtonClicked(1)" type="button"
-                class="btn btn-success roundButton"><i class="fa fa-check"></i> Fortify
-                {{selectedTerritory.name}}!</button>
-        </div>
-        <div *ngIf="optionType=='botTarget'" class="borderClass2">
-            <div>Request that your ally target this territory?</div>
-            <button ng-click="changeTargetNationButtonClicked()" type="button" class="btn btn-success roundButton"><img
-                    src="assets/graphics/images/flag{{allyNation}}.gif" height=40></button>
-            <button ng-click="requestFortifyConfirmButtonClicked(2)" type="button"
-                class="btn btn-success roundButton"><i class="fa fa-check"></i> Target
-                {{selectedTerritory.name}}!</button>
-        </div>
 
         <div *ngIf="infoFlg" class="borderClass2" style="text-align: left; font-size: 12px;">
             <div><b>Attack Details</b></div>
