@@ -21,6 +21,13 @@
                         <img src="assets/graphics/misc/news{{news.type}}.png" height="40">
                     </div>
                 </div>
+                
+                <!--allyRequests-->
+                <div *ngIf="currentPlayer.allyRequests.length > 0" class="borderClass3">
+                    <div class="blueBgWhite"><i class="fa fa-users"></i> allyRequests</div>
+                    <div>You have the following ally request</div>
+                    <div *ngFor="let request of currentPlayer.allyRequests">{{request}}</div>
+                 </div>
                 <!--over limit of allies-->
                 <div *ngIf="currentPlayer.allySpotsOpen < 0" class="borderClass3">
                     <div class="blueBgWhite"><i class="fa fa-users"></i> Too many Allies!</div>

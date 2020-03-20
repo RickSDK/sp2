@@ -169,7 +169,7 @@
 					</tr>
 					<tr *ngFor="let player of gameObj.players"
 						ng-style="ngStyleWinners(player.wonFlg, gameObj.gameOver)" style="font-size: 12px;">
-						<td>
+						<td>{{player.mainBaseID}}
 							<img src="assets/graphics/images/flag{{player.nation}}.gif" height="40"
 								title="{{superpowersData.superpowers[player.nation]}}">
 						</td>

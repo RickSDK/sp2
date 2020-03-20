@@ -122,6 +122,8 @@
                             <img *ngIf="player.treaties[7]==3" src="assets/graphics/images/flag8.gif" height=25>
                         </td>
                         <td *ngIf="ableToTakeThisTurn" ng-style="ngStyleAllies(player, 'white')">
+                            <div *ngIf="currentPlayer.diplomacyFlg && currentPlayer.treatyOfferedNation==player.nation"><i class="fa fa-flag"></i> Treaty Offered!</div>
+                           
                             <button title="Offer Peace"
                                 *ngIf="player.alive && ableToTakeThisTurn && !currentPlayer.diplomacyFlg && player.treaties[currentPlayer.nation-1]!=2 && player.treaties[currentPlayer.nation-1]!=3 && player.nation != currentPlayer.nation"
                                 (click)="offerTreaty(2, player.nation)" type="button"

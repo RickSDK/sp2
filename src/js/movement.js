@@ -447,7 +447,7 @@ function nukeHitsForTerr(terr, player, gameObj) {
         hits += 3;
     if (player.tech[5])
         hits += 3;
-    var adCount = terr.adCount;
+     var adCount = terr.adCount;
     if (adCount > 3)
         adCount = 3;
     var blocked = adCount * 2;

@@ -3,6 +3,8 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 declare var playClick: any;
 declare var allowHostileAct: any;
 declare var refreshTerritory: any;
+declare var transferControlOfTerr: any;
+declare var $: any;
 
 @Component({
   selector: 'app-terr-buttons',
@@ -71,19 +73,23 @@ export class TerrButtonsComponent implements OnInit {
   requestTranferConfirmButtonClicked() {
     playClick();
     this.selectedTerritory.requestTransfer=this.currentPlayer.nation;
+    $('#territoryPopup').modal('toggle');
   }
   tranferConfirmButtonClicked() {
     playClick();
-    this.selectedTerritory.owner=this.allyNation;
+    transferControlOfTerr(this.selectedTerritory, this.allyNation, this.gameObj, false);
     this.initChild();
     refreshTerritory(this.selectedTerritory, this.gameObj, this.currentPlayer, this.superpowersData, this.currentPlayer);
+    $('#territoryPopup').modal('toggle');
   }
   requestFortifyButtonClicked() {
     playClick();
     this.selectedTerritory.requestedHotSpot=this.currentPlayer.nation;
+    $('#territoryPopup').modal('toggle');
   }
   requestTargetButtonClicked() {
     playClick();
     this.selectedTerritory.requestedTarget=this.currentPlayer.nation;
+    $('#territoryPopup').modal('toggle');
   }
 }

@@ -431,6 +431,8 @@
 			<div class="modal-header" style="background-color: #337ab7;  border: 0">
 				<button (click)="closeModal('#territoryPopup')" type="button"
 					class="btn btn-secondary roundButton">Close</button>
+					<button *ngIf="ableToTakeThisTurn && optionType=='production'" (click)="completePurchaseButtonClicked()" type="button"
+					class="btn btn-success roundButton">Complete Purchase</button>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>

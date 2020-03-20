@@ -257,9 +257,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	terr.defStrength = defStrength;
 	terr.expectedLosses = parseInt(terr.defStrength / 6);
 	terr.groundForce = groundForce;
-	terr.adCount = adCount;
 	terr.unitCount = unitCount;
-
 	var status = 1;
 	if (yourPlayer && yourPlayer.nation > 0)
 		status = treatyStatus(yourPlayer, terr.owner);
@@ -276,10 +274,10 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	}
 	var flag = flagOfOwner(terr.owner, terr, showDetailsFlg, totalUnitCount, terr.defeatedByNation, terr.nuked, terr.attackedByNation);
 	terr.flag = flag;
-	if (gameObj.historyMode) {
-		terr.flag = flagOfOwner(terr.histOwner, terr, false, totalUnitCount, terr.histDefeatedByNation, terr.histNuked, terr.attackedByNation);
-		return;
-	}
+	//	if (gameObj.historyMode) {
+	//		terr.flag = flagOfOwner(terr.histOwner, terr, false, totalUnitCount, terr.histDefeatedByNation, terr.histNuked, terr.attackedByNation);
+	//		return;
+	//	}
 
 	var userName = 'Neutral';
 	if (terr.owner > 0) {
@@ -291,13 +289,15 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 			userName = player.userName;
 			terr.shieldTech = player.tech[18];
 		}
-		if (player.tech[18])
+		if (player.tech[16]) {
 			adCount++;
+		}
 		if (!player.tech[2])
 			defendingFighterId = 0;
 
 		cleanupTerr(terr, player);
 	}
+	terr.adCount = adCount;
 
 	terr.fogOfWar = (gameObj.fogOfWar == 'Y' && numberVal(status) < 3);
 	if (terr.fogOfWar)
@@ -338,6 +338,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 		highestPiece = (terr.nation < 99) ? 2 : 4;
 		console.log('ERROR!!!!! highestPiece==0!!', terr);
 	}
+	terr.adCount;
 	terr.piece = highestPiece;
 	var obj = getTerritoryType(yourPlayer, terr);
 	terr.territoryType = obj.territoryType;
@@ -391,16 +392,32 @@ function refreshBoard(terrs) {
 }
 function playersPanelMoved() {
 	var left = window.innerWidth - 55;
+	var currentLeft = 0;
 	var e = document.getElementById("sidelinePopup");
 	if (e) {
-		var left = window.innerWidth - 55;
 		if (left > 1282)
 			left = 1282;
-		var currentLeft = numberVal(e.style.left.replace('px', ''));
+		currentLeft = numberVal(e.style.left.replace('px', ''));
 		if (currentLeft == 0)
 			e.style.left = left + 'px';
 		else
 			e.style.left = '0';
+	}
+	var e2 = document.getElementById("purchaseSideBar");
+	if (e2) {
+		if (currentLeft == 0)
+			e2.style.left = left + 'px';
+		else
+			e2.style.left = '0';
+	}
+}
+function positionPurchasePanel() {
+	var e = document.getElementById("sidelinePopup");
+	var e2 = document.getElementById("purchaseSideBar");
+	if (e && e2) {
+		var rect = e.getBoundingClientRect();
+		var top = rect.top + rect.height + 20;
+		e2.style.top = top + 'px';
 	}
 }
 function isFactoryAllowedOnTerr(terr, gameObj) {
@@ -467,6 +484,7 @@ function offerTreaty(type, nation, gameObj, currentPlayer, superpowersData) {
 	}
 	currentPlayer.diplomacyFlg = true;
 	attemptDiplomacy(currentPlayer, p2, type, superpowersData, gameObj);
+	currentPlayer.treatyOfferedNation=p2.nation;
 }
 function attemptDiplomacy(player, player2, type, superpowersData, gameObj) {
 	if (type == 2) {
@@ -707,7 +725,6 @@ function resetPlayerUnits(player, gameObj) {
 	var leaderFlg = false;
 	var sbcFlg = false;
 	var stratBombButton = false;
-	player.mainBaseID = 0;
 	gameObj.units.forEach(function (unit) {
 		if (unit.owner == player.nation && unit.mv > 0 && unit.hp > 0) {
 			unit.dice = [];
@@ -765,7 +782,7 @@ function setLastRoundsOfPeaceAndWar(player, gameObj) {
 			player.lastRoundsOfWar[p.nation - 1] = gameObj.round;
 	});
 }
-function cleanUpTerritories(player, cleanFlg, gameObj) {
+function cleanUpTerritories(player, gameObj) {
 	var numFactories = 0;
 	var biggestForce = 0;
 	var mainBase = 0;
@@ -777,12 +794,14 @@ function cleanUpTerritories(player, cleanFlg, gameObj) {
 			terr.defeatedByNation = 0;
 			terr.defeatedByRound = 0;
 		}
+		if (terr.owner == 0 && terr.nuked)
+			terr.nuked = false;
 		if (terr.owner == player.nation) {
 			if (terr.attackedByNation > 0)
 				terr.attackedByNation = 0; // needed in case planes attack
-			if (terr.nuked && cleanFlg)
+			if (terr.nuked)
 				terr.nuked = false;
-			if (terr.bombed && cleanFlg)
+			if (terr.bombed)
 				terr.bombed = false;
 			//			refreshTerritory(terr);
 			numFactories += terr.factoryCount;
@@ -1337,7 +1356,7 @@ function displayLeaderAndAdvisorInfo(terr, currentPlayer, yourPlayer, user, game
 			//			else
 			//				terr.leaderMessage = "Time to build troops. Buy your desired units, close this panel and then press 'Purchase Complete'.";
 		} else {
-			if (terr.nation == 0)
+			if (terr.owner == 0)
 				terr.leaderMessage = neutralRandomMessage(terr.id);
 			else {
 				var status = treatyStatus(yourPlayer, terr.leader);

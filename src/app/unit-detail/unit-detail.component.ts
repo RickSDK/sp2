@@ -25,6 +25,8 @@ export class UnitDetailComponent implements OnInit {
     { name: 'Sp3', icon: 'fa-star' },
     { name: 'Sp4', icon: 'fa-star' },
   ];
+  public generalTypes = ['Infantry General', 'Movement General', 'Tank General', 'Charismatic General',
+'Artillery General', 'Assasin', 'Attack General', 'Defender'];
 
 
   constructor() { }
@@ -54,5 +56,10 @@ export class UnitDetailComponent implements OnInit {
     if (this.selectedUnit.id == 14)
       return 'Heros are exempt.';
     return 'Targets all units.';
+  }
+  ngStyleLogs(nation: number) {
+    var colors = ['#ffc', '#ccf', '#ccc', '#db6', '#fcc', '#cfc', '#ffc', '#fcf', '#cff', '#666'];
+    var color = colors[nation];
+    return { 'background-color': color, 'color': 'black' };
   }
 }

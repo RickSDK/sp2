@@ -53,6 +53,11 @@ function arrayOfPieces(units) {
 }
 function startBattle(terr, player, gameObj, superpowersData) {
     var cost = costToAttack(terr, player);
+    if (cost > 0 && player.cpu) {
+        console.log('!!!why attack ally??!!!!', terr.name);
+        return;
+    }
+
     if (cost > 0) {
         var p2 = playerOfNation(terr.owner, gameObj);
         changeTreaty(player, p2, 0, gameObj, superpowersData, cost);
@@ -233,6 +238,26 @@ function getBattleAnalysis(battle, selectedTerritory, player, gameObj) {
         endPhrase: endPhrase
     };
 }
+function landTheNukeBattle(player, targetTerr, attackUnits, gameObj, superpowersData, launchTerritories) {
+    playSound('tornado.mp3');
+    var battle = initializeBattle(player, targetTerr, attackUnits, gameObj);
+    startBattle(targetTerr, player, gameObj, superpowersData);
+    targetTerr.nuked = true;
+    battle.attHits = battle.militaryObj.expectedHits;
+    var expectedHits = nukeHitsForTerr(targetTerr, player, gameObj);
+    console.log('***NUKE***', targetTerr.name, expectedHits, battle);
+    battle.defHits = attackUnits.length;
+    markCasualties(battle);
+    nukeBattleCompleted(battle, targetTerr, player, launchTerritories, gameObj, superpowersData, false);
+}
+function landTheCruiseBattle(player, targetTerr, attackUnits, gameObj, superpowersData) {
+    var battle = initializeBattle(player, targetTerr, attackUnits, gameObj);
+    startBattle(targetTerr, player, gameObj, superpowersData);
+    battle.attHits = battle.militaryObj.expectedHits;
+    battle.defHits = 0;
+    markCasualties(battle);
+    nukeBattleCompleted(battle, targetTerr, player, [], gameObj, superpowersData, true);
+}
 function highlightTheseUnits(moveTerr, units) {
     unitIdHash = {}
     units.forEach(unit => {
@@ -355,7 +380,7 @@ function removeCasualties(battle, gameObj, player, finalFlg, superpowersData) {
     if (!finalFlg)
         battle.defendingUnits = defendingUnits;
 }
-function nukeBattleCompleted(displayBattle, selectedTerritory, currentPlayer, moveTerr, gameObj, superpowersData) {
+function nukeBattleCompleted(displayBattle, selectedTerritory, currentPlayer, moveTerr, gameObj, superpowersData, cruiseFlg) {
     removeCasualties(displayBattle, gameObj, selectedTerritory, true, superpowersData);
     var units = [];
     gameObj.units.forEach(function (unit) {
@@ -366,12 +391,14 @@ function nukeBattleCompleted(displayBattle, selectedTerritory, currentPlayer, mo
     moveTerr.forEach(function (terr) {
         refreshTerritory(terr, gameObj, currentPlayer, superpowersData, currentPlayer);
     });
-    
+
     var hits = displayBattle.defCasualties.length;
     var losses = displayBattle.attCasualties.length;
-    var msg = selectedTerritory.name+' nuked! '+hits+' casualties.';
+    var weaponType = (cruiseFlg) ? ' missiled! ' : ' nuked! ';
+    var title = (cruiseFlg) ? 'Cruise Attack!' : 'Nuke Attack!';
+    var msg = selectedTerritory.name + weaponType + hits + ' casualties.';
     displayBattle.round = 1;
-    logItem(gameObj, currentPlayer, 'Nuke Attack!', msg, displayBattle.battleDetails + '|' + displayBattle.attCasualties.join('+') + '|' + displayBattle.defCasualties.join('+') + '|' + displayBattle.medicHealedCount + '|' + displayBattle.round, selectedTerritory.id, selectedTerritory.owner, '', '', displayBattle.defender);
+    logItem(gameObj, currentPlayer, title, msg, displayBattle.battleDetails + '|' + displayBattle.attCasualties.join('+') + '|' + displayBattle.defCasualties.join('+') + '|' + displayBattle.medicHealedCount + '|' + displayBattle.round, selectedTerritory.id, selectedTerritory.owner, '', '', displayBattle.defender);
     popupNationMessage(currentPlayer.nation, msg, selectedTerritory.owner, selectedTerritory.x, selectedTerritory.y);
     setTimeout(() => {
         refreshTerritory(selectedTerritory, gameObj, currentPlayer, superpowersData, currentPlayer);
@@ -383,7 +410,7 @@ function battleCompleted(displayBattle, selectedTerritory, currentPlayer, moveTe
     if (displayBattle.militaryObj.wonFlg) {
         selectedTerritory.defeatedByNation = currentPlayer.nation;
         selectedTerritory.defeatedByRound = gameObj.round;
-        transferControlOfTerr(selectedTerritory, currentPlayer.nation);
+        transferControlOfTerr(selectedTerritory, currentPlayer.nation, gameObj, true);
         if (!currentPlayer.cpu)
             playVoiceSound(71 + Math.floor((Math.random() * 6)));
         displayBattle.attackUnits.forEach(function (unit) {
@@ -424,18 +451,36 @@ function battleCompleted(displayBattle, selectedTerritory, currentPlayer, moveTe
     logItem(gameObj, currentPlayer, 'Battle', msg, displayBattle.battleDetails + '|' + displayBattle.attCasualties.join('+') + '|' + displayBattle.defCasualties.join('+') + '|' + displayBattle.medicHealedCount + '|' + displayBattle.round, selectedTerritory.id, selectedTerritory.owner, '', '', displayBattle.defender);
     popupNationMessage(currentPlayer.nation, msg, selectedTerritory.owner, selectedTerritory.x, selectedTerritory.y);
 }
-function transferControlOfTerr(terr, nation) {
+function transferControlOfTerr(terr, nation, gameObj, annihilationFlg) {
     terr.owner = nation;
+    terrUnits = [];
+    gameObj.units.forEach(function (unit) {
+        if (unit.terr == terr.id) {
+            if (isUnitOkToDefend(unit)) {
+                if (annihilationFlg && unit.owner != nation)
+                    unit.dead = true;
+                else
+                    terrUnits.push(unit);
+            } else {
+                unit.owner = nation;
+                unit.nation = nation;
+                unit.movesLeft = 0;
+                terrUnits.push(unit);
+            }
+        }
+    });
+    terr.units = terrUnits;
+    /*
     terr.units.forEach(function (unit) {
         if (!isUnitOkToDefend(unit)) {
             unit.owner = nation;
             unit.nation = nation;
             unit.movesLeft = 0;
         }
-    });
+    });*/
 }
 function transferControlOfTerrAndRefresh(terr, nation, gameObj, currentPlayer, superpowersData, yourPlayer) {
-    transferControlOfTerr(terr, nation);
+    transferControlOfTerr(terr, nation, gameObj, false);
     refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPlayer)
 }
 function addNewUnitToBoard(gameObj, terr, piece, superpowersData) {

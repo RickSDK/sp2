@@ -30,6 +30,8 @@ declare var battleCompleted: any;
 declare var initializeBattle: any;
 declare var startBattle: any;
 declare var markCasualties: any;
+declare var landTheNukeBattle: any;
+declare var landTheCruiseBattle: any;
 //board.js
 declare var checkCargoForTerr: any;
 declare var isFactoryAllowedOnTerr: any;
@@ -110,12 +112,18 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     this.checkSendButtonStatus(null);
     checkCargoForTerr(terr, gameObj);
     this.allowFactoryFlg = isFactoryAllowedOnTerr(terr, this.gameObj);
+
+
     console.log(terr.name, this.allowFactoryFlg, terr);
 
     if (this.terrButtonsComp)
       this.terrButtonsComp.initChild();
     if (this.terrPurchaseComp)
       this.terrPurchaseComp.initChild(terr);
+  }
+  completePurchaseButtonClicked() {
+    this.battleHappened.emit('done!');
+    this.closeModal('#territoryPopup');
   }
   autoCompletePressed() {
     playClick();
@@ -191,33 +199,29 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       return;
     }
     if (this.optionType == 'nuke') {
-      playSound('tornado.mp3');
       var obj = packageSelectedUnits(this.moveTerr, this.selectedTerritory);
-      obj.nukeFlg = true;
-      this.moveSpriteBetweenTerrs(obj);
-      this.landTheNuke();
+      var attackUnits = getSelectedUnits(this.moveTerr);
+      this.landTheNuke(obj.t1, attackUnits, this.selectedTerritory, this.moveTerr, this.currentPlayer, this.gameObj, this.superpowersData);
     }
     if (this.optionType == 'cruise') {
-      shakeScreen();
       playSound('raid.mp3');
-    }
+      var obj = packageSelectedUnits(this.moveTerr, this.selectedTerritory);
+      var attackUnits = getSelectedUnits(this.moveTerr);
+      this.landTheCruise(obj.t1, attackUnits, this.selectedTerritory, this.currentPlayer, this.gameObj, this.superpowersData);
+   }
     this.closeModal('#territoryPopup');
   }
 
-  landTheNuke() {
-    var attackUnits = getSelectedUnits(this.moveTerr);
-    var battle = initializeBattle(this.currentPlayer, this.selectedTerritory, attackUnits, this.gameObj);
-    startBattle(this.selectedTerritory, this.currentPlayer, this.gameObj, this.superpowersData);
-    this.selectedTerritory.nuked=true;
-    battle.attHits = battle.militaryObj.expectedHits;
-    battle.defHits = attackUnits.length;
-    markCasualties(battle);
-    nukeBattleCompleted(battle, this.selectedTerritory, this.currentPlayer, this.moveTerr, this.gameObj, this.superpowersData);
-
-    //rollAttackDice(this.displayBattle);
-    //rollDefenderDice(battle, this.selectedTerritory, this.currentPlayer, this.moveTerr, this.gameObj, this.superpowersData);
-   console.log(battle);
-  }
+  landTheNuke(fromTerrId: number, attackUnits:any, targetTerr:any, launchTerritories:any, player:any, gameObj:any, superpowersData:any) {
+    var obj = { t1: fromTerrId, t2: targetTerr.id, id: 14, nukeFlg: true };
+    this.moveSpriteBetweenTerrs(obj);
+    landTheNukeBattle(player, targetTerr, attackUnits, gameObj, superpowersData, launchTerritories);
+   }
+   landTheCruise(fromTerrId: number, attackUnits:any, targetTerr:any, player:any, gameObj:any, superpowersData:any) {
+    var obj = { t1: fromTerrId, t2: targetTerr.id, id: 144, cruiseFlg: true };
+    this.moveSpriteBetweenTerrs(obj);
+    landTheCruiseBattle(player, targetTerr, attackUnits, gameObj, superpowersData);
+   }
   fightButtonPressed() {
     //emit 
     this.battleHappened.emit('yes');

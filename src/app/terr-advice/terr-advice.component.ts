@@ -4,6 +4,7 @@ declare var declareWarOnNation: any;
 declare var offerTreatyToNation: any;
 declare var refreshTerritory: any;
 declare var displayLeaderAndAdvisorInfo: any;
+declare var $: any;
 
 
 @Component({
@@ -34,5 +35,6 @@ export class TerrAdviceComponent implements OnInit {
   }
   offerTreaty(type: number) {
     offerTreatyToNation(this.selectedTerritory.owner, this.gameObj, this.currentPlayer, this.superpowersData);
+    $('#territoryPopup').modal('toggle');
   }
 }

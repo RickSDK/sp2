@@ -16,13 +16,20 @@
                         *ngIf="gameObj.type!='freeforall' && gameObj.type!='ffa-5' && gameObj.type!='ffa-6' && gameObj.type!='ffa-7' && numTeams<gameObj.players.length">
                         <div>Team Income</div>
                         <canvas id="teamCanvas" width="640" height="340"></canvas>
-                        <div *ngFor="let team of gameObj.teams" class="borderClass2"
-                            ng-style="ngStyleLogs(team.nations[0])">
-                            <div style="font-size: 12px;">Team {{team.name}}</div>
-                            <span *ngFor="let nation of team.nations"><img
-                                    src="assets/graphics/images/flag{{nation}}.gif" height=30></span>
-                            <div style="font-size: 24px; color: #070;"> {{team.income}}</div>
-                        </div>
+
+                        <span *ngFor="let team of gameObj.teams">
+
+                            <div *ngIf="team.income>0" class="borderClass2" ng-style="ngStyleLogs(team.nations[0])">
+                                <div style="font-size: 12px;">Team {{team.name}}</div>
+                                <span *ngFor="let nation of team.nations"><img
+                                        src="assets/graphics/images/flag{{nation}}.gif" height=30></span>
+                                <div style="font-size: 24px; color: #070;"> {{team.income}}</div>
+                            </div>
+    
+                        </span>
+
+
+ 
                         <hr>
                     </div>
 
@@ -31,8 +38,9 @@
 
                     <span *ngFor="let player of gameObj.players" class="borderClass3"
                         [ngStyle]="ngStyleLogs(player.nation)" style="text-align: center;">
-                        <div style="font-size: 10px; background-color: #444; color: white;"><i *ngIf="player.cpu && player.alive"
-                                class="fa fa-android" title="Computer Player"></i> {{player.userName}}</div>
+                        <div style="font-size: 10px; background-color: #444; color: white;"><i
+                                *ngIf="player.cpu && player.alive" class="fa fa-android" title="Computer Player"></i>
+                            {{player.userName}}</div>
                         <img src="assets/graphics/images/flag{{player.nation}}.gif" height=35
                             title="{{superpowersData.superpowers[player.nation]}}">
 
