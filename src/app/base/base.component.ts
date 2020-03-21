@@ -35,7 +35,12 @@ export class BaseComponent implements OnInit {
     return ngUnitSrc(piece, nation);
   }
   //-----ngStyles---
-  ngStyleLogs(nation: number) {
+  ngStyleLogs(nation: number, deadFlg = false) {
+    if (nation == 99)
+      return { 'background-color': '#7df', 'color': 'black' };
+    if (deadFlg)
+      return { 'background-color': '#777', 'color': 'black' };
+
     var colors = ['#ffc', '#ccf', '#ccc', '#db6', '#fcc', '#cfc', '#ffc', '#fcf', '#cff', '#666'];
     var color = colors[nation];
     return { 'background-color': color, 'color': 'black' };
@@ -45,7 +50,7 @@ export class BaseComponent implements OnInit {
     if (num == buttonIdx)
       return 'btn btn-primary roundButton';
     else
-      return 'btn btn-secondary roundButton';
+      return 'btn btn-light roundButton';
   }
 
   //-----views---

@@ -21,7 +21,7 @@
 					<div>defeatedByRound {{selectedTerritory.defeatedByRound}}</div>
 				</div>
 
-				<app-terr-header [selectedTerritory]="selectedTerritory"></app-terr-header>
+				<app-terr-header [selectedTerritory]="selectedTerritory" [ableToTakeThisTurn]="ableToTakeThisTurn"></app-terr-header>
 
 				<div *ngIf="displayBattle && optionType == 'battle'">
 					<div *ngIf="currentPlayer.nation<=6 && displayBattle.generalUnit>0" style="background-color: #ccf;">

@@ -47,7 +47,7 @@
 						<th style="padding: 5px;"><span title="Deaths">D</span></th>
 						<th style="padding: 5px;"><span title="Kills/Death">K/D</span></th>
 					</tr>
-					<tr *ngFor="let player of gameObj.players" [ngStyle]="ngStyleLogs(player.nation)"
+					<tr *ngFor="let player of gameObj.players" [ngStyle]="ngStyleLogs(player.nation, !player.alive)"
 						ng-style="ngStyleWinners(player.wonFlg, gameObj.gameOver)">
 						<td>
 							<img src="assets/graphics/images/flag{{player.nation}}.gif" height=40
@@ -126,7 +126,7 @@
 						<th valign=top>Income<div><img src="assets/graphics/images/coin.png" height=20></div>
 						</th>
 					</tr>
-					<tr *ngFor="let player of gameObj.players" [ngStyle]="ngStyleLogs(player.nation)"
+					<tr *ngFor="let player of gameObj.players" [ngStyle]="ngStyleLogs(player.nation, !player.alive)"
 						ng-style="ngStyleWinners(player.wonFlg, gameObj.gameOver)">
 						<td>
 							<img src="assets/graphics/images/flag{{player.nation}}.gif" height="40"
@@ -168,7 +168,7 @@
 						<th valign=top>Secondary</th>
 					</tr>
 					<tr *ngFor="let player of gameObj.players"
-						ng-style="ngStyleWinners(player.wonFlg, gameObj.gameOver)" style="font-size: 12px;">
+					[ngStyle]="ngStyleLogs(player.nation, !player.alive)" style="font-size: 12px;">
 						<td>{{player.mainBaseID}}
 							<img src="assets/graphics/images/flag{{player.nation}}.gif" height="40"
 								title="{{superpowersData.superpowers[player.nation]}}">

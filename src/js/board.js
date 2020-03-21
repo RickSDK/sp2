@@ -403,21 +403,30 @@ function playersPanelMoved() {
 		else
 			e.style.left = '0';
 	}
-	var e2 = document.getElementById("purchaseSideBar");
+	var e2 = document.getElementById("sidelineButton");
 	if (e2) {
 		if (currentLeft == 0)
 			e2.style.left = left + 'px';
 		else
 			e2.style.left = '0';
 	}
+	var e3 = document.getElementById("purchaseSideBar");
+	if (e3) {
+		if (currentLeft == 0)
+			e3.style.left = left + 'px';
+		else
+			e3.style.left = '0';
+	}
 }
 function positionPurchasePanel() {
 	var e = document.getElementById("sidelinePopup");
-	var e2 = document.getElementById("purchaseSideBar");
-	if (e && e2) {
+	var e2 = document.getElementById("sidelineButton");
+	var e3 = document.getElementById("purchaseSideBar");
+	if (e && e2 && e3) {
 		var rect = e.getBoundingClientRect();
-		var top = rect.top + rect.height + 20;
+		var top = rect.top + rect.height + 5;
 		e2.style.top = top + 'px';
+		e3.style.top = (top + 50) + 'px';
 	}
 }
 function isFactoryAllowedOnTerr(terr, gameObj) {
@@ -484,7 +493,7 @@ function offerTreaty(type, nation, gameObj, currentPlayer, superpowersData) {
 	}
 	currentPlayer.diplomacyFlg = true;
 	attemptDiplomacy(currentPlayer, p2, type, superpowersData, gameObj);
-	currentPlayer.treatyOfferedNation=p2.nation;
+	currentPlayer.treatyOfferedNation = p2.nation;
 }
 function attemptDiplomacy(player, player2, type, superpowersData, gameObj) {
 	if (type == 2) {
@@ -726,7 +735,7 @@ function resetPlayerUnits(player, gameObj) {
 	var sbcFlg = false;
 	var stratBombButton = false;
 	gameObj.units.forEach(function (unit) {
-		if (unit.owner == player.nation && unit.mv > 0 && unit.hp > 0) {
+		if (unit.owner == player.nation && unit.mv > 0 && !unit.dead) {
 			unit.dice = [];
 			unit.moving = false;
 			unit.usedInCombat = false;
@@ -899,6 +908,9 @@ function addIncomeForPlayer(player, gameObj) {
 			units++;
 		}
 	});
+	gameObj.players.forEach(function (player) {
+		resetPlayerUnits(player, gameObj);
+	});
 	player.units = units;
 	addTechForPlayer(player);
 	figureOutTeams(gameObj);
@@ -913,7 +925,6 @@ function figureOutTeams(gameObj) {
 	var capitals = [0, 0, 0, 0, 0, 0, 0, 0];
 	for (var x = 0; x < gameObj.players.length; x++) {
 		var pl1 = gameObj.players[x];
-		resetPlayerUnits(pl1, gameObj);
 		if (gameObj.turnId == pl1.turn)
 			currentTurn = pl1.turn;
 		if (currentTurn >= 0 && gameObj.turnId != pl1.turn && nextTurn == -1 && pl1.alive)
@@ -927,11 +938,46 @@ function figureOutTeams(gameObj) {
 			team = teamNum;
 			teamHash[pl1.teamIndex] = teamNum;
 		}
+		pl1.capitals = capitalsForPlayer(pl1, gameObj);
 		pl1.team = team;
 		incomes[team - 1] += pl1.income;
-		capitals[team - 1] += pl1.cap;
+		capitals[team - 1] += pl1.capitals.length;
 	}
 	checkGameTeams(incomes, capitals, gameObj);
+}
+function capitalsForPlayer(player, gameObj) {
+	capitals = [];
+	gameObj.territories.forEach(function (terr) {
+		if (terr.capital && terr.nation < 99 && terr.owner == player.nation)
+			capitals.push(terr.nation);
+	});
+	return capitals;
+}
+function checkGameTeams(incomes, capitals, gameObj) {
+	var x = 0;
+	gameObj.teams.forEach(function (team) {
+		var nations = [];
+		var alive = false;
+		var numPlayers = 0;
+		gameObj.players.forEach(function (player) {
+			if (player.team == team.name && player.capitals.length > 0) {
+				if (player.alive) {
+					numPlayers++;
+					alive = true;
+				}
+
+				player.capitals.forEach(function (cap) {
+					nations.push(cap);
+				});
+			}
+		});
+		team.numPlayers = numPlayers;
+		team.alive = alive;
+		team.nations = nations;
+		team.income = incomes[x];
+		team.capitals = capitals[x];
+		x++;
+	});
 }
 function registerTeamStats(player, gameObj) {
 	if (!gameObj.statsObj)
@@ -963,20 +1009,6 @@ function registerTeamStats(player, gameObj) {
 		thisTurnStatsObj.teams.push({ t: team.name, i: team.income, n: n });
 	});
 	gameObj.statsObj.push(thisTurnStatsObj);
-}
-function checkGameTeams(incomes, capitals, gameObj) {
-	var x = 0;
-	gameObj.teams.forEach(function (team) {
-		var nations = [];
-		gameObj.players.forEach(function (player) {
-			if (player.team == team.name)
-				nations.push(player.nation);
-		});
-		team.nations = nations;
-		team.income = incomes[x];
-		team.capitals = capitals[x];
-		x++;
-	});
 }
 function getTeamIndex(player, gameObj) {
 	var adder = parseInt(player.nation);
@@ -1534,3 +1566,92 @@ function flagOfOwner(own, terr, showDetailsFlg, unitCount, defeatedByNation, nuk
 	}
 	return flag;
 }
+function checkVictoryConditions(currentPlayer, gameObj, superpowersData) {
+	figureOutTeams(gameObj);
+	var victoryMet = false;
+
+	var maxCapitals = 6;
+	var maxIncome = 0;
+	var winnningPlayer = 'Unknown';
+	gameObj.players.forEach(function (player) {
+		if (player.income > maxIncome) {
+			maxIncome = player.income;
+			winnningPlayer = superpowersData.superpowers[player.nation];
+		}
+	});
+
+	var maxCapitalsHeld;
+	var winningTeam = 0;
+	gameObj.teams.forEach(function (team) {
+		if (team.capitals >= maxCapitals) {
+			maxCapitalsHeld = team.capitals;
+			victoryMet = true;
+			winningTeam = team.name;
+		}
+
+		if (team.income > maxIncome && team.numPlayers > 1) {
+			maxIncome = team.income;
+			winnningPlayer = 'Team ' + team.name;
+		}
+	});
+	var winningTeamList = playersOfTeam(winningTeam, gameObj, superpowersData);
+	if(gameObj.gameOver) {
+		var msg = 'Victory!  Game won by ' + winningTeamList.join(', ');
+		gameObj.currentSituation = msg;
+		return;
+	}
+	gameObj.currentSituation = winnningPlayer + ' is winning!';
+	var victoryRound = numberVal(gameObj.victoryRound);
+	if (victoryMet) {
+		var vRound = (victoryRound > 0) ? victoryRound : gameObj.round;
+		var msg = 'Victory Conditions met! ' + winnningPlayer + ' controls ' + maxCapitalsHeld + ' capitals. Game will end in round ' + vRound + ' if 6 capitals are held.';
+		gameObj.currentSituation = msg;
+		if (victoryRound == 0) {
+			gameObj.victoryRound = gameObj.round + 1;
+			gameObj.nation = currentPlayer.nation;
+			showAlertPopup(msg);
+			logItem(gameObj, currentPlayer, 'Victory Conditions Met', msg);
+		} else {
+			if (victoryRound == gameObj.round && gameObj.nation == currentPlayer.nation) {
+				var msg = 'Game won by ' + winningTeamList.join(', ');
+				gameObj.currentSituation = msg;
+				logItem(gameObj, currentPlayer, 'Game Over!', msg);
+				displayFixedPopup('gameOverPopup');
+				setInnerHTMLFromElement('winningTeam', msg);
+				playSound('tada.mp3');
+				gameObj.inProgress = false;
+				gameObj.gameOver = true;
+				gameObj.actionButtonMessage = '';
+				clearCurrentGameId();
+			}
+		}
+	} else {
+		if (victoryRound > 0) {
+			var msg = 'Victory conditions no longer met!';
+			showAlertPopup(msg);
+			logItem(gameObj, currentPlayer, 'Victory Conditions Broken', msg);
+			gameObj.victoryRound = 0;
+		}
+	}
+
+
+}
+function playersOfTeam(team, gameObj, superpowersData) {
+	var winningTeam = [];
+	gameObj.players.forEach(function (player) {
+		if (player.team == team) {
+			player.wonFlg = true;
+			winningTeam.push(superpowersData.superpowers[player.nation]);
+		}
+	});
+	return winningTeam;
+}
+function playIntroSequence() {
+	setTimeout(function() { fadeInDiv('intro1', ''); playSound('zap.mp3'); }, 2000);	
+	setTimeout(function() { fadeInDiv('intro2', ''); playSound('zap.mp3');  }, 4000);	
+	setTimeout(function() { fadeInDiv('intro3', ''); playSound('zap.mp3');}, 6000);	
+	setTimeout(function() { fadeInDiv('intro4', 'btn btn-primary roundButton'); playSound('zap.mp3');}, 8000);	
+	setTimeout(function() { fadeInDiv('intro5', 'btn btn-default roundButton'); playSound('zap.mp3');}, 10000);	
+}
+
+

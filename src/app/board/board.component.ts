@@ -35,6 +35,9 @@ declare var changeClass: any;
 declare var playClick: any;
 declare var treatyStatus: any;
 declare var shakeScreen: any;
+declare var clearCurrentGameId: any;
+declare var playVoiceClip: any;
+declare var playIntroSequence: any;
 //---board.js
 declare var displayLeaderAndAdvisorInfo: any;
 declare var getDisplayQueueFromQueue: any;
@@ -50,6 +53,7 @@ declare var alliesFromTreaties: any;
 declare var whiteoutScreen: any;
 declare var positionPurchasePanel: any;
 declare var transferControlOfTerr: any;
+declare var checkVictoryConditions: any;
 //---spLib.js
 declare var scrollToCapital: any;
 //---computer.js
@@ -95,13 +99,13 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public svgs = [];
 	public hostname: string;
 	public user: any;
-	public loadingFlg = true;
+	public loadingFlg = false;
 	public showControls = false;
 	public historyMode = false;
 	public historyRound = 1;
 	public gameObj: any;
 	public currentPlayer: any;
-	public yourPlayer = { userName: 'Ted', nation: 3 };
+	public yourPlayer: any;
 	public ableToTakeThisTurn = true;
 	public uploadMultiplayerFlg = false;
 	public progress = 0;
@@ -120,6 +124,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public haltActionFlg = false;
 	public haltPurchaseFlg = false;
 	public nukeFrameNum = 1;
+	public forcedClickNation = 0;
 
 	constructor() { super(); }
 
@@ -128,13 +133,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.user = userObjFromUser();
 		this.user.rank = 1;
 		this.svgs = loadSVGs();
-		this.initBoard();
 		this.warAudio.loop = true;
+		this.gameObj = { territories: [] };
+		this.initBoard();
 	}
 	//----------------load board------------------
 	initBoard() {
-		startSpinner('Loading Game', '100px');
-		updateProgressBar(20);
 		var loadGameId = numberVal(localStorage.loadGameId);
 		var currentGameId = numberVal(localStorage.currentGameId);
 		if (loadGameId > 0) {
@@ -151,12 +155,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				var startingNation = localStorage.startingNation;
 				console.log('+++ new single player....', startingNation);
 				var type = (localStorage.gameType == 1) ? 'freeforall' : 'diplomacy';
-				var id = 3;
 				var numPlayers = 4;
-				var attack = 6;
 				var name = (this.user.rank == 0) ? 'Basic Training' : 'Single Player Game';
-				if (this.user.rank == 0)
-					type = "basicTraining";
 
 				var pObj = {};
 				if (localStorage.customGame == 'Y') {
@@ -164,18 +164,21 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					numPlayers = localStorage.customNumPlayers;
 					pObj = JSON.parse(localStorage.customGamePlayers);
 				}
-				showAlertPopup('hi' + startingNation);
 				this.gameObj = createNewGameSimple(type, numPlayers, name, startingNation, pObj);
-				//								this.gameObj = createNewGame(id, type, numPlayers, name, attack, this.gUnits, startingNation, localStorage.fogOfWar, this.user.rank, localStorage.customGame, pObj, localStorage.hardFog);
-				//				this.gameObj.difficultyNum = localStorage.difficultyNum || 1;
-				showAlertPopup('gameObj' + this.gameObj.id + this.gameObj.name);
-				//				saveGame(this.gameObj, this.user, this.currentPlayer);
-				//				localStorage.currentGameId = this.gameObj.id;
+				this.gameObj.difficultyNum = localStorage.difficultyNum || 1;
+				saveGame(this.gameObj, this.user, this.currentPlayer);
+				localStorage.currentGameId = this.gameObj.id;
 			}
 		}
-		scrubGameObj(this.gameObj, this.superpowersData.units);
-		console.log('gameObj', this.gameObj);
-		setTimeout(() => { this.loadBoard(); }, 500);
+		if (this.gameObj.territories.length > 0) {
+			this.loadingFlg = true;
+			startSpinner('Loading Game', '100px');
+			updateProgressBar(20);
+			scrubGameObj(this.gameObj, this.superpowersData.units);
+			console.log('gameObj', this.gameObj);
+			setTimeout(() => { this.loadBoard(); }, 500);
+		} else
+			showAlertPopup('No Game!', 1);
 	}
 	loadBoard() {
 		updateProgressBar(70);
@@ -209,10 +212,14 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		stopSpinner();
 		this.loadCurrentPlayer();
 	}
+	haultAction() {
+		this.haltActionFlg = !this.haltActionFlg;
+		localStorage.haltActionFlg = (this.haltActionFlg) ? 'Y' : 'N';
+	}
 	loadCurrentPlayer() {
 		//-------------------- test
 		//	this.gameObj.turnId = 3; //<--- test
-		this.haltActionFlg = false;
+		this.haltActionFlg = (localStorage.haltActionFlg == 'Y');
 		this.haltPurchaseFlg = false;
 		//--------------------end test
 		this.currentPlayer = getCurrentPlayer(this.gameObj);
@@ -237,6 +244,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		if (this.gameObj.gameOver) {
 			console.log('game over!!');
+			this.ableToTakeThisTurn = false;
+			this.showControls = true;
+			this.gameObj.unitPurchases = [];
+			clearCurrentGameId();
 			return;
 		}
 		if (this.gameObj.multiPlayerFlg && this.yourPlayer && this.yourPlayer.nation > 0) {
@@ -271,7 +282,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 
 		if (this.ableToTakeThisTurn)
-			this.checkForMessages();
+			this.displayMilitaryAdvisorMessage();
 		else
 			this.initializePlayer();
 	}
@@ -332,8 +343,32 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.currentPlayer.mainBaseID = findMainBase(this.gameObj, this.currentPlayer);
 
 	}
-	checkForMessages() {
-		this.displayHelpMessagesAreClear();
+	displayMilitaryAdvisorMessage() {
+		console.log(this.user);
+		console.log(this.currentPlayer.status);
+		if (this.user.rank == 1 && this.gameObj.round == 1 && this.currentPlayer.status != 'Attack') {
+			displayFixedPopup('introPopup');
+			playVoiceClip('bt01welcome.mp3');
+			playIntroSequence();
+			return;
+		}
+		if (this.gameObj.round == 1 && this.currentPlayer.placedInf < 3) {
+			militaryAdvisorPopup('New Game! You are starting as ' + this.superpowersData.superpowers[this.yourPlayer.nation] + '. First place 3 infantry by clicking on your territories.', 21); //23
+			return false;
+		}
+		if (this.currentPlayer.status == 'Attack')
+			militaryAdvisorPopup('Conduct attacks, then press "Complete Turn" button at the top to end your turn.');
+		else
+			militaryAdvisorPopup('Purchase units and then press "Purchase Complete".');
+		return true;
+	}
+	introContinuePressed() {
+		closePopup('introPopup');
+		playVoiceClip('bt07Germany.mp3');
+		this.playGameButtonPressed();
+		this.forcedClickNation = 7;
+		this.currentPlayer.placedInf = 3;
+		highlightCapital(2);
 	}
 	playGameButtonPressed() {
 		closePopup('advisorPopup');
@@ -392,18 +427,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.allowBotToAct)
 			this.computerGo();
 	}
-	displayHelpMessagesAreClear() {
-		//		scrollToCapital(this.yourPlayer.nation);
-		if (this.gameObj.round == 1 && this.currentPlayer.placedInf < 3) {
-			militaryAdvisorPopup('New Game! You are starting as ' + this.superpowersData.superpowers[this.yourPlayer.nation] + '. First place 3 infantry by clicking on your territories.', 21); //23
-			return false;
-		}
-		if (this.currentPlayer.status == 'Attack')
-			militaryAdvisorPopup('Conduct attacks, then press "Complete Turn" button at the top to end your turn.');
-		else
-			militaryAdvisorPopup('Purchase units and then press "Purchase Complete".');
-		return true;
-	}
 	computerGo() {
 		if (this.gameObj.gameOver)
 			return;
@@ -449,7 +472,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		if (this.gameObj.round != 6) {
 			var obj = findAmphibiousAttacks(this.gameObj, this.currentPlayer);
-			if (obj && obj.attackUnits && obj.attackUnits>0) {
+			if (obj && obj.attackUnits && obj.attackUnits > 0) {
 				this.doThisBattle(obj);
 				if (obj && obj.ampFlg) {
 					this.doThisBattle({ attackUnits: obj.ampAttUnits, defUnits: obj.ampDefUnits, t1: obj.ampAttTerr.id, t2: obj.ampDefTerr.id, id: 2, terr: obj.ampDefTerr, attTerr: obj.ampAttTerr });
@@ -573,7 +596,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		var piece = 2;
 		var infCount = 0;
 		terr1.units.forEach(function (unit) {
-			if (isUnitOkToMove(unit, nation) && (unit.piece != 2 || ++infCount>3)) {
+			if (isUnitOkToMove(unit, nation) && (unit.piece != 2 || ++infCount > 3)) {
 				unit.terr = terr2.id;
 				unit.movesLeft = 0;
 				piece = unit.piece;
@@ -672,7 +695,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			doCpuDiplomacyRespond(player, this.gameObj, this.superpowersData);
 	}
 	terrClicked(popup: any, terr: any, gameObj: any, ableToTakeThisTurn: any, currentPlayer: any, user: any) {
-		if (!this.showControls) {
+		if (!this.showControls || (this.forcedClickNation > 0 && terr.id != this.forcedClickNation)) {
 			playSound('error.mp3');
 			return;
 		}
@@ -928,6 +951,11 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			showAlertPopup('Conduct purchases first. Click on your capital, ' + this.superpowersData.superpowers[this.currentPlayer.nation] + '.', 1);
 			return;
 		}
+		if (this.forcedClickNation == 7) {
+			this.forcedClickNation = 62;
+			//highlightTerritory(63);
+			playVoiceClip('bt09Ukraine.mp3');
+		}
 		playClick();
 		changeClass('completeTurnButton', 'btn btn-success roundButton');
 		if (this.currentPlayer.status == 'Purchase') {
@@ -992,6 +1020,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		return numAddedUnitsToAdd;
 	}
 	endTurn() {
+		checkVictoryConditions(this.currentPlayer, this.gameObj, this.superpowersData);
 		var prevPlayer = this.currentPlayer;
 		updateProgressBar(100);
 		addIncomeForPlayer(this.currentPlayer, this.gameObj);
@@ -1011,7 +1040,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.currentPlayer.cpu || !this.currentPlayer.alive || this.gameObj.turboFlg)
 			sendEmailFlg = false;
 
-//		console.log('endTurn', sendEmailFlg);
+		//		console.log('endTurn', sendEmailFlg);
 		var secondsLeft = 0;
 		saveGame(this.gameObj, this.user, this.currentPlayer, sendEmailFlg, true, prevPlayer, this.currentPlayer.cpu, secondsLeft);
 		//		this.startTheTurn();
@@ -1059,7 +1088,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.currentPlayer = getCurrentPlayer(this.gameObj);
 		this.gameObj.currentNation = this.currentPlayer.nation;
 		this.gameObj.actionButtonMessage = '';
-//		this.loadCurrentPlayer();
+		//		this.loadCurrentPlayer();
 	}
 	logPurchases(player: any) {
 		var unitHash = {};

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
 declare var getHostname: any;
@@ -12,22 +13,59 @@ declare var $: any;
   templateUrl: './start-game-popup.component.html',
   styleUrls: ['./start-game-popup.component.scss']
 })
-export class StartGamePopupComponent implements OnInit {
-  public hostname:string;
-  public user:any;
+export class StartGamePopupComponent extends BaseComponent implements OnInit {
+  public hostname: string;
+  public user: any;
+  public gameType: any;
+  public fogIdx = 0;
+  public difficultyIdx = 1;
+  public gameTypeObj: any;
+  public numPlayers = 4;
+  public gameTypes = [];
+  public players = [];
+  public game: any;
+  public nations = [1, 2, 3, 4, 5, 6, 7, 8];
+  public yourNation = 0;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) { super(); }
 
   ngOnInit(): void {
-  	this.hostname = getHostname();
-  	this.user = userObjFromUser();
+    this.hostname = getHostname();
+    this.user = userObjFromUser();
+    this.gameTypeObj = { name: 'test', desc: 'test' };
+    this.game = { name: 'test', type: 'test' };
   }
   show() {
+    this.difficultyIdx = 1;
+    this.yourNation = 2;
+    this.segmentIdx = 0;
     $("#startGamePopup").modal();
   }
-  resumeGame() {
-  	$("#startGamePopup").modal('hide');
-  	this.router.navigate(['/board']);
+  startGame() {
+    if (this.yourNation == 0)
+      this.yourNation = Math.floor((Math.random() * 8) + 1);
+
+ 
+    localStorage.startingNation = this.yourNation;
+    localStorage.difficultyNum = this.difficultyIdx-1;
+    localStorage.hardFog = (this.fogIdx == 2) ? "Y" : "N";
+    localStorage.fogOfWar = (this.fogIdx > 0) ? "Y" : "N";
+    localStorage.customGameType = (this.segmentIdx==0)?'diplomacy':'freeforall';
+    localStorage.gameType = this.segmentIdx;
+
+    console.log(localStorage.customGameType);
+    console.log(localStorage.gameType);
+    console.log(localStorage.fogOfWar, localStorage.hardFog);
+    console.log(localStorage.difficultyNum);
+    console.log(localStorage.startingNation);
+ 
+    // localStorage.customGamePlayers=JSON.stringify(gamePlayers);
+    //localStorage.customNumPlayers = gamePlayers.length;
+    //localStorage.customGame='Y';
+
+
+    $("#startGamePopup").modal('hide');
+    this.router.navigate(['/board']);
   }
 
 }

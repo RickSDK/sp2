@@ -15,9 +15,9 @@ export class MainPageComponent implements OnInit {
   public myEMPCount = 0;
   public forumCount = 0;
   public hostname: string;
-  public singleButton = { img: 'basicTrainButton.png', title: 'Basic Training' }; //basicTrainButton.png
   public user: any;
   public expandFlg = false;
+  public singleGameId: number;
 
   constructor(private router: Router) { console.log('constructor'); }
 
@@ -26,6 +26,8 @@ export class MainPageComponent implements OnInit {
     this.user = userObjFromUser();
     this.flexSprite(100);
     console.log('ngOnInit', this.user);
+    this.singleGameId = localStorage.currentGameId;
+    console.log('multiplayer, loadGameId', localStorage.loadGameId);
   }
   multiplayGameClicked(login: any) {
     if (this.user.username != 'Guest')
@@ -35,8 +37,10 @@ export class MainPageComponent implements OnInit {
 
   }
   singlePlayerGame(startGame: any) {
-    //  	playSound('open.mp3', 0, false);
-    startGame.show();
+    if (this.singleGameId > 0)
+      this.router.navigate(['/board']);
+    else
+      startGame.show();
   }
   flexSprite(width: number) {
     if (this.expandFlg)
@@ -46,7 +50,7 @@ export class MainPageComponent implements OnInit {
     var e = document.getElementById('spLogo');
     if (e) {
       e.style.width = width + '%';
-      if (width < 75 || width>99) {
+      if (width < 75 || width > 99) {
         this.expandFlg = !this.expandFlg;
       }
       //window.requestAnimationFrame(flexSprite);

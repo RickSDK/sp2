@@ -161,7 +161,8 @@ display: none; position: absolute; font-weight: 900; text-shadow: 2px 2px 3px #0
 	border: 1px solid white;
 }
 .roundButton {
-margin: 5px;
+  border: 1px solid black !important; 
+  margin: 5px;
  /*Rounded Corners*/
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
@@ -404,7 +405,7 @@ margin: 1px;
 	border: 1px solid gray; padding: 5px; margin: 5px; background-color: #aaa; color: black;
 }
 .borderClass2 {
-	border: 1px solid gray; padding: 5px; margin: 5px; background-color: #ffc; color: black; display: inline-block; padding-left: 15px; padding-right: 12px;
+	border: 1px solid gray; padding: 5px; margin: 5px; background-color: #cef; color: black; display: inline-block; padding-left: 15px; padding-right: 12px;
 }
 .borderClass2:hover {
 	border: 1px solid black;

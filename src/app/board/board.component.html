@@ -50,14 +50,17 @@
 		class="btn btn-success roundButton"><i class="fa fa-refresh"></i> Redo</button>
 	<button *ngIf="ableToTakeThisTurn && hideActionButton" (click)="completeTurnButtonPressed()" type="button"
 		class="btn btn-success roundButton"><i class="fa fa-arrow-right"></i> End Turn</button>
-	<img (click)="scrollToNation(currentPlayer.nation)"
-		src="assets/graphics/images/flag{{currentPlayer.nation || 1}}.gif" height=42
-		title="{{superpowersData.superpowers[gameObj.currentNation]}}" style="cursor: pointer;">
-	<span style="background-color: #777; color: white; border: 1px solid black;">{{currentPlayer.userName}}</span>
-	<span style="background-color: #ccc; color: black; font-size: 14px; padding: 3px;">
-		<span *ngIf="currentPlayer.status == 'Purchase'"><img src="assets/graphics/images/coin.png" height=30
-				title="coins">{{currentPlayer.money}} </span>
-		<span *ngIf="currentPlayer.status != 'Purchase'"> {{currentPlayer.status}}</span>
+	<span *ngIf="this.gameObj.gameOver" style="font-size: 24px; color: white; font-weight: 700;">Game Over!</span>
+	<span *ngIf="!this.gameObj.gameOver">
+		<img (click)="scrollToNation(currentPlayer.nation)"
+			src="assets/graphics/images/flag{{currentPlayer.nation || 1}}.gif" height=42
+			title="{{superpowersData.superpowers[gameObj.currentNation]}}" style="cursor: pointer;">
+		<span style="background-color: #777; color: white; border: 1px solid black;">{{currentPlayer.userName}}</span>
+		<span style="background-color: #ccc; color: black; font-size: 14px; padding: 3px;">
+			<span *ngIf="currentPlayer.status == 'Purchase'"><img src="assets/graphics/images/coin.png" height=30
+					title="coins">{{currentPlayer.money}} </span>
+			<span *ngIf="currentPlayer.status != 'Purchase'"> {{currentPlayer.status}}</span>
+		</span>
 	</span>
 	<span *ngIf="currentPlayer.nation != yourPlayer.nation">
 		<img (click)="scrollToNation(yourPlayer.nation)" src="assets/graphics/images/flag{{yourPlayer.nation || 1}}.gif"
@@ -69,7 +72,9 @@
 <div
 	style="z-index: 201; opacity: .75; background-color: gray; text-align: center;  position: fixed; top: 45px; width: 100%; height: 55px;">
 	<span *ngIf="!showControls" style="color: white; font-size: 24px;"><i class="fa fa-spinner fa-spin"></i>&nbsp;
-		<span *ngIf="loadingFlg">Loading...</span><span *ngIf="allowBotToAct"><img src="assets/graphics/images/flag{{currentPlayer.nation || 1}}.gif" height="50"> <i class="fa fa-android"></i> Computer
+		<span *ngIf="loadingFlg">Loading...</span><span *ngIf="allowBotToAct"><img
+				src="assets/graphics/images/flag{{currentPlayer.nation || 1}}.gif" height="50"> <i
+				class="fa fa-android"></i> Computer
 			taking
 			turn...</span>
 	</span></div>
@@ -104,10 +109,14 @@
 			style="line-height: 14px;"><i class="fa fa-android"></i><br><span style="font-size: 10px;"><span
 					*ngIf="haltActionFlg"><i class="fa fa-bug"></i></span>CPU
 				Go</span></button>
+		<button id="" (click)="haultAction()" type="button" class="btn btn-secondary tight roundButton"
+			style="line-height: 14px;"><i *ngIf="!haltActionFlg" class="fa fa-pause"></i><i *ngIf="haltActionFlg"
+				class="fa fa-play"></i><br><span style="font-size: 10px;">
+				Halt</span></button>
 	</span>
 </div>
 <!---third bar--->
-<div (click)="gameInfoPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)"
+<div *ngIf="gameObj.desc" (click)="gameInfoPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)"
 	style="z-index: 202; text-align: center;  position: fixed; top: 87px; width: 100%; ">
 	<span title="{{gameObj.desc}}"
 		style="cursor: pointer; text-align: center; font-size: 12px; padding-left: 5px; color: #ccc; line-height: 1.5em; overflow: hidden; background-color: #557; border: 1px solid gray; box-shadow: 5px 5px 5px #000;">
@@ -122,13 +131,11 @@
 	Menu</button>
 
 <!-----------------players sidebar------------------>
-<div id="sidelinePopup"
+<div id="sidelinePopup" (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)"
 	style="cursor: pointer; position: fixed; min-width: 50px; max-width: 68px; top: 150px; left: 0; border: 1px solid black; text-align: center; box-shadow: 3px 3px 5px #000; transition: all 1s ease;">
 	<div id="playerPanel" class="roundedPanel" *ngIf="currentPlayer">
-		<div (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)"
-			style="background-color: #444; color: white; font-size: 10px;">Players</div>
-		<div (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)"
-			*ngFor="let player of gameObj.players" style="white-space: nowrap;">
+		<div style="background-color: #444; color: white; font-size: 10px;">Players</div>
+		<div *ngFor="let player of gameObj.players" style="white-space: nowrap;">
 			<div *ngIf="player.alive">
 				<i *ngIf="player.nation==currentPlayer.nation" class="fa fa-check"
 					style="font-size: 10px; color: green;"></i>
@@ -139,13 +146,16 @@
 				<div *ngIf="player.nation==currentPlayer.nation" style="font-size: 11px;"><b>{{player.status}}</b></div>
 			</div>
 		</div>
-		<button *ngIf="isMobileFlg" (click)="arrowsButtonClicked()" type="button"
-			class="btn btn-secondary roundButton"><i class="fa fa-arrows-h"></i></button>
 	</div>
 </div>
 
+<button id="sidelineButton" *ngIf="isMobileFlg" (click)="arrowsButtonClicked()" type="button"
+	style="cursor: pointer; position: fixed; min-width: 50px; max-width: 60px; top: 320px; left: 0; transition: all 1s ease;"
+	class="btn btn-secondary roundButton"><i class="fa fa-arrows-h"></i></button>
+
 <!-----------------purchase sidebar------------------>
-<div id="purchaseSideBar" (click)="showPanelsFlg = !showPanelsFlg" *ngIf="showPanelsFlg"
+<div id="purchaseSideBar" (click)="productionQueuePopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)"
+	*ngIf="showPanelsFlg"
 	style="cursor: pointer; position: fixed; min-width: 50px; max-width: 60px; top: 360px; left: 0; border: 1px solid black; text-align: center; box-shadow: 3px 3px 5px #000; transition: all 1s ease;">
 	<div class="roundedPanel" *ngIf="currentPlayer">
 		<div style="background-color: #444; color: white; font-size: 10px;">Purchases</div>
@@ -190,6 +200,28 @@
 	<button onClick="closePopup('alertPopup')" id="" type="button"
 		class="btn btn-primary roundButton medium">OK</button>
 	<p>
+</div>
+
+<div onClick="closePopup('gameOverPopup')" id="gameOverPopup" class="popupScreenNoPad"
+	style="max-width: 400px; z-index: 1000;">
+	<div style="background-color: #444; color: white;">Game Over</div>
+	<img *ngIf="yourPlayer && yourPlayer.wonFlg" src="assets/graphics/misc/victory.jpg" width=100%>
+	<div *ngIf="yourPlayer && yourPlayer.wonFlg" style="color: green; font-size: 36px;">Victory!</div>
+	<img *ngIf="yourPlayer && !yourPlayer.wonFlg" src="assets/graphics/misc/cityNuked.jpg" width=100%>
+	<div *ngIf="yourPlayer && !yourPlayer.wonFlg" style="color: red; font-size: 36px;">Sorry, you lose!</div>
+	<div id="winningTeam" style="color: black; font-size: 24px;">winning team</div>
+	<button type="button" class="btn btn-primary roundButton medium">Got it!</button>
+</div>
+
+<div id="introPopup" class="popupScreen2" style="min-height: 440px; width: 300px; text-align:center;">
+	<img src="assets/graphics/splash/spLogoSmall.png" width=280>
+	<div id="intro1" class="off" style="font-size: 22px; margin-top: 20px;">Nations rise against nations...</div>
+	<div id="intro2" class="off" style="font-size: 22px; margin-top: 20px;">Total war has broken out!</div>
+	<div id="intro3" class="off" style="font-size: 16px; margin-top: 20px;">The world has 
+		formed 8 mighty superpower alliances. All at war with each other.</div>
+	<div style="padding: 10px;"><button (click)="introContinuePressed()" id="intro4" class="off" type="button"
+			style="height: 60px;">Start the Game!</button></div>
+	<div><a routerLink="/"><button id="intro5" class="off" type="button">Exit Game</button></a></div>
 </div>
 
 
@@ -280,6 +312,7 @@
 
 <app-game-info-popup #gameInfoPopup></app-game-info-popup>
 <app-game-players-popup #gamePlayersPopup></app-game-players-popup>
+<app-production-queue-popup #productionQueuePopup></app-production-queue-popup>
 <app-units-popup #unitsPopup></app-units-popup>
 <app-tech-popup #techPopup></app-tech-popup>
 <app-allies-popup #alliesPopup></app-allies-popup>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
+declare var checkVictoryConditions: any;
 
 @Component({
   selector: 'app-game-info-popup',
@@ -21,6 +22,7 @@ export class GameInfoPopupComponent extends BaseComponent implements OnInit {
   
   show(gameObj, ableToTakeThisTurn, currentPlayer, user) {
     this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);
+    checkVictoryConditions(currentPlayer, gameObj, this.superpowersData);
     this.openModal('#gameInfoPopup');
   }
 

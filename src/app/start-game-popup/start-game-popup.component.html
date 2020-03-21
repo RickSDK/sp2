@@ -1,26 +1,168 @@
 <div class="modal fade" id="startGamePopup" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg" role="document" style="max-width: 400px;">
         <div class="modal-content">
-            <div class="modal-header">
-   	       <img src="assets/graphics/images/superpowers.png" title="Superpowers!" height=30> &nbsp;<b>Start Game</b>
+            <div class="modal-header" style="border: 0;">
+                <img src="assets/graphics/images/superpowers.png" title="Superpowers!" height=30> &nbsp;<b>Single Player
+                    Game</b>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="padding: 0; text-align: center;">
 
-		<div *ngIf="user.rank==0">
-			<div class="borderClass2" style="text-align: center;">
-				<div style="font-size: 20px; font-weight: 700;">Training Campaign</div>
-				<div><font color=black>This is a short exercise for you to practice the basic game play.</font></div>
-				<img src="assets/graphics/images/map.png" width=100% style="max-width: 400px;">
-				<div><img src="assets/graphics/images/flag2.gif" width="60"></div>
-				<div style="font-size: 18px; font-weight: 700;">European Union</div>
-				<div style="color: gray;">You will start as the leader of the European Union</div>
-				<div><font color=#700><b>Objective:</b> Conquer Russia and China!</font></div>
-			   	<div style="margin: 15px;" ><button (click)="resumeGame()" type="button" class="btn ptp-red roundButton medium glowRed">Start Game!</button></div>
-			</div>
-		</div>
+                <img src="assets/graphics/images/map.png" width="100%">
+                <div *ngIf="user.rank==0">
+                    <div style="font-size: 22px; font-weight: 700;">Welcome New Recruit!</div>
+                    
+                    <table width="90%">
+                        <tr>
+                            <td><img src="assets/graphics/units/leader2.png" height="200"></td>
+                            <td>
+                                <p style="font-size: 12px; color: #337ab7;"><i class="fa fa-lock"></i> Win a single player game to unlock more game modes!</p>
+                                <p><i class="fa fa-flag"></i>&nbsp;<b>Basic Training:</b> You will be starting out as European Union.</p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div *ngIf="user.rank>0">
+                    <div style="border: 1px solid black; margin: 3px; background-color: #ddd;">
+                        <div class="btn-group">
+                            <button (click)="segmentIdx=0" type="button" class="btn btn-default roundButton"
+                                [ngClass]="ngClassSegment(segmentIdx,0)"> Diplomacy</button>
+                            <button (click)="segmentIdx=1" type="button" class="btn btn-default roundButton"
+                                [ngClass]="ngClassSegment(segmentIdx,1)"> Free-For-All</button>
+                            <button (click)="infoFlg=!infoFlg" type="button" class="btn btn-default roundButton"> <i
+                                    class="fa fa-info-circle"></i></button>
+                        </div>
+                        <div class="borderClass2" *ngIf="infoFlg">
+                            <div *ngIf="segmentIdx==0">
+                                <i class="fa fa-handshake-o"></i> <b>Diplomacy</b>: You can make alliances to form a 2v2
+                                matchup.
+                                First team to control 6 capitals wins the game.</div>
+                            <div *ngIf="segmentIdx==1">
+                                <i class="fa fa-user"></i> <b>Free-For-All</b>: You are on your own. First player to
+                                control
+                                6
+                                capitals wins the game.
+                            </div>
+                            <!--<div *ngIf="segmentIdx==2">
+                            <div><b><i ng-class="ngClassGameType(gameType.type)"></i> {{gameTypeObj.name}}:</b>
+                                {{gameTypeObj.desc}}</div>
+                            <span ng-repeat="game in gameTypes">
+                                <span ng-hide="game.type==gameType.type" class="borderClass2"
+                                    style="margin: 1px; cursor: pointer;" ng-click="loadType(game)"><i
+                                        ng-class="ngClassGameType(game.type)"></i> {{game.name}}</span>
+                                <span ng-show="game.type==gameType.type" class="borderClass2"
+                                    style="margin: 1px; background-color: #def;"><i
+                                        ng-class="ngClassGameType(game.type)"></i> {{game.name}}</span>
+                            </span>
+                            <hr>
+                            <div style="font-size: 16px;">Number Players: {{numPlayers}}
+                                <button id="" ng-click="randomizeNations()" type="button"
+                                    class="btn btn-primary roundButton">Random Nations</button>
+                            </div>
+                            <div class="borderClass" style="font-size: 16px;">
+                                <div class="title">
+                                    Humans
+                                    <button id="minusHuman" ng-click="addPlayer(-1, false)" type="button"
+                                        class="btn btn-primary roundButton"><i class="fa fa-minus"></i></button>
+                                    <button id="addHuman" ng-click="addPlayer(1, false)" type="button"
+                                        class="btn btn-primary roundButton"><i class="fa fa-plus"></i></button>
+                                </div>
+                                <div *ngFor="let player of players" ng-show="player.active && !player.cpu">
+                                    {{player.name}}
+                                    <i ng-show="player.locked" class="fa fa-check"></i>
+                                    <button id="" ng-click="changeNation(player)" type="button"
+                                        class="btn btn-primary roundButton"><img
+                                            src="assets/graphics/images/flag{{player.nation}}.gif" height=50></button>
+                                    <button ng-show="gameType.type=='locked'" ng-click="changeTeam(player)"
+                                        type="button" class="btn btn-primary roundButton">{{player.teamName}}</button>
+                                </div>
+                            </div>
+                            <div class="borderClass" style="font-size: 16px;">
+                                <div class="title">
+                                    Bots
+                                    <button id="minusBot" ng-click="addPlayer(-1, true)" type="button"
+                                        class="btn btn-primary roundButton"><i class="fa fa-minus"></i></button>
+                                    <button id="addBot" ng-click="addPlayer(1, true)" type="button"
+                                        class="btn btn-primary roundButton"><i class="fa fa-plus"></i></button>
+                                </div>
+                                <div *ngFor="let player of players" ng-show="player.active && player.cpu">
+                                    {{player.name}}
+                                    <i ng-show="player.locked" class="fa fa-check"></i>
+                                    <button id="" ng-click="changeNation(player)" type="button"
+                                        class="btn btn-primary roundButton"><img
+                                            src="assets/graphics/images/flag{{player.nation}}.gif" height=50></button>
+                                    <button ng-show="gameType.type=='locked'" ng-click="changeTeam(player)"
+                                        type="button" class="btn btn-primary roundButton">{{player.teamName}}</button>
+                                </div>
+                            </div>
+                        </div>-->
+                        </div>
+
+                    </div>
+                    <div style="border: 1px solid black; margin: 3px; background-color: #ddd;">
+                        <div class="btn-group">
+                            <button (click)="fogIdx=0" type="button" class="btn btn-default roundButton"
+                                [ngClass]="ngClassSegment(fogIdx,0)"> Standard</button>
+                            <button (click)="fogIdx=1" type="button" class="btn btn-default roundButton"
+                                [ngClass]="ngClassSegment(fogIdx,1)"> Fog-of-War</button>
+                            <button (click)="fogIdx=2" type="button" class="btn btn-default roundButton"
+                                [ngClass]="ngClassSegment(fogIdx,2)"> Hardcore Fog</button>
+                        </div>
+                        <div class="borderClass2" *ngIf="infoFlg">
+                            <div *ngIf="fogIdx==0">All units are visible to all players.</div>
+                            <div *ngIf="fogIdx==1">You get approximate unit counts for each territory but not specific
+                                units.
+                            </div>
+                            <div *ngIf="fogIdx==2">Total fog blackout for all territories unless you have a unit that
+                                borders
+                                it.</div>
+                        </div>
+                    </div>
+
+                    <div style="border: 1px solid black; margin: 3px; background-color: #ddd;">
+                        <div class="btn-group">
+                            <button (click)="difficultyIdx=0" type="button" class="btn btn-default roundButton"
+                                [ngClass]="ngClassSegment(difficultyIdx,0)"> Easy</button>
+                            <button (click)="difficultyIdx=1" type="button" class="btn btn-default roundButton"
+                                [ngClass]="ngClassSegment(difficultyIdx,1)"> Standard</button>
+                            <button (click)="difficultyIdx=2" type="button" class="btn btn-default roundButton"
+                                [ngClass]="ngClassSegment(difficultyIdx,2)"> Difficult</button>
+                        </div>
+                    </div>
+
+                    <div style="border: 1px solid black; margin: 3px; background-color: #ddd;">
+                        <table>
+                            <tr>
+                                <td valign="top" style="width: 120px;">
+                                    <div style="font-size: 12px;">Starting Superpower</div>
+                                    <div *ngIf="yourNation==0"
+                                        style="margin-top: -40px; font-size: 120px; padding: 0; height: 150px;">?</div>
+                                    <img *ngIf="yourNation>0" src="assets/graphics/images/flag{{yourNation}}.gif"
+                                        height="120">
+                                </td>
+                                <td>
+                                    <img *ngFor="let nation of nations" (click)="yourNation = nation"
+                                        src="assets/graphics/images/flag{{nation}}.gif" height="60"
+                                        class="hoverShadowed">
+                                    <button (click)="yourNation=0" type="button"
+                                        class="btn btn-default roundButton">Random</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div><button (click)="startGame()" type="button" class="btn btn-danger roundButton medium glowRed">Start
+                        Game!</button></div>
+
+                <div style="font-size: 10px;">Note single player games are just for fun. Stats are not saved and do not
+                    affect your multi-player record or standings. You can surrender at any time without penalty.</div>
+
+
+
+
 
             </div>
             <div class="modal-footer">

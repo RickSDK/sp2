@@ -51,7 +51,7 @@ function createNewGameFromInitObj(obj, pieces) {
 }
 function createNewGameSimple(type, numPlayers, name, startingNation, pObj) {
 	var gUnits = populateUnits();
-	return createNewGame(3, type, numPlayers, name, attack, gUnits, startingNation, localStorage.fogOfWar, 1, localStorage.customGame, pObj, localStorage.hardFog);
+	return createNewGame(3, type, numPlayers, name, 6, gUnits, startingNation, localStorage.fogOfWar, 1, localStorage.customGame, pObj, localStorage.hardFog);
 }
 function createNewGame(id, type, numPlayers, name, attack, pieces, startingNation, fogOfWar, rank, customGame, pObj, hardFog, turboFlg) {
 	// this is for single player games

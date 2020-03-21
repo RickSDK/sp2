@@ -7,6 +7,7 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class TerrHeaderComponent implements OnInit {
   @Input('selectedTerritory') selectedTerritory:any;
+  @Input('ableToTakeThisTurn') ableToTakeThisTurn:any;
 
   constructor() { }
 
