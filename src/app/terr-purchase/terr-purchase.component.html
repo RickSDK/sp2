@@ -6,7 +6,7 @@
     <!---------technology--------->
     <div *ngIf="selectedTerritory.factoryCount>0"
         style="background-color: #cdf; border: 1px solid black; border-radius: 5px;">
-        <div class="darkBlueBg" style="font-size: 10px;"><i class="fa fa-flask"></i> Technology</div>
+        <div class="darkBlueBg" style="font-size: 10px;"><i class="fa fa-cogs"></i> Technology</div>
         <table class="spTable" style="color: black;">
             <tr>
                 <td>
@@ -15,7 +15,7 @@
                         title="Anti-Balistics"><i class="fa fa-shield"></i></button>
                     <div *ngIf="currentPlayer.tech[18]" style="font-size: 18px;"><i class="fa fa-check"
                             style="color: green;"></i><i class="fa fa-shield"></i></div>
-                    <div style="font-size: 8px;">Anti-Balistics</div>
+                    <div style="font-size: 8px;"><i class="fa fa-wrench"></i> Anti-Balistics</div>
                 </td>
                 <td>
                     <button [disabled]="currentPlayer.money<10 || currentPlayer.railFlg" *ngIf="!currentPlayer.tech[19]"
@@ -23,7 +23,7 @@
                         title="Railway"><i class="fa fa-train"></i></button>
                     <div *ngIf="currentPlayer.tech[19]" style="font-size: 18px;"><i class="fa fa-check"
                             style="color: green;"></i><i class="fa fa-train"></i></div>
-                    <div style="font-size: 8px;">Railway</div>
+                    <div style="font-size: 8px;"><i class="fa fa-wrench"></i> Railway</div>
                 </td>
                 <td>
                     <button [disabled]="currentPlayer.money<10" *ngIf="currentPlayer.techCount<18"
@@ -33,7 +33,7 @@
                     <div *ngIf="currentPlayer.techCount>=18" style="font-size: 18px;"><i class="fa fa-check"
                             style="color: green;"></i><i class="fa fa-flask"></i>
                     </div>
-                    <div style="font-size: 8px;">Technology</div>
+                    <div style="font-size: 8px;"><i class="fa fa-flask"></i> Research</div>
                 </td>
                 <td>
                     <button (click)="infoFlg=!infoFlg" type="button" class="btn btn-secondary roundButton"><i
@@ -49,7 +49,7 @@
     </div>
     <!---------queue--------->
     <div style="background-color: #cdf; border: 1px solid black; border-radius: 5px; color: black;">
-        <div class="darkBlueBg" style="font-size: 10px;"><i class="fa fa-building-o"></i> Production
+        <div class="darkBlueBg" style="font-size: 10px;"><i class="fa fa-industry"></i> Production
             Queue
         </div>
         <span

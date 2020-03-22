@@ -362,7 +362,7 @@ function removeCasualties(battle, gameObj, player, finalFlg, superpowersData) {
         if (unit.dead) {
             battle.attCasualties.push(unit.piece);
             if (unit.piece == 10 || unit.piece == 11)
-                logItem(gameObj, player, 'Hero Killed', superpowersData.superpowers[unit.owner] + ' ' + unit.name + ' killed!');
+                logItem(gameObj, player, 'Hero Killed', superpowersData.superpowers[unit.owner] + ' ' + unit.name + ' killed!', '', 0, player.nation);
         } else if (!unit.returnFlg)
             attackUnits.push(unit);
     });
@@ -373,7 +373,7 @@ function removeCasualties(battle, gameObj, player, finalFlg, superpowersData) {
         if (unit.dead) {
             battle.defCasualties.push(unit.piece);
             if (unit.piece == 10 || unit.piece == 11)
-                logItem(gameObj, player, 'Hero Killed', superpowersData.superpowers[unit.owner] + ' ' + unit.name + ' killed!');
+                logItem(gameObj, player, 'Hero Killed', superpowersData.superpowers[unit.owner] + ' ' + unit.name + ' killed!', '', 0, battle.defender);
         } else
             defendingUnits.push(unit);
     });
@@ -403,9 +403,9 @@ function battleCompleted(displayBattle, selectedTerritory, currentPlayer, moveTe
     wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, 'Battle', selectedTerritory, moveTerr);
 }
 function wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, title, selectedTerritory, moveTerr, delay = 0, weaponType = '') {
-    removeCasualties(displayBattle, gameObj, selectedTerritory, true, superpowersData);
+    removeCasualties(displayBattle, gameObj, currentPlayer, true, superpowersData);
 
-    if (displayBattle.bonusUnitsFlg && displayBattle.militaryObj.wonFlg) {
+    if (displayBattle.bonusUnitsFlg && displayBattle.militaryObj.wonFlg && currentPlayer.cpu) {
         if (selectedTerritory.capital)
             addNewUnitToBoard(gameObj, selectedTerritory, 15, superpowersData);
         else {
@@ -450,7 +450,7 @@ function wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, ti
         msg = selectedTerritory.name + weaponType + hits + ' casualties.';
     if (displayBattle.round == 0)
         displayBattle.round = 1
-    logItem(gameObj, currentPlayer, title, msg, displayBattle.battleDetails + '|' + displayBattle.attCasualties.join('+') + '|' + displayBattle.defCasualties.join('+') + '|' + displayBattle.medicHealedCount + '|' + displayBattle.round, selectedTerritory.id, selectedTerritory.owner, '', '', displayBattle.defender);
+    logItem(gameObj, currentPlayer, title, msg, displayBattle.battleDetails + '|' + displayBattle.attCasualties.join('+') + '|' + displayBattle.defCasualties.join('+') + '|' + displayBattle.medicHealedCount + '|' + displayBattle.round, selectedTerritory.id, displayBattle.defender, '', '', displayBattle.defender);
     popupNationMessage(currentPlayer.nation, msg, selectedTerritory.owner, selectedTerritory.x, selectedTerritory.y);
 
     setTimeout(() => {

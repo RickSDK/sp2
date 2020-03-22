@@ -3,7 +3,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<img src="assets/graphics/images/superpowers.png" title="Superpowers!" height=30> &nbsp;<b><i
-						class="fa fa-flask"></i> Technology</b>
+						class="fa fa-cogs"></i> Technology</b>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -16,9 +16,9 @@
 							class="fa fa-clipboard"></i> Show Descriptions</button>
 					<div style="padding: 20px;" *ngIf="infoFlg">
 						<div class="borderClass2">
-							<p><b>Upgrades:</b> Upgrades can be purchased at any time for 10 coins each. Anti-balistics
+							<p><b><i class="fa fa-wrench"></i> Upgrades:</b> Upgrades can be purchased at any time for 10 coins each. Anti-balistics
 								or Advanced Railway. You can use this technology on the same turn that you buy it.</p>
-							<p><b>Research:</b> Research you aquire randomly. The cost is 10 coins per research tech and
+							<p><b><i class="fa fa-flask"></i> Research:</b> Research you aquire randomly. The cost is 10 coins per research tech and
 								you are guaranteed something. For any given type, you will receive Level 1 before Level
 								2, before Level 3. You can buy as much research as you want and get to use it the same
 								turn that you buy it.</p>
@@ -27,7 +27,7 @@
 				</div>
 
 
-				<div class="blueBgWhite">Upgrades</div>
+				<div class="blueBgWhite"><i class="fa fa-wrench"></i> Upgrades</div>
 				<table border=1 width=100% class="spTable">
 					<tr>
 						<td>
@@ -41,21 +41,44 @@
 					</tr>
 				</table>
 
-				<div class="blueBgWhite">Research</div>
-				<table border=1 class="spTable" width=100%>
+				<div class="blueBgWhite"><i class="fa fa-flask"></i> Research</div>
+				<table border="1" class="spTable">
 					<tr>
 						<th class="hidden-xxs">Type</th>
 						<th>Level 1</th>
 						<th>Level 2</th>
 						<th>Level 3</th>
 					</tr>
-					<tr class="visible-xxs">
-						<td colspan=3><img src="assets/graphics/units/piece6u.png" height=28> Air Power</td>
+
+					<tr *ngFor="let item of techItems; let i = index;">
+						<td class="hidden-xxs" valign="top">
+							<div class="blueBgWhite">{{item.name}}</div>
+							<i class="fa fa-{{item.icon}}" style="font-size: 48px;"></i>
+						</td>
+						<td valign="top">
+							<div class="blueBgWhite visible-xxs" style="font-size: 12px;"><i class="fa fa-{{item.icon}}"></i> {{item.name}}</div>
+							<app-tech [tech]="superpowersData.techs[i*3]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
+							</app-tech>
+						</td>
+						<td valign="top">
+							<div class="blueBgWhite visible-xxs" style="font-size: 12px;"><i class="fa fa-{{item.icon}}"></i> {{item.name}}</div>
+							<app-tech [tech]="superpowersData.techs[i*3+1]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
+							</app-tech>
+						</td>
+						<td valign="top">
+							<div class="blueBgWhite visible-xxs" style="font-size: 12px;"><i class="fa fa-{{item.icon}}"></i> {{item.name}}</div>
+							<app-tech [tech]="superpowersData.techs[i*3+2]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
+							</app-tech>
+						</td>
+					</tr>
+
+				<!--			<tr class="visible-xxs">
+						<td colspan=3><i class="fa fa-fighter-jet"></i> Air Power</td>
 					</tr>
 					<tr>
-						<td class="hidden-xxs">
-							<div class="blueBgWhite">Air Power</div><img src="assets/graphics/units/piece6u.png"
-								width=70>
+						<td class="hidden-xxs" valign="top">
+							<div class="blueBgWhite">Air Power</div>
+							<i class="fa fa-fighter-jet" style="font-size: 48px;"></i>
 						</td>
 						<td>
 							<app-tech [tech]="superpowersData.techs[0]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
@@ -71,12 +94,12 @@
 						</td>
 					</tr>
 					<tr class="visible-xxs">
-						<td colspan=3><img src="assets/graphics/units/piece1u.png" height=28> Warheads</td>
+						<td colspan=3><i class="fa fa-crosshairs"></i> Warheads</td>
 					</tr>
 					<tr>
-						<td class="hidden-xxs">
-							<div class="blueBgWhite">Warheads</div><img src="assets/graphics/units/piece1u.png"
-								width=70>
+						<td class="hidden-xxs" valign="top">
+							<div class="blueBgWhite">Warheads</div>
+							<i class="fa fa-crosshairs" style="font-size: 48px;"></i>
 						</td>
 						<td>
 							<app-tech [tech]="superpowersData.techs[3]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
@@ -92,12 +115,12 @@
 						</td>
 					</tr>
 					<tr class="visible-xxs">
-						<td colspan=3><img src="assets/graphics/units/piece5u.png" height=28> Torpedoes</td>
+						<td colspan=3><i class="fa fa-anchor"></i> Torpedoes</td>
 					</tr>
 					<tr>
-						<td class="hidden-xxs">
-							<div class="blueBgWhite">Torpedoes</div><img src="assets/graphics/units/piece5u.png"
-								width=70>
+						<td class="hidden-xxs" valign="top">
+							<div class="blueBgWhite">Torpedoes</div>
+							<i class="fa fa-anchor" style="font-size: 48px;"></i>
 						</td>
 						<td>
 							<app-tech [tech]="superpowersData.techs[6]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
@@ -113,12 +136,12 @@
 						</td>
 					</tr>
 					<tr class="visible-xxs">
-						<td colspan=3><img src="assets/graphics/units/piece19u.png" height=28> Economy</td>
+						<td colspan=3><i class="fa fa-industry"></i> Economy</td>
 					</tr>
 					<tr>
-						<td class="hidden-xxs">
-							<div class="blueBgWhite">Economy</div><img src="assets/graphics/units/piece19u.png"
-								width=70>
+						<td class="hidden-xxs" valign="top">
+							<div class="blueBgWhite">Economy</div>
+							<i class="fa fa-industry" style="font-size: 48px;"></i>
 						</td>
 						<td>
 							<app-tech [tech]="superpowersData.techs[9]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
@@ -134,12 +157,12 @@
 						</td>
 					</tr>
 					<tr class="visible-xxs">
-						<td colspan=3><img src="assets/graphics/units/piece7u.png" height=28> Bombers</td>
+						<td colspan=3><i class="fa fa-plane"></i> Bombers</td>
 					</tr>
 					<tr>
-						<td class="hidden-xxs">
-							<div class="blueBgWhite">Bombers</div><img src="assets/graphics/units/piece7u.png" width=70>
-						</td>
+						<td class="hidden-xxs" valign="top">
+							<div class="blueBgWhite">Bombers</div>
+							<i class="fa fa-plane" style="font-size: 48px;"></i>
 						<td>
 							<app-tech [tech]="superpowersData.techs[12]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
 							</app-tech>
@@ -154,12 +177,12 @@
 						</td>
 					</tr>
 					<tr class="visible-xxs">
-						<td colspan=3><img src="assets/graphics/units/piece13u.png" height=28> Tactical</td>
+						<td colspan=3><i class="fa fa-gear"></i> Tactical</td>
 					</tr>
 					<tr>
-						<td class="hidden-xxs">
-							<div class="blueBgWhite">Tactical</div><img src="assets/graphics/units/piece13u.png"
-								width=70>
+						<td class="hidden-xxs" valign="top">
+							<div class="blueBgWhite">Tactical</div>
+							<i class="fa fa-gear" style="font-size: 48px;"></i>
 						</td>
 						<td>
 							<app-tech [tech]="superpowersData.techs[15]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
@@ -173,7 +196,7 @@
 							<app-tech [tech]="superpowersData.techs[17]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
 							</app-tech>
 						</td>
-					</tr>
+					</tr>-->	
 				</table>
 
 				<div *ngIf="gameObj" style="text-align: center;" class="darkBlueBg">

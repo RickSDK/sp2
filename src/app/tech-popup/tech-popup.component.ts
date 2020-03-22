@@ -10,6 +10,14 @@ declare var $: any;
 })
 export class TechPopupComponent extends BaseComponent implements OnInit {
   public descFlg=false;
+  public techItems = [
+    {name: 'Air Power', icon: 'fighter-jet'},
+    {name: 'Warheads', icon: 'crosshairs'},
+    {name: 'Torpedoes', icon: 'anchor'},
+    {name: 'Economy', icon: 'industry'},
+    {name: 'Bombers', icon: 'plane'},
+    {name: 'Tactical', icon: 'cogs'},
+  ]
   
   constructor() { super(); }
 

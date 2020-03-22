@@ -56,7 +56,8 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
     return false;
 }
 function selectAllUnits(terr, optionType, currentPlayer) {
-    var checked = document.getElementById('ter' + terr.id).checked;
+    var t = document.getElementById('ter' + terr.id);
+    var checked = (t && t.checked);
     for (var x = 0; x < terr.units.length; x++) {
         var unit = terr.units[x];
         var cm = checkMovement(terr.distObj, unit, optionType, currentPlayer, terr);

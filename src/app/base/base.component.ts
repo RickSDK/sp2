@@ -5,6 +5,7 @@ declare var playSound: any;
 declare var getSuperpowersData: any;
 declare var ngUnitSrc: any;
 declare var displayFixedPopup: any;
+declare var showAlertPopup: any;
 
 @Component({
   selector: 'app-base',
@@ -77,5 +78,11 @@ export class BaseComponent implements OnInit {
     let piece = unit.piece || unit.id;
     this.selectedUnit = this.superpowersData.units[piece];
     displayFixedPopup('unitPopup');
+  }
+  displaySPPopup(id:string) {
+    displayFixedPopup(id);
+  }
+  showAlertPopup(msg:string, num=0) {
+    showAlertPopup(msg, num);
   }
 }

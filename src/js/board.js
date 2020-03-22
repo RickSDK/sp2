@@ -1126,6 +1126,11 @@ function getYourPlayer(gameObj, userName) {
 	}
 	return humanPlayer;
 }
+function highlightCompleteTurnButton() {
+	playVoiceClip('bt10EndTurn.mp3');
+	changeClass('completeTurnButton', 'glowButton');
+	showUpArrowAtElement('completeTurnButton');
+}
 function highlightCapital(nation) {
 	var ids = [1, 1, 7, 13, 21, 28, 35, 42, 50];
 	//	highlightTerritory(ids[nation], nation, true);
@@ -1135,6 +1140,27 @@ function highlightCapital(nation) {
 	e.style.position = 'absolute';
 	e.style.left = (obj.x - 40).toString() + 'px';
 	e.style.top = (obj.y + 140).toString() + 'px';
+}
+function highlightTerritoryWithArrow(terrId, gameObj) {
+	var terr = gameObj.territories[terrId - 1];
+	var e = document.getElementById('arrow');
+	if (e) {
+		e.style.display = 'block';
+		e.style.position = 'absolute';
+		e.style.left = (terr.x - 40).toString() + 'px';
+		e.style.top = (terr.y + 140).toString() + 'px';
+	}
+}
+function showUpArrowAtElement(id) {
+	var e = document.getElementById('arrow');
+	var b = document.getElementById(id);
+	if (e && b) {
+		var elemRect = b.getBoundingClientRect();
+		e.style.display = 'block';
+		e.style.position = 'fixed';
+		e.style.left = (elemRect.left + 10).toString() + 'px';
+		e.style.top = (elemRect.top + 40).toString() + 'px';
+	}
 }
 function whiteoutScreen() {
 	var e = document.getElementById('whiteOut');
@@ -1595,7 +1621,7 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData) {
 		}
 	});
 	var winningTeamList = playersOfTeam(winningTeam, gameObj, superpowersData);
-	if(gameObj.gameOver) {
+	if (gameObj.gameOver) {
 		var msg = 'Victory!  Game won by ' + winningTeamList.join(', ');
 		gameObj.currentSituation = msg;
 		return;
@@ -1647,11 +1673,145 @@ function playersOfTeam(team, gameObj, superpowersData) {
 	return winningTeam;
 }
 function playIntroSequence() {
-	setTimeout(function() { fadeInDiv('intro1', ''); playSound('zap.mp3'); }, 2000);	
-	setTimeout(function() { fadeInDiv('intro2', ''); playSound('zap.mp3');  }, 4000);	
-	setTimeout(function() { fadeInDiv('intro3', ''); playSound('zap.mp3');}, 6000);	
-	setTimeout(function() { fadeInDiv('intro4', 'btn btn-primary roundButton'); playSound('zap.mp3');}, 8000);	
-	setTimeout(function() { fadeInDiv('intro5', 'btn btn-default roundButton'); playSound('zap.mp3');}, 10000);	
+	setTimeout(function () { fadeInDiv('intro1', ''); playSound('zap.mp3'); }, 2000);
+	setTimeout(function () { fadeInDiv('intro2', ''); playSound('zap.mp3'); }, 4000);
+	setTimeout(function () { fadeInDiv('intro3', ''); playSound('zap.mp3'); }, 6000);
+	setTimeout(function () { fadeInDiv('intro4', 'btn btn-primary roundButton'); playSound('zap.mp3'); }, 8000);
+	setTimeout(function () { fadeInDiv('intro5', 'btn btn-default roundButton'); playSound('zap.mp3'); }, 10000);
+}
+function getMilitaryReportObj(gameObj, currentPlayer, line) {
+	var obj = {};
+	var numPlayers = 0;
+	var place = 1;
+	var yourIncome = currentPlayer.income;
+	var team1Income = 0;
+	var team2Income = 0;
+	gameObj.players.forEach(function (player) {
+		if (player.alive)
+			numPlayers++;
+		if (player.team == 1)
+			team1Income += player.income;
+		if (player.team == 2)
+			team2Income += player.income;
+		if (player.nation != currentPlayer.nation) {
+			if (player.income > yourIncome)
+				place++;
+		}
+	});
+	var nukeCount = 0;
+	gameObj.units.forEach(function (unit) {
+		if (unit.piece == 14 && unit.owner != currentPlayer.nation)
+			nukeCount++;
+	});
+	var facBombed = 0;
+	gameObj.territories.forEach(function (terr) {
+		if (terr.owner == currentPlayer.nation && terr.facBombed)
+			facBombed++;
+	});
+	obj.numPlayers = numPlayers;
+	obj.place = place;
+	obj.team1Income = team1Income;
+	obj.team2Income = team2Income;
+	obj.team = currentPlayer.team;
+	obj.nationLost = checkControlOrigEmpire(currentPlayer.nation, gameObj);
+	obj.teamCapitals = getTeamCapitals(currentPlayer.team, gameObj);
+	obj.balistics = currentPlayer.tech[18];
+	obj.nukeCount = nukeCount;
+	obj.facBombed = facBombed;
+	if(gameObj.round % 2 == 1)
+		customMilitaryReport1(obj, gameObj, line);
+	else
+		customMilitaryReport2(obj, line);
+}
+function customMilitaryReport1(obj, gameObj, line1) {
+	var voiceOverId = obj.place;
+	if (obj.place == 1)
+		line1 = 'Good work! You are currently in first place.';
+	if (obj.place == 2)
+		line1 = 'Not bad. You are currently in second place.';
+	if (obj.place == 3)
+		line1 = 'You are currently in third place.';
+	if (obj.place == 4)
+		line1 = 'You are currently in fourth place, which isn\'t very good.';
+	if (obj.place == 5)
+		line1 = 'Unfortunately you are currently in 5th place, which isn\'t very good.';
+	if (obj.place == 6)
+		line1 = 'Unfortunately you are currently in 6th place, which is terrible.';
+	if (obj.place == 7)
+		line1 = 'Unfortunately you are currently in 7th place, which is downright terrible.';
+	if (obj.place == 8 || obj.place == obj.numPlayers)
+		line1 = 'Ugh! You are currently in last place. This is not good.';
+
+	if (obj.nationLost.length > 0)
+		line1 += ' Your primary goal this turn should be to reclaim ' + obj.nationLost + '.';
+
+	if (obj.teamCapitals == 0) {
+		line1 += ' As of right now you don\'t control any capitals so you are in danger of losing this game.';
+	} else {
+		var capitals = (obj.teamCapitals == 1) ? 'just 1 capital' : obj.teamCapitals + ' capitals';
+		if (gameObj.allowAlliances)
+			line1 += ' As of this turn your team is controlling ' + capitals + '. The goal is to control at least 6.';
+		else
+			line1 += ' As of this turn you are controlling ' + capitals + '. The goal is to control at least 6.';
+	}
+
+	militaryAdvisorPopup(line1, voiceOverId);
+}
+function customMilitaryReport2(obj, line) {
+	var voiceOverId = obj.teamCapitals + 10;
+	if (obj.nationLost.length > 0)
+		line += ' An enemy scurge currently occupies part of the motherland! Send forces in to reclaim ' + obj.nationLost + '.';
+
+	if (obj.nukeCount > 0 && !obj.balistics) {
+		voiceOverId = 101;
+		line += ' There are nukes in play and you do not have Anti-Balistics tech. Purchase that upgrade.';
+	}
+
+	if (obj.facBombed > 0) {
+		voiceOverId = 102;
+		line += ' You have factories bombed out. Purchase air defense (2 per factory) and buy a new factory to restore your income.';
+	}
+
+	militaryAdvisorPopup(line, voiceOverId);
+}
+function getTeamCapitals(team, gameObj) {
+	var count = 0;
+	gameObj.territories.forEach(function (terr) {
+		if (terr.capital && terr.nation < 99 && terr.owner > 0) {
+			var p = playerOfNation(terr.owner, gameObj);
+			if (p.team == team)
+				count++;
+		}
+	});
+	return count;
+}
+function checkControlOrigEmpire(nation, gameObj) {
+	var name = '';
+	gameObj.territories.forEach(function (terr) {
+		if (terr.owner != nation && terr.nation == nation) {
+			name = terr.name;
+		}
+	});
+	return name;
+}
+function isCountOfNation(nation, count) {
+	if (nation == 1 && count > 5)
+		return true;
+	if (nation == 2 && count > 5)
+		return true;
+	if (nation == 3 && count > 7)
+		return true;
+	if (nation == 4 && count > 6)
+		return true;
+	if (nation == 5 && count > 6)
+		return true;
+	if (nation == 6 && count > 6)
+		return true;
+	if (nation == 7 && count > 7)
+		return true;
+	if (nation == 8 && count > 5)
+		return true;
+	return false;
 }
 
 

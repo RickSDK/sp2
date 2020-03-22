@@ -38,6 +38,8 @@ declare var shakeScreen: any;
 declare var clearCurrentGameId: any;
 declare var playVoiceClip: any;
 declare var playIntroSequence: any;
+declare var highlightTerritoryWithArrow: any;
+declare var showUpArrowAtElement: any;
 //---board.js
 declare var displayLeaderAndAdvisorInfo: any;
 declare var getDisplayQueueFromQueue: any;
@@ -54,6 +56,7 @@ declare var whiteoutScreen: any;
 declare var positionPurchasePanel: any;
 declare var transferControlOfTerr: any;
 declare var checkVictoryConditions: any;
+declare var getMilitaryReportObj: any;
 //---spLib.js
 declare var scrollToCapital: any;
 //---computer.js
@@ -125,13 +128,15 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public haltPurchaseFlg = false;
 	public nukeFrameNum = 1;
 	public forcedClickNation = 0;
+	public bonusInfantryFlg = false;
+	public bonusFactoryFlg = false;
+	public selectedTerritory: any;
 
 	constructor() { super(); }
 
 	ngOnInit(): void {
 		this.hostname = getHostname();
 		this.user = userObjFromUser();
-		this.user.rank = 1;
 		this.svgs = loadSVGs();
 		this.warAudio.loop = true;
 		this.gameObj = { territories: [] };
@@ -344,23 +349,44 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 	}
 	displayMilitaryAdvisorMessage() {
-		console.log(this.user);
-		console.log(this.currentPlayer.status);
-		if (this.user.rank == 1 && this.gameObj.round == 1 && this.currentPlayer.status != 'Attack') {
-			displayFixedPopup('introPopup');
-			playVoiceClip('bt01welcome.mp3');
-			playIntroSequence();
+		if (this.user.rank == 0 && this.gameObj.round == 1) {
+			if (this.currentPlayer.status == 'Purchase') {
+				displayFixedPopup('introPopup');
+				playVoiceClip('bt01welcome.mp3');
+				playIntroSequence();
+			} else {
+				this.forceUserToClickTerritory(62);
+				militaryAdvisorPopup('Begin the conquest! It\'s time to expand your empire. Click on Ukraine to invade.');
+				playVoiceClip('bt09Ukraine.mp3');
+			}
 			return;
 		}
 		if (this.gameObj.round == 1 && this.currentPlayer.placedInf < 3) {
 			militaryAdvisorPopup('New Game! You are starting as ' + this.superpowersData.superpowers[this.yourPlayer.nation] + '. First place 3 infantry by clicking on your territories.', 21); //23
 			return false;
 		}
-		if (this.currentPlayer.status == 'Attack')
-			militaryAdvisorPopup('Conduct attacks, then press "Complete Turn" button at the top to end your turn.');
-		else
-			militaryAdvisorPopup('Purchase units and then press "Purchase Complete".');
-		return true;
+		var defaultLine = 'Round ' + this.gameObj.round + '. Purchase new units and then press "Purchase Complete". To advance to the attack phase.';
+		if (this.currentPlayer.status == 'Purchase')
+		defaultLine = 'Round ' + this.gameObj.round + '. Conduct attacks, then press "Complete Turn" button at the top to end your turn.';
+
+		if (this.gameObj.round <= 6) {
+			playVoiceClip('round' + this.gameObj.round + '.mp3');
+			militaryAdvisorPopup(defaultLine);
+		} else {
+			if (this.gameObj.victoryRound && this.gameObj.victoryRound > 0) {
+				militaryAdvisorPopup('Victory conditions met! Game will end in round ' + this.gameObj.victoryRound + ' unless they are stopped!');
+				playVoiceSound(60);
+				setTimeout(() => {
+					showUpArrowAtElement('alliesButton');
+				}, 7000);
+			} else {
+				getMilitaryReportObj(this.gameObj, this.currentPlayer, defaultLine);
+			}
+		}
+	}
+	forceUserToClickTerritory(terrId: number) {
+		this.forcedClickNation = terrId;
+		highlightTerritoryWithArrow(terrId, this.gameObj);
 	}
 	introContinuePressed() {
 		closePopup('introPopup');
@@ -694,10 +720,25 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (player.cpu)
 			doCpuDiplomacyRespond(player, this.gameObj, this.superpowersData);
 	}
+	forcedClickMessage() {
+		var ter = this.gameObj.territories[this.forcedClickNation - 1];
+		showAlertPopup('Please click on ' + ter.name, 1);
+		highlightTerritoryWithArrow(this.forcedClickNation, this.gameObj);
+	}
 	terrClicked(popup: any, terr: any, gameObj: any, ableToTakeThisTurn: any, currentPlayer: any, user: any) {
-		if (!this.showControls || (this.forcedClickNation > 0 && terr.id != this.forcedClickNation)) {
+		if (!this.showControls) {
 			playSound('error.mp3');
 			return;
+		}
+		if (this.forcedClickNation > 0) {
+			if (terr.id == this.forcedClickNation) {
+				if (this.forcedClickNation == 62) {
+					showAlertPopup('Click "Attack" and send all your units into Ukraine.');
+				}
+			} else {
+				this.forcedClickMessage();
+				return;
+			}
 		}
 		if (this.gameObj.round == 1 && this.currentPlayer.placedInf < 3) {
 			if (terr.treatyStatus < 4 || terr.nation == 99)
@@ -711,6 +752,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 			return;
 		}
+		this.bonusInfantryFlg = (terr.owner == 0 && !terr.capital && terr.nation < 99);
+		this.bonusFactoryFlg = (terr.owner == 0 && terr.capital && terr.nation < 99);
 		hideArrow();
 		if (currentPlayer.status == 'Purchase')
 			changeClass('completeTurnButton', 'glowButton');
@@ -719,6 +762,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		displayLeaderAndAdvisorInfo(terr, currentPlayer, this.yourPlayer, user, gameObj, this.superpowersData.superpowers);
 		//		terr.units = unitsForTerr(terr, gameObj.units);
 		terr.displayQueue = getDisplayQueueFromQueue(terr, this.gameObj);
+		this.selectedTerritory = terr;
 		popup.show(terr, currentPlayer, gameObj, ableToTakeThisTurn, user);
 	}
 	redoMoves() {
@@ -788,13 +832,35 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	battleHappened(msg: string) {
 		//emitted from terr-popup
+		console.log('battleHappened', msg);
 		if (msg == 'done!') {
 			this.completeTurnButtonPressed();
 			return;
 		}
-
+		if (msg == 'battle completed') {
+			var terr = this.selectedTerritory;
+			if (this.bonusInfantryFlg) {
+				setTimeout(() => {
+					this.addUnitToTerr(terr, 2, false, true);
+				}, 2000);
+				setTimeout(() => {
+					this.addUnitToTerr(terr, 2, false, true);
+				}, 3000);
+				setTimeout(() => {
+					this.addUnitToTerr(terr, 3, false, true);
+				}, 4000);
+			}
+			if (this.bonusFactoryFlg) {
+				setTimeout(() => {
+					this.addUnitToTerr(terr, 15, false, true);
+				}, 3000);
+			}
+		}
 		if (this.hideActionButton)
 			this.hideActionButton = false;
+		if (this.user.rank == 0 && this.gameObj.round == 1) {
+			this.forcedClickNation = 0;
+		}
 	}
 	moveSpriteFromTerrToTerr(terr1: any, terr2: any, piece: number) {
 		this.moveSpriteBetweenTerrs({ t1: terr1.id, t2: terr2.id, id: piece });
@@ -953,8 +1019,11 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 		if (this.forcedClickNation == 7) {
 			this.forcedClickNation = 62;
-			//highlightTerritory(63);
 			playVoiceClip('bt09Ukraine.mp3');
+		}
+		if (this.forcedClickNation == 62) {
+			this.forcedClickMessage();
+			return;
 		}
 		playClick();
 		changeClass('completeTurnButton', 'btn btn-success roundButton');

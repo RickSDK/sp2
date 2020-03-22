@@ -19,15 +19,14 @@ export class MainPageComponent implements OnInit {
   public expandFlg = false;
   public singleGameId: number;
 
-  constructor(private router: Router) { console.log('constructor'); }
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
     this.hostname = getHostname();
     this.user = userObjFromUser();
     this.flexSprite(100);
-    console.log('ngOnInit', this.user);
     this.singleGameId = localStorage.currentGameId;
-    console.log('multiplayer, loadGameId', localStorage.loadGameId);
+    console.log('main-page ngOnInit', this.user);
   }
   multiplayGameClicked(login: any) {
     if (this.user.username != 'Guest')

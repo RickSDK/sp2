@@ -15,12 +15,11 @@ declare var selectAllButtonChecked: any;
 declare var showUnitsForMovementBG2: any;
 declare var moveSelectedUnits: any;
 declare var refreshBoardFromMove: any;
-declare var whiteoutScreen: any;
-declare var shakeScreen: any;
 declare var autoButtonPressed: any;
 declare var getSelectedUnits: any;
+declare var showAlertPopup: any;
+declare var highlightCompleteTurnButton: any;
 //battle.js
-declare var getBattleAnalysis: any;
 declare var highlightTheseUnits: any;
 declare var playSoundForPiece: any;
 declare var rollAttackDice: any;
@@ -29,7 +28,6 @@ declare var removeCasualties: any;
 declare var battleCompleted: any;
 declare var initializeBattle: any;
 declare var startBattle: any;
-declare var markCasualties: any;
 declare var landTheNukeBattle: any;
 declare var landTheCruiseBattle: any;
 //board.js
@@ -41,7 +39,6 @@ declare var countNumberUnitsChecked: any;
 declare var checkThisNumberBoxesForUnit: any;
 declare var verifyUnitsAreLegal: any;
 declare var packageSelectedUnits: any;
-declare var nukeBattleCompleted: any;
 
 @Component({
   selector: 'app-territory-popup',
@@ -179,6 +176,13 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     return checkMovement(distObj, unit, optionType, player, this.selectedTerritory);
   }
   moveTroopsButtonPressed() {
+    if (this.user.rank==0 && this.gameObj.round==1 && this.selectedTerritory.id == 62) { //ukraine
+      var attackUnits = getSelectedUnits(this.moveTerr);
+      if (attackUnits.length < 8) {
+        showAlertPopup('Go ahead and select all your troops for this battle.', 1);
+        return;
+      }
+    }
     playClick();
     if (this.optionType == 'movement') {
       var obj = moveSelectedUnits(this.moveTerr, this.selectedTerritory);
@@ -208,20 +212,20 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       var obj = packageSelectedUnits(this.moveTerr, this.selectedTerritory);
       var attackUnits = getSelectedUnits(this.moveTerr);
       this.landTheCruise(obj.t1, attackUnits, this.selectedTerritory, this.currentPlayer, this.gameObj, this.superpowersData);
-   }
+    }
     this.closeModal('#territoryPopup');
   }
 
-  landTheNuke(fromTerrId: number, attackUnits:any, targetTerr:any, launchTerritories:any, player:any, gameObj:any, superpowersData:any) {
+  landTheNuke(fromTerrId: number, attackUnits: any, targetTerr: any, launchTerritories: any, player: any, gameObj: any, superpowersData: any) {
     var obj = { t1: fromTerrId, t2: targetTerr.id, id: 14, nukeFlg: true };
     this.moveSpriteBetweenTerrs(obj);
     landTheNukeBattle(player, targetTerr, attackUnits, gameObj, superpowersData, launchTerritories);
-   }
-   landTheCruise(fromTerrId: number, attackUnits:any, targetTerr:any, player:any, gameObj:any, superpowersData:any) {
+  }
+  landTheCruise(fromTerrId: number, attackUnits: any, targetTerr: any, player: any, gameObj: any, superpowersData: any) {
     var obj = { t1: fromTerrId, t2: targetTerr.id, id: 144, cruiseFlg: true };
     this.moveSpriteBetweenTerrs(obj);
     landTheCruiseBattle(player, targetTerr, attackUnits, gameObj, superpowersData);
-   }
+  }
   fightButtonPressed() {
     //emit 
     this.battleHappened.emit('yes');
@@ -253,12 +257,21 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   }
   rollDefenderDice() {
     rollDefenderDice(this.displayBattle, this.selectedTerritory, this.currentPlayer, this.moveTerr, this.gameObj, this.superpowersData);
-
+    if(!this.displayBattle.militaryObj.battleInProgress) {
+      this.battleHappened.emit('battle completed');
+    }
+ 
     if (this.autoCompleteFlg) {
       if (this.displayBattle.militaryObj.battleInProgress)
         this.beginNextRoundOfBattle();
       else
         this.closeModal('#territoryPopup');
+    }
+    if(this.user.rank==0 && this.gameObj.round==1 && !this.displayBattle.militaryObj.battleInProgress) {
+      setTimeout(() => {
+        showAlertPopup('Good job! Click "Complete Turn" at the top to finish your turn.');
+        highlightCompleteTurnButton();
+ 			}, 3500);
     }
   }
   removeCasualties() {

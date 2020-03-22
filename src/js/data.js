@@ -328,7 +328,7 @@ function getAllRanks() {
 	var x=0;
 	return [
 	{id: x++, name: 'New Recruit', desc: 'New Recruit'}
-	,{id: x++, name: 'Private', desc: 'Complete Basic Training'}
+	,{id: x++, name: 'Private', desc: 'Complete 6 rounds of a Single Player game.'}
 	,{id: x++, name: 'Private 1st Class', desc: 'Win Single Player Game'}
 	,{id: x++, name: 'Corporal', desc: 'Win a multiplayer game as a Private 1st Class'}
 	,{id: x++, name: 'Sergeant', desc: 'Win a 1v1 game with someone ranked Corporal or higher'}
