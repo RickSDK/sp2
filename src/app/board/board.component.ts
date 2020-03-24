@@ -40,6 +40,7 @@ declare var playVoiceClip: any;
 declare var playIntroSequence: any;
 declare var highlightTerritoryWithArrow: any;
 declare var showUpArrowAtElement: any;
+declare var okToAttack: any;
 //---board.js
 declare var displayLeaderAndAdvisorInfo: any;
 declare var getDisplayQueueFromQueue: any;
@@ -57,6 +58,8 @@ declare var positionPurchasePanel: any;
 declare var transferControlOfTerr: any;
 declare var checkVictoryConditions: any;
 declare var getMilitaryReportObj: any;
+declare var declareWarOnNation: any;
+declare var refreshAllTerritories: any;
 //---spLib.js
 declare var scrollToCapital: any;
 //---computer.js
@@ -90,7 +93,8 @@ declare var removeCasualties: any;
 declare var rollAttackDice: any;
 declare var rollDefenderDice: any;
 declare var landTheNukeBattle: any;
-declare var nukeHitsForTerr: any;
+declare var maximumPossibleNukeHitsForTerr: any;
+declare var addAAGunesToBattle: any;
 
 @Component({
 	selector: 'app-board',
@@ -124,8 +128,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public hideActionButton = false;
 	public displayBattle: any;
 	public warAudio = new Audio('assets/sounds/war1.mp3');
-	public haltActionFlg = false;
 	public haltPurchaseFlg = false;
+	public haltCombatActionFlg = false;
+	public haltActionFlg = false;
 	public nukeFrameNum = 1;
 	public forcedClickNation = 0;
 	public bonusInfantryFlg = false;
@@ -191,10 +196,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (e) {
 			this.yourPlayer = getYourPlayer(this.gameObj, this.user.userName);
 			console.log('yourPlayer', this.yourPlayer);
-			for (var x = 0; x < this.gameObj.territories.length; x++) {
-				var terr = this.gameObj.territories[x];
-				refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
-			}
+			refreshAllTerritories(this.gameObj, this.yourPlayer, this.superpowersData, this.yourPlayer)
 			refreshBoard(this.gameObj.territories);
 			var left = window.innerWidth - 55;
 			if (left > 1282) {
@@ -222,17 +224,18 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		localStorage.haltActionFlg = (this.haltActionFlg) ? 'Y' : 'N';
 	}
 	loadCurrentPlayer() {
+		//#####################################################################
+		//#####################################################################
 		//-------------------- test
-		//	this.gameObj.turnId = 3; //<--- test
-		this.haltActionFlg = (localStorage.haltActionFlg == 'Y');
+		//this.gameObj.turnId = 2; //<--- test
+		this.haltCombatActionFlg = false;
 		this.haltPurchaseFlg = false;
+		this.haltActionFlg = (localStorage.haltActionFlg == 'Y');
 		//--------------------end test
 		this.currentPlayer = getCurrentPlayer(this.gameObj);
 		this.gameObj.currentNation = this.currentPlayer.nation;
 		this.gameObj.actionButtonMessage = '';
 		this.allowBotToAct = this.currentPlayer.cpu;
-		//		if (this.currentPlayer.status == 'Waiting')
-		//			this.gameObj.unitPurchases = [];
 
 		console.log('========' + this.superpowersData.superpowers[this.currentPlayer.nation] + '======');
 		if (!this.currentPlayer.news)
@@ -241,6 +244,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.currentPlayer.botRequests = [];
 		if (!this.currentPlayer.offers)
 			this.currentPlayer.offers = [];
+		refreshAllTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer)
 		this.findTargets();
 
 		this.currentPlayer.allies = alliesFromTreaties(this.currentPlayer);
@@ -305,6 +309,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.currentPlayer.primaryTargetId = 0;
 		this.gameObj.territories.forEach(terr => {
 			if (terr.requestedTarget == this.currentPlayer.nation) {
+				console.log('+++requestedTarget+++', terr.name);
 				this.currentPlayer.primaryTargetId = terr.id;
 				this.currentPlayer.secondaryTargetId = terr.id;
 				terr.requestedTarget = 0;
@@ -312,6 +317,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					allyRequests.push({ type: 1, terr: terr.id });
 			}
 			if (terr.requestedHotSpot == this.currentPlayer.nation) {
+				console.log('+++requestedHotSpot+++', terr.name);
 				this.currentPlayer.hotSpotId = terr.id;
 				terr.requestedHotSpot = 0;
 				if (!this.currentPlayer.cpu)
@@ -326,27 +332,29 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				terr.requestTransfer = 0;
 			}
 		});
-		if (this.currentPlayer.secondaryTargetId > 0) {
+		if (this.currentPlayer.secondaryTargetId > 0) { // clear target if achieved
 			var terr = this.gameObj.territories[this.currentPlayer.secondaryTargetId - 1];
-			if (treatyStatus(this.currentPlayer, terr.owner) > 1)
+			var tStatus = treatyStatus(this.currentPlayer, terr.owner);
+			if (tStatus > 2)
 				this.currentPlayer.secondaryTargetId = 0;
+			if (this.currentPlayer.cpu && (tStatus == 1 || tStatus == 2))
+				declareWarOnNation(terr.owner, this.gameObj, this.currentPlayer, this.superpowersData);
 		}
-		if (this.currentPlayer.hotSpotId > 0) {
+		if (this.currentPlayer.hotSpotId > 0) { // clear hot spot if lost
 			var terr = this.gameObj.territories[this.currentPlayer.hotSpotId - 1];
 			if (treatyStatus(this.currentPlayer, terr.owner) < 3)
-				this.currentPlayer.secondaryTargetId = 0;
+				this.currentPlayer.hotSpotId = 0;
 		}
 		this.currentPlayer.allyRequests = allyRequests;
 		if (this.currentPlayer.primaryTargetId == 0)
 			this.currentPlayer.primaryTargetId = findPrimaryTarget(this.gameObj, this.currentPlayer);
-		this.currentPlayer.secondaryTargetId = findSecondaryTarget(this.gameObj, this.currentPlayer);
-		if (this.currentPlayer.hotSpotId == 0)
+		if (this.currentPlayer.secondaryTargetId == 0 || this.currentPlayer.primaryTargetId == 0)
+			this.currentPlayer.secondaryTargetId = findSecondaryTarget(this.gameObj, this.currentPlayer);
+
+		if (numberVal(this.currentPlayer.hotSpotId) == 0)
 			this.currentPlayer.hotSpotId = findFortification(this.gameObj, this.currentPlayer);
 		this.currentPlayer.mainTargetId = (this.currentPlayer.primaryTargetId > 0) ? this.currentPlayer.primaryTargetId : this.currentPlayer.secondaryTargetId;
-		this.currentPlayer.mainBaseID = 0;
-		if (this.currentPlayer.mainBaseID == 0)
-			this.currentPlayer.mainBaseID = findMainBase(this.gameObj, this.currentPlayer);
-
+		this.currentPlayer.mainBaseID = findMainBase(this.gameObj, this.currentPlayer);
 	}
 	displayMilitaryAdvisorMessage() {
 		if (this.user.rank == 0 && this.gameObj.round == 1) {
@@ -367,7 +375,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 		var defaultLine = 'Round ' + this.gameObj.round + '. Purchase new units and then press "Purchase Complete". To advance to the attack phase.';
 		if (this.currentPlayer.status == 'Purchase')
-		defaultLine = 'Round ' + this.gameObj.round + '. Conduct attacks, then press "Complete Turn" button at the top to end your turn.';
+			defaultLine = 'Round ' + this.gameObj.round + '. Conduct attacks, then press "Complete Turn" button at the top to end your turn.';
 
 		if (this.gameObj.round <= 6) {
 			playVoiceClip('round' + this.gameObj.round + '.mp3');
@@ -423,7 +431,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.gameObj.unitPurchases = [];
 		this.gameObj.superBCForm.cost = 0;
 
-		player.mainBaseID = 0;
 		resetPlayerUnits(player, this.gameObj); //<------------------------------------------------- clean player units
 		if (this.currentPlayer.mainBaseID == 0)
 			this.currentPlayer.mainBaseID = findMainBase(this.gameObj, this.currentPlayer);
@@ -519,7 +526,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		this.advanceMainBase();
 
-		if (this.haltActionFlg) {
+		if (this.haltCombatActionFlg) {
 			this.showControls = true;//<---testing only!!
 			showAlertPopup('action halted!', 1);
 			this.warAudio.pause();
@@ -546,7 +553,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		keys.forEach(idStr => {
 			var id = numberVal(idStr) - 1;
 			var terr = this.gameObj.territories[id];
-			var target = this.findLargestEnemyOfTerr(terr, this.currentPlayer, 5, 4, null);
+			var minTroops = 5;
+			var range = 4;
+			var target = this.findLargestEnemyOfTerr(terr, this.currentPlayer, minTroops, range, null, this.gameObj);
 			if (target) {
 				nukeTargets.push({ t1: terr, t2: target });
 			}
@@ -557,8 +566,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				return;
 			var terr = nukeTarget.t1;
 			var target = nukeTarget.t2;
+			if (target.unitCount < 6)
+				return;
 			hitListHash[target.id] = true;
-			var hits = nukeHitsForTerr(target, this.currentPlayer, this.gameObj);
+			var hits = maximumPossibleNukeHitsForTerr(target, this.currentPlayer, this.gameObj);
 			var maxNukes = Math.ceil(target.unitCount / hits);
 			this.gameObj.units.forEach(unit => {
 				if (unit.owner == this.currentPlayer.nation && unit.piece == 14 && unit.terr == terr.id && unit.movesLeft > 0 && --maxNukes >= 0) {
@@ -576,18 +587,18 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.moveSpriteBetweenTerrs(obj);
 		landTheNukeBattle(player, targetTerr, attackUnits, gameObj, superpowersData, launchTerritories);
 	}
-	findLargestEnemyOfTerr(terr: any, attacker: any, max: number, range: number, bestTerr: any) {
+	findLargestEnemyOfTerr(terr: any, attacker: any, max: number, range: number, bestTerr: any, gameObj: any) {
 		range--;
 		if (range == 0)
 			return bestTerr;
 		for (var x = 0; x < terr.land.length; x++) {
 			var id = terr.land[x];
-			var terr2 = this.gameObj.territories[id - 1];
-			if (!terr2.nuked && terr2.unitCount > max && treatyStatus(attacker, terr2.owner) == 0) {
+			var terr2 = this.gameObj.territories[id - 1]; //treatyStatus(attacker, terr2.owner)
+			if (!terr2.nuked && terr2.unitCount > max && terr2.owner != attacker.nation && okToAttack(attacker, terr, gameObj)) {
 				max = terr2.unitCount;
 				bestTerr = terr2;
 			}
-			var possibleTarget = this.findLargestEnemyOfTerr(terr2, attacker, max, range, bestTerr);
+			var possibleTarget = this.findLargestEnemyOfTerr(terr2, attacker, max, range, bestTerr, gameObj);
 			if (possibleTarget && possibleTarget.unitCount > max)
 				bestTerr = possibleTarget;
 		}
@@ -596,7 +607,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	advanceMainBase() {
 		var base = this.gameObj.territories[this.currentPlayer.mainBaseID - 1];
-		if (!base || this.currentPlayer.mainTargetId == 0)
+		if (!base || !base.land || this.currentPlayer.mainTargetId == 0)
 			return;
 		if (base.attackedRound == this.gameObj.round)
 			return;
@@ -605,6 +616,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			return;
 		var dist = landDistFromTerr(this.currentPlayer.mainBaseID, target.id, 0, this.gameObj);
 		var closerTerr;
+		console.log(base);
 		base.land.forEach(terrId => {
 			var terr = this.gameObj.territories[terrId - 1];
 			if (terr.owner == this.currentPlayer.nation) {
@@ -664,6 +676,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	computerBattleRound(obj: any) {
 		removeCasualties(this.displayBattle, this.gameObj, this.currentPlayer, false, this.superpowersData);
 		this.displayBattle.round++;
+		addAAGunesToBattle(this.displayBattle, obj.terr);
 		rollAttackDice(this.displayBattle);
 		rollDefenderDice(this.displayBattle, obj.terr, this.currentPlayer, [obj.attTerr], this.gameObj, this.superpowersData);
 		if (this.displayBattle.militaryObj.battleInProgress)
@@ -674,6 +687,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		recallBoats(this.gameObj, this.currentPlayer);
 
+		console.log('computerMove', this.currentPlayer.hotSpotId)
 		if (this.currentPlayer.hotSpotId > 0)
 			fortifyThisTerritory(this.currentPlayer, this.gameObj);
 
@@ -862,6 +876,19 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.forcedClickNation = 0;
 		}
 	}
+	withdrawGeneralButtonClicked() {
+		this.gameObj.units.forEach(unit => {
+			if (unit.piece == 10 && unit.owner == this.currentPlayer.nation && unit.prevTerr > 0) {
+				var terr2 = this.gameObj.territories[unit.prevTerr - 1];
+				localStorage.generalTerr1 = unit.prevTerr;
+				localStorage.generalTerr2 = unit.terr;
+				unit.terr = unit.prevTerr;
+				this.moveSpriteFromTerrToTerr(this.selectedTerritory, terr2, 10);
+				closePopup('generalWithdrawPopup');
+				this.closeModal('#territoryPopup');
+			}
+		});
+	}
 	moveSpriteFromTerrToTerr(terr1: any, terr2: any, piece: number) {
 		this.moveSpriteBetweenTerrs({ t1: terr1.id, t2: terr2.id, id: piece });
 		refreshTerritory(terr1, this.gameObj, this.currentPlayer, this.superpowersData, this.currentPlayer);
@@ -1028,7 +1055,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		playClick();
 		changeClass('completeTurnButton', 'btn btn-success roundButton');
 		if (this.currentPlayer.status == 'Purchase') {
-			this.completingPurchases()
+			this.completingPurchases();
+			playVoiceClip('beginConquest.mp3');
 		} else if (this.currentPlayer.status == 'Attack') {
 			displayFixedPopup('diplomacyWarningPopup');
 		} else if (this.currentPlayer.status == 'Place Units')

@@ -22,8 +22,8 @@
 				</div>
 
 				<app-terr-header [selectedTerritory]="selectedTerritory" [ableToTakeThisTurn]="ableToTakeThisTurn"></app-terr-header>
-
-				<div *ngIf="displayBattle && optionType == 'battle'">
+				
+				<div *ngIf="displayBattle && optionType == 'battle'">allowGeneralRetreat {{displayBattle.allowGeneralRetreat}}
 					<div *ngIf="currentPlayer.nation<=6 && displayBattle.generalUnit>0" style="background-color: #ccf;">
 						<img src="assets/graphics/units/piece10u.png" height=20>
 						General
@@ -127,12 +127,14 @@
 							<div class="borderClass3">
 								<div class="darkBlueBg">Casualties</div>
 								<div><img src="assets/graphics/images/flag{{displayBattle.attacker}}.gif" height="20">
-									&nbsp;<span *ngFor="let piece of displayBattle.attCasualties" style="opacity: .5;"
+									&nbsp;<span *ngIf="displayBattle.attCasualties.length==0">None</span>
+									<span *ngFor="let piece of displayBattle.attCasualties" style="opacity: .5;"
 										title="attacking casualties"><img src="{{ngUnitSrc(piece)}}" height=15
 											title="{{superpowersData.units[piece].name}}"></span>
 								</div>
 								<div><img src="assets/graphics/images/flag{{displayBattle.defender}}.gif" height="20">
-									&nbsp;<span *ngFor="let piece of displayBattle.defCasualties" style="opacity: .5;"
+									&nbsp;<span *ngIf="displayBattle.defCasualties.length==0">None</span>
+									<span *ngFor="let piece of displayBattle.defCasualties" style="opacity: .5;"
 										title="attacking casualties"><img src="{{ngUnitSrc(piece)}}" height=15
 											title="{{superpowersData.units[piece].name}}"></span>
 								</div>
@@ -233,7 +235,7 @@
 					[superpowersData]="superpowersData" [gameObj]="gameObj" [user]="user">
 				</app-terr-units>
 
-
+				<!--#########################################################################################-->
 				<!-- troop selection panel -->
 				<div *ngIf="ableToTakeThisTurn && optionType!='home' && currentPlayer.status!='Purchase' && optionType != 'battle'"
 					class="terr-card">
@@ -296,8 +298,14 @@
 						<div *ngIf="optionType=='loadPlanes'" class="borderClass">Select units to load as paratroopers.
 							<button (click)="infoFlg = !infoFlg" type="button" class="btn ptp-gray roundButton"
 								style=""><i class="fa fa-info-circle"></i>Info</button>
-							<div *ngIf="infoFlg">Each bomber can carry up to 2 infantry, plus hero units. Only select
-								the infantry. Bombers are chosen automatically for you.</div>
+							<div *ngIf="infoFlg">
+								<img src="assets/graphics/units/piece7u.png" height="20">
+								<img src="assets/graphics/units/piece2u.png" height="20">
+								<img src="assets/graphics/units/piece2u.png" height="20">
+								<img src="assets/graphics/units/piece10u.png" height="20">
+								<img src="assets/graphics/units/piece11u.png" height="20">
+								Each bomber can carry up to 2 infantry, plus hero units. Only select
+								the paratroopers. Bombers are chosen automatically for you.</div>
 						</div>
 
 						<!--     each terr-->
@@ -404,7 +412,7 @@
 					<div style="font-size: 10px; color: white;"><i class="fa fa-industry"></i> Production
 						Queue
 					</div>
-					<div style="background-color: white;">
+					<div style="background-color: white; color: black;">
 						<span *ngIf="selectedTerritory.displayQueue.length==0">&nbsp;</span>
 						<span *ngFor="let unit of selectedTerritory.displayQueue"><img *ngIf="unit.piece>0"
 								src="{{ngUnitSrc(unit.piece, 1)}}" height=20

@@ -30,6 +30,8 @@ declare var initializeBattle: any;
 declare var startBattle: any;
 declare var landTheNukeBattle: any;
 declare var landTheCruiseBattle: any;
+declare var rollAAGuns: any;
+declare var startToRollAAGuns: any;
 //board.js
 declare var checkCargoForTerr: any;
 declare var isFactoryAllowedOnTerr: any;
@@ -39,6 +41,7 @@ declare var countNumberUnitsChecked: any;
 declare var checkThisNumberBoxesForUnit: any;
 declare var verifyUnitsAreLegal: any;
 declare var packageSelectedUnits: any;
+declare var loadParatroopers: any;
 
 @Component({
   selector: 'app-territory-popup',
@@ -83,16 +86,18 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     var moveTerr = [];
     var totalUnitsThatCanMove = 0;
 
+    /*
     this.gameObj.territories.forEach(function (terr) {
       totalUnitsThatCanMove += terr.movableTroopCount;
       if (terr.movableTroopCount > 0) {
         terr.distObj = { land: 9, air: 9, sea: 9 };
         moveTerr.push(terr);
       }
-    });
+    });*/
     this.hostileMessage = populateHostileMessage('home', this.selectedTerritory, this.gameObj, this.currentPlayer);
     this.totalUnitsThatCanMove = totalUnitsThatCanMove;
-    this.totalMoveTerrs = moveTerr;
+    //this.totalMoveTerrs = moveTerr;
+    this.totalMoveTerrs = currentPlayer.territories;
     this.optionType = 'home';
 
     terr.facFlg = (terr.treatyStatus == 4 && terr.nation < 99);
@@ -176,7 +181,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     return checkMovement(distObj, unit, optionType, player, this.selectedTerritory);
   }
   moveTroopsButtonPressed() {
-    if (this.user.rank==0 && this.gameObj.round==1 && this.selectedTerritory.id == 62) { //ukraine
+    if (this.user.rank == 0 && this.gameObj.round == 1 && this.selectedTerritory.id == 62) { //ukraine
       var attackUnits = getSelectedUnits(this.moveTerr);
       if (attackUnits.length < 8) {
         showAlertPopup('Go ahead and select all your troops for this battle.', 1);
@@ -184,6 +189,9 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       }
     }
     playClick();
+    if (this.optionType == 'loadPlanes' || this.optionType == 'loadChoppers') {
+      loadParatroopers(this.selectedTerritory, this.optionType);
+    }
     if (this.optionType == 'movement') {
       var obj = moveSelectedUnits(this.moveTerr, this.selectedTerritory);
       setTimeout(() => {
@@ -242,11 +250,26 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     this.displayBattle.phase = 2;
     this.battleDelay = this.autoCompleteFlg ? 100 : 1200;
     playSound('9mm.mp3');
+
+    if (this.displayBattle.airDefenseUnits.length > 0) {
+      startToRollAAGuns(this.displayBattle);
+      this.changeDiceUnitsToImg(this.displayBattle.airDefenseUnits, 'spin.gif');
+      setTimeout(() => {
+        this.aaGunsRoll();
+      }, this.battleDelay);
+
+    } else {
+      this.aaGunsRoll();
+    }
+  }
+  aaGunsRoll() {
+    rollAAGuns(this.displayBattle);
     this.changeDiceUnitsToImg(this.displayBattle.attackUnits, 'spin.gif');
     this.changeDiceUnitsToImg(this.displayBattle.defendingUnits, 'dice.png');
     setTimeout(() => {
       this.attackerRolls();
     }, this.battleDelay);
+
   }
   attackerRolls() {
     rollAttackDice(this.displayBattle);
@@ -257,21 +280,21 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   }
   rollDefenderDice() {
     rollDefenderDice(this.displayBattle, this.selectedTerritory, this.currentPlayer, this.moveTerr, this.gameObj, this.superpowersData);
-    if(!this.displayBattle.militaryObj.battleInProgress) {
+    if (!this.displayBattle.militaryObj.battleInProgress) {
       this.battleHappened.emit('battle completed');
     }
- 
+
     if (this.autoCompleteFlg) {
       if (this.displayBattle.militaryObj.battleInProgress)
         this.beginNextRoundOfBattle();
       else
         this.closeModal('#territoryPopup');
     }
-    if(this.user.rank==0 && this.gameObj.round==1 && !this.displayBattle.militaryObj.battleInProgress) {
+    if (this.user.rank == 0 && this.gameObj.round == 1 && !this.displayBattle.militaryObj.battleInProgress) {
       setTimeout(() => {
         showAlertPopup('Good job! Click "Complete Turn" at the top to finish your turn.');
         highlightCompleteTurnButton();
- 			}, 3500);
+      }, 3500);
     }
   }
   removeCasualties() {
@@ -308,7 +331,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       return 'btn btn-danger roundButton';
   }
   checkSendButtonStatus(unit: any, terr = null) {
-    this.battleAnalysisObj = checkSendButtonStatus(unit, this.moveTerr, this.optionType, this.selectedTerritory, this.currentPlayer, this.gameObj);
+    this.battleAnalysisObj = checkSendButtonStatus(unit, this.moveTerr, this.optionType, this.selectedTerritory, this.currentPlayer, this.gameObj, this.superpowersData);
     this.selectedUnitTerr = { piece: 1, terrId: 1, max: 0, count: 0 };
     if (terr) {
       var obj = countNumberUnitsChecked(terr, unit, this.currentPlayer);
@@ -318,7 +341,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   checkboxAmountOfUnit(num: number, terr: any) {
     this.selectedUnitTerr.count = num;
     checkThisNumberBoxesForUnit(this.selectedUnitTerr.piece, num, terr);
-    this.battleAnalysisObj = checkSendButtonStatus(null, this.moveTerr, this.optionType, this.selectedTerritory, this.currentPlayer, this.gameObj);
+    this.battleAnalysisObj = checkSendButtonStatus(null, this.moveTerr, this.optionType, this.selectedTerritory, this.currentPlayer, this.gameObj, this.superpowersData);
   }
 
   changeProdType(segmentIdx: number) {

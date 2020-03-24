@@ -35,7 +35,7 @@
             <div *ngIf="unitDetailFlg">
                 <span *ngFor="let unit of selectedTerritory.units"
                     style="display: inline-block; margin: 2px; min-width: 40px; text-align: center;">
-                    <div *ngIf="!unit.cargoOf || unit.cargoOf==0"><img (click)="unitDetailPopup.show(unit, true)"
+                    <div *ngIf="1 || !unit.cargoOf || unit.cargoOf==0"><img (click)="unitDetailPopup.show(unit, true)"
                             *ngIf="unit.piece>0" src="{{ngUnitSrc(unit.piece, unit.nation)}}"
                             style="max-height: 20px; max-width: 40px; cursor: pointer;"
                             title="{{superpowersData.units[unit.piece].name}}">

@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { BaseComponent } from '../base/base.component';
 
 declare var playClick: any;
 declare var allowHostileAct: any;
@@ -11,7 +12,7 @@ declare var $: any;
   templateUrl: './terr-buttons.component.html',
   styleUrls: ['./terr-buttons.component.scss']
 })
-export class TerrButtonsComponent implements OnInit {
+export class TerrButtonsComponent extends BaseComponent implements OnInit {
   @Input('selectedTerritory') selectedTerritory: any;
   @Input('currentPlayer') currentPlayer: any;
   @Input('superpowersData') superpowersData: any;
@@ -32,7 +33,7 @@ export class TerrButtonsComponent implements OnInit {
   public showAlliesButtonsFlg = false;
   public showAlliesButtonsIdx = 0;
 
-  constructor() { }
+  constructor() { super(); }
 
   ngOnInit(): void {
   }
@@ -72,8 +73,8 @@ export class TerrButtonsComponent implements OnInit {
   }
   requestTranferConfirmButtonClicked() {
     playClick();
-    this.selectedTerritory.requestTransfer=this.currentPlayer.nation;
-    $('#territoryPopup').modal('toggle');
+    this.selectedTerritory.requestTransfer = this.currentPlayer.nation;
+    //   $('#territoryPopup').modal('toggle');
   }
   tranferConfirmButtonClicked() {
     playClick();
@@ -84,12 +85,24 @@ export class TerrButtonsComponent implements OnInit {
   }
   requestFortifyButtonClicked() {
     playClick();
-    this.selectedTerritory.requestedHotSpot=this.currentPlayer.nation;
-    $('#territoryPopup').modal('toggle');
+    this.selectedTerritory.requestedHotSpot = this.allyNation;
+    //   $('#territoryPopup').modal('toggle');
   }
   requestTargetButtonClicked() {
     playClick();
-    this.selectedTerritory.requestedTarget=this.currentPlayer.nation;
-    $('#territoryPopup').modal('toggle');
+    this.selectedTerritory.requestedTarget = this.allyNation;
+    //    $('#territoryPopup').modal('toggle');
+  }
+  unloadAllParatroopers() {
+    playClick();
+    this.selectedTerritory.units.forEach(unit => {
+      if (unit.cargoOf > 0)
+        unit.cargoOf = 0;
+      if (unit.cargo && unit.cargo.length > 0) {
+        unit.cargo = [];
+        unit.cargoUnits = 0;
+      }
+    });
+    this.selectedTerritory.paratrooperCount = 0;
   }
 }

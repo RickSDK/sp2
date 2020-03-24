@@ -4999,6 +4999,10 @@ app.controller("boardCtrl", function ($scope) {
 			return true;
 		if(player.nation==terr.owner)
 			return false;
+		if(terr.nuked)
+			return false;
+		if(terr.attackedByNation == player.nation)
+			return false;
 		if($scope.gameObj.round<$scope.gameObj.attack)
 			return false;
 //		if(terr.nuked) {
@@ -6087,7 +6091,7 @@ app.controller("boardCtrl", function ($scope) {
 		}
 		battle.units.forEach(function(unit) {
 			if(unit.piece==14 || unit.piece==52) {
-				var unitHits = nukeHitsForTerr(terr);
+				var unitHits = maximumPossibleNukeHitsForTerr(terr);
 				if(unit.piece==52)
 					unitHits*=3;
 				hits+=unitHits;
@@ -11449,7 +11453,7 @@ app.controller("boardCtrl", function ($scope) {
 		$scope.expectedHits=expectedHitsFromHits(expectedHits);
 		
 		if(numNukes>0) {
-			$scope.expectedHits=nukeHitsForTerr($scope.selectedTerritory)*numNukes;
+			$scope.expectedHits=maximumPossibleNukeHitsForTerr($scope.selectedTerritory, gameObj)*numNukes;
 			if($scope.expectedHits==0)
 				showAlertPopup('This territory is too heavily defended for your nukes! Find a better target or get your nukes upgraded through technology.',1);
 		}

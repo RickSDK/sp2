@@ -46,10 +46,20 @@ export class DiplomacyPopupComponent extends BaseComponent implements OnInit {
     dropAllyOfNation(this.currentPlayer, nation, this.gameObj, this.superpowersData);
     this.checkAllies();
   }
+  dismissNews(selectedNewsItem) {
+    var newsList = [];
+    this.currentPlayer.news.forEach(item => {
+      if (item.nation != selectedNewsItem.nation || item.type != selectedNewsItem.type)
+        newsList.push(item);
+    });
+    this.currentPlayer.news = newsList;
+    if (newsList.length == 0)
+      this.checkAllies();
+  }
   checkAllies() {
     this.currentPlayer.allies = alliesFromTreaties(this.currentPlayer);
-		this.currentPlayer.allySpotsOpen = this.gameObj.maxAllies - this.currentPlayer.allies.length;
-    if (this.currentPlayer.offers.length == 0 && this.currentPlayer.allySpotsOpen>=0) {
+    this.currentPlayer.allySpotsOpen = this.gameObj.maxAllies - this.currentPlayer.allies.length;
+    if (this.currentPlayer.offers.length == 0 && this.currentPlayer.allySpotsOpen >= 0) {
       this.messageEvent.emit('done');
       this.closeModal('#diplomacyPopup');
     }

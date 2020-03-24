@@ -22,8 +22,8 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
         return false;
     if (optionType == 'bomb' && unit.piece != 7)
         return false;
-    if (optionType == 'loadPlanes') {
-        if (unit.type == 1 && (!unit.cargoOf || unit.cargoOf == 0))
+    if (optionType == 'loadPlanes' || optionType == 'loadChoppers') {
+        if ((unit.piece == 2 || unit.piece == 10 || unit.piece == 11) && (!unit.cargoOf || unit.cargoOf == 0))
             return true;
         else
             return false;
@@ -88,10 +88,29 @@ function packageSelectedUnits(moveTerr, selectedTerritory) {
             if (e && e.checked) {
                 terr1Id = unit.terr;
                 piece = unit.piece;
-             }
+            }
         }
     }
     return { t1: terr1Id, t2: selectedTerritory.id, id: piece };
+}
+function loadParatroopers(selectedTerritory, optinType) {
+    var units = getSelectedUnits([selectedTerritory]);
+    units.forEach(function (unit) {
+        findBomberForParatrooper(unit, selectedTerritory, optinType);
+    });
+}
+function findBomberForParatrooper(unit, selectedTerritory, optinType) {
+    var selectedTransport;
+    selectedTerritory.units.forEach(function (transport) {
+        if (optinType == 'loadPlanes' && transport.piece == 7 && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits)
+            selectedTransport = transport;
+        if (optinType == 'loadChoppers' && transport.piece == 50 && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits)
+            selectedTransport = transport;
+    });
+    if (selectedTransport)
+        loadThisUnitOntoThisTransport(unit, selectedTransport);
+    else
+        console.log('no transport found!')
 }
 function moveSelectedUnits(moveTerr, selectedTerritory) {
     var terr1Id = 1;
@@ -175,6 +194,8 @@ function expectedHitsFromStrength(strength) {
         return (strength / 6).toFixed(1);
 }
 function showUnitsForMovementBG2(optionType, gameObj, currentPlayer, totalMoveTerrs, selectedTerritory) {
+    if (optionType == 'loadPlanes' || optionType == 'loadChoppers')
+        totalMoveTerrs = [selectedTerritory];
     var moveTerr = [];
     var totalUnitsThatCanMove = 0;
     var maxDist = 8;
@@ -231,7 +252,7 @@ function checkThisNumberBoxesForUnit(piece, num, terr) {
         }
     }
 }
-function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, player, gameObj) {
+function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, player, gameObj, superpowersData) {
     var transportCargo = selectedTerritory.transportCargo;
     var carrierCargo = selectedTerritory.carrierCargo;
     var numUnits = 0;
@@ -287,12 +308,12 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
                         specialUnitHash[unit.piece] = 0;
                     specialUnitHash[unit.piece]++;
                     if (unit.piece >= 20 && optionType == 'attack' && specialUnitHash[unit.piece] > 6) {
-                        showAlertPopup('Maximum of 6 ' + gUnits[unit.piece].name + ' units per battle.', 1);
+                        showAlertPopup('Maximum of 6 ' + superpowersData.units[unit.piece].name + ' units per battle.', 1);
                         e.checked = false;
                     }
 
                     if ((unit.piece == 23 || unit.piece == 25 || unit.piece == 41 || unit.piece == 42) && optionType == 'attack' && selectedTerritory.unitCount == 0) {
-                        showAlertPopup('No target for your ' + gUnits[unit.piece].name + '.', 1);
+                        showAlertPopup('No target for your ' + superpowersData.units[unit.piece].name + '.', 1);
                         e.checked = false;
                     }
                     if (unit.piece == 44 && optionType == 'attack') {
@@ -442,13 +463,17 @@ function expectedHitsFromHits(num) {
     else
         return (num / 6).toFixed(1);
 }
-function nukeHitsForTerr(terr, player, gameObj) {
+function maximumPossibleNukeHitsForTerr(terr, player, gameObj) {
+    if (!terr || !terr.name) {
+        console.log('!!! no terr sent to maximumPossibleNukeHitsForTerr');
+        return 0;
+    }
     var hits = 12;
     if (player.tech[4])
         hits += 3;
     if (player.tech[5])
         hits += 3;
-     var adCount = terr.adCount;
+    var adCount = terr.adCount;
     if (adCount > 3)
         adCount = 3;
     var blocked = adCount * 2;

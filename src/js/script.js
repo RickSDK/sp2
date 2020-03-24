@@ -266,7 +266,7 @@ function updateProgressBar(num) {
 //----------------------------------------movement------------------------------
 //this.optionType, this.gameObj, this.currentPlayer, this.totalMoveTerrs, this.selectedTerritory
 //function showUnitsForMovementBG(type, units, currentPlayer, territories, selectedTerritory, goButton, round, currentPlayer, optionType, svgs) {
-function showUnitsForMovementBG(optionType, gameObj, currentPlayer, territories, selectedTerritory) {
+/*function showUnitsForMovementBG(optionType, gameObj, currentPlayer, territories, selectedTerritory) {
 	// in combination with: 
 	//	showSelectableBox 
 	//	$scope.checkMovement = function;
@@ -337,7 +337,7 @@ function showUnitsForMovementBG(optionType, gameObj, currentPlayer, territories,
 	}
 	obj.totalUnitsThatCanMove = totalUnitsThatCanMove;
 	return obj;
-}
+}*/
 function getAllyHash(player, selectedTerritory) {
 	var limit = 3;
 	if (selectedTerritory && selectedTerritory.id && selectedTerritory.id > 79)

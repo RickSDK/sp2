@@ -200,11 +200,13 @@ function doCpuDiplomacyOffer(player, gameObj, superpowersData) {
     }
 }
 function declareWarIfNeeded(gameObj, player, superpowersData) {
-    if (gameObj.round > 10) {
+    if (gameObj.round > 6) {
         gameObj.players.forEach(function (p2) {
-            var status = player.treaties[p2.nation - 1];
-            if ((status == 1 || status == 2) && roundsOfPeace(player, p2.nation, gameObj) >= 3)
-                changeTreaty(player, p2, 0, gameObj, superpowersData);
+            var status = treatyStatus(player, p2.nation);
+            var roundsP = roundsOfPeace(player, p2.nation, gameObj);
+            var roundsW = roundsOfWar(player, p2.nation, gameObj);
+            if ((status == 1 || status == 2) && roundsP > 3 && (player.alliesMaxed || p2.alliesMaxed))
+                declareWarOnNation(p2.nation, gameObj, player, superpowersData);
         });
     }
 }
@@ -292,13 +294,12 @@ function moveAFewUnitsFromTerrToTerr(terr, toTerr, player, gameObj) {
 function findMainBase(gameObj, currentPlayer) {
     var baseId = 0;
     var max = 0;
-    currentPlayer.territories.forEach(function (terr) {
-        if (terr.owner == currentPlayer.nation && terr.unitCount > max) {
+    gameObj.territories.forEach(function (terr) {
+        if (terr.owner == currentPlayer.nation && terr.unitCount > max && terr.nation<99) {
             max = terr.unitCount;
             baseId = terr.id;
         }
     });
-    console.log('main base!', baseId);
     return baseId;
 }
 function findPrimaryTarget(gameObj, player) {
@@ -334,6 +335,28 @@ function findNextPrimaryTargetForPlayer(player, ids, gameObj) {
     return 0;
 }
 function findSecondaryTarget(gameObj, player) {
+    var terrId = findBorderingAttackableTerritory(gameObj, player);
+    if (terrId > 0)
+        return terrId;
+    else return findClosestAttackableCapital(gameObj, player);
+}
+function findBorderingAttackableTerritory(gameObj, player) {
+    var targetId = 0;
+    var smallestArmy = 6;
+    player.territories.forEach(function (terr) {
+        if (terr.land && terr.land.length > 0) {
+            terr.land.forEach(function (terrId) {
+                var ter = gameObj.territories[terrId - 1];
+                if (ter.owner != player.nation && ter.unitCount < smallestArmy && okToAttack(player, ter, gameObj)) {
+                    targetId = terrId;
+                    smallestArmy = ter.unitCount;
+                }
+            });
+        }
+    });
+    return targetId;
+}
+function findClosestAttackableCapital(gameObj, player) {
     var targets = [1, 7, 13, 21, 28, 35, 42, 50];
     var min = 9;
     var minId = 0;
@@ -507,7 +530,6 @@ function attemptToAttack(targetId, currentPlayer, gameObj) {
         }
     });
     if (biggestAttacker) {
-        console.log('attemptToAttack', biggestAttacker.name, targetTerr.name);
         return stageAttackBetweenTerritories(biggestAttacker, targetTerr, currentPlayer);
     }
     //-----------------
@@ -617,8 +639,11 @@ function fortifyThisTerritory(player, gameObj) {
         if (ter.owner == player.nation) {
             var x = 0;
             ter.units.forEach(function (unit) {
-                if (unit.att > 0 && unit.mv > 0 && unit.movesLeft > 0 && unit.owner == player.nation && x++ > 2)
-                    unit.terr = player.hotSpotId;
+                if (isUnitOkToAttack(unit, player.nation)) {
+                    unit.movesLeft = 0;
+                    if(x++>=2)
+                        unit.terr = player.hotSpotId;
+                }
             });
         }
     });

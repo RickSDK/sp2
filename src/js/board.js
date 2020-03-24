@@ -1,3 +1,8 @@
+function refreshAllTerritories(gameObj, currentPlayer, superpowersData, yourPlayer) {
+	gameObj.territories.forEach(function (terr) {
+		refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPlayer);
+	});
+}
 function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPlayer) {
 	if (!gameObj)
 		console.log('!!!! no gameObj!!');
@@ -63,7 +68,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 				if (currentPlayer.treaties[unit.owner - 1] == 0)
 					enemyPiecesExist = true;
 			}
-			if (unit.moveAtt > 0 && unit.owner == yourPlayer.nation)
+			if (unit.moveAtt > 0 && unit.owner == currentPlayer.nation)
 				movableTroopCount++;
 			totalUnitCount++;
 			if (unit.piece == 9)
@@ -1102,7 +1107,7 @@ function populateHostileMessage(type, terr, gameObj, player) {
 		return '';
 }
 function costToAttack(terr, player) {
-	var status = treatyStatus(player, terr.owner);
+	var status = treatyStatusAtStart(player, terr.owner);
 	if (status == 1)
 		return 5;
 	if (status == 2)
@@ -1249,10 +1254,9 @@ function changeTreaty(p1, p2, type, gameObj, superpowersData, cost = 0) {
 	}
 
 	if (cost > 0) {
-		var sta = p1.treatiesAtStart[p2.nation - 1];
-		console.log('+++treatiesAtStart', sta);
 		p1.treatiesAtStart[p2.nation - 1] = 0;
-		logItem(gameObj, p1, 'War!', cost + ' coin penalty paid to declare war on ' + superpowersData.superpowers[p2.nation] + '!', '', 0, p2.nation);
+        p1.money -= cost;
+		logItem(gameObj, p1, 'War Penalty!', cost + ' coin penalty paid to declare war on ' + superpowersData.superpowers[p2.nation] + '!', '', 0, p2.nation);
 	} else
 		logItem(gameObj, p1, 'Diplomacy', msg, '', 0, p2.nation);
 
@@ -1543,7 +1547,7 @@ function getTerritoryType(player, terr) {
 }
 function playerOfNation(nation, gameObj) {
 	if (!gameObj || !gameObj.players) {
-		console.log('!!!!whoa playerOfNation!!!');
+		console.log('!!!!whoa!!! no gameObj sent to playerOfNation!!!');
 		return;
 	}
 	for (var x = 0; x < gameObj.players.length; x++) {
@@ -1561,6 +1565,16 @@ function treatyStatus(p1, nation) {
 		return 0;
 
 	return p1.treaties[nation - 1];
+}
+function treatyStatusAtStart(p1, nation) {
+	if (!p1)
+		return 0;
+	if (p1.nation == nation)
+		return 4;
+	if (!p1.treatiesAtStart)
+		return 0;
+
+	return p1.treatiesAtStart[nation - 1];
 }
 function isUnitAirDefense(unit) {
 	return (unit.piece == 13 || unit.piece == 37 || unit.piece == 39 || unit.piece == 40 || unit.piece == 9);
@@ -1718,10 +1732,10 @@ function getMilitaryReportObj(gameObj, currentPlayer, line) {
 	obj.balistics = currentPlayer.tech[18];
 	obj.nukeCount = nukeCount;
 	obj.facBombed = facBombed;
-	if(gameObj.round % 2 == 1)
+	if (gameObj.round % 2 == 1)
 		customMilitaryReport1(obj, gameObj, line);
 	else
-		customMilitaryReport2(obj, line);
+		customMilitaryReport2(obj, line, gameObj.round);
 }
 function customMilitaryReport1(obj, gameObj, line1) {
 	var voiceOverId = obj.place;
@@ -1757,8 +1771,9 @@ function customMilitaryReport1(obj, gameObj, line1) {
 
 	militaryAdvisorPopup(line1, voiceOverId);
 }
-function customMilitaryReport2(obj, line) {
+function customMilitaryReport2(obj, lineAlt, round) {
 	var voiceOverId = obj.teamCapitals + 10;
+	var line = 'Round '+round+'.';
 	if (obj.nationLost.length > 0)
 		line += ' An enemy scurge currently occupies part of the motherland! Send forces in to reclaim ' + obj.nationLost + '.';
 
@@ -1771,7 +1786,8 @@ function customMilitaryReport2(obj, line) {
 		voiceOverId = 102;
 		line += ' You have factories bombed out. Purchase air defense (2 per factory) and buy a new factory to restore your income.';
 	}
-
+	if (line.length < 20)
+		line = lineAlt;
 	militaryAdvisorPopup(line, voiceOverId);
 }
 function getTeamCapitals(team, gameObj) {

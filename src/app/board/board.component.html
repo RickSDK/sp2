@@ -242,6 +242,26 @@
 	</div>
 </div>
 
+<div id="generalWithdrawPopup" class="popupScreen2" style="width: 300px;">
+	<div *ngIf="displayBattle && displayBattle.wonFlg" style="font-size: 24px; color: green; font-weight: 800;">You Won!</div>
+	<div><font size=3 color=#03a><i class="fa fa-exclamation-triangle"></i> Withdraw General?</font> </div>
+	<button (click)="infoFlg = !infoFlg" id="" type="button" class="btn ptp-gray roundButton"><i class="fa fa-info-circle"></i> Withdraw Info</button>
+	<div class="borderClass2" *ngIf="infoFlg">
+		<div><b>General Withdraw Info</b></div>
+		<div style="text-align: left;">
+			<li> Generals have a unique ability to withdraw after a battle.
+			<li> This allows him to assist in an attack, but then not be exposed to a possible counter-attack.
+			<li> If you are a new player, simply press 'Stay'.
+		</div>
+	</div>
+	<img src="assets/graphics/units/piece10u.png" height=40>
+	<div>
+		   <button (click)="withdrawGeneralButtonClicked()" id="generalWithdrawButton" type="button" class="btn btn-success roundButton tall2"><i class="fa fa-arrow-left"></i> Withdraw</button>
+		   <button onClick="closePopup('generalWithdrawPopup')" id="" type="button" class="btn btn-danger roundButton tall2"><i class="fa fa-arrow-down"></i> Stay</button><p>
+		</div>
+	   <div *ngIf="user.rank <= 2" style="font-size: 12px;">Press 'Stay' to keep your General on the front lines.</div>
+</div>
+
 <div id="advisorPopup" (click)="playGameButtonPressed()" *ngIf="currentPlayer" class="popupScreenNoPad"
 	style="width: 200px; z-index: 9999;">
 	<div ng-style="ngStyleLogs(gameObj.currentNation)" style="color: black;"><img
