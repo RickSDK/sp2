@@ -26,10 +26,10 @@
 					</div>
 					<div style="padding: 5px;">
 						<div style="font-size: 14px;"><img src="assets/graphics/ranks/rank{{user.rank}}.png"
-								style="max-height: 45px; max-width: 120px;"></div>
+								style="max-height: 45px; max-width: 120px;" title="{{superpowersData.ranks[user.rank].name}}"></div>
 					</div>
-					<div style="background-color: #444; color: white;">
-						New Recruit
+					<div *ngIf="superpowersData" style="background-color: #444; color: white;">
+						{{superpowersData.ranks[user.rank].name}}
 					</div>
 				</div>
 				<div>

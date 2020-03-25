@@ -312,6 +312,10 @@ function capitalXY(num) {
 	obj.y = centerYs[num];
 	return obj;
 }
+function promoteSuperpowersUser(user) {
+	displayFixedPopup('promotionPopup');
+	playSound('tada.mp3');
+}
 function scrollToCapital(num) {
 	var e = document.getElementById('target');
 	if (e) {

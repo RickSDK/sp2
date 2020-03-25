@@ -3,6 +3,7 @@ import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
 declare var drawSPGraph: any;
+declare var checkVictoryConditions: any;
 
 @Component({
   selector: 'app-stats-popup',
@@ -18,6 +19,11 @@ export class StatsPopupComponent extends BaseComponent implements OnInit {
   }
   show(gameObj: any, ableToTakeThisTurn: any, currentPlayer: any, user: any) {
     this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);
+
+    checkVictoryConditions(currentPlayer, gameObj, this.superpowersData);
+    console.log('xxx', gameObj.teams);
+
+
     var numTeams = 0;
     this.gameObj.teams.forEach(function (team) {
       if (team.income > 0)

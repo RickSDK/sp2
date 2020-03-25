@@ -5,7 +5,7 @@
 				style="line-height: 40px; vertical-align: middle; background-color: #337ab7;  border: 0">
 				<img *ngIf="selectedTerritory" src="assets/graphics/images/{{selectedTerritory.flag || 'flag1.gif'}}"
 					title="{{superpowersData.superpowers[selectedTerritory.owner]}}" height=40>
-				&nbsp;<span style="color: yellow; font-size: 12px;">[{{selectedTerritory.id}}]</span>
+				&nbsp;<span *ngIf="adminModeFlg" style="color: yellow; font-size: 12px;">[{{selectedTerritory.id}}]</span>
 				&nbsp;<span style="font-size: 24px; font-weight: 700;">{{selectedTerritory.name}}</span>
 				&nbsp;<span style="color: #ccc;">{{selectedTerritory.userName}}</span>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -421,12 +421,11 @@
 						</span>
 					</div>
 				</div>
-
-				<app-terr-purchase *ngIf="optionType=='production'" [selectedTerritory]="selectedTerritory"
+				<app-terr-purchase *ngIf="optionType=='production' || adminModeFlg" [selectedTerritory]="selectedTerritory"
 					[currentPlayer]="currentPlayer" [superpowersData]="superpowersData" [gameObj]="gameObj"
 					[user]="user" [optionType]="optionType" [ableToTakeThisTurn]="ableToTakeThisTurn"
 					[productionDisplayUnits]="productionDisplayUnits"
-					[allowFactoryFlg]="allowFactoryFlg"></app-terr-purchase>
+					[allowFactoryFlg]="allowFactoryFlg" [adminModeFlg]="adminModeFlg"></app-terr-purchase>
 					
 				<app-terr-advice
 					*ngIf="ableToTakeThisTurn && optionType=='home' && selectedTerritory.leaderMessage.length>0"
@@ -439,8 +438,8 @@
 			<div class="modal-header" style="background-color: #337ab7;  border: 0">
 				<button (click)="closeModal('#territoryPopup')" type="button"
 					class="btn btn-secondary roundButton">Close</button>
-					<button *ngIf="ableToTakeThisTurn && optionType=='production'" (click)="completePurchaseButtonClicked()" type="button"
-					class="btn btn-success roundButton">Complete Purchase</button>
+					<button *ngIf="ableToTakeThisTurn && optionType=='production' && gameObj.round>1" (click)="completePurchaseButtonClicked()" type="button"
+					class="btn btn-success roundButton">Purchase Complete</button>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>

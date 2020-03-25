@@ -11,8 +11,8 @@
             <div class="modal-body" style="padding: 0; text-align: center;">
 
                 <img src="assets/graphics/images/map.png" width="100%">
-                <div *ngIf="user.rank==0">
-                    <div style="font-size: 22px; font-weight: 700;">Welcome New Recruit!</div>
+                <div *ngIf="user.rank < 2">
+                    <div style="font-size: 22px; font-weight: 700;">Welcome {{superpowersData.ranks[user.rank].name}}!</div>
                     
                     <table width="90%">
                         <tr>
@@ -24,7 +24,7 @@
                         </tr>
                     </table>
                 </div>
-                <div *ngIf="user.rank>0">
+                <div *ngIf="user.rank >= 2">
                     <div style="border: 1px solid black; margin: 3px; background-color: #ddd;">
                         <div class="btn-group">
                             <button (click)="segmentIdx=0" type="button" class="btn btn-default roundButton"

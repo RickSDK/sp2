@@ -31,10 +31,12 @@
 				<table border=1 width=100% class="spTable">
 					<tr>
 						<td>
+							<div *ngIf="adminModeFlg" style="background-color: yellow;">18</div>
 							<app-tech [tech]="superpowersData.techs[18]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
 							</app-tech>
 						</td>
 						<td>
+							<div *ngIf="adminModeFlg" style="background-color: yellow;">19</div>
 							<app-tech [tech]="superpowersData.techs[19]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
 							</app-tech>
 						</td>
@@ -56,16 +58,19 @@
 							<i class="fa fa-{{item.icon}}" style="font-size: 48px;"></i>
 						</td>
 						<td valign="top">
+							<div *ngIf="adminModeFlg" style="background-color: yellow;">{{i*3}}</div>
 							<div class="blueBgWhite visible-xxs" style="font-size: 12px;"><i class="fa fa-{{item.icon}}"></i> {{item.name}}</div>
 							<app-tech [tech]="superpowersData.techs[i*3]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
 							</app-tech>
 						</td>
 						<td valign="top">
+							<div *ngIf="adminModeFlg" style="background-color: yellow;">{{i*3+1}}</div>
 							<div class="blueBgWhite visible-xxs" style="font-size: 12px;"><i class="fa fa-{{item.icon}}"></i> {{item.name}}</div>
 							<app-tech [tech]="superpowersData.techs[i*3+1]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
 							</app-tech>
 						</td>
 						<td valign="top">
+							<div *ngIf="adminModeFlg" style="background-color: yellow;">{{i*3+2}}</div>
 							<div class="blueBgWhite visible-xxs" style="font-size: 12px;"><i class="fa fa-{{item.icon}}"></i> {{item.name}}</div>
 							<app-tech [tech]="superpowersData.techs[i*3+2]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
 							</app-tech>

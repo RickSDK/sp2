@@ -18,12 +18,15 @@
                         <canvas id="teamCanvas" width="640" height="340"></canvas>
 
                         <span *ngFor="let team of gameObj.teams">
-
-                            <div *ngIf="team.income>0" class="borderClass2" ng-style="ngStyleLogs(team.nations[0])">
-                                <div style="font-size: 12px;">Team {{team.name}}</div>
-                                <span *ngFor="let nation of team.nations"><img
+                            <div *ngIf="team.income>0" class="borderClass2" ng-style="ngStyleLogs(team.teamPlayers[0])" style="text-align: center;">
+                                <div class="blueBgWhite">Team {{team.name}}</div>
+                                <span *ngFor="let nation of team.teamPlayers"><img
                                         src="assets/graphics/images/flag{{nation}}.gif" height=30></span>
-                                <div style="font-size: 24px; color: #070;"> {{team.income}}</div>
+                                <div style="border: 1px solid black;">
+                                    <div style="font-size: 10px;">-Capitals-</div>
+                                    <img *ngFor="let nation of team.nations" 
+                                    src="assets/graphics/images/flag{{nation}}.gif" height=20></div>
+                                <div style="font-size: 24px; color: #070;"> {{team.income}} <img src="assets/graphics/images/coin.png" height="25" title="{{team.income}} coins"></div>
                             </div>
     
                         </span>

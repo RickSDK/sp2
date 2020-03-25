@@ -16,7 +16,7 @@
             type="button" class="btnbtn-danger roundButton">Attack!</button></div>
 
     <div [ngStyle]="ngStyleLogs(selectedTerritory.owner)" style="color: black;">
-        <div *ngIf="selectedTerritory.unitCount==0">-None-</div>
+        <div *ngIf="selectedTerritory.militaryUnits2.length==0">-None-</div>
         <div *ngIf="!selectedTerritory.fogOfWar">
             <!------------------large img units------------------unitDetailPopup.show(unit, true)----------->
             <div *ngIf="!unitDetailFlg">

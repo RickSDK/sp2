@@ -50,7 +50,10 @@
 		class="btn btn-success roundButton"><i class="fa fa-refresh"></i> Redo</button>
 	<button *ngIf="ableToTakeThisTurn && hideActionButton" (click)="completeTurnButtonPressed()" type="button"
 		class="btn btn-success roundButton"><i class="fa fa-arrow-right"></i> End Turn</button>
-	<span *ngIf="this.gameObj.gameOver" style="font-size: 24px; color: white; font-weight: 700;">Game Over!</span>
+	<span *ngIf="this.gameObj.gameOver">
+		<a routerLink="/"><button type="button"
+		class="btn btn-success roundButton glowButton">Game Over! Exit Game</button></a>
+	</span>
 	<span *ngIf="!this.gameObj.gameOver">
 		<img (click)="scrollToNation(currentPlayer.nation)"
 			src="assets/graphics/images/flag{{currentPlayer.nation || 1}}.gif" height=42
@@ -69,7 +72,7 @@
 	</span>
 </section>
 <!---gray bar--->
-<div
+<div [style.background-color]="adminModeFlg?'red':'gray'"
 	style="z-index: 201; opacity: .75; background-color: gray; text-align: center;  position: fixed; top: 45px; width: 100%; height: 55px;">
 	<span *ngIf="!showControls" style="color: white; font-size: 24px;"><i class="fa fa-spinner fa-spin"></i>&nbsp;
 		<span *ngIf="loadingFlg">Loading...</span><span *ngIf="allowBotToAct"><img
@@ -89,9 +92,9 @@
 		<button id="" (click)="techPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button"
 			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-cogs"></i><br><span
 				style="font-size: 10px;">Tech</span></button>
-		<button id="alliesButton" (click)="alliesPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button"
-			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-users"></i><br><span
-				style="font-size: 10px;">Allies</span></button>
+		<button id="alliesButton" (click)="alliesPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)"
+			type="button" class="btn btn-primary tight roundButton" style="line-height: 14px;"><i
+				class="fa fa-users"></i><br><span style="font-size: 10px;">Allies</span></button>
 		<button id="" (click)="logsPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button"
 			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-list-ol"></i><br><span
 				style="font-size: 10px;">Logs</span></button>
@@ -113,6 +116,10 @@
 			style="line-height: 14px;"><i *ngIf="!haltActionFlg" class="fa fa-pause"></i><i *ngIf="haltActionFlg"
 				class="fa fa-play"></i><br><span style="font-size: 10px;">
 				Halt</span></button>
+		<button id="" (click)="toggleAdminFlg()" type="button" class="btn btn-secondary tight roundButton"
+			style="line-height: 14px;"><i *ngIf="!haltActionFlg" class="fa fa-lock"></i><i *ngIf="haltActionFlg"
+				class="fa fa-play"></i><br><span style="font-size: 10px;">
+				Admin</span></button>
 	</span>
 </div>
 <!---third bar--->
@@ -217,7 +224,7 @@
 	<img src="assets/graphics/splash/spLogoSmall.png" width=280>
 	<div id="intro1" class="off" style="font-size: 22px; margin-top: 20px;">Nations rise against nations...</div>
 	<div id="intro2" class="off" style="font-size: 22px; margin-top: 20px;">Total war has broken out!</div>
-	<div id="intro3" class="off" style="font-size: 16px; margin-top: 20px;">The world has 
+	<div id="intro3" class="off" style="font-size: 16px; margin-top: 20px;">The world has
 		formed 8 mighty superpower alliances. All at war with each other.</div>
 	<div style="padding: 10px;"><button (click)="introContinuePressed()" id="intro4" class="off" type="button"
 			style="height: 60px;">Start the Game!</button></div>
@@ -243,9 +250,13 @@
 </div>
 
 <div id="generalWithdrawPopup" class="popupScreen2" style="width: 300px;">
-	<div *ngIf="displayBattle && displayBattle.wonFlg" style="font-size: 24px; color: green; font-weight: 800;">You Won!</div>
-	<div><font size=3 color=#03a><i class="fa fa-exclamation-triangle"></i> Withdraw General?</font> </div>
-	<button (click)="infoFlg = !infoFlg" id="" type="button" class="btn ptp-gray roundButton"><i class="fa fa-info-circle"></i> Withdraw Info</button>
+	<div *ngIf="displayBattle && displayBattle.wonFlg" style="font-size: 24px; color: green; font-weight: 800;">You Won!
+	</div>
+	<div>
+		<font size=3 color=#03a><i class="fa fa-exclamation-triangle"></i> Withdraw General?</font>
+	</div>
+	<button (click)="infoFlg = !infoFlg" id="" type="button" class="btn ptp-gray roundButton"><i
+			class="fa fa-info-circle"></i> Withdraw Info</button>
 	<div class="borderClass2" *ngIf="infoFlg">
 		<div><b>General Withdraw Info</b></div>
 		<div style="text-align: left;">
@@ -256,10 +267,13 @@
 	</div>
 	<img src="assets/graphics/units/piece10u.png" height=40>
 	<div>
-		   <button (click)="withdrawGeneralButtonClicked()" id="generalWithdrawButton" type="button" class="btn btn-success roundButton tall2"><i class="fa fa-arrow-left"></i> Withdraw</button>
-		   <button onClick="closePopup('generalWithdrawPopup')" id="" type="button" class="btn btn-danger roundButton tall2"><i class="fa fa-arrow-down"></i> Stay</button><p>
-		</div>
-	   <div *ngIf="user.rank <= 2" style="font-size: 12px;">Press 'Stay' to keep your General on the front lines.</div>
+		<button (click)="withdrawGeneralButtonClicked()" id="generalWithdrawButton" type="button"
+			class="btn btn-success roundButton tall2"><i class="fa fa-arrow-left"></i> Withdraw</button>
+		<button onClick="closePopup('generalWithdrawPopup')" id="" type="button"
+			class="btn btn-danger roundButton tall2"><i class="fa fa-arrow-down"></i> Stay</button>
+		<p>
+	</div>
+	<div *ngIf="user.rank <= 2" style="font-size: 12px;">Press 'Stay' to keep your General on the front lines.</div>
 </div>
 
 <div id="advisorPopup" (click)="playGameButtonPressed()" *ngIf="currentPlayer" class="popupScreenNoPad"
@@ -279,6 +293,30 @@
 		Redo</button>
 	<button (click)="acceptInfantryPlacement()" id="" type="button" class="btn btn-success roundButton tall2"><i
 			class="fa fa-check"></i> Yes!</button>
+	<p>
+</div>
+
+
+<div *ngIf="superpowersData" id="promotionPopup" class="popupScreen2" style="width: 300px; padding: 0;">
+	<img src="assets/graphics/misc/crowdCheer.jpg" width="100%">
+	<table width=95%>
+		<tr>
+			<td><img src="assets/graphics/misc/trophy.png" width="75"></td>
+			<td>
+				<div>You have been promoted!</div>
+			</td>
+			<td><img src="assets/graphics/ranks/rank{{user.rank}}.png" style="max-width: 75px; max-height: 100px;">
+				<div style="font-size: 12px; font-weight: 700;">{{superpowersData.ranks[user.rank].name}}</div>
+			</td>
+		</tr>
+	</table>
+	<div class="borderClass2"> Next Rank: <img src="assets/graphics/ranks/rank{{user.rank+1}}.png" height="22">
+		{{superpowersData.ranks[user.rank+1].name}}
+		<div style="font-size: 12px;">{{superpowersData.ranks[user.rank+1].desc}}</div>
+
+	</div>
+	<button onClick="closePopup('promotionPopup')" id="" type="button" class="btn btn-primary roundButton tall2"><i
+			class="fa fa-check"></i> Ok!</button>
 	<p>
 </div>
 
@@ -328,13 +366,13 @@
 <app-loading-popup #loadingPopup></app-loading-popup>
 <app-message-popup #messagePopup></app-message-popup>
 <app-territory-popup #territoryPopup (messageEvent)="moveSpriteBetweenTerrs($event)"
-	(battleHappened)="battleHappened($event)"></app-territory-popup>
+	(battleHappened)="battleHappened($event)" [adminModeFlg]="adminModeFlg"></app-territory-popup>
 
 <app-game-info-popup #gameInfoPopup></app-game-info-popup>
 <app-game-players-popup #gamePlayersPopup></app-game-players-popup>
 <app-production-queue-popup #productionQueuePopup></app-production-queue-popup>
-<app-units-popup #unitsPopup></app-units-popup>
-<app-tech-popup #techPopup></app-tech-popup>
+<app-units-popup #unitsPopup [adminModeFlg]="adminModeFlg"></app-units-popup>
+<app-tech-popup #techPopup [adminModeFlg]="adminModeFlg"></app-tech-popup>
 <app-allies-popup #alliesPopup></app-allies-popup>
 <app-logs-popup #logsPopup></app-logs-popup>
 <app-chat-popup #chatPopup></app-chat-popup>

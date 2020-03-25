@@ -41,6 +41,7 @@ declare var playIntroSequence: any;
 declare var highlightTerritoryWithArrow: any;
 declare var showUpArrowAtElement: any;
 declare var okToAttack: any;
+declare var promoteSuperpowersUser: any;
 //---board.js
 declare var displayLeaderAndAdvisorInfo: any;
 declare var getDisplayQueueFromQueue: any;
@@ -95,6 +96,9 @@ declare var rollDefenderDice: any;
 declare var landTheNukeBattle: any;
 declare var maximumPossibleNukeHitsForTerr: any;
 declare var addAAGunesToBattle: any;
+declare var isUnitCruiseUnit: any;
+declare var landTheCruiseBattle: any;
+declare var strategicBombBattle: any;
 
 @Component({
 	selector: 'app-board',
@@ -123,7 +127,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public spriteObj: any;
 	public carrierAddedFlg = false;
 	public allowBotToAct = false;
-	public adminMode = false;
+	public adminModeFlg = false;
 	public showPanelsFlg = true;
 	public hideActionButton = false;
 	public displayBattle: any;
@@ -136,6 +140,14 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public bonusInfantryFlg = false;
 	public bonusFactoryFlg = false;
 	public selectedTerritory: any;
+	public advisorFirst6RoundsMessage = [
+		'Round 1. Click on your capital to purchase new units.',
+		'Round 2. Buying economic centers will help our income grow.',
+		'Round 3. Building new factories on your front lines will help get troops where you need them.',
+		'Round 4. Taking over enemy capitals will boost your income by 10 coins.',
+		'Round 5. Last round of peace. Make sure your defenses are in place.',
+		'Round 6. Players can now attack other players. You can take at most one other player\'s territory and lose at most one territory.',
+	];
 
 	constructor() { super(); }
 
@@ -166,7 +178,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				console.log('+++ new single player....', startingNation);
 				var type = (localStorage.gameType == 1) ? 'freeforall' : 'diplomacy';
 				var numPlayers = 4;
-				var name = (this.user.rank == 0) ? 'Basic Training' : 'Single Player Game';
+				var name = (this.user.rank  < 2) ? 'Basic Training' : 'Single Player Game';
 
 				var pObj = {};
 				if (localStorage.customGame == 'Y') {
@@ -223,19 +235,26 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.haltActionFlg = !this.haltActionFlg;
 		localStorage.haltActionFlg = (this.haltActionFlg) ? 'Y' : 'N';
 	}
+	toggleAdminFlg() {
+		playClick();
+		this.adminModeFlg = !this.adminModeFlg;
+		if (this.adminModeFlg)
+			this.ableToTakeThisTurn = true;
+	}
 	loadCurrentPlayer() {
 		//#####################################################################
 		//#####################################################################
 		//-------------------- test
-		//this.gameObj.turnId = 2; //<--- test
-		this.haltCombatActionFlg = false;
+		//this.gameObj.turnId = 3; //<--- test
 		this.haltPurchaseFlg = false;
+		this.haltCombatActionFlg = false;
 		this.haltActionFlg = (localStorage.haltActionFlg == 'Y');
 		//--------------------end test
 		this.currentPlayer = getCurrentPlayer(this.gameObj);
 		this.gameObj.currentNation = this.currentPlayer.nation;
 		this.gameObj.actionButtonMessage = '';
 		this.allowBotToAct = this.currentPlayer.cpu;
+	
 
 		console.log('========' + this.superpowersData.superpowers[this.currentPlayer.nation] + '======');
 		if (!this.currentPlayer.news)
@@ -266,7 +285,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (!this.gameObj.multiPlayerFlg)
 			this.ableToTakeThisTurn = !this.currentPlayer.cpu;
 
-		if (this.adminMode && this.user.userName == 'Rick') {
+		if (this.adminModeFlg && this.user.userName == 'Rick') {
 			this.ableToTakeThisTurn = true; // admin mode only!!!
 			this.yourPlayer = this.currentPlayer;
 		}
@@ -357,7 +376,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.currentPlayer.mainBaseID = findMainBase(this.gameObj, this.currentPlayer);
 	}
 	displayMilitaryAdvisorMessage() {
-		if (this.user.rank == 0 && this.gameObj.round == 1) {
+		if (this.user.rank < 2 && this.gameObj.round == 1) {
 			if (this.currentPlayer.status == 'Purchase') {
 				displayFixedPopup('introPopup');
 				playVoiceClip('bt01welcome.mp3');
@@ -373,13 +392,16 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			militaryAdvisorPopup('New Game! You are starting as ' + this.superpowersData.superpowers[this.yourPlayer.nation] + '. First place 3 infantry by clicking on your territories.', 21); //23
 			return false;
 		}
-		var defaultLine = 'Round ' + this.gameObj.round + '. Purchase new units and then press "Purchase Complete". To advance to the attack phase.';
+		var defaultLine = 'Round ' + this.gameObj.round + '. Purchase new units and then press "Purchase Complete".';
+		if (this.gameObj.round > 3)
+			defaultLine = 'Round ' + this.gameObj.round + '. Purchase new military units.';
+
 		if (this.currentPlayer.status == 'Purchase')
 			defaultLine = 'Round ' + this.gameObj.round + '. Conduct attacks, then press "Complete Turn" button at the top to end your turn.';
 
 		if (this.gameObj.round <= 6) {
 			playVoiceClip('round' + this.gameObj.round + '.mp3');
-			militaryAdvisorPopup(defaultLine);
+			militaryAdvisorPopup(this.advisorFirst6RoundsMessage[this.gameObj.round-1]);
 		} else {
 			if (this.gameObj.victoryRound && this.gameObj.victoryRound > 0) {
 				militaryAdvisorPopup('Victory conditions met! Game will end in round ' + this.gameObj.victoryRound + ' unless they are stopped!');
@@ -418,7 +440,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	initializePlayerForPurchase() {
 		//human & cpu
-		this.gameObj.actionButtonMessage = 'Complete Purchase';
+		this.gameObj.actionButtonMessage = 'Purchase Complete';
 		var player = this.currentPlayer;
 		this.hideActionButton = false;
 		player.carrierAddedFlg = false;
@@ -503,6 +525,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.gameObj.round > 6 && this.currentPlayer.tech[3])
 			this.attemptCPUToNuke();
 
+		if (this.gameObj.round > 6 && this.currentPlayer.tech[8])
+			this.attemptCPUToCruise();
+
+		if (this.gameObj.round > 6)
+			this.attemptCPUStrategicBomb();
+
 		if (this.gameObj.round != 6) {
 			var obj = findAmphibiousAttacks(this.gameObj, this.currentPlayer);
 			if (obj && obj.attackUnits && obj.attackUnits > 0) {
@@ -536,6 +564,85 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				this.computerMove();
 			}, 2000);
 		}
+	}
+	attemptCPUStrategicBomb() {
+		var terrHash = {};
+		var attackUnits = [];
+		this.gameObj.units.forEach(unit => {
+			if (unit.owner == this.currentPlayer.nation && unit.piece == 7) {
+				if (terrHash[unit.terr])
+					terrHash[unit.terr]++;
+				else
+					terrHash[unit.terr] = 1;
+			}
+		});
+		var keys = Object.keys(terrHash);
+		var player = this.currentPlayer;
+		var nukeTargets = [];
+		keys.forEach(idStr => {
+			var id = numberVal(idStr) - 1;
+			var terr = this.gameObj.territories[id];
+			var range = 3;
+			var target = this.findStratBombOfTerr(terr, this.currentPlayer, range, null, this.gameObj);
+			if (target) {
+				nukeTargets.push({ t1: terr, t2: target });
+			}
+		});
+		console.log('nukeTargets', nukeTargets);
+		var hitListHash = {};
+		nukeTargets.forEach(nukeTarget => {
+			if (hitListHash[nukeTarget.t2.id])
+				return;
+			var terr = nukeTarget.t1;
+			var target = nukeTarget.t2;
+			hitListHash[target.id] = true;
+			this.gameObj.units.forEach(unit => {
+				if (unit.owner == this.currentPlayer.nation && unit.piece == 7 && unit.terr == terr.id && unit.movesLeft > 0) {
+					unit.movesLeft = 0;
+					attackUnits.push(unit);
+				}
+			});
+			if (attackUnits.length > 0 && terr.attackedByNation != this.currentPlayer.nation)
+				this.strategicBombThisTerr(terr.id, attackUnits, target, [terr], this.currentPlayer, this.gameObj, this.superpowersData);
+		});
+	}
+	attemptCPUToCruise() {
+		var terrHash = {};
+		var attackUnits = [];
+		this.gameObj.units.forEach(unit => {
+			if (unit.owner == this.currentPlayer.nation && isUnitCruiseUnit(unit.piece)) {
+				if (terrHash[unit.terr])
+					terrHash[unit.terr]++;
+				else
+					terrHash[unit.terr] = 1;
+			}
+		});
+		var keys = Object.keys(terrHash);
+		var player = this.currentPlayer;
+		keys.forEach(idStr => {
+			var id = numberVal(idStr) - 1;
+			var terr = this.gameObj.territories[id];
+			this.gameObj.units.forEach(unit => {
+				if (unit.owner == player.nation && unit.terr == terr.id && unit.movesLeft > 0 && isUnitCruiseUnit(unit.piece)) {
+					unit.movesLeft = 0;
+					attackUnits.push(unit);
+				}
+			});
+			var min = 0;
+			var bestTerr;
+			var borders = terr.borders.split('+');
+			borders.forEach(borderId => {
+				if (borderId > 0) {
+					var terr2 = this.gameObj.territories[borderId - 1];
+					if (terr2.nation < 99 && terr2.owner != player.nation && terr2.unitCount > min && okToAttack(terr2, player.nation, this.gameObj)) {
+						min = terr2.unitCount;
+						bestTerr = terr2;
+					}
+				}
+			});
+			if (bestTerr && attackUnits.length > 0)
+				this.landTheCruise(terr.id, attackUnits, bestTerr, [terr], this.currentPlayer, this.gameObj, this.superpowersData);
+		});
 	}
 	attemptCPUToNuke() {
 		var terrHash = {};
@@ -582,10 +689,35 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		});
 
 	}
+	strategicBombThisTerr(fromTerrId: number, attackUnits: any, targetTerr: any, launchTerritories: any, player: any, gameObj: any, superpowersData: any) {
+		var obj = { t1: fromTerrId, t2: targetTerr.id, id: 7, cruiseFlg: true };
+		this.moveSpriteBetweenTerrs(obj);
+		strategicBombBattle(player, targetTerr, attackUnits, gameObj, superpowersData);
+	}
+	landTheCruise(fromTerrId: number, attackUnits: any, targetTerr: any, launchTerritories: any, player: any, gameObj: any, superpowersData: any) {
+		console.log('!!cruise attack!!', targetTerr.name);
+		var obj = { t1: fromTerrId, t2: targetTerr.id, id: 144, cruiseFlg: true };
+		this.moveSpriteBetweenTerrs(obj);
+		landTheCruiseBattle(player, targetTerr, attackUnits, gameObj, superpowersData);
+	}
 	landTheNuke(fromTerrId: number, attackUnits: any, targetTerr: any, launchTerritories: any, player: any, gameObj: any, superpowersData: any) {
 		var obj = { t1: fromTerrId, t2: targetTerr.id, id: 14, nukeFlg: true };
 		this.moveSpriteBetweenTerrs(obj);
 		landTheNukeBattle(player, targetTerr, attackUnits, gameObj, superpowersData, launchTerritories);
+	}
+	findStratBombOfTerr(terr: any, attacker: any, range: number, bestTerr: any, gameObj: any) {
+		range--;
+		if (range == 0)
+			return bestTerr;
+		for (var x = 0; x < terr.land.length; x++) {
+			var id = terr.land[x];
+			var terr2 = this.gameObj.territories[id - 1];
+			if (terr2.factoryCount > 0 && terr2.owner != attacker.nation && okToAttack(attacker, terr2, gameObj)) {
+				bestTerr = terr2;
+			} else
+				bestTerr = this.findStratBombOfTerr(terr2, attacker, range, bestTerr, gameObj);
+		}
+		return bestTerr;
 	}
 	findLargestEnemyOfTerr(terr: any, attacker: any, max: number, range: number, bestTerr: any, gameObj: any) {
 		range--;
@@ -594,7 +726,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		for (var x = 0; x < terr.land.length; x++) {
 			var id = terr.land[x];
 			var terr2 = this.gameObj.territories[id - 1]; //treatyStatus(attacker, terr2.owner)
-			if (!terr2.nuked && terr2.unitCount > max && terr2.owner != attacker.nation && okToAttack(attacker, terr, gameObj)) {
+			if (!terr2.nuked && terr2.unitCount > max && terr2.owner != attacker.nation && okToAttack(attacker, terr2, gameObj)) {
 				max = terr2.unitCount;
 				bestTerr = terr2;
 			}
@@ -872,7 +1004,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 		if (this.hideActionButton)
 			this.hideActionButton = false;
-		if (this.user.rank == 0 && this.gameObj.round == 1) {
+		if (this.user.rank < 2 && this.gameObj.round == 1) {
 			this.forcedClickNation = 0;
 		}
 	}
@@ -1027,7 +1159,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	redoPurchase() {
 		playClick();
 		this.currentPlayer.status = 'Purchase'
-		this.gameObj.actionButtonMessage = 'Complete Purchase';
+		this.gameObj.actionButtonMessage = 'Purchase Complete';
 		this.hideActionButton = !this.hideActionButton;
 		this.logItem(this.currentPlayer, 'Redoing Purchases', 'Redo');
 	}
@@ -1044,10 +1176,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			showAlertPopup('Conduct purchases first. Click on your capital, ' + this.superpowersData.superpowers[this.currentPlayer.nation] + '.', 1);
 			return;
 		}
-		if (this.forcedClickNation == 7) {
-			this.forcedClickNation = 62;
-			playVoiceClip('bt09Ukraine.mp3');
-		}
 		if (this.forcedClickNation == 62) {
 			this.forcedClickMessage();
 			return;
@@ -1056,7 +1184,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		changeClass('completeTurnButton', 'btn btn-success roundButton');
 		if (this.currentPlayer.status == 'Purchase') {
 			this.completingPurchases();
-			playVoiceClip('beginConquest.mp3');
+			if(this.user.rank<2 && this.gameObj.round==1) {
+				this.forcedClickNation = 62;
+				highlightTerritoryWithArrow(this.forcedClickNation, this.gameObj);
+				playVoiceClip('bt09Ukraine.mp3');
+			} else
+				playVoiceClip('beginConquest.mp3');
 		} else if (this.currentPlayer.status == 'Attack') {
 			displayFixedPopup('diplomacyWarningPopup');
 		} else if (this.currentPlayer.status == 'Place Units')
@@ -1117,8 +1250,19 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		return numAddedUnitsToAdd;
 	}
 	endTurn() {
-		checkVictoryConditions(this.currentPlayer, this.gameObj, this.superpowersData);
-		var prevPlayer = this.currentPlayer;
+		if (!this.currentPlayer.cpu && this.user.rank == 0 && this.gameObj.round >= 6) {
+			localStorage.rank = 1;
+			this.user = userObjFromUser();
+			promoteSuperpowersUser(this.user);
+		}
+
+		this.currentPlayer.status = 'Waiting';
+		checkVictoryConditions(this.currentPlayer, this.gameObj, this.superpowersData, this.yourPlayer);
+		if (this.gameObj.gameOver && this.gameObj.winningTeamFlg) {
+			localStorage.rank = 2;
+			this.user = userObjFromUser();
+			promoteSuperpowersUser(this.user);
+		}
 		updateProgressBar(100);
 		addIncomeForPlayer(this.currentPlayer, this.gameObj);
 		this.currentPlayer.money += this.currentPlayer.income;
@@ -1128,8 +1272,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.currentPlayer.requestedHotSpot = 0;
 		this.currentPlayer.requestedTarget = 0;
 		var damageReport = getDamageReport(this.currentPlayer, this.gameObj, this.superpowersData);
-		this.currentPlayer.status = 'Waiting';
 		logItem(this.gameObj, this.currentPlayer, 'Turn Completed', this.currentPlayer.income + ' Coins Collected.', '', '', '', '', damageReport);
+		var prevPlayer = this.currentPlayer;
 		this.advanceToNextPlayer();
 		//		
 		stopSpinner();

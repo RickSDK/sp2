@@ -236,7 +236,7 @@ function loadPlayers(numPlayers, startingNation, rank) {
 	var humanTurn=Math.floor((Math.random() * numPlayers));
 	if(!rank || rank < 2)
 		humanTurn=0;
-	if(!rank || rank == 0)
+	if(!rank || rank < 2)
 		numPlayers=2;
 
 	var nationsHash={};

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, Input } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { TerrButtonsComponent } from '../terr-buttons/terr-buttons.component';
 import { TerrPurchaseComponent } from '../terr-purchase/terr-purchase.component';
@@ -32,6 +32,8 @@ declare var landTheNukeBattle: any;
 declare var landTheCruiseBattle: any;
 declare var rollAAGuns: any;
 declare var startToRollAAGuns: any;
+declare var strategicBombBattle: any;
+declare var playVoiceClip: any;
 //board.js
 declare var checkCargoForTerr: any;
 declare var isFactoryAllowedOnTerr: any;
@@ -49,6 +51,7 @@ declare var loadParatroopers: any;
   styleUrls: ['./territory-popup.component.scss']
 })
 export class TerritoryPopupComponent extends BaseComponent implements OnInit {
+  @Input('adminModeFlg') adminModeFlg: string;
   @Output() messageEvent = new EventEmitter<string>();
   @Output() battleHappened = new EventEmitter<string>();
   @ViewChild(TerrButtonsComponent) terrButtonsComp: TerrButtonsComponent;
@@ -82,8 +85,25 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   show(terr: any, currentPlayer: any, gameObj: any, ableToTakeThisTurn: boolean, user: any) {
     this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);
     $("#territoryPopup").modal();
+
+    $('#territoryPopup').on('hidden.bs.modal', function () {
+      if (gameObj.round == 1 && user.rank < 2) {
+        if (currentPlayer.status == 'Purchase') {
+          if (currentPlayer.money == 20)
+            playVoiceClip('bt07Germany.mp3');
+          else
+            playVoiceClip('bt08PurchComplete.mp3');
+        } else {
+          var ter = gameObj.territories[61];
+          if (ter.owner == 2) {
+            showAlertPopup('Good job! Click "Complete Turn" at the top to finish your turn.');
+            highlightCompleteTurnButton();
+          }
+        }
+      }
+    });
     this.selectedTerritory = terr;
-    var moveTerr = [];
+ //   var moveTerr = [];
     var totalUnitsThatCanMove = 0;
 
     /*
@@ -104,6 +124,9 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     if (terr.nation == 99)
       terr.facFlg = checkWaterForFactory(terr, currentPlayer.nation, gameObj);
 
+    if (user.rank < 2 && gameObj.round == 1 && currentPlayer.status == 'Purchase')
+      showAlertPopup('Welcome new recruit! If not sure what to buy, simply get 4 tanks. they are good all-purpose attack units.')
+
     if (ableToTakeThisTurn && currentPlayer.status == 'Purchase' && terr.facFlg) {
       if (this.selectedTerritory.nation == 99)
         this.changeProdType(2);
@@ -115,13 +138,18 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     checkCargoForTerr(terr, gameObj);
     this.allowFactoryFlg = isFactoryAllowedOnTerr(terr, this.gameObj);
 
-
-    console.log(terr.name, this.allowFactoryFlg, terr);
-
     if (this.terrButtonsComp)
       this.terrButtonsComp.initChild();
+
     if (this.terrPurchaseComp)
       this.terrPurchaseComp.initChild(terr);
+    else {
+      setTimeout(() => {
+        if (this.terrPurchaseComp)
+          this.terrPurchaseComp.initChild(terr);
+      }, 500);
+    }
+
   }
   completePurchaseButtonClicked() {
     this.battleHappened.emit('done!');
@@ -181,7 +209,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     return checkMovement(distObj, unit, optionType, player, this.selectedTerritory);
   }
   moveTroopsButtonPressed() {
-    if (this.user.rank == 0 && this.gameObj.round == 1 && this.selectedTerritory.id == 62) { //ukraine
+    if (this.user.rank < 2 && this.gameObj.round == 1 && this.selectedTerritory.id == 62) { //ukraine
       var attackUnits = getSelectedUnits(this.moveTerr);
       if (attackUnits.length < 8) {
         showAlertPopup('Go ahead and select all your troops for this battle.', 1);
@@ -216,10 +244,15 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       this.landTheNuke(obj.t1, attackUnits, this.selectedTerritory, this.moveTerr, this.currentPlayer, this.gameObj, this.superpowersData);
     }
     if (this.optionType == 'cruise') {
-      playSound('raid.mp3');
+      //     playSound('raid.mp3');
       var obj = packageSelectedUnits(this.moveTerr, this.selectedTerritory);
       var attackUnits = getSelectedUnits(this.moveTerr);
       this.landTheCruise(obj.t1, attackUnits, this.selectedTerritory, this.currentPlayer, this.gameObj, this.superpowersData);
+    }
+    if (this.optionType == 'bomb') {
+      var obj = packageSelectedUnits(this.moveTerr, this.selectedTerritory);
+      var attackUnits = getSelectedUnits(this.moveTerr);
+      this.strategicBomingRun(obj.t1, attackUnits, this.selectedTerritory, this.currentPlayer, this.gameObj, this.superpowersData);
     }
     this.closeModal('#territoryPopup');
   }
@@ -233,6 +266,11 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     var obj = { t1: fromTerrId, t2: targetTerr.id, id: 144, cruiseFlg: true };
     this.moveSpriteBetweenTerrs(obj);
     landTheCruiseBattle(player, targetTerr, attackUnits, gameObj, superpowersData);
+  }
+  strategicBomingRun(fromTerrId: number, attackUnits: any, targetTerr: any, player: any, gameObj: any, superpowersData: any) {
+    var obj = { t1: fromTerrId, t2: targetTerr.id, id: 7, cruiseFlg: true };
+    this.moveSpriteBetweenTerrs(obj);
+    strategicBombBattle(player, targetTerr, attackUnits, gameObj, superpowersData);
   }
   fightButtonPressed() {
     //emit 
@@ -290,12 +328,12 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       else
         this.closeModal('#territoryPopup');
     }
-    if (this.user.rank == 0 && this.gameObj.round == 1 && !this.displayBattle.militaryObj.battleInProgress) {
-      setTimeout(() => {
-        showAlertPopup('Good job! Click "Complete Turn" at the top to finish your turn.');
-        highlightCompleteTurnButton();
-      }, 3500);
-    }
+    //    if (this.user.rank == 0 && this.gameObj.round == 1 && !this.displayBattle.militaryObj.battleInProgress) {
+    //     setTimeout(() => {
+    //       showAlertPopup('Good job! Click "Complete Turn" at the top to finish your turn.');
+    //       highlightCompleteTurnButton();
+    //      }, 3500);
+    //   }
   }
   removeCasualties() {
     playClick();

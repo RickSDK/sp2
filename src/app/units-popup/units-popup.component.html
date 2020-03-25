@@ -8,7 +8,6 @@
 				</button>
 			</div>
 			<div class="modal-body" style="padding: 5px; text-align: center;">
-
 				<div class="btn-group">
 					<button *ngFor="let button of buttonList; let i = index;" (click)="selectButton(i)" type="button"
 						class="btn btn-default roundButton" [ngClass]="ngClassSegment(segmentIdx,i)"
@@ -35,7 +34,7 @@
 						<td valign=top>
 
 
-
+<div *ngIf="adminModeFlg" style="background-color: yellow;">{{selectedUnit.name}} [id={{selectedUnit.id}}]</div>
 							<app-unit-detail nation="1" [selectedUnit]="selectedUnit"></app-unit-detail>
 
 

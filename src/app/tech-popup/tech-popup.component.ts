@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
@@ -9,6 +9,7 @@ declare var $: any;
   styleUrls: ['./tech-popup.component.scss']
 })
 export class TechPopupComponent extends BaseComponent implements OnInit {
+	@Input('adminModeFlg') adminModeFlg: string;
   public descFlg=false;
   public techItems = [
     {name: 'Air Power', icon: 'fighter-jet'},

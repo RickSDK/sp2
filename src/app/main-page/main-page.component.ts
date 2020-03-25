@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BaseComponent } from '../base/base.component';
 import { Router } from '@angular/router';
 
 declare var getHostname: any;
@@ -10,7 +11,7 @@ declare var playSound: any;
   templateUrl: './main-page.component.html',
   styleUrls: ['./main-page.component.scss']
 })
-export class MainPageComponent implements OnInit {
+export class MainPageComponent extends BaseComponent implements OnInit {
   public userRank = 0;
   public myEMPCount = 0;
   public forumCount = 0;
@@ -19,7 +20,7 @@ export class MainPageComponent implements OnInit {
   public expandFlg = false;
   public singleGameId: number;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) { super(); }
 
   ngOnInit(): void {
     this.hostname = getHostname();

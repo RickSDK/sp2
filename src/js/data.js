@@ -6,6 +6,7 @@ function getSuperpowersData() {
 	obj.superpowers = ['Neutral','United States','European Union','Russian Republic','Imperial Japan','Communist China','Middle-East Federation','African Coalition','Latin Alliance'];
 	obj.units = populateUnits();
 	obj.techs = getTechs();
+	obj.ranks = getAllRanks();
 	return obj;
 }
 function populateUnits() {

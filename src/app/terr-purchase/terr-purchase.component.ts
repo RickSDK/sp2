@@ -7,6 +7,7 @@ declare var isUnitGoodForForm: any;
 declare var addUniToQueue: any;
 declare var displayFixedPopup: any;
 declare var isFactoryAllowedOnTerr: any;
+declare var unitOfId: any;
 
 @Component({
   selector: 'app-terr-purchase',
@@ -23,6 +24,8 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
   @Input('optionType') optionType: any;
   @Input('productionDisplayUnits') productionDisplayUnits: any;
   @Input('allowFactoryFlg') allowFactoryFlg: any;
+  @Input('adminModeFlg') adminModeFlg: string;
+  public facBombedFlg = false;
   // public allowEcoCenterFlg = true;
   //  public allowFactoryFlg = true;
 
@@ -32,22 +35,36 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
   }
   initChild(terr: any) {
     this.allowFactoryFlg = isFactoryAllowedOnTerr(terr, this.gameObj);
-    this.segmentIdx = (terr.nation<99)?0:2;
+    this.segmentIdx = (terr.nation < 99) ? 0 : 2;
     this.changeProdType(this.segmentIdx);
+    this.facBombedFlg = terr.facBombed;
   }
 
   addUniToQueue(piece: number, count: number) {
+    if (this.adminModeFlg) {
+      var newId = this.gameObj.unitId;
+      this.gameObj.unitId++;
+      var unit = unitOfId(newId, this.selectedTerritory.owner, piece, this.selectedTerritory.id, this.superpowersData.units, true);
+      this.gameObj.units.push(unit);
+      playSound('Swoosh.mp3');
+      return;
+    }
     playSound('clink.wav');
-    if (piece == 15 || piece == 19)
-      this.allowFactoryFlg = false;
+    if (piece == 15 || piece == 19) {
+      if (this.facBombedFlg)
+        this.facBombedFlg = false;
+      else
+        this.allowFactoryFlg = false;
+    }
     addUniToQueue(piece, count, this.superpowersData, this.currentPlayer, this.gameObj, this.selectedTerritory);
   }
   clearQueue() {
-    playSound('clink.wav', 0, false);
+    playSound('clink.wav');
     var newUnits = [];
     var terrId = this.selectedTerritory.id;
     var units = this.superpowersData.units;
     var money = this.currentPlayer.money;
+    this.facBombedFlg = this.selectedTerritory.facBombed;
 
     for (var x = 0; x < this.gameObj.unitPurchases.length; x++) {
       var purchUnit = this.gameObj.unitPurchases[x];
@@ -72,7 +89,7 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
       }
     }
 
-    this.allowFactoryFlg = this.selectedTerritory.factoryCount<2;
+    this.allowFactoryFlg = this.selectedTerritory.factoryCount < 2;
     this.currentPlayer.money = money;
     this.gameObj.unitPurchases = newUnits;
     this.selectedTerritory.displayQueue = getDisplayQueueFromQueue(this.selectedTerritory, this.gameObj);

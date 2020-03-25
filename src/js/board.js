@@ -61,6 +61,8 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	var unitUniqueHash = {};
 	var movableTroopCount = 0;
 	gameObj.units.forEach(function (unit) {
+		if(unit.dead)
+			console.log('unit dead!!!', unit.piece);
 		if (unit.terr == terr.id && !unit.dead && !unitUniqueHash[unit.id]) {
 			unitUniqueHash[unit.id] = true;
 			units.push(unit);
@@ -964,11 +966,13 @@ function checkGameTeams(incomes, capitals, gameObj) {
 		var nations = [];
 		var alive = false;
 		var numPlayers = 0;
+		var teamPlayers = [];
 		gameObj.players.forEach(function (player) {
 			if (player.team == team.name && player.capitals.length > 0) {
 				if (player.alive) {
 					numPlayers++;
 					alive = true;
+					teamPlayers.push(player.nation);
 				}
 
 				player.capitals.forEach(function (cap) {
@@ -976,6 +980,7 @@ function checkGameTeams(incomes, capitals, gameObj) {
 				});
 			}
 		});
+		team.teamPlayers = teamPlayers;
 		team.numPlayers = numPlayers;
 		team.alive = alive;
 		team.nations = nations;
@@ -1376,7 +1381,11 @@ function updateAdvisorInfo(terr, currentPlayer, user, gameObj, superpowers) {
 			strategyHint = 'Last round before full-out war breaks out. Make sure your defenses are in place.';
 	}
 	if (terr.treatyStatus == 0 && terr.owner > 0) {
-		strategyHint = superpowers[terr.owner] + ' is a very dangerous enemy that needs to be attacked and defeated! Prepare to move troops into position.';
+		var p2 = playerOfNation(terr.owner, gameObj);
+		if(currentPlayer.income>=p2.income)
+			strategyHint = superpowers[terr.owner] + ' is a very weak enemy that needs to be attacked and defeated! Prepare to move troops into position.';
+		else
+		strategyHint = superpowers[terr.owner] + ' is a very dangerous enemy that is at war with us. Consider getting additional help from allies or making peace.';
 	}
 	if (terr.treatyStatus == 1 && terr.owner > 0) {
 		strategyHint = superpowers[terr.owner] + ' is not to be trusted. We need to keep an eye on these guys.';
@@ -1606,7 +1615,7 @@ function flagOfOwner(own, terr, showDetailsFlg, unitCount, defeatedByNation, nuk
 	}
 	return flag;
 }
-function checkVictoryConditions(currentPlayer, gameObj, superpowersData) {
+function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPlayer) {
 	figureOutTeams(gameObj);
 	var victoryMet = false;
 
@@ -1634,6 +1643,7 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData) {
 			winnningPlayer = 'Team ' + team.name;
 		}
 	});
+	gameObj.winningTeamFlg = (yourPlayer && yourPlayer.team==winningTeam);
 	var winningTeamList = playersOfTeam(winningTeam, gameObj, superpowersData);
 	if (gameObj.gameOver) {
 		var msg = 'Victory!  Game won by ' + winningTeamList.join(', ');
@@ -1644,7 +1654,7 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData) {
 	var victoryRound = numberVal(gameObj.victoryRound);
 	if (victoryMet) {
 		var vRound = (victoryRound > 0) ? victoryRound : gameObj.round;
-		var msg = 'Victory Conditions met! ' + winnningPlayer + ' controls ' + maxCapitalsHeld + ' capitals. Game will end in round ' + vRound + ' if 6 capitals are held.';
+		var msg = 'Victory Conditions met! ' + winnningPlayer + ' controls ' + maxCapitalsHeld + ' capitals. Game will end in round ' + vRound + ' if they are held.';
 		gameObj.currentSituation = msg;
 		if (victoryRound == 0) {
 			gameObj.victoryRound = gameObj.round + 1;
@@ -1652,17 +1662,16 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData) {
 			showAlertPopup(msg);
 			logItem(gameObj, currentPlayer, 'Victory Conditions Met', msg);
 		} else {
-			if (victoryRound == gameObj.round && gameObj.nation == currentPlayer.nation) {
+			if (victoryRound > gameObj.round || (victoryRound == gameObj.round && gameObj.nation == currentPlayer.nation && currentPlayer.status=='Waiting')) {
 				var msg = 'Game won by ' + winningTeamList.join(', ');
 				gameObj.currentSituation = msg;
 				logItem(gameObj, currentPlayer, 'Game Over!', msg);
 				displayFixedPopup('gameOverPopup');
 				setInnerHTMLFromElement('winningTeam', msg);
 				playSound('tada.mp3');
-				gameObj.inProgress = false;
 				gameObj.gameOver = true;
 				gameObj.actionButtonMessage = '';
-				clearCurrentGameId();
+//				clearCurrentGameId();
 			}
 		}
 	} else {

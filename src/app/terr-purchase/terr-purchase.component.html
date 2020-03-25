@@ -1,10 +1,10 @@
 <!------------------Production----------------------------->
-<div *ngIf="optionType=='production'" class="terr-card">
+<div class="terr-card">
     <div><img src="assets/graphics/units/piece15u.png" height=20> {{selectedTerritory.name}} Production</div>
 
 
     <!---------technology--------->
-    <div *ngIf="selectedTerritory.factoryCount>0"
+    <div *ngIf="selectedTerritory.factoryCount>0 && gameObj.round>1"
         style="background-color: #cdf; border: 1px solid black; border-radius: 5px;">
         <div class="darkBlueBg" style="font-size: 10px;"><i class="fa fa-cogs"></i> Technology</div>
         <table class="spTable" style="color: black;">
@@ -165,10 +165,10 @@
                 </td>
             </tr>
         </table>
-        <div *ngIf="selectedTerritory.facBombedFlg && segmentIdx==0"><img src="assets/graphics/units/piece103.gif"
+        <div *ngIf="facBombedFlg && segmentIdx==0"><img src="assets/graphics/units/piece103.gif"
                 height=20 title="Repair bombed factory"> <i class="fa fa-arrow-right"></i>
             <img src="assets/graphics/units/piece15.gif" height=20 title="Repair bombed factory">
-            <font color=#fc0>15</font> <button id="" ng-click="addUniToQueue(19, 1)" type="button"
+            <font color=#fc0>15</font> <button id="" (click)="addUniToQueue(15, 1)" type="button"
                 class="btn btn-secondary roundButton">buy</button>
         </div>
         <div style="padding: 10px;">
