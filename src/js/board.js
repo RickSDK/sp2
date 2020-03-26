@@ -915,9 +915,9 @@ function addIncomeForPlayer(player, gameObj) {
 			units++;
 		}
 	});
-	gameObj.players.forEach(function (player) {
-		resetPlayerUnits(player, gameObj);
-	});
+//	gameObj.players.forEach(function (player) {
+//		resetPlayerUnits(player, gameObj); // dont do this!
+//	});
 	player.units = units;
 	addTechForPlayer(player);
 	figureOutTeams(gameObj);
@@ -1092,24 +1092,6 @@ function getDamageReport(player, gameObj, superpowersData) {
 		}
 	});
 	return { lostUnits: lostUnits, lostCoins: lostCoins, enemyUnits: enemyUnits, enemyCoins: enemyCoins };
-}
-function populateHostileMessage(type, terr, gameObj, player) {
-	if (terr.defeatedByNation == player.nation && terr.defeatedByRound == gameObj.round) {
-		return "This territory has just been conquered.";
-	}
-	if (terr.attackedByNation == player.nation && terr.attackedRound == gameObj.round) {
-		return "This territory has already been attacked.";
-	}
-	if (terr.owner == player.nation)
-		return '';
-	var cost = costToAttack(terr, player);
-	if (cost > 0) {
-		if (terr.treatyStatus == 0)
-			return 'This will cost you ' + cost + ' coins to attack, because you were not at war at the beginning of the turn. You can attack for free next turn.';
-		else
-			return 'This will cost you ' + cost + ' coins to attack! Alternatively, you can declare war this turn and then attack for free next turn.';
-	} else
-		return '';
 }
 function costToAttack(terr, player) {
 	var status = treatyStatusAtStart(player, terr.owner);
@@ -1653,16 +1635,18 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 	gameObj.currentSituation = winnningPlayer + ' is winning!';
 	var victoryRound = numberVal(gameObj.victoryRound);
 	if (victoryMet) {
-		var vRound = (victoryRound > 0) ? victoryRound : gameObj.round;
 		var msg = 'Victory Conditions met! ' + winnningPlayer + ' controls ' + maxCapitalsHeld + ' capitals. Game will end in round ' + vRound + ' if they are held.';
 		gameObj.currentSituation = msg;
 		if (victoryRound == 0) {
 			gameObj.victoryRound = gameObj.round + 1;
+			msg = 'Victory Conditions met! ' + winnningPlayer + ' controls ' + maxCapitalsHeld + ' capitals. Game will end in round ' + gameObj.victoryRound + ' if they are held.';
+			gameObj.currentSituation = msg;
 			gameObj.nation = currentPlayer.nation;
 			showAlertPopup(msg);
 			logItem(gameObj, currentPlayer, 'Victory Conditions Met', msg);
+			playVoiceClip('conditionsMet.mp3');
 		} else {
-			if (victoryRound > gameObj.round || (victoryRound == gameObj.round && gameObj.nation == currentPlayer.nation && currentPlayer.status=='Waiting')) {
+			if (victoryRound < gameObj.round || (victoryRound == gameObj.round && gameObj.nation == currentPlayer.nation && currentPlayer.status=='Waiting')) {
 				var msg = 'Game won by ' + winningTeamList.join(', ');
 				gameObj.currentSituation = msg;
 				logItem(gameObj, currentPlayer, 'Game Over!', msg);
@@ -1671,7 +1655,8 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 				playSound('tada.mp3');
 				gameObj.gameOver = true;
 				gameObj.actionButtonMessage = '';
-//				clearCurrentGameId();
+				if(!gameObj.multiPlayerFlg)
+					clearCurrentGameId();
 			}
 		}
 	} else {

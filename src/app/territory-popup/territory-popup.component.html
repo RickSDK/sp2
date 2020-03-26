@@ -359,9 +359,6 @@
 							</div>
 
 						</div> <!-- each terr-->
-						<div *ngIf="hostileMessage.length>0 && totalUnitsThatCanMove>0"
-							style="background-color: yellow; color: red; font-weight: 700;"><i
-								class="fa fa-exclamation-triangle"></i> {{hostileMessage}}</div>
 						<div *ngIf="totalUnitsThatCanMove==0" style="background-color: yellow; border: 1px solid red;">
 							<div style="color: red;"><b><i class="fa fa-exclamation-triangle"></i> None
 									of your units can reach {{selectedTerritory.name}}!</b>

@@ -23,6 +23,7 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   constructor(private router: Router) { super(); }
 
   ngOnInit(): void {
+    //localStorage.rank=0; //<-- reset rank
     this.hostname = getHostname();
     this.user = userObjFromUser();
     this.flexSprite(100);

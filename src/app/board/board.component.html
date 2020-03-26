@@ -11,13 +11,12 @@
 </svg>
 
 <!---flags--->
-<div *ngFor="let terr of gameObj.territories" id="{{'terr'+terr.id}}"
-	style="position: absolute; cursor: pointer; z-index: -4;">
-	<div><img (click)="terrClicked(territoryPopup, terr, gameObj, ableToTakeThisTurn, currentPlayer, user)"
-			src="assets/graphics/images/{{terr.flag || 'flag1.gif'}}" [class]="ngClassFlag(terr)"
-			id="{{'flag'+terr.id}}" title='{{terr.title}}' alt='{{terr.title}}' style="max-width: 55px;"
-			(mouseenter)="changeSVGColor(true, terr.id, terr.owner)"
-			(mouseleave)="changeSVGColor(false, terr.id, terr.owner)"></div>
+<div *ngFor="let terr of gameObj.territories" id="{{'terr'+terr.id}}" style="position: absolute; z-index: -4;">
+	<img (click)="terrClicked(territoryPopup, terr, gameObj, ableToTakeThisTurn, currentPlayer, user)"
+		src="assets/graphics/images/{{terr.flag || 'flag1.gif'}}" [class]="ngClassFlag(terr)" id="{{'flag'+terr.id}}"
+		title='{{terr.title}}' alt='{{terr.title}}' style="cursor: pointer; z-index: 10;"
+		(mouseenter)="changeSVGColor(true, terr.id, terr.owner)"
+		(mouseleave)="changeSVGColor(false, terr.id, terr.owner)">
 	<div style="padding-top: 0px; margin-top: -6px; width: 60px; white-space: nowrap;" *ngIf="terr.nation<99"><span
 			class="boardBlack">{{terr.displayUnitCount}}</span><img *ngIf="terr.piece>0"
 			src="{{ngUnitSrc(terr.piece, terr.owner)}}" title="{{terr.piece}}"
@@ -41,7 +40,7 @@
 	style="z-index: 201; text-align: center; position: fixed; width: 100%; top: 0px; height: 44px; background-color: #ccc; box-shadow: 2px 2px 3px #000; max-height: 44px; line-height: 1.5em; overflow: hidden;">
 	<a routerLink="/"><button id="homeButton" type="button" class="btn btn-secondary roundButton"><i
 				class="fa fa-home"></i></button></a>
-	<button id="" (click)="gameInfoPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button"
+	<button id="" (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 3)" type="button"
 		class="btn btn-primary roundButton"><i class="fa fa-info-circle"></i></button>
 	<button *ngIf="ableToTakeThisTurn && gameObj.actionButtonMessage.length>0 && !hideActionButton"
 		(click)="completeTurnButtonPressed()" id="completeTurnButton" type="button"
@@ -51,8 +50,8 @@
 	<button *ngIf="ableToTakeThisTurn && hideActionButton" (click)="completeTurnButtonPressed()" type="button"
 		class="btn btn-success roundButton"><i class="fa fa-arrow-right"></i> End Turn</button>
 	<span *ngIf="this.gameObj.gameOver">
-		<a routerLink="/"><button type="button"
-		class="btn btn-success roundButton glowButton">Game Over! Exit Game</button></a>
+		<a routerLink="/"><button type="button" class="btn btn-success roundButton glowButton">Game Over! Exit
+				Game</button></a>
 	</span>
 	<span *ngIf="!this.gameObj.gameOver">
 		<img (click)="scrollToNation(currentPlayer.nation)"
@@ -92,7 +91,7 @@
 		<button id="" (click)="techPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button"
 			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-cogs"></i><br><span
 				style="font-size: 10px;">Tech</span></button>
-		<button id="alliesButton" (click)="alliesPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)"
+		<button id="alliesButton" (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 1)"
 			type="button" class="btn btn-primary tight roundButton" style="line-height: 14px;"><i
 				class="fa fa-users"></i><br><span style="font-size: 10px;">Allies</span></button>
 		<button id="" (click)="logsPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button"
@@ -102,7 +101,7 @@
 			(click)="chatPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button"
 			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-comment"></i><br><span
 				style="font-size: 10px;">Chat</span></button>
-		<button id="" (click)="statsPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button"
+		<button id="" (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 2)" type="button"
 			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i
 				class="fa fa-line-chart"></i><br><span style="font-size: 10px;">Stats</span></button>
 		<button id="" (click)="audioPopup.show()" type="button" class="btn btn-primary tight roundButton"
@@ -123,8 +122,8 @@
 	</span>
 </div>
 <!---third bar--->
-<div *ngIf="gameObj.desc" (click)="gameInfoPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)"
-	style="z-index: 202; text-align: center;  position: fixed; top: 87px; width: 100%; ">
+<div *ngIf="gameObj.desc" (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 3)"
+	style="z-index: 202; text-align: center;  position: fixed; top: 95px; width: 100%; ">
 	<span title="{{gameObj.desc}}"
 		style="cursor: pointer; text-align: center; font-size: 12px; padding-left: 5px; color: #ccc; line-height: 1.5em; overflow: hidden; background-color: #557; border: 1px solid gray; box-shadow: 5px 5px 5px #000;">
 		Round <b><span *ngIf="historyMode">{{historyRound}}/</span>{{gameObj.round}}</b> <span
@@ -138,7 +137,7 @@
 	Menu</button>
 
 <!-----------------players sidebar------------------>
-<div id="sidelinePopup" (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)"
+<div id="sidelinePopup" (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 0)"
 	style="cursor: pointer; position: fixed; min-width: 50px; max-width: 68px; top: 150px; left: 0; border: 1px solid black; text-align: center; box-shadow: 3px 3px 5px #000; transition: all 1s ease;">
 	<div id="playerPanel" class="roundedPanel" *ngIf="currentPlayer">
 		<div style="background-color: #444; color: white; font-size: 10px;">Players</div>
@@ -320,6 +319,15 @@
 	<p>
 </div>
 
+<div id="surrenderPopup" class="popupScreenNoPad" style="max-width: 400px;">
+	<img src="assets/graphics/misc/cityNuked.jpg" width="100%">
+	<div style="font-size: 12px;">Do you wish to surrender? Single player games are not saved to your record. Feel free to surrender at any time without penalty.</div>
+	<button onClick="closePopup('surrenderPopup')" type="button"
+		class="btn btn-primary roundButton medium">Cancel</button>
+	<button (click)="surrenderConfirmButtonPressed()" type="button"
+		class="btn btn-danger roundButton medium">Surrender!</button>
+</div>
+
 <div onClick="closePopup('technologyPopup')" id="technologyPopup" class="popupScreenNoPad" style="max-width: 400px;">
 	<div style="background-color: #444; color: white;">Technology Breakthrough</div>
 	<img src="assets/graphics/misc/gears.jpg" width=100%>
@@ -340,7 +348,7 @@
 	<div class="title">-End Turn-</div>
 	<button onClick="closePopup('diplomacyWarningPopup')" type="button"
 		class="btn btn-secondary roundButton">Cancel</button>
-	<button (click)="alliesPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button"
+	<button (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 1)" type="button"
 		class="btn btn-warning roundButton">Diplomacy</button>
 	<button (click)="placeUnitsAndEndTurn()" type="button" class="btn btn-success roundButton tall2"><i
 			class="fa fa-check"></i> End Turn</button>
@@ -368,14 +376,11 @@
 <app-territory-popup #territoryPopup (messageEvent)="moveSpriteBetweenTerrs($event)"
 	(battleHappened)="battleHappened($event)" [adminModeFlg]="adminModeFlg"></app-territory-popup>
 
-<app-game-info-popup #gameInfoPopup></app-game-info-popup>
 <app-game-players-popup #gamePlayersPopup></app-game-players-popup>
 <app-production-queue-popup #productionQueuePopup></app-production-queue-popup>
 <app-units-popup #unitsPopup [adminModeFlg]="adminModeFlg"></app-units-popup>
 <app-tech-popup #techPopup [adminModeFlg]="adminModeFlg"></app-tech-popup>
-<app-allies-popup #alliesPopup></app-allies-popup>
 <app-logs-popup #logsPopup></app-logs-popup>
 <app-chat-popup #chatPopup></app-chat-popup>
-<app-stats-popup #statsPopup></app-stats-popup>
 <app-audio-popup #audioPopup></app-audio-popup>
 <app-diplomacy-popup #diplomacyPopup (messageEvent)="diplomacyDone($event)"></app-diplomacy-popup>

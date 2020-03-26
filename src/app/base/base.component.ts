@@ -72,7 +72,7 @@ export class BaseComponent implements OnInit {
     $(id).modal();
   }
   closeModal(id: string) {
-    $(id).modal('toggle');
+    $(id).modal('hide');
   }
   showUnitPopup(unit: any) {
     let piece = unit.piece || unit.id;

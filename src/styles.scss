@@ -116,6 +116,9 @@ td {
 .right {
 	float: right;
 }
+.centerText {
+	text-align: center;
+}
 .blueBgWhite {
 	background-color: rgb(51, 122, 183);
 	color: white;
@@ -378,10 +381,15 @@ margin: 1px;
     -ms-filter: "progid:DXImageTransform.Microsoft.Dropshadow(OffX=2, OffY=2, Color='#0f0')";
     filter: "progid:DXImageTransform.Microsoft.Dropshadow(OffX=2, OffY=2, Color='#0f0')";
 }
+.flagAlly:hover {
+    -webkit-filter: drop-shadow(4px 4px 4px rgba(0,0,0,1));
+    -ms-filter: "progid:DXImageTransform.Microsoft.Dropshadow(OffX=4, OffY=4, Color='#000')";
+    filter: "progid:DXImageTransform.Microsoft.Dropshadow(OffX=4, OffY=4, Color='#000')";
+}
 .flagEnemy {
-    -webkit-filter: drop-shadow(2px 2px 2px rgba(255,0,0,1));
-    -ms-filter: "progid:DXImageTransform.Microsoft.Dropshadow(OffX=2, OffY=2, Color='#f00')";
-    filter: "progid:DXImageTransform.Microsoft.Dropshadow(OffX=2, OffY=2, Color='#f00')";
+    -webkit-filter: drop-shadow(4px 4px 4px rgba(255,0,0,1));
+    -ms-filter: "progid:DXImageTransform.Microsoft.Dropshadow(OffX=4, OffY=4, Color='#f00')";
+    filter: "progid:DXImageTransform.Microsoft.Dropshadow(OffX=4, OffY=4, Color='#f00')";
 }
 .largeDate {
 	font-size: 80px; 

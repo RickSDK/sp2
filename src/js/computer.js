@@ -295,7 +295,7 @@ function findMainBase(gameObj, currentPlayer) {
     var baseId = 0;
     var max = 0;
     gameObj.territories.forEach(function (terr) {
-        if (terr.owner == currentPlayer.nation && terr.unitCount > max && terr.nation<99) {
+        if (terr.owner == currentPlayer.nation && terr.unitCount > max && terr.nation < 99) {
             max = terr.unitCount;
             baseId = terr.id;
         }
@@ -452,9 +452,11 @@ function okToAttack(player, terr, gameObj) {
     if (gameObj.round == gameObj.attack) {
         if (player.attackFlg)
             return false;
-        var p2 = playerOfNation(terr.owner, gameObj);
-        if (p2 && p2.defenseFlg)
-            return false;
+        if (terr.owner > 0) {
+            var p2 = playerOfNation(terr.owner, gameObj);
+            if (p2 && p2.defenseFlg)
+                return false;
+        }
     }
     var status = treatyStatus(player, terr.owner)
     if (status > 0) {
@@ -641,7 +643,7 @@ function fortifyThisTerritory(player, gameObj) {
             ter.units.forEach(function (unit) {
                 if (isUnitOkToAttack(unit, player.nation)) {
                     unit.movesLeft = 0;
-                    if(x++>=2)
+                    if (x++ >= 2)
                         unit.terr = player.hotSpotId;
                 }
             });

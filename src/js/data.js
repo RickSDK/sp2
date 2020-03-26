@@ -203,12 +203,12 @@ function getGameTerritories() {
 	terrs.push({id: x++, name: 'Far East', x: 1166, y: 73, nation: 4, owner: 0, type: 0, water: 0, borders: '20+23+144+5', land: [20,23,5]});
 	terrs.push({id: x++, name: 'Okhotsk', x: 1126, y: 211, nation: 4, owner: 0, type: 0, water: 0, borders: '22+20+24+141', land: [22,20,24]});
 	terrs.push({id: x++, name: 'Manchuria', x: 1091, y: 258, nation: 4, owner: 0, type: 0, water: 0, borders: '20+23+141+21+25+30+64', land: [20,23,64,30,25,21]});
-	terrs.push({id: x++, name: 'Peiping', x: 1062, y: 330, nation: 4, owner: 0, type: 0, water: 0, borders: '30+24+138+31', land: [30,31,24]});
+	terrs.push({id: x++, name: 'Peiping', x: 1075, y: 330, nation: 4, owner: 0, type: 0, water: 0, borders: '30+24+138+31', land: [30,31,24]});
 	terrs.push({id: x++, name: 'Taiwan', x: 1138, y: 394, nation: 4, owner: 0, type: 0, water: 0, borders: '139', land: []});
 	terrs.push({id: x++, name: 'Marshall Islands', x: 1214, y: 387, nation: 4, owner: 0, type: 0, water: 0, borders: '140', land: []});
 	terrs.push({id: x++, name: 'Indo-China', x: 985, y: 441, nation: 5, owner: 0, type: 0, capital: true, land: [70,29,30,31,34], water: 131, enemyWater: 139, enemyZone: 26, enemyWater2: 137, enemyZone2: 32, borders: '70+29+30+31+131+34'});
 	terrs.push({id: x++, name: 'Tibet', x: 961, y: 320, nation: 5, owner: 0, type: 0, water: 0, borders: '17+19+64+30+28+70', land: [28,70,17,19,20,24,30]});
-	terrs.push({id: x++, name: 'China', x: 1022, y: 338, nation: 5, owner: 0, type: 0, water: 0, borders: '64+24+25+31+28+29', land: [28,29,64,24,25]});
+	terrs.push({id: x++, name: 'China', x: 1018, y: 338, nation: 5, owner: 0, type: 0, water: 0, borders: '64+24+25+31+28+29', land: [28,29,64,24,25]});
 	terrs.push({id: x++, name: 'Hong Kong', x: 1054, y: 382, nation: 5, owner: 0, type: 0, water: 0, borders: '25+138+28+30', land: [28,30,25]});
 	terrs.push({id: x++, name: 'Philippines', x: 1094, y: 469, nation: 5, owner: 0, type: 0, water: 0, borders: '137', land: []});
 	terrs.push({id: x++, name: 'Borneo', x: 1058, y: 507, nation: 5, owner: 0, type: 0, water: 0, borders: '134', land: []});
@@ -218,8 +218,8 @@ function getGameTerritories() {
 	terrs.push({id: x++, name: 'Syria-Iraq', x: 745, y: 370, nation: 6, owner: 0, type: 0, water: 0, borders: '115+36+38+35+40+118+119', land: [36,40,38,35]});
 	terrs.push({id: x++, name: 'Iran', x: 819, y: 362, nation: 6, owner: 0, type: 0, water: 0, borders: '119+117+37+36+39+63+17', land: [36,37,63,17,39]});
 	terrs.push({id: x++, name: 'Afghan-Pakistan', x: 871, y: 379, nation: 6, owner: 0, type: 0, water: 0, borders: '17+38+70+120', land: [38,17,70]});
-	terrs.push({id: x++, name: 'Egypt', x: 691, y: 405, nation: 6, owner: 0, type: 0, water: 0, borders: '115+118+37+46+41', land: [41,46,37]});
-	terrs.push({id: x++, name: 'Libya', x: 647, y: 403, nation: 6, owner: 0, type: 0, water: 0, borders: '115+74+45+46+40', land: [74,45,46,40]});
+	terrs.push({id: x++, name: 'Egypt', x: 699, y: 409, nation: 6, owner: 0, type: 0, water: 0, borders: '115+118+37+46+41', land: [41,46,37]});
+	terrs.push({id: x++, name: 'Libya', x: 642, y: 403, nation: 6, owner: 0, type: 0, water: 0, borders: '115+74+45+46+40', land: [74,45,46,40]});
 	terrs.push({id: x++, name: 'Congo', x: 659, y: 541, nation: 7, owner: 0, type: 0, capital: true, water: 96, land: [44,45,46,48,73], enemyWater: 98, enemyZone: 50, enemyWater2: 104, enemyZone2: 43, borders: '96+73+48+46+45+44'});
 	terrs.push({id: x++, name: 'West Africa', x: 530, y: 442, nation: 7, owner: 0, type: 0, water: 0, borders: '104+74+45+44+75', land: [74,75,44,45]});
 	terrs.push({id: x++, name: 'Nigeria', x: 594, y: 495, nation: 7, owner: 0, type: 0, water: 0, borders: '75+43+45+42+96', land: [75,43,45,42]});

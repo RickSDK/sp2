@@ -103,21 +103,21 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       }
     });
     this.selectedTerritory = terr;
- //   var moveTerr = [];
+    console.log(terr.name, terr);
     var totalUnitsThatCanMove = 0;
 
-    /*
+    
+    var moveTerr = [];
     this.gameObj.territories.forEach(function (terr) {
       totalUnitsThatCanMove += terr.movableTroopCount;
       if (terr.movableTroopCount > 0) {
         terr.distObj = { land: 9, air: 9, sea: 9 };
         moveTerr.push(terr);
       }
-    });*/
+    });
+    this.totalMoveTerrs = moveTerr;
     this.hostileMessage = populateHostileMessage('home', this.selectedTerritory, this.gameObj, this.currentPlayer);
     this.totalUnitsThatCanMove = totalUnitsThatCanMove;
-    //this.totalMoveTerrs = moveTerr;
-    this.totalMoveTerrs = currentPlayer.territories;
     this.optionType = 'home';
 
     terr.facFlg = (terr.treatyStatus == 4 && terr.nation < 99);
@@ -133,6 +133,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       else
         this.changeProdType(0);
       this.optionType = 'production';
+   
     }
     this.checkSendButtonStatus(null);
     checkCargoForTerr(terr, gameObj);
@@ -168,6 +169,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   }
   buttonClicked(type) {
     //this event emitted from app-terr-buttons
+    this.hostileMessage = populateHostileMessage(type, this.selectedTerritory, this.gameObj, this.currentPlayer);
     this.optionType = type;
     this.loadingFlg = true;
     this.checkSendButtonStatus(null);
@@ -318,8 +320,8 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   }
   rollDefenderDice() {
     rollDefenderDice(this.displayBattle, this.selectedTerritory, this.currentPlayer, this.moveTerr, this.gameObj, this.superpowersData);
-    if (!this.displayBattle.militaryObj.battleInProgress) {
-      this.battleHappened.emit('battle completed');
+    if (!this.displayBattle.militaryObj.battleInProgress && this.displayBattle.militaryObj.wonFlg) {
+      this.battleHappened.emit('battle won');
     }
 
     if (this.autoCompleteFlg) {

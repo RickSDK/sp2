@@ -17,7 +17,7 @@ export class TechPopupComponent extends BaseComponent implements OnInit {
     {name: 'Torpedoes', icon: 'anchor'},
     {name: 'Economy', icon: 'industry'},
     {name: 'Bombers', icon: 'plane'},
-    {name: 'Tactical', icon: 'cogs'},
+    {name: 'Tactical', icon: 'arrows'},
   ]
   
   constructor() { super(); }

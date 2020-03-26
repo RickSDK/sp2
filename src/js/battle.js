@@ -324,7 +324,7 @@ function strategicBombBattle(player, targetTerr, attackUnits, gameObj, superpowe
     var hits = battle.attHits;
     for (var x = 0; x < battle.defTargets.length; x++)
         battle.attCasualties.push(7);
-    if(battle.defHits>0)
+    if (battle.defHits > 0)
         playSound('Scream.mp3');
 
     if (hits > 0) {
@@ -436,7 +436,7 @@ function rollAttackDice(battle, stratFlg = false) {
             var diceRoll = Math.floor((Math.random() * 6) + 1);
             if (diceRoll <= unit.att) {
                 unit.dice.push('diceh' + diceRoll + '.png');
-                if(stratFlg)
+                if (stratFlg)
                     unitHits = 1;
                 else
                     unitHits++;
@@ -449,7 +449,7 @@ function rollAttackDice(battle, stratFlg = false) {
         }
         battle.attHits += unitHits;
     });
- 
+
 }
 function markSoliderAsDead(battle) {
     for (var x = 0; x < battle.defendingUnits.length; x++) {
@@ -700,9 +700,14 @@ function wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, ti
         currentPlayer.losses += losses;
         currentPlayer.kd = getKdForPlayer(currentPlayer);
     }
+    if (displayBattle.militaryObj.wonFlg && gameObj.round == gameObj.attack)
+        currentPlayer.attackFlg = true;
     addIncomeForPlayer(currentPlayer, gameObj);
+
     if (displayBattle.defender > 0) {
         var p2 = playerOfNation(displayBattle.defender, gameObj);
+        if (displayBattle.militaryObj.wonFlg && gameObj.round == gameObj.attack)
+            p2.defenseFlg = true;
         addIncomeForPlayer(p2, gameObj);
         p2.kills += losses;
         p2.losses += hits;
@@ -763,22 +768,66 @@ function addNewUnitToBoard(gameObj, terr, piece, superpowersData) {
     var unit = unitOfId(newId, nation, piece, terr.id, superpowersData.units, false);
     gameObj.units.push(unit);
 }
-function allowHostileAct(type, selectedTerritory, player, gameObj) {
-    //   console.log('allowHostileAct', type);
-    if (type == 'bomb' && selectedTerritory.bombed) {
-        showAlertPopup("This country has already been bombed.", 1);
-        return false;
+function allowHostileAct(type, terr, player, gameObj) {
+    var obj = hostileActObj(type, terr, gameObj, player);
+    if (!obj.allowFlg) {
+        showAlertPopup(obj.message, 1);
     }
-    if (type == 'movement' && selectedTerritory.defeatedByNation == player.nation && selectedTerritory.defeatedByRound == gameObj.round) {
-        showAlertPopup("Can't move into territories just defeated.", 1);
-        return false;
-    }
-    if ((type == 'attack' || type == 'nuke' || type == 'cruise') && selectedTerritory.attackedByNation == player.nation && selectedTerritory.attackedRound == gameObj.round) {
-        showAlertPopup("Can't attack the same territory twice.", 1);
-        return false;
-    }
+    return obj.allowFlg;
+}
+function populateHostileMessage(type, terr, gameObj, player) {
+    var obj = hostileActObj(type, terr, gameObj, player);
+    return obj.message;
+}
+function hostileActObj(type, terr, gameObj, player) {
+    var message = '';
+    var allowFlg = true;
+    var hostileType = (type == 'attack' || type == 'nuke' || type == 'cruise' || type == 'bomb');
 
-    if (type == 'attack') {
+    if (terr.defeatedByNation == player.nation && terr.defeatedByRound == gameObj.round) {
+        message = "This territory has just been conquered.";
+        allowFlg = false;
     }
-    return true;
+    if (terr.attackedByNation == player.nation && terr.attackedRound == gameObj.round) {
+        message = "This territory has already been attacked.";
+        allowFlg = false;
+    }
+    if (type == 'movement' && terr.defeatedByNation == player.nation && terr.defeatedByRound == gameObj.round) {
+        message = 'Can\'t move into territories just defeated.';
+        allowFlg = false;
+    }
+    if (hostileType) {
+        var cost = costToAttack(terr, player);
+        if (cost > 0) {
+            var treatyName = 'non-agression pact';
+            if (cost == 10)
+                treatyName = 'peace treaty';
+            if (cost == 15)
+                treatyName = 'alliance';
+            if (terr.treatyStatus == 0)
+                message = 'This will cost you ' + cost + ' coins to attack, because you were not at war at the beginning of the turn. You can attack for free next turn.';
+            else
+                message = 'This will cost you ' + cost + ' coins to break the ' + treatyName + '! Alternatively, you can declare war this turn and then attack for free next turn.';
+        }
+        if (type == 'bomb' && terr.bombed) {
+            message = 'This country has already been bombed.';
+            allowFlg = false;
+        }
+        if (terr.attackedByNation == player.nation && terr.attackedRound == gameObj.round) {
+            message = 'Can\'t attack the same territory twice.';
+            allowFlg = false;
+        }
+        if (terr.owner > 0 && gameObj.round == gameObj.attack) {
+            var p2 = playerOfNation(terr.owner, gameObj);
+            if (player.attackFlg) {
+                message = 'Limited attack round: You are only allowed to take over 1 enemy territory on this round.';
+                allowFlg = false;
+            }
+            if (p2.defenseFlg) {
+                message = 'Limited attack round: This player has already lost a territory on this round.';
+                allowFlg = false;
+            }
+        }
+    }
+    return { message: message, allowFlg: allowFlg }
 }

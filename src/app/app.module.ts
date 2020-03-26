@@ -28,13 +28,10 @@ import { MessagePopupComponent } from './message-popup/message-popup.component';
 import { LoadingPopupComponent } from './loading-popup/loading-popup.component';
 import { LeaderMessagePopupComponent } from './leader-message-popup/leader-message-popup.component';
 import { UnitDetailPopupComponent } from './unit-detail-popup/unit-detail-popup.component';
-import { GameInfoPopupComponent } from './game-info-popup/game-info-popup.component';
 import { GamePlayersPopupComponent } from './game-players-popup/game-players-popup.component';
 import { UnitDetailComponent } from './unit-detail/unit-detail.component';
-import { AlliesPopupComponent } from './allies-popup/allies-popup.component';
 import { LogsPopupComponent } from './logs-popup/logs-popup.component';
 import { ChatPopupComponent } from './chat-popup/chat-popup.component';
-import { StatsPopupComponent } from './stats-popup/stats-popup.component';
 import { BaseComponent } from './base/base.component';
 import { TerrUnitsComponent } from './terr-units/terr-units.component';
 import { TerrHeaderComponent } from './terr-header/terr-header.component';
@@ -44,6 +41,10 @@ import { TerrPurchaseComponent } from './terr-purchase/terr-purchase.component';
 import { TerrTroopSelectComponent } from './terr-troop-select/terr-troop-select.component';
 import { DiplomacyPopupComponent } from './diplomacy-popup/diplomacy-popup.component';
 import { ProductionQueuePopupComponent } from './production-queue-popup/production-queue-popup.component';
+import { PlayerViewComponent } from './player-view/player-view.component';
+import { AlliesViewComponent } from './allies-view/allies-view.component';
+import { StatsViewComponent } from './stats-view/stats-view.component';
+import { GameViewComponent } from './game-view/game-view.component';
 
 @NgModule({
   declarations: [
@@ -73,13 +74,10 @@ import { ProductionQueuePopupComponent } from './production-queue-popup/producti
     LoadingPopupComponent,
     LeaderMessagePopupComponent,
     UnitDetailPopupComponent,
-    GameInfoPopupComponent,
     GamePlayersPopupComponent,
     UnitDetailComponent,
-    AlliesPopupComponent,
     LogsPopupComponent,
     ChatPopupComponent,
-    StatsPopupComponent,
     BaseComponent,
     TerrUnitsComponent,
     TerrHeaderComponent,
@@ -88,7 +86,11 @@ import { ProductionQueuePopupComponent } from './production-queue-popup/producti
     TerrPurchaseComponent,
     TerrTroopSelectComponent,
     DiplomacyPopupComponent,
-    ProductionQueuePopupComponent
+    ProductionQueuePopupComponent,
+    PlayerViewComponent,
+    AlliesViewComponent,
+    StatsViewComponent,
+    GameViewComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,81 @@
+<table width=100% class="spTable" *ngIf="gameObj">
+	<tr>
+		<th style="padding: 5px; text-align: center;">Field</th>
+		<th style="padding: 5px; text-align: center;">Value</th>
+	</tr>
+	<tr>
+		<td><b>Created:</b></td>
+		<td>{{gameObj.created}}</td>
+	</tr>
+	<tr>
+		<td><b>Attack Round:</b></td>
+		<td>{{gameObj.attack}}</td>
+	</tr>
+	<tr>
+		<td><b>Max Allies:</b></td>
+		<td>{{gameObj.maxAllies}}</td>
+	</tr>
+	<tr *ngIf="gameObj.multiPlayerFlg">
+		<td><b>Host:</b></td>
+		<td>{{gameObj.host}}</td>
+	</tr>
+	<tr *ngIf="gameObj.turboFlg">
+		<td><b>Turbo Game:</b></td>
+		<td>
+			<font color=#000>Y</font>
+		</td>
+	</tr>
+	<tr *ngIf="gameObj.autoNations=='Y'">
+		<td><b>Auto Assign:</b></td>
+		<td>
+			<font color=#c80>{{gameObj.autoNations}}</font>
+		</td>
+	</tr>
+	<tr *ngIf="gameObj.fogOfWar=='Y'">
+		<td><b>Fog of War:</b></td>
+		<td>
+			<font color=#08f>{{gameObj.fogOfWar}}</font>
+		</td>
+	</tr>
+	<tr *ngIf="gameObj.hardFog=='Y'">
+		<td><b>Hardcore Fog:</b></td>
+		<td>
+			<font color=#08f>{{gameObj.hardFog}}</font>
+		</td>
+	</tr>
+	<tr *ngIf="gameObj.autoSkip=='Y'">
+		<td><b>Auto Skip:</b></td>
+		<td>
+			<font color=#c00>{{gameObj.autoSkip}}</font>
+		</td>
+	</tr>
+	<tr *ngIf="gameObj.restrict_units_flg=='Y'">
+		<td><b>No Special Units:</b></td>
+		<td>
+			<font color=#c00>{{gameObj.restrict_units_flg}}</font>
+		</td>
+	</tr>
+	<tr *ngIf="gameObj.no_stats_flg=='Y' && !gameObj.mmFlg">
+		<td><b>No Stats:</b></td>
+		<td>
+			<font color=#c00>{{gameObj.no_stats_flg}}</font>
+		</td>
+	</tr>
+	<tr *ngIf="gameObj.mmFlg">
+		<td><b>League:</b></td>
+		<td>
+			<font color=red>Official Matchmaking</font>
+		</td>
+	</tr>
+	<tr>
+		<td><b>Current Situation</b></td>
+		<td>{{gameObj.currentSituation}}</td>
+	</tr>
+</table>
+
+<div style="text-align: center;">
+	<button (click)="surrenderButtonPressed()" type="button" class="btn btn-danger roundButton">
+		<i class="fa fa-flag" style="font-size: 26px;"></i>
+		<div style="font-size: 10px;">Surrender</div>
+	</button>
+</div>

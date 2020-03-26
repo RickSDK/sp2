@@ -146,7 +146,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		'Round 3. Building new factories on your front lines will help get troops where you need them.',
 		'Round 4. Taking over enemy capitals will boost your income by 10 coins.',
 		'Round 5. Last round of peace. Make sure your defenses are in place.',
-		'Round 6. Players can now attack other players. You can take at most one other player\'s territory and lose at most one territory.',
+		'Round 6. Players can now attack other players! This is the limited attack round, meaning you can take at most one other player\'s territory and lose at most one territory.',
 	];
 
 	constructor() { super(); }
@@ -172,13 +172,15 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				this.gameObj = loadSinglePlayerGame();
 			} else {
 				//new game
-				if (numberVal(localStorage.startingNation) == 0)
-					localStorage.startingNation = 2;
-				var startingNation = localStorage.startingNation;
+				var startingNation = numberVal(localStorage.startingNation);
+				if(startingNation == 0) {
+					showAlertPopup('Invalid Game');
+					return;
+				}
 				console.log('+++ new single player....', startingNation);
 				var type = (localStorage.gameType == 1) ? 'freeforall' : 'diplomacy';
 				var numPlayers = 4;
-				var name = (this.user.rank  < 2) ? 'Basic Training' : 'Single Player Game';
+				var name = (this.user.rank < 2) ? 'Basic Training' : 'Single Player Game';
 
 				var pObj = {};
 				if (localStorage.customGame == 'Y') {
@@ -254,7 +256,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.gameObj.currentNation = this.currentPlayer.nation;
 		this.gameObj.actionButtonMessage = '';
 		this.allowBotToAct = this.currentPlayer.cpu;
-	
+
 
 		console.log('========' + this.superpowersData.superpowers[this.currentPlayer.nation] + '======');
 		if (!this.currentPlayer.news)
@@ -401,7 +403,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		if (this.gameObj.round <= 6) {
 			playVoiceClip('round' + this.gameObj.round + '.mp3');
-			militaryAdvisorPopup(this.advisorFirst6RoundsMessage[this.gameObj.round-1]);
+			militaryAdvisorPopup(this.advisorFirst6RoundsMessage[this.gameObj.round - 1]);
 		} else {
 			if (this.gameObj.victoryRound && this.gameObj.victoryRound > 0) {
 				militaryAdvisorPopup('Victory conditions met! Game will end in round ' + this.gameObj.victoryRound + ' unless they are stopped!');
@@ -467,7 +469,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			showAlertPopup(this.superpowersData.superpowers[player.nation] + ' surrendered!', 1)
 			player.alive = false;
 			removeAlliancesForNation(player.nation, this.gameObj);
-			this.placeUnitsAndEndTurn();
+			if(this.currentPlayer.cpu)
+				this.placeUnitsAndEndTurn();
+			else
+				this.surrenderConfirmButtonPressed();
 			return;
 		}
 		this.checkTreatyOffers(player);
@@ -983,7 +988,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.completeTurnButtonPressed();
 			return;
 		}
-		if (msg == 'battle completed') {
+		if (msg == 'battle won') {
 			var terr = this.selectedTerritory;
 			if (this.bonusInfantryFlg) {
 				setTimeout(() => {
@@ -1011,6 +1016,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	withdrawGeneralButtonClicked() {
 		this.gameObj.units.forEach(unit => {
 			if (unit.piece == 10 && unit.owner == this.currentPlayer.nation && unit.prevTerr > 0) {
+				console.log(unit.prevTerr, unit.terr, this.selectedTerritory);
 				var terr2 = this.gameObj.territories[unit.prevTerr - 1];
 				localStorage.generalTerr1 = unit.prevTerr;
 				localStorage.generalTerr2 = unit.terr;
@@ -1184,13 +1190,14 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		changeClass('completeTurnButton', 'btn btn-success roundButton');
 		if (this.currentPlayer.status == 'Purchase') {
 			this.completingPurchases();
-			if(this.user.rank<2 && this.gameObj.round==1) {
+			if (this.user.rank < 2 && this.gameObj.round == 1) {
 				this.forcedClickNation = 62;
 				highlightTerritoryWithArrow(this.forcedClickNation, this.gameObj);
 				playVoiceClip('bt09Ukraine.mp3');
 			} else
 				playVoiceClip('beginConquest.mp3');
 		} else if (this.currentPlayer.status == 'Attack') {
+			this.hideActionButton = false;
 			displayFixedPopup('diplomacyWarningPopup');
 		} else if (this.currentPlayer.status == 'Place Units')
 			this.placeUnitsAndEndTurn();
@@ -1292,6 +1299,30 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.gameObj.unitPurchases = [];
 			this.loadCurrentPlayer();
 		}, 2000);
+	}
+	surrenderConfirmButtonPressed() {
+		closePopup('surrenderPopup');
+		playClick();
+		logItem(this.gameObj, this.currentPlayer, 'Player Surrendered', 'Player has surrendered.');
+		this.gameObj.actionButtonMessage = ''
+		this.currentPlayer.status = 'Waiting';
+		this.ableToTakeThisTurn = false;
+		playSound('Scream.mp3');
+
+		this.currentPlayer.alive = false;
+		removeAlliancesForNation(this.currentPlayer.nation, this.gameObj);
+		if(this.gameObj.multiPlayerFlg)
+			this.placeUnitsAndEndTurn();
+		else {
+			clearCurrentGameId();
+			localStorage.startingNation = 0;
+			this.gameObj.gameOver = true;
+		}
+
+		setTimeout(() => {
+			playVoiceClip('surrendered'+this.currentPlayer.nation+'.mp3');
+		}, 2000);
+		
 	}
 	advanceToNextPlayer() {
 		var alivePlayers = [];
@@ -1461,9 +1492,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	ngClassFlag = function (terr) {
 		var flagShadow = ' hoverShadowed';
-		if (terr.territoryType == 'Ally' || terr.territoryType == 'Your Empire')
+		if (terr.treatyStatus>=3)
 			flagShadow = ' flagAlly';
-		if (terr.territoryType == 'Enemy!')
+		if (terr.treatyStatus==0)
 			flagShadow = ' flagEnemy';
 		var hover = isMobile() ? '' : flagShadow;
 		if (terr.capital && terr.id < 79)
@@ -1476,9 +1507,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	ngClassHalo = function (terr) {
 		var flagShadow = ' haloNone';
-		if (terr.territoryType == 'Ally' || terr.territoryType == 'Your Empire')
+		if (terr.treatyStatus>=3)
 			flagShadow = ' haloAlly';
-		if (terr.territoryType == 'Enemy!')
+		if (terr.treatyStatus==0)
 			flagShadow = ' haloEnemy';
 		if (terr.capital && terr.id < 79)
 			return "haloCapital " + flagShadow;
