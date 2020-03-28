@@ -7,26 +7,27 @@
 	<div class="container-fluid" style="text-align: center;">
 		<div class="row">
 			<div class="col-sm-4">
-				<img title="Multi-Player" (click)="multiplayGameClicked(loginPopup)"
-					style="cursor: pointer; width: 100%; max-width: 300px;"
-					src="assets/graphics/buttons/multiButton.png">
-			</div>
-			<div class="col-sm-4">
 
-				<div *ngIf="user.rank>=0" class="roundedCard" style="cursor: pointer;" (click)="userPopup.show()">
-					<div style="background-color: #444; color: white;">
-						<img src="http://www.superpowersgame.com/graphics/avitars/{{user.userGraphic}}"
-							style="height: 25px; max-width: 30px;" align=left>
-						<b> <span *ngIf="!user.userName || user.userName.length==0">Your
-								Rank</span>{{user.userName}}</b>
-						<img style="float: right;" *ngIf="myEMPCount>0" src="assets/graphics/units/piece52u.png"
+				<button (click)="multiplayGameClicked(loginPopup)" type="button" class="btn btn-primary circleButton"
+					style="width: 180px; height: 180px; background-size: cover; background-image: url('assets/graphics/buttons/multiplayer.png'); background-position: center; background-size: cover;">
+				</button>
+
+			</div>
+			<div class="col-sm-4" style="padding-top: 10px;">
+
+				<div *ngIf="user" class="roundedCard" style="cursor: pointer;" (click)="userPopup.show()">
+					<div style="background-color: #444; color: white; min-width: 130px; height: 32px;">
+						<img src="{{user.imgSrc}}" style="height: 32px; max-width: 44px; float: left;">
+						<span style="padding: 5px;">{{user.userName}}</span>
+						<img style="float: right;" *ngIf="user.empCount>0" src="assets/graphics/units/piece52u.png"
 							height=25>
-						<img style="float: right;" *ngIf="myEMPCount>1" src="assets/graphics/units/piece52u.png"
+						<img style="float: right;" *ngIf="user.empCount>1" src="assets/graphics/units/piece52u.png"
 							height=25>
 					</div>
 					<div style="padding: 5px;">
 						<div style="font-size: 14px;"><img src="assets/graphics/ranks/rank{{user.rank}}.png"
-								style="max-height: 45px; max-width: 120px;" title="{{superpowersData.ranks[user.rank].name}}"></div>
+								style="max-height: 45px; max-width: 120px;"
+								title="{{superpowersData.ranks[user.rank].name}}"></div>
 					</div>
 					<div *ngIf="superpowersData" style="background-color: #444; color: white;">
 						{{superpowersData.ranks[user.rank].name}}
@@ -50,26 +51,16 @@
 			</div>
 			<div class="col-sm-4">
 				<button (click)="singlePlayerGame(startGamePopup)" type="button" class="btn btn-primary circleButton"
-					style="background-image: url('assets/graphics/buttons/singleButton.png'); background-position: center; background-size: cover;"><img
-						id="button2" title="singleButton.png"
-						style="cursor: pointer; width: 100%; max-width: 300px;"
-						src="assets/graphics/buttons/singleButton.png"></button> 
-						<div *ngIf="singleGameId>0" style="color: #337ab7;"><b>Game in Progress!</b></div>
+					style="width: 180px; height: 180px; background-image: url('assets/graphics/buttons/singlePlayer.png'); background-position: center; background-size: cover;">
+				</button>
+				<div *ngIf="singleGameId>0" style="color: #337ab7;"><b>Game in Progress!</b></div>
 			</div>
 		</div>
 	</div>
 </div>
 
-hostname: {{hostname}}
-
-
-
-<div><a routerLink="/board"> Board </a></div>
-<div><a routerLink="/info"> Info </a></div>
-<div><a routerLink="/multiplayer"> multiplayer </a></div>
-
 <app-rules-popup #rulesPopup></app-rules-popup>
 <app-login-popup #loginPopup></app-login-popup>
-<app-user-popup #userPopup></app-user-popup>
+<app-user-popup #userPopup [user]="user" (messageEvent)="userUpdated($event)"></app-user-popup>
 <app-scoreboard-popup #scoreboardPopup></app-scoreboard-popup>
 <app-start-game-popup #startGamePopup></app-start-game-popup>

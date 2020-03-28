@@ -8,167 +8,324 @@
 	</div>
 </a>
 
+<div style="width: 100%; text-align: center;">
+	<div style="max-width: 400px; display: inline-block; box-shadow: 2px 2px 5px #000;">
+
+		<div style="background-color: #ccc; text-align: center; padding: 5px;">
+			<button (click)="ranksPopup.show()" type="button" class="btn btn-primary roundButton" style="height: 44px;">
+				<i class="fa fa-star"></i>&nbsp;<span class="smallText">Ranks</span>
+			</button>
+			<button (click)="unitsPopup.show()" type="button" class="btn btn-primary roundButton" style="height: 44px;">
+				<i class="fa fa-fighter-jet"></i>&nbsp;<span class="smallText">Units</span> 
+			</button>
+			<button (click)="typesPopup.show()" type="button" class="btn btn-primary roundButton" style="height: 44px;">
+				<i class="fa fa-list-alt"></i>&nbsp;<span class="smallText">Types</span> 
+			</button>
+			<button (click)="techPopup.show(null, null, null, null)" type="button" class="btn btn-primary roundButton"
+				style="height: 44px;">
+				<i class="fa fa-cogs"></i>&nbsp;<span class="smallText">Tech</span> 
+			</button>
+		</div>
 
 
-
-            <div style="background-color: #ccc; text-align: center; padding: 5px;">
-                <button (click)="ranksPopup.show()" type="button" class="btn btn-primary roundButton" style="height: 44px;">
-                    <img src="assets/graphics/ranks/rank5.png" height="30"> <span class="hidden-xxs">Ranks</span>
-                </button>
-                <button (click)="unitsPopup.show()" type="button" class="btn btn-primary roundButton" style="height: 44px;">
-                    <i class="fa fa-fighter-jet"></i> Units
-                </button>
-                <button (click)="typesPopup.show()" type="button" class="btn btn-primary roundButton" style="height: 44px;">
-                    <i class="fa fa-list-alt"></i> Types
-                </button>
-                <button (click)="techPopup.show(null, null, null, null)" type="button" class="btn btn-primary roundButton" style="height: 44px;">
-                    <i class="fa fa-cogs"></i> Tech
-                </button>
-            </div>
-            
-            
-            <div style="background-color: #17a2b8; text-align: center; padding: 5px;">
-            	<div class="btn-group">
-	            	<button *ngFor="let button of buttonList; let i = index;" (click)="buttonIdx=i" type="button" class="btn btn-default roundButton"  [ngClass]="ngClassSegment(buttonIdx,i)"
-	            		style="min-width: 60px;">
-	            		<i class="fa {{button.icon}}" style="font-size: 26px;"></i>
-	                    	<div style="font-size: 10px;">{{button.name}}</div>
-	                </button>
-	        </div>
-            </div>
-            
-            <div class="modal-body" style="padding: 0;">
-		<div *ngIf="buttonIdx==0" style="background-color: white;">	                
-			<img src="assets/graphics/splash/poster02.jpg" width="100%">
-			<div style="padding: 10px;">
-			<p class="darkBlue" style="font-size: 16px; font-weight: 800; text-align: center;">Nation will rise against nation, kingdom against kingdom.<p>
-			<p style="font-weight: 800;">The modern world has broken into 8 factions, or Superpowers, each trying to dominate the planet. Your goal is to lead one of these empires to victory by crushing the others!<p>
-			<p class="darkBlue" style="font-size: 18px; font-weight: 800; text-align: center;">This game isn't post-apocalypse... this IS the apocalypse!!<p>
-			<p><i class="fa fa-check darkBlue" style="font-size: 20px;"></i><b>The Game</b>: Superpowers is your classic take-over-the-world game. Think RISK, but on steroids, with 8 players per game, modern weapons, nukes, 49 unique military units, alliances and more. Much more!</p>
-			<p><i class="fa fa-check darkBlue" style="font-size: 20px;"></i><b>The Objective</b>: Rule the World! Build up a premier military Superpower and pummel the rest of the world!</p>
-			<p><i class="fa fa-check darkBlue" style="font-size: 20px;"></i><b>Available Devices</b>: Works on any device! Best if played on a large screen, but works great on mobile phones too.</p>
-			<p>&nbsp;</p>
-			<p style="text-align: center;"><i class="fa fa-users darkBlue" style="font-size: 20px;"></i> Nothing to download, no user signup, just play!</p>
+		<div style="background-color: #cde; text-align: center; padding: 5px;">
+			<div class="btn-group">
+				<button *ngFor="let button of buttonList; let i = index;" (click)="buttonIdx=i" type="button"
+					class="btn btn-default roundButton" [ngClass]="ngClassSegment(buttonIdx,i)"
+					style="min-width: 60px;">
+					<i class="fa {{button.icon}}" style="font-size: 26px;"></i>
+					<div style="font-size: 10px;">{{button.name}}</div>
+				</button>
 			</div>
 		</div>
-		<div *ngIf="buttonIdx==1">
-			<img src="assets/graphics/splash/poster01.png" width="100%">
-			<table class="spTable">
-				<tr *ngFor="let item of overviewList" style="border-bottom: 1px solid gray;">
-					<td align="center"><img src="assets/graphics/units/piece{{item.piece}}u.png" title="{{item.name}}" height=40></td>
-					<td style="text-align: left;">{{item.desc}}</td>
-				</tr>
-			</table>
+
+		<div class="modal-body" style="padding: 0;">
+			<div *ngIf="buttonIdx==0" style="background-color: white;">
+				<img src="assets/graphics/splash/poster02.jpg" width="100%">
+				<div style="padding: 10px;">
+					<p class="darkBlue" style="font-size: 16px; font-weight: 800; text-align: center;">Nation will rise
+						against nation, kingdom against kingdom.<p>
+							<p style="font-weight: 800;">The modern world has broken into 8 factions, or Superpowers,
+								each
+								trying to dominate the planet. Your goal is to lead one of these empires to victory by
+								crushing the others!<p>
+									<p class="darkBlue" style="font-size: 18px; font-weight: 800; text-align: center;">
+										This
+										game isn't post-apocalypse... this IS the apocalypse!!<p>
+											<p><i class="fa fa-check darkBlue" style="font-size: 20px;"></i><b>The
+													Game</b>:
+												Superpowers is your classic take-over-the-world game. Think RISK, but on
+												steroids, with 8 players per game, modern weapons, nukes, 49 unique
+												military
+												units, alliances and more. Much more!</p>
+											<p><i class="fa fa-check darkBlue" style="font-size: 20px;"></i><b>The
+													Objective</b>: Rule the World! Build up a premier military
+												Superpower
+												and pummel the rest of the world!</p>
+											<p><i class="fa fa-check darkBlue" style="font-size: 20px;"></i><b>Available
+													Devices</b>: Works on any device! Best if played on a large screen,
+												but
+												works great on mobile phones too.</p>
+											<p>&nbsp;</p>
+											<p style="text-align: center;"><i class="fa fa-users darkBlue"
+													style="font-size: 20px;"></i> Nothing to download, no user signup,
+												just
+												play!</p>
+				</div>
+			</div>
+			<div *ngIf="buttonIdx==1">
+				<img src="assets/graphics/splash/poster01.png" width="100%">
+				<table class="spTable">
+					<tr *ngFor="let item of overviewList" style="border-bottom: 1px solid gray;">
+						<td align="center"><img src="assets/graphics/units/piece{{item.piece}}u.png"
+								title="{{item.name}}" height=40></td>
+						<td style="text-align: left;">{{item.desc}}</td>
+					</tr>
+				</table>
+			</div>
+			<div *ngIf="buttonIdx==2" style="padding: 10px; background-color: white;">
+				<img src="assets/graphics/splash/splash1024.png" width="100%">
+				<p>If you are familiar with RISK or Axis & Allies, this game will be very easy for you to pick up. If
+					you
+					aren't familiar with those games... you soon will be!</p>
+				<div class="headline2">What You Do On A Turn</div>
+				On your turn, complete a 2-part action sequence. When you are done, your turn is over and play continues
+				with the next player.
+				<p>
+					<div class="headline2">Action Sequence</div>
+					1. Purchase Units<br>
+					2. Combat<br>
+
+					<div class="headline2">Purchase Units</div>
+					<p><img src="assets/graphics/units/piece2u.png" height=20><img
+							src="assets/graphics/units/piece3u.png" height=20><img
+							src="assets/graphics/units/piece6u.png" height=20> The first thing you do on your
+						turn is purchase new units at one of your factories. </p>
+					<p><img src="assets/graphics/units/piece9u.png" height=20> For ships, you purchase these in sea
+						zones
+						adjacent to your factories.</p>
+					<p><img src="assets/graphics/units/piece15.gif" height=20> You start the game with a single factory,
+						which is on your capital. That's where the fun begins.</p>
+					<p><img src="assets/graphics/images/coin.png" height=20> You also start with 20 coins, but don't
+						worry,
+						there's more where that came from. At the end of your turn you collect new coins based on your
+						income.
+						<p> Ready for some bad news? You don't get to use those new units right away. That's because the
+							new
+							units are placed on the board at the end of your turn. This means you need to think! Part of
+							your strategy involves planning for your future needs.</p>
+						<p><img src="assets/graphics/units/piece15.gif" height=20> To expand the number of factories
+							available, simply purchase new ones. For example, if you are playing as European Union, your
+							only factory is on Germany. However buying a new factory on France, will allow you to start
+							placing new units there as well.</p>
+						<p><i class="fa fa-flask"></i> High Tech! You also have the option of developing technology in
+							this
+							phase. Technology is good. Very good. These can swing the entire balance of power in a game!
+							See
+							the technology tab in-game for complete instructions on how technology works.</p>
+						<p><img src="assets/graphics/units/piece19.gif" height=20> Want more money? Yes, you do.
+							Purchasing
+							an economic center will boost your income by 5 coins per turn. (Just one per territory
+							though).
+							<p>
+								<p>Once you are done shopping and spending money, press the "Purchase Complete" button
+									which
+									will take you to the next phase.</p>
+
+								<div class="headline2">Combat</div>
+								<p>This is where things get real! In the combat phase of your turn you can do any or all
+									of
+									the following</p>
+								<li>Attack<br>
+								<li>Move<br>
+								<li>Diplomacy<br>
+								<li>End your Turn<br>
+
+									<div class="headline2">Attack</div>
+									<p> The object of the game is to rule the world, so attacking other territories is
+										not
+										only fun, it's a must. Here are a few basics about attacking:<p>
+								<li> Peace in our Time! You cannot attack other players for the first 5 rounds. This
+									gives
+									you a chance to prepare your defenses for war. Round 6 is when things go down. Bad
+									things.<br>
+								<li> There's still plenty to attack in the first 5 rounds. Any territory that is not
+									owned
+									by another player can be conquered. Defeating one of these will give you a one-time
+									bonus of 2 infantry (<img src="assets/graphics/units/piece2u.png" height=20>) and
+									one
+									tank (<img src="assets/graphics/units/piece3u.png" height=20>). Gobble up as many of
+									these as possible in the first 5 rounds.
+								<li> If you are able to defeat a non-player capital, you are pretty awesome! Way to go!
+									For
+									your work you get a bonus factory, and +10 coins per turn as long as your own that
+									capital. The object is to control 6 of the 8 world capitals.<br>
+								<li> Controlling all territories of a single Superpower (which are color coded) gives
+									you
+									+10 coins per turn. So your primary objective is to secure your superpowers while
+									trying
+									to disrupt those of your enemies.<br>
+								<li> So you want to attack someone? Look for an enemy territory that is adjacent to your
+									troops. Then click on that territory and press the "Attack" button.<br>
+								<li> Once you choose your target and move troops in, the units will show up on a combat
+									board based on their attack and defense values. This will allow you to decide if you
+									want to attack or not.<br>
+									<img src="assets/graphics/misc/combatBoard.png" height="140" title="Combat Board"
+										class="center">
+								<li> Notice that on defense, both tanks and infantry defend at a "2" meaning a 33%
+									chance of
+									scoring a hit. This means, from a strategy perspective infantry are better for
+									defense
+									as they are cheaper than tanks, but tanks are better for attacks as they are 3 times
+									as
+									powerful when attacking. Understand how that works? Good!<br>
+								<li> Combat is resolved one round at a time. For each round of battle, each of your
+									troops
+									has a chance to score a hit, based on their attack strength. Infantry, which attack
+									at a
+									"1" have a 1 in 6 chance of hitting, and tanks, which attack at "3" have a 3 in 6
+									(or
+									50%) chance of hitting. Don't worry, the computer keeps track of all this for
+									you.<br>
+								<li> We then add up the total number of hits for attacker and defender, and remove
+									casualties starting with the lowest cost units first. Sorry infantry, but most
+									battles
+									you will be removed first.<br>
+								<li> If both sides have troops remaining, you will have the option of attacking another
+									round, or retreating. The battle ends when one side is defeated or the attacker
+									retreats. The defender does not have the option of retreating.<br>
+								<li> <img src="assets/graphics/units/piece10u.png" height=20> You start the game with a
+									single General. This guy is awesome. Don't let him die because you don't get to buy
+									another one. Your infantry double their attacks when the General is involved in the
+									battle. Makes for easy-peasy wins.<br>
+								<li> Tanks don't float. Land units cannot move through sea zones. However you can load
+									them
+									onto transports (<img src="assets/graphics/units/piece4u.png" height=20>) and move
+									them
+									accross the sea and then unload them onto other land territories.<br>
+								<li> <img src="assets/graphics/units/piece6u.png" height=20><img
+										src="assets/graphics/units/piece7u.png" height=20> Planes are unique in that
+									they
+									must always return after the battle.<br>
+								<li> Look through the (<i class="fa fa-fighter-jet"></i>) "Units" tab to see special
+									attack
+									and defence capabilities of each unit.<br>
+
+									<div class="headline2">Move</div>
+									<p> Move! Move! For any unit that has not been involved in combat, you can move them
+										up
+										to their maximum movement value. (1 space for infantry, 2 for tanks. See units
+										page
+										for more info)</p>
+									<p> This allows you to move units up to the front lines (where they will probably
+										die),
+										or prepare your defenses against other players (where they will also probably
+										die).
+									</p>
+									<p> <img src="assets/graphics/units/piece11u.png" height=20> Heros Galore: You have
+										a
+										second hero unit! Yay! Each player starts with one Leader hero, which you need
+										to
+										keep alive. All tanks and infantry defend at a "3" if your leader is attacked.
+										Plus
+										you get +10 coin bonus per turn as long as he is alive. If he dies... no more
+										bonus
+										for you!
+
+										<div class="headline2">Diplomacy</div>
+										<p>Let's make a deal! Diplomacy exists in one of 4 states between you and the
+											other
+											players in the game.<p>
+												<ul>
+													<li>Neutral<br>
+													<li>Peace <img src="assets/graphics/misc/news2.png" height=20><br>
+													<li>Ally <img src="assets/graphics/misc/news3.png" height=20><br>
+													<li>War <img src="assets/graphics/misc/news0.png" height=20><br>
+												</ul>
+												<p> For games that allow alliances, you will want to build them with
+													other
+													players to maximize your strategic benefits. Meaning, you want the
+													good
+													players on your team! Once you are allied with another player, you
+													are
+													on the same team and can win the game together.</p>
+												<p> For multi-player games, the 2 highest ranked players in the game
+													cannot
+													be on the same alliance. This is to keep the teams relatively
+													balanced.
+													(You won't have to worry about this for a while)</p>
+												<p> You must have a peace agreement with a player before offering an
+													alliance. Just like in real life.<p>
+														<p> You can only make one diplomacy offer per turn, so choose
+															wisely. You can, however, declare war as often as you like
+															(which is more fun than peace anyways).</p>
+														<p> If you attack a player who you are not at war with, shame on
+															you! You will pay a penalty. 5 coins, 10 coins or 15 coins
+															depending on your diplomacy agreement before the attack.</p>
+														<p> To be a gentleman, you can declare war on a player, which
+															allows
+															you to attack for free next turn. This however tips your
+															hand,
+															and gives them the chance to attack you first, so be careful
+															to
+															weigh your options.</p>
+														<p> Too many friends! There is a limit to the number of
+															alliances
+															you can have, which means if you go over your limit, you
+															will be
+															forced to drop one of your allies. And guess what? They will
+															hate you!</p>
+
+														<div class="headline2">End Your Turn</div>
+														<p> Once you are done beating up on the weaker players, you can
+															end
+															your turn. Press the "Complete Turn" button.<p>
+																<p> This will automatically place your new units,
+																	collect
+																	your income, end your turn, and notify the next
+																	player
+																	of their turn.</p>
+																<p> Players then have up to 24 hours to take their turn
+																	before being skipped.</p>
+																<p> Ideally players will check the app several times per
+																	day
+																	to keep games moving, but just be aware that some
+																	games
+																	take many days, even weeks to complete.</p>
+																<p> Enjoy!</p>
+			</div>
+			<div *ngIf="buttonIdx==3" style="padding: 10px; background-color: white;">
+				<img src="assets/graphics/images/map.png" width="100%">
+				<img *ngFor="let sp of superpowers; let i = index" src="assets/graphics/images/flag{{i+1}}.gif"
+					width="12%">
+				<ul class="two-column" style="font-size: 13px;">
+					<div *ngFor="let sp of superpowers; let i = index"><img src="assets/graphics/images/flag{{i+1}}.gif"
+							height="18"> {{sp}}</div>
+				</ul>
+			</div>
+			<div *ngIf="buttonIdx==4" style="text-align: center; background-color: white;">
+				<button (click)="emailPopup.show()" type="button" class="btn btn-primary roundButton">
+					<i class="fa fa-envelope" style="font-size: 24px;"></i><br>Email
+				</button>
+				<button (click)="audioPopup.show()" type="button" class="btn btn-primary roundButton">
+					<i class="fa fa-volume-up" style="font-size: 24px;"></i><br>Audio
+				</button>
+				<button (click)="scoreboardPopup.show()" type="button" class="btn btn-primary roundButton">
+					<i class="fa fa-list-alt" style="font-size: 24px;"></i><br>Scoreboard
+				</button>
+				<button (click)="videoPopup.show()" type="button" class="btn btn-primary roundButton">
+					<i class="fa fa-youtube-play" style="font-size: 24px;"></i><br>Videos
+				</button>
+				<div>
+					<button (click)="purchasePopup.show()" type="button" class="btn btn-primary roundButton">
+						<i class="fa fa-usd"></i> Boardgame Purchase
+					</button>
+				</div>
+			</div>
 		</div>
-		<div *ngIf="buttonIdx==2" style="padding: 10px; background-color: white;">
-			<img src="assets/graphics/splash/splash1024.png" width="100%">
-			<p>If you are familiar with RISK or Axis & Allies, this game will be very easy for you to pick up. If you aren't familiar with those games... you soon will be!</p>
-			<div class="headline2">What You Do On A Turn</div>
-			On your turn, complete a 2-part action sequence. When you are done, your turn is over and play continues with the next player.
-			<p>
-			<div class="headline2">Action Sequence</div>
-			1. Purchase Units<br>
-			2. Combat<br>
-			
-			<div class="headline2">Purchase Units</div>
-			<p><img src="assets/graphics/units/piece2u.png" height=20><img src="assets/graphics/units/piece3u.png" height=20><img src="assets/graphics/units/piece6u.png" height=20> The first thing you do on your turn is purchase new units at one of your factories. </p>
-			<p><img src="assets/graphics/units/piece9u.png" height=20> For ships, you purchase these in sea zones adjacent to your factories.</p>
-			<p><img src="assets/graphics/units/piece15.gif" height=20> You start the game with a single factory, which is on your capital. That's where the fun begins.</p>
-			<p><img src="assets/graphics/images/coin.png" height=20> You also start with 20 coins, but don't worry, there's more where that came from. At the end of your turn you collect new coins based on your income. 
-			<p> Ready for some bad news? You don't get to use those new units right away. That's because the new units are placed on the board at the end of your turn. This means you need to think! Part of your strategy involves planning for your future needs.</p>
-			<p><img src="assets/graphics/units/piece15.gif" height=20> To expand the number of factories available, simply purchase new ones. For example, if you are playing as European Union, your only factory is on Germany. However buying a new factory on France, will allow you to start placing new units there as well.</p>
-			<p><i class="fa fa-flask"></i> High Tech! You also have the option of developing technology in this phase. Technology is good. Very good. These can swing the entire balance of power in a game! See the technology tab in-game for complete instructions on how technology works.</p>
-			<p><img src="assets/graphics/units/piece19.gif" height=20> Want more money? Yes, you do. Purchasing an economic center will boost your income by 5 coins per turn. (Just one per territory though).<p>
-			<p>Once you are done shopping and spending money, press the "Purchase Complete" button which will take you to the next phase.</p>
-	
-			<div class="headline2">Combat</div>
-			<p>This is where things get real! In the combat phase of your turn you can do any or all of the following</p>
-			<li>Attack<br>
-			<li>Move<br>
-			<li>Diplomacy<br>
-			<li>End your Turn<br>
-	
-				<div class="headline2">Attack</div>
-			<p> The object of the game is to rule the world, so attacking other territories is not only fun, it's a must. Here are a few basics about attacking:<p>
-			<li> Peace in our Time! You cannot attack other players for the first 5 rounds. This gives you a chance to prepare your defenses for war. Round 6 is when things go down. Bad things.<br>
-			<li> There's still plenty to attack in the first 5 rounds. Any territory that is not owned by another player can be conquered. Defeating one of these will give you a one-time bonus of 2 infantry (<img src="assets/graphics/units/piece2u.png" height=20>) and one tank (<img src="assets/graphics/units/piece3u.png" height=20>). Gobble up as many of these as possible in the first 5 rounds.
-			<li> If you are able to defeat a non-player capital, you are pretty awesome! Way to go! For your work you get a bonus factory, and +10 coins per turn as long as your own that capital. The object is to control 6 of the 8 world capitals.<br>
-			<li> Controlling all territories of a single Superpower (which are color coded) gives you +10 coins per turn. So your primary objective is to secure your superpowers while trying to disrupt those of your enemies.<br>
-			<li> So you want to attack someone? Look for an enemy territory that is adjacent to your troops. Then click on that territory and press the "Attack" button.<br>
-			<li> Once you choose your target and move troops in, the units will show up on a combat board based on their attack and defense values. This will allow you to decide if you want to attack or not.<br>
-			<img src="assets/graphics/misc/combatBoard.png" height="140" title="Combat Board" class="center">
-			<li> Notice that on defense, both tanks and infantry defend at a "2" meaning a 33% chance of scoring a hit. This means, from a strategy perspective infantry are better for defense as they are cheaper than tanks, but tanks are better for attacks as they are 3 times as powerful when attacking. Understand how that works? Good!<br>
-			<li> Combat is resolved one round at a time. For each round of battle, each of your troops has a chance to score a hit, based on their attack strength. Infantry, which attack at a "1" have a 1 in 6 chance of hitting, and tanks, which attack at "3" have a 3 in 6 (or 50%) chance of hitting. Don't worry, the computer keeps track of all this for you.<br>
-			<li> We then add up the total number of hits for attacker and defender, and remove casualties starting with the lowest cost units first. Sorry infantry, but most battles you will be removed first.<br>
-			<li> If both sides have troops remaining, you will have the option of attacking another round, or retreating. The battle ends when one side is defeated or the attacker retreats. The defender does not have the option of retreating.<br>
-			<li> <img src="assets/graphics/units/piece10u.png" height=20> You start the game with a single General. This guy is awesome. Don't let him die because you don't get to buy another one. Your infantry double their attacks when the General is involved in the battle. Makes for easy-peasy wins.<br>
-			<li> Tanks don't float. Land units cannot move through sea zones. However you can load them onto transports (<img src="assets/graphics/units/piece4u.png" height=20>) and move them accross the sea and then unload them onto other land territories.<br>
-			<li> <img src="assets/graphics/units/piece6u.png" height=20><img src="assets/graphics/units/piece7u.png" height=20> Planes are unique in that they must always return after the battle.<br>
-			<li> Look through the (<i class="fa fa-fighter-jet"></i>) "Units" tab to see special attack and defence capabilities of each unit.<br>
-	
-				<div class="headline2">Move</div>
-			<p> Move! Move! For any unit that has not been involved in combat, you can move them up to their maximum movement value. (1 space for infantry, 2 for tanks. See units page for more info)</p>
-			<p> This allows you to move units up to the front lines (where they will probably die), or prepare your defenses against other players (where they will also probably die).</p>
-			<p> <img src="assets/graphics/units/piece11u.png" height=20> Heros Galore: You have a second hero unit! Yay! Each player starts with one Leader hero, which you need to keep alive. All tanks and infantry defend at a "3" if your leader is attacked. Plus you get +10 coin bonus per turn as long as he is alive. If he dies... no more bonus for you!
-	
-				<div class="headline2">Diplomacy</div>
-			<p>Let's make a deal! Diplomacy exists in one of 4 states between you and the other players in the game.<p>
-			<ul>
-				<li>Neutral<br>
-				<li>Peace <img src="assets/graphics/misc/news2.png" height=20><br>
-				<li>Ally <img src="assets/graphics/misc/news3.png" height=20><br>
-				<li>War <img src="assets/graphics/misc/news0.png" height=20><br>
-			</ul>
-			<p> For games that allow alliances, you will want to build them with other players to maximize your strategic benefits. Meaning, you want the good players on your team! Once you are allied with another player, you are on the same team and can win the game together.</p>
-			<p> For multi-player games, the 2 highest ranked players in the game cannot be on the same alliance. This is to keep the teams relatively balanced. (You won't have to worry about this for a while)</p>
-			<p> You must have a peace agreement with a player before offering an alliance. Just like in real life.<p>
-			<p> You can only make one diplomacy offer per turn, so choose wisely. You can, however, declare war as often as you like (which is more fun than peace anyways).</p>
-			<p> If you attack a player who you are not at war with, shame on you! You will pay a penalty. 5 coins, 10 coins or 15 coins depending on your diplomacy agreement before the attack.</p>
-			<p> To be a gentleman, you can declare war on a player, which allows you to attack for free next turn. This however tips your hand, and gives them the chance to attack you first, so be careful to weigh your options.</p>
-			<p> Too many friends! There is a limit to the number of alliances you can have, which means if you go over your limit, you will be forced to drop one of your allies. And guess what? They will hate you!</p>
-	
-			<div class="headline2">End Your Turn</div>
-			<p> Once you are done beating up on the weaker players, you can end your turn. Press the "Complete Turn" button.<p>
-			<p> This will automatically place your new units, collect your income, end your turn, and notify the next player of their turn.</p>
-			<p> Players then have up to 24 hours to take their turn before being skipped.</p>
-			<p> Ideally players will check the app several times per day to keep games moving, but just be aware that some games take many days, even weeks to complete.</p>
-			<p> Enjoy!</p>
-		</div>
-		<div *ngIf="buttonIdx==3" style="padding: 10px; background-color: white;">
-			<img src="assets/graphics/images/map.png" width="100%">
-			<img *ngFor="let sp of superpowers; let i = index" src="assets/graphics/images/flag{{i+1}}.gif" width="12%">
-			<ul  class="two-column">
-			<li *ngFor="let sp of superpowers; let i = index"><img src="assets/graphics/images/flag{{i+1}}.gif" height="20"> {{sp}}</li>
-			</ul>
-		</div>
-		<div *ngIf="buttonIdx==4" style="text-align: center;">
-	                <button (click)="emailPopup.show()" type="button" class="btn btn-primary roundButton">
-	                    <i class="fa fa-envelope" style="font-size: 24px;"></i><br>Email
-	                </button>
-	                <button (click)="audioPopup.show()" type="button" class="btn btn-primary roundButton">
-	                    <i class="fa fa-volume-up" style="font-size: 24px;"></i><br>Audio
-	                </button>
-	                <button (click)="scoreboardPopup.show()" type="button" class="btn btn-primary roundButton">
-	                    <i class="fa fa-list-alt" style="font-size: 24px;"></i><br>Scoreboard
-	                </button>
-	                <button (click)="videoPopup.show()" type="button" class="btn btn-primary roundButton">
-	                    <i class="fa fa-youtube-play" style="font-size: 24px;"></i><br>Videos
-	                </button>
-	                <div>
-		                <button (click)="purchasePopup.show()" type="button" class="btn btn-primary roundButton">
-		                    <i class="fa fa-usd"></i> Boardgame Purchase
-		                </button>
-	                </div>
-		</div>
 
-
-
-
-
-
-
-            </div>
-
+	</div>
+</div>
 <app-tech-popup #techPopup></app-tech-popup>
 <app-audio-popup #audioPopup></app-audio-popup>
 <app-units-popup #unitsPopup></app-units-popup>

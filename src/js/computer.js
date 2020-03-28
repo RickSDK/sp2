@@ -167,6 +167,10 @@ function getRandomTech(player) {
     return hotSpot;
 }*/
 function doCpuDiplomacyRespond(player, gameObj, superpowersData) {
+    if (player.allySpotsOpen < 0 && player.allies.length > 0) {
+        var nation = player.allies[0];
+        dropAllyOfNation(player, nation, gameObj, superpowersData)
+    }
     player.offers.forEach(function (nation) {
         var status = player.treaties[nation - 1];
         var treatyStatus = (status < 2) ? 2 : 3;
@@ -195,7 +199,7 @@ function doCpuDiplomacyOffer(player, gameObj, superpowersData) {
         if (rounds > 3)
             offerTreatyToNation(player2.nation, gameObj, player, superpowersData);
     }
-    if (status == 2 && player.allies.length < gameObj.maxAllies) {
+    if (status == 2 && player.allies.length < player.maxAlliesForPlayer) {
         offerTreatyToNation(player2.nation, gameObj, player, superpowersData);
     }
 }

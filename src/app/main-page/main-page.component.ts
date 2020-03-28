@@ -31,17 +31,19 @@ export class MainPageComponent extends BaseComponent implements OnInit {
     console.log('main-page ngOnInit', this.user);
   }
   multiplayGameClicked(login: any) {
-    if (this.user.username != 'Guest')
-      login.show();
-    else
+    if (this.user.userId > 0)
       this.router.navigate(['/multiplayer']);
-
+    else
+      login.show();
   }
   singlePlayerGame(startGame: any) {
     if (this.singleGameId > 0)
       this.router.navigate(['/board']);
     else
       startGame.show();
+  }
+  userUpdated($event) {
+    this.user = userObjFromUser();
   }
   flexSprite(width: number) {
     if (this.expandFlg)

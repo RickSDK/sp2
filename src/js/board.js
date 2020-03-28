@@ -1,3 +1,4 @@
+
 function refreshAllTerritories(gameObj, currentPlayer, superpowersData, yourPlayer) {
 	gameObj.territories.forEach(function (terr) {
 		refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPlayer);
@@ -61,10 +62,11 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	var unitUniqueHash = {};
 	var movableTroopCount = 0;
 	gameObj.units.forEach(function (unit) {
-		if(unit.dead)
+		if (unit.dead)
 			console.log('unit dead!!!', unit.piece);
 		if (unit.terr == terr.id && !unit.dead && !unitUniqueHash[unit.id]) {
 			unitUniqueHash[unit.id] = true;
+
 			units.push(unit);
 			if (currentPlayer && unit.owner != terr.owner && !enemyPiecesExist) {
 				if (currentPlayer.treaties[unit.owner - 1] == 0)
@@ -476,7 +478,6 @@ function rejectOfferFromNation(player, nation, gameObj) {
 }
 function dropAllyOfNation(player, nation, gameObj, superpowersData) {
 	var player2 = playerOfNation(nation, gameObj);
-	logDiplomacyNews(player, player2, 1);
 	changeTreaty(player, player2, 1, gameObj, superpowersData);
 }
 function offerTreatyToNation(nation, gameObj, currentPlayer, superpowersData) {
@@ -915,9 +916,9 @@ function addIncomeForPlayer(player, gameObj) {
 			units++;
 		}
 	});
-//	gameObj.players.forEach(function (player) {
-//		resetPlayerUnits(player, gameObj); // dont do this!
-//	});
+	//	gameObj.players.forEach(function (player) {
+	//		resetPlayerUnits(player, gameObj); // dont do this!
+	//	});
 	player.units = units;
 	addTechForPlayer(player);
 	figureOutTeams(gameObj);
@@ -1242,7 +1243,7 @@ function changeTreaty(p1, p2, type, gameObj, superpowersData, cost = 0) {
 
 	if (cost > 0) {
 		p1.treatiesAtStart[p2.nation - 1] = 0;
-        p1.money -= cost;
+		p1.money -= cost;
 		logItem(gameObj, p1, 'War Penalty!', cost + ' coin penalty paid to declare war on ' + superpowersData.superpowers[p2.nation] + '!', '', 0, p2.nation);
 	} else
 		logItem(gameObj, p1, 'Diplomacy', msg, '', 0, p2.nation);
@@ -1336,8 +1337,8 @@ function getDisplayQueueFromQueue(terr, gameObj) {
 	}
 	return queue;
 }
-function updateAdvisorInfo(terr, currentPlayer, user, gameObj, superpowers) {
 
+function updateAdvisorInfo(terr, currentPlayer, user, gameObj, superpowers) {
 	var strategyHint = '';
 	if (currentPlayer.status == 'Purchase' && terr.treatyStatus == 4 && user.rank <= 3) {
 		strategyHint = "Time to build troops. Buy your desired units, close this panel and then press 'Purchase Complete'.";
@@ -1364,10 +1365,10 @@ function updateAdvisorInfo(terr, currentPlayer, user, gameObj, superpowers) {
 	}
 	if (terr.treatyStatus == 0 && terr.owner > 0) {
 		var p2 = playerOfNation(terr.owner, gameObj);
-		if(currentPlayer.income>=p2.income)
+		if (currentPlayer.income >= p2.income)
 			strategyHint = superpowers[terr.owner] + ' is a very weak enemy that needs to be attacked and defeated! Prepare to move troops into position.';
 		else
-		strategyHint = superpowers[terr.owner] + ' is a very dangerous enemy that is at war with us. Consider getting additional help from allies or making peace.';
+			strategyHint = superpowers[terr.owner] + ' is a very dangerous enemy that is at war with us. Consider getting additional help from allies or making peace.';
 	}
 	if (terr.treatyStatus == 1 && terr.owner > 0) {
 		strategyHint = superpowers[terr.owner] + ' is not to be trusted. We need to keep an eye on these guys.';
@@ -1382,6 +1383,9 @@ function updateAdvisorInfo(terr, currentPlayer, user, gameObj, superpowers) {
 	//	if (hostileMessage.length > 0)
 	//		strategyHint = hostileMessage;
 	terr.strategyHint = strategyHint;
+}
+function getMaxAllies(player, gameObj) {
+	return gameObj.maxAllies;
 }
 function displayLeaderAndAdvisorInfo(terr, currentPlayer, yourPlayer, user, gameObj, superpowers) {
 	updateAdvisorInfo(terr, currentPlayer, user, gameObj, superpowers);
@@ -1410,11 +1414,14 @@ function displayLeaderAndAdvisorInfo(terr, currentPlayer, yourPlayer, user, game
 			//				terr.leaderMessage = "Time to build troops. Buy your desired units, close this panel and then press 'Purchase Complete'.";
 		} else {
 			if (terr.owner == 0)
-				terr.leaderMessage = neutralRandomMessage(terr.id);
+				if (terr.nation == 0)
+					terr.leaderMessage = neutralRandomMessage(terr.id);
+				else
+					terr.leaderMessage = neutralSuperpowerMessage(terr.nation);
 			else {
 				var status = treatyStatus(yourPlayer, terr.leader);
 				if (status == 0)
-					terr.leaderMessage = warMessageForNation(terr.leader);
+					terr.leaderMessage = warMessageForNation(terr, currentPlayer, gameObj);
 				if (status == 1)
 					terr.leaderMessage = neutralMessageForNation(terr.leader);
 				if (status == 2)
@@ -1424,6 +1431,20 @@ function displayLeaderAndAdvisorInfo(terr, currentPlayer, yourPlayer, user, game
 			}
 		}
 	}
+}
+function neutralSuperpowerMessage(nation) {
+	var m = [
+		'We will not take kindly to enemy troops in our territory!',
+		'I am going to tell you once, and then tell you again, you are a loser! Stay out of our lands.',
+		'European Union welcomes you with open arms. But we will be placing you in detention centers for 90 days. Please comply.',
+		'Please come quickly. Our concentration work camps need to be restocked with fresh workers.',
+		'The Emperor has asked us to kindly place your army in handcuffs and await further instructions.',
+		'Communism is a beautiful system, but only works once we have imposed total domination on the rest of the world. Please help us reach these ends.',
+		'We welcome anyone who shares our views on religion, politics and life. Everyone else must die!',
+		'We will crush your imperialist desires! You are not welcome in any of our lands. Go away!',
+		'Greetings weak dictator. You are your bombs are not welcome here.',
+	];
+	return m[nation];
 }
 function neutralMessageForNation(nation) {
 	var m = [
@@ -1439,19 +1460,38 @@ function neutralMessageForNation(nation) {
 	];
 	return m[nation];
 }
-function warMessageForNation(nation) {
-	var m = [
-		'We will not take kindly to enemy troops in our territory. Prepare for war!',
-		'Now you have really made me angry. You are not only a loser, but a big loser. A really, really big loser.',
-		'Hey scumbag! It\'s over for you. You do not stand a chance. We will own you!',
-		'The armies of mother Russia never surrender! We will defeat you even if it kills every one of us!',
-		'You have brought great dishonor to your corrupt nation and to your greedy people. Prepare for defeat!',
-		'The people\'s cannon is pointed at your hearts! Surrender now or we will point it at your heads!',
-		'Prepare for jihad! First we will attack you with a million strikes of total destruction. Then we will make more threats!',
-		'We tried to bring peace to your nation, but have failed. Now we must kill you.',
-		'Please send us the coordinates of your leadership bunker. Guided missiles have already been launched!',
-	];
-	return m[nation];
+
+function warMessageForNation(terr, player, gameObj) {
+	var p2 = playerOfNation(terr.owner, gameObj);
+	if (p2.income >= player.income-20) {
+		var m = [
+			'We will not take kindly to enemy troops in our territory. Prepare for war!',
+			'Now you have really made me angry. You are not only a loser, but a big loser. A really, really big loser.',
+			'Hey scumbag! It\'s over for you. You do not stand a chance. We will own you!',
+			'The armies of mother Russia never surrender! We will defeat you even if it kills every one of us!',
+			'You have brought great dishonor to your corrupt nation and to your greedy people. Prepare for defeat!',
+			'The people\'s cannon is pointed at your hearts! Surrender now or we will point it at your heads!',
+			'Prepare for jihad! First we will attack you with a million strikes of total destruction. Then we will make more threats!',
+			'We tried to bring peace to your nation, but have failed. Now we must kill you.',
+			'Please send us the coordinates of your leadership bunker. Guided missiles have already been launched!',
+		];
+		return m[terr.owner];
+
+	} else {
+		var m = [
+			'We will not take kindly to enemy troops in our territory. Prepare for war!',
+			'Let\'s make a deal! I am willing to sell you 15 luxury casinos if you end the madness.',
+			'Hey budddy, good pal. We have had our differences, but it\'s time to be firends again.',
+			'The armies of mother Russia never surrender! We would, however, be interested in joining your fine nation.',
+			'Rather than killing each other, and ending up both in last place, let\'s work together to defeat the others!',
+			'We have discussed things and, good news, we have decided to allow you to live. Let\'s sign a peace agreement right away.',
+			'What\'s a little jihad amongst friends? It is time for us to join forces and all live in harmony sharing our great values equally.',
+			'you know what? We were wrong about you. I think we might just be able to live side by side in harmony. Sign this agreement quickly before we change our minds.',
+			'Hola amigos! We are all good and friendly people. Let\'s sign an agreement and dane the night away.',
+		];
+		return m[terr.owner];
+
+	}
 }
 function neutralRandomMessage(id) {
 	var m = [
@@ -1471,9 +1511,7 @@ function neutralRandomMessage(id) {
 	];
 	var i = Math.floor((id % m.length));
 	return m[i];
-	//
 }
-
 function unitsForTerr(terr, units) {
 	var tUnits = [];
 	for (var x = 0; x < units.length; x++) {
@@ -1625,7 +1663,7 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 			winnningPlayer = 'Team ' + team.name;
 		}
 	});
-	gameObj.winningTeamFlg = (yourPlayer && yourPlayer.team==winningTeam);
+	gameObj.winningTeamFlg = (yourPlayer && yourPlayer.team == winningTeam);
 	var winningTeamList = playersOfTeam(winningTeam, gameObj, superpowersData);
 	if (gameObj.gameOver) {
 		var msg = 'Victory!  Game won by ' + winningTeamList.join(', ');
@@ -1646,7 +1684,7 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 			logItem(gameObj, currentPlayer, 'Victory Conditions Met', msg);
 			playVoiceClip('conditionsMet.mp3');
 		} else {
-			if (victoryRound < gameObj.round || (victoryRound == gameObj.round && gameObj.nation == currentPlayer.nation && currentPlayer.status=='Waiting')) {
+			if (victoryRound < gameObj.round || (victoryRound == gameObj.round && gameObj.nation == currentPlayer.nation && currentPlayer.status == 'Waiting')) {
 				var msg = 'Game won by ' + winningTeamList.join(', ');
 				gameObj.currentSituation = msg;
 				logItem(gameObj, currentPlayer, 'Game Over!', msg);
@@ -1655,7 +1693,7 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 				playSound('tada.mp3');
 				gameObj.gameOver = true;
 				gameObj.actionButtonMessage = '';
-				if(!gameObj.multiPlayerFlg)
+				if (!gameObj.multiPlayerFlg)
 					clearCurrentGameId();
 			}
 		}
@@ -1767,7 +1805,7 @@ function customMilitaryReport1(obj, gameObj, line1) {
 }
 function customMilitaryReport2(obj, lineAlt, round) {
 	var voiceOverId = obj.teamCapitals + 10;
-	var line = 'Round '+round+'.';
+	var line = 'Round ' + round + '.';
 	if (obj.nationLost.length > 0)
 		line += ' An enemy scurge currently occupies part of the motherland! Send forces in to reclaim ' + obj.nationLost + '.';
 

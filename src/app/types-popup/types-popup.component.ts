@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
 declare var getGameTypesObj: any;
@@ -8,12 +9,12 @@ declare var getGameTypesObj: any;
   templateUrl: './types-popup.component.html',
   styleUrls: ['./types-popup.component.scss']
 })
-export class TypesPopupComponent implements OnInit {
+export class TypesPopupComponent extends BaseComponent implements OnInit {
   public gameTypes1 = [];
   public gameTypes2 = [];
   public gameTypes3 = [];
   
-  constructor() { }
+  constructor() { super(); }
 
   ngOnInit(): void {
   	this.gameTypes1 = getGameTypesObj(false, 1);

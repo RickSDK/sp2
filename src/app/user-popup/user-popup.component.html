@@ -2,17 +2,57 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                User
+                <b><i class="fa fa-user"></i> User</b>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" *ngIf="user">
 
-		body!
+                <table>
+                    <tr>
+                        <td><img class="terr-card" (click)="editUserImageFlg = !editUserImageFlg" src="{{user.imgSrc}}"
+                                width="100%"></td>
+                        <td>
+                            <div class="terr-card" (click)="editUseNameFlg = !editUseNameFlg">
+                                <div>{{user.userName}}</div>
+                                <div style="background-color: white; color: black;">
+                                    <img src="assets/graphics/ranks/rank{{user.rank}}.png" width="100%">
+                                    <div class="darkBlueBg">{{superpowersData.ranks[user.rank].name}}</div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+                <div *ngIf="editUserImageFlg" class="terr-card" style="text-align: center;">
+                    <div style="height: 48px;">Choose a new Profile Image
+                        <button (click)="editUserImageFlg=false" type="button" class="btn btn-primary roundButton"
+                            style="float: right;"><i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                    <img *ngFor="let image of localAvatars" src="assets/graphics/avatars/{{image}}" height="100"
+                        class="roundedPanel" (click)="changeImage(image)">
+                </div>
+
+                <div *ngIf="editUseNameFlg" class="terr-card" style="text-align: center;">
+                    <div style="height: 48px;">Choose a User Name
+                        <button (click)="editUseNameFlg=false" type="button" class="btn btn-primary roundButton"
+                            style="float: right;"><i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                    <div>
+                        <input type="text" id="userName" name="userName" placeholder="Email" maxlength="16"
+                            (click)="clearValue($event)" [value]="user.userName">
+                        <button (click)="updateUsername()" type="button" class="btn btn-primary roundButton tall"
+                        >Update
+                        </button>
+                    </div>
+                </div>
+
+
             </div>
             <div class="modal-footer">
-            	footer!
             </div>
         </div>
     </div>

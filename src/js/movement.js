@@ -33,7 +33,7 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
             return true;
     }
     if (unit.type == 1 && unit.terr >= 79) {
-        if (distObj.air == 1)
+        if (distObj.air == 1 && toTerr.nation < 99)
             return true;
         else
             return false;
@@ -125,7 +125,12 @@ function moveSelectedUnits(moveTerr, selectedTerritory) {
                 terr1Id = unit.terr;
                 piece = unit.piece;
                 unit.terr = selectedTerritory.id;
-                unit.movesLeft = 0;
+                if (unit.piece == 4)
+                    unit.movesLeft--;
+                else
+                    unit.movesLeft = 0;
+                if (unit.cargoOf > 0 && unit.type == 1 && selectedTerritory.nation < 99)
+                    unit.cargoOf = 0;
                 if ((unit.type == 1 || unit.type == 2) && selectedTerritory.nation == 99)
                     findTransportForThisCargo(unit, selectedTerritory);
                 if (unit.cargo && unit.cargo.length > 0)

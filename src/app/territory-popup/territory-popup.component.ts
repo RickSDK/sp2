@@ -87,7 +87,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     $("#territoryPopup").modal();
 
     $('#territoryPopup').on('hidden.bs.modal', function () {
-      if (gameObj.round == 1 && user.rank < 2) {
+      if (gameObj.round <= 2 && user.rank < 2) {
         if (currentPlayer.status == 'Purchase') {
           if (currentPlayer.money == 20)
             playVoiceClip('bt07Germany.mp3');
@@ -95,7 +95,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
             playVoiceClip('bt08PurchComplete.mp3');
         } else {
           var ter = gameObj.territories[61];
-          if (ter.owner == 2) {
+          if (ter.owner == 2 && gameObj.round == 1) {
             showAlertPopup('Good job! Click "Complete Turn" at the top to finish your turn.');
             highlightCompleteTurnButton();
           }
@@ -106,7 +106,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     console.log(terr.name, terr);
     var totalUnitsThatCanMove = 0;
 
-    
+
     var moveTerr = [];
     this.gameObj.territories.forEach(function (terr) {
       totalUnitsThatCanMove += terr.movableTroopCount;
@@ -133,7 +133,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       else
         this.changeProdType(0);
       this.optionType = 'production';
-   
+
     }
     this.checkSendButtonStatus(null);
     checkCargoForTerr(terr, gameObj);
@@ -341,6 +341,21 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     playClick();
     removeCasualties(this.displayBattle, this.gameObj, this.currentPlayer, false, this.superpowersData);
     this.displayBattle.phase = 1;
+  }
+  pullSelectTroopsMidBattle(num: any) {
+    var attackUnits = [];
+    this.displayBattle.attackUnits.forEach(unit => {
+      if (num == 1 && unit.piece == 10)
+        return;
+      if (num == 2 && unit.type == 2)
+        return;
+      if (num == 3 && unit.piece == 7)
+        return;
+      attackUnits.push(unit);
+    });
+    this.displayBattle.attackUnits = attackUnits;
+    this.displayBattle.militaryObj.includesGeneral = false;
+    this.removeCasualties();
   }
   changeDiceUnitsToImg(units: any, image: string) {
     units.forEach(unit => {

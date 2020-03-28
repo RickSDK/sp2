@@ -61,6 +61,7 @@ declare var checkVictoryConditions: any;
 declare var getMilitaryReportObj: any;
 declare var declareWarOnNation: any;
 declare var refreshAllTerritories: any;
+declare var getMaxAllies: any;
 //---spLib.js
 declare var scrollToCapital: any;
 //---computer.js
@@ -184,9 +185,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 				var pObj = {};
 				if (localStorage.customGame == 'Y') {
-					type = localStorage.customGameType;
-					numPlayers = localStorage.customNumPlayers;
-					pObj = JSON.parse(localStorage.customGamePlayers);
+//					type = localStorage.customGameType;
+//					numPlayers = localStorage.customNumPlayers;
+//					pObj = JSON.parse(localStorage.customGamePlayers);
 				}
 				this.gameObj = createNewGameSimple(type, numPlayers, name, startingNation, pObj);
 				this.gameObj.difficultyNum = localStorage.difficultyNum || 1;
@@ -247,7 +248,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		//#####################################################################
 		//#####################################################################
 		//-------------------- test
-		//this.gameObj.turnId = 3; //<--- test
+		//this.gameObj.turnId = 4; //<--- test
 		this.haltPurchaseFlg = false;
 		this.haltCombatActionFlg = false;
 		this.haltActionFlg = (localStorage.haltActionFlg == 'Y');
@@ -267,10 +268,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.currentPlayer.offers = [];
 		refreshAllTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer)
 		this.findTargets();
+		console.log('this.currentPlayer.secondaryTargetId', this.currentPlayer.secondaryTargetId);
 
 		this.currentPlayer.allies = alliesFromTreaties(this.currentPlayer);
+		this.currentPlayer.maxAlliesForPlayer = getMaxAllies(this.currentPlayer, this.gameObj);
 		this.currentPlayer.treatiesAtStart = this.currentPlayer.treaties.slice(0);
-		this.currentPlayer.allySpotsOpen = this.gameObj.maxAllies - this.currentPlayer.allies.length;
+		this.currentPlayer.allySpotsOpen = this.currentPlayer.maxAlliesForPlayer - this.currentPlayer.allies.length;
 
 		if (this.gameObj.gameOver) {
 			console.log('game over!!');
@@ -422,11 +425,14 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	introContinuePressed() {
 		closePopup('introPopup');
-		playVoiceClip('bt07Germany.mp3');
+		playVoiceClip('bt02EU.mp3');
 		this.playGameButtonPressed();
 		this.forcedClickNation = 7;
 		this.currentPlayer.placedInf = 3;
-		highlightCapital(2);
+		setTimeout(() => {
+			playVoiceClip('bt07Germany.mp3');
+			highlightCapital(2);			
+		}, 5000);
 	}
 	playGameButtonPressed() {
 		closePopup('advisorPopup');

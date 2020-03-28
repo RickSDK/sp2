@@ -6,6 +6,13 @@
     cannot be allies with each other in this game.</div>
 
 
+
+
+<button (click)="infoFlg=!infoFlg" type="button" class="btn btn-secondary roundButton"><i
+        class="fa fa-info-circle"></i> Diplomacy Info</button>
+
+<div class="borderClass2" *ngIf="infoFlg">
+
     <table class="spTable">
         <tr>
             <th colspan="2">{{gameObj.name}}</th>
@@ -33,11 +40,7 @@
             <td>{{gameObj.currentSituation}}</td>
         </tr>
     </table>
-
-<button (click)="infoFlg=!infoFlg" type="button" class="btn btn-secondary roundButton"><i
-        class="fa fa-info-circle"></i> Diplomacy Info</button>
-
-<div class="borderClass2" *ngIf="infoFlg">
+    
     Offer up to 1 treaty per turn, however you can declare war as much as you want.<br>
     <table class="spTable" border=1 style="text-align: left;">
         <tr>

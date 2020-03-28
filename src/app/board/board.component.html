@@ -40,7 +40,7 @@
 	style="z-index: 201; text-align: center; position: fixed; width: 100%; top: 0px; height: 44px; background-color: #ccc; box-shadow: 2px 2px 3px #000; max-height: 44px; line-height: 1.5em; overflow: hidden;">
 	<a routerLink="/"><button id="homeButton" type="button" class="btn btn-secondary roundButton"><i
 				class="fa fa-home"></i></button></a>
-	<button id="" (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 3)" type="button"
+	<button id="" (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 4)" type="button"
 		class="btn btn-primary roundButton"><i class="fa fa-info-circle"></i></button>
 	<button *ngIf="ableToTakeThisTurn && gameObj.actionButtonMessage.length>0 && !hideActionButton"
 		(click)="completeTurnButtonPressed()" id="completeTurnButton" type="button"
@@ -107,17 +107,17 @@
 		<button id="" (click)="audioPopup.show()" type="button" class="btn btn-primary tight roundButton"
 			style="line-height: 14px;"><i class="fa fa-volume-up"></i><br><span
 				style="font-size: 10px;">Sound</span></button>
-		<button id="" (click)="computerGo()" type="button" class="btn btn-secondary tight roundButton"
+		<!--<button id="" (click)="computerGo()" type="button" class="btn btn-secondary tight roundButton"
 			style="line-height: 14px;"><i class="fa fa-android"></i><br><span style="font-size: 10px;"><span
 					*ngIf="haltActionFlg"><i class="fa fa-bug"></i></span>CPU
 				Go</span></button>
 		<button id="" (click)="haultAction()" type="button" class="btn btn-secondary tight roundButton"
 			style="line-height: 14px;"><i *ngIf="!haltActionFlg" class="fa fa-pause"></i><i *ngIf="haltActionFlg"
 				class="fa fa-play"></i><br><span style="font-size: 10px;">
-				Halt</span></button>
-		<button id="" (click)="toggleAdminFlg()" type="button" class="btn btn-secondary tight roundButton"
-			style="line-height: 14px;"><i *ngIf="!haltActionFlg" class="fa fa-lock"></i><i *ngIf="haltActionFlg"
-				class="fa fa-play"></i><br><span style="font-size: 10px;">
+				Halt</span></button>-->
+		<button *ngIf="user.userName=='Rick'" (click)="toggleAdminFlg()" type="button" class="btn btn-secondary tight roundButton"
+			style="line-height: 14px;"><i *ngIf="!haltActionFlg" class="fa fa-lock"></i><br>
+			<span style="font-size: 10px;">
 				Admin</span></button>
 	</span>
 </div>

@@ -796,6 +796,10 @@ function hostileActObj(type, terr, gameObj, player) {
         message = 'Can\'t move into territories just defeated.';
         allowFlg = false;
     }
+    if(terr.owner > 0 && gameObj.round < gameObj.attack && terr.treatyStatus <= 2) {
+        message = 'Players cannot be attacked until round '+gameObj.attack+'.';
+        allowFlg = false;
+    }
     if (hostileType) {
         var cost = costToAttack(terr, player);
         if (cost > 0) {
@@ -815,6 +819,10 @@ function hostileActObj(type, terr, gameObj, player) {
         }
         if (terr.attackedByNation == player.nation && terr.attackedRound == gameObj.round) {
             message = 'Can\'t attack the same territory twice.';
+            allowFlg = false;
+        }
+        if(terr.owner > 0 && gameObj.round < gameObj.attack) {
+            message = 'You can\'t attack other players, or be attacked until round '+gameObj.attack+'.';
             allowFlg = false;
         }
         if (terr.owner > 0 && gameObj.round == gameObj.attack) {

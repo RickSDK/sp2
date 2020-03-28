@@ -19,6 +19,24 @@ export class UnitsPopupComponent extends BaseComponent implements OnInit {
 	public loadingFlg = true;
 	public unitList = [];
 	public userStrategies = [];
+	public classTypes = [
+		'Land Units',
+		'Air Units',
+		'Sea Units',
+		'Special Units 1',
+		'Special Units 2',
+		'Special Units 3',
+		'Special Units 4',
+	];
+	public rankTypes = [
+		'',
+		'',
+		'',
+		'Sergeant',
+		'Warrant Officer',
+		'Lieutenant',
+		'Brig General',
+	];
 	//  public buttonIdx:number;
 	public selectedUnit: any;
 
@@ -92,6 +110,12 @@ export class UnitsPopupComponent extends BaseComponent implements OnInit {
 			return "assets/graphics/units/piece" + piece + "u.png";
 		else
 			return "assets/graphics/units/piece" + piece + ".gif";
+	}
+	ngClassUnit(num1: number, num2: number) {
+		if (num1 == num2)
+			return 'shadowedYellow';
+		else
+			return 'shadowed';
 	}
 	uploadStrategyPressed(unit) {
 	}

@@ -2,40 +2,68 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <img src="assets/graphics/images/superpowers.png" title="Superpowers!" height=30> &nbsp;<b>Types</b>
+                <b><i class="fa fa-list-alt"></i> Types</b> 
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body" style="padding: 0;">
 		<div style="text-align: center;">Object of all games is for one team (or 1 player) to controll 6 of the original 8 capitals for one complete turn.</div>
-		
-            <table border=0 class="spTable" style="border: 1px solid black; margin: 5px;">
+
+        
+
+        <div style="text-align: center; padding-bottom: 5px;">
+            <div class="btn-group">
+                <button (click)="segmentIdx=0" type="button"
+                    class="btn btn-default roundButton" [ngClass]="ngClassSegment(segmentIdx,0)"
+                    style="min-width: 80px;">
+                    <i class="fa fa-handshake-o" style="font-size: 26px;"></i>
+                    <div style="font-size: 10px;">Diplomacy</div>
+                </button>
+                <button (click)="segmentIdx=1" type="button"
+                    class="btn btn-default roundButton" [ngClass]="ngClassSegment(segmentIdx,1)"
+                    style="min-width: 80px;">
+                    <i class="fa fa-lock" style="font-size: 26px;"></i>
+                    <div style="font-size: 10px;">Locked</div>
+                </button>
+                <button (click)="segmentIdx=2" type="button"
+                    class="btn btn-default roundButton" [ngClass]="ngClassSegment(segmentIdx,2)"
+                    style="min-width: 80px;">
+                    <i class="fa fa-user" style="font-size: 26px;"></i>
+                    <div style="font-size: 10px;">Free-For-All</div>
+                </button>
+            </div>
+        </div>
+
+
+
+
+            <table *ngIf="segmentIdx==0" class="spTable" style="border: 1px solid black; margin: 5px;">
             	<tr><th align=center>Diplomacy Games</th></tr>
             	<tr *ngFor="let game of gameTypes1" style="border-bottom: 1px solid black;">
             		<td>
             			<div style="text-align: left;"><b><i class="{{game.icon}}"></i>  {{game.name}}</b>: {{game.desc}}</div>
-            			<div><b>Win:</b> 3 pts ({{game.win}} pts MM), <b>Loss:</b> {{game.loss}} pts</div>
+            			<div><b>Win:</b> 3 pts, <b>Loss:</b> {{game.loss}} pts</div>
             		</td>
             	</tr>
             </table>
 
-            <table border=0 class="spTable" style="border: 1px solid black; margin: 5px;">
+            <table *ngIf="segmentIdx==1"class="spTable" style="border: 1px solid black; margin: 5px;">
             	<tr><th align=center>Locked-Team Games</th></tr>
             	<tr *ngFor="let game of gameTypes2" style="border-bottom: 1px solid black;">
             		<td>
             			<div style="text-align: left;"><b><i class="{{game.icon}}"></i>  {{game.name}}</b>: {{game.desc}}</div>
-            			<div><b>Win:</b> 3 pts ({{game.win}} pts MM), <b>Loss:</b> {{game.loss}} pts</div>
+            			<div><b>Win:</b> 3 pts, <b>Loss:</b> {{game.loss}} pts</div>
             		</td>
             	</tr>
             </table>
 
-            <table border=0 class="spTable" style="border: 1px solid black; margin: 5px;">
+            <table *ngIf="segmentIdx==2" class="spTable" style="border: 1px solid black; margin: 5px;">
             	<tr><th align=center>Free-For-All Games</th></tr>
             	<tr *ngFor="let game of gameTypes3" style="border-bottom: 1px solid black;">
             		<td>
             			<div style="text-align: left;"><b><i class="{{game.icon}}"></i>  {{game.name}}</b>: {{game.desc}}</div>
-            			<div><b>Win:</b> 3 pts ({{game.win}} pts MM), <b>Loss:</b> {{game.loss}} pts</div>
+            			<div><b>Win:</b> 3 pts, <b>Loss:</b> {{game.loss}} pts</div>
             		</td>
             	</tr>
             </table>

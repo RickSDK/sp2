@@ -75,14 +75,18 @@ export class BaseComponent implements OnInit {
     $(id).modal('hide');
   }
   showUnitPopup(unit: any) {
-    let piece = unit.piece || unit.id;
+    var piece = 1;
+    if (unit > 0)
+      piece = unit;
+    else
+      piece = unit.piece || unit.id;
     this.selectedUnit = this.superpowersData.units[piece];
     displayFixedPopup('unitPopup');
   }
-  displaySPPopup(id:string) {
+  displaySPPopup(id: string) {
     displayFixedPopup(id);
   }
-  showAlertPopup(msg:string, num=0) {
+  showAlertPopup(msg: string, num = 0) {
     showAlertPopup(msg, num);
   }
 }

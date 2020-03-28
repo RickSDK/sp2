@@ -4,6 +4,7 @@ declare var declareWarOnNation: any;
 declare var offerTreatyToNation: any;
 declare var refreshTerritory: any;
 declare var displayLeaderAndAdvisorInfo: any;
+declare var playSound: any;
 declare var $: any;
 
 
@@ -29,6 +30,8 @@ export class TerrAdviceComponent implements OnInit {
     return { 'background-color': color, 'color': 'black' };
   }
   declareWar() {
+    playSound('shotgun.mp3');
+    playSound('warning.mp3');
     declareWarOnNation(this.selectedTerritory.owner, this.gameObj, this.currentPlayer, this.superpowersData)
     refreshTerritory(this.selectedTerritory, this.gameObj, this.currentPlayer, this.superpowersData, this.currentPlayer);
     displayLeaderAndAdvisorInfo(this.selectedTerritory, this.currentPlayer, this.currentPlayer, this.user, this.gameObj, this.superpowersData.superpowers);

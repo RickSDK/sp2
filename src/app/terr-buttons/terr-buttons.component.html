@@ -10,28 +10,21 @@
             <div *ngIf="0" style="font-size: 10px;">-Troop Movement-</div>
 
             <button [disabled]="optionType=='movement'" (click)="changeOptionType('movement')" type="button"
-                class="btn btn-success roundButton"><i class="fa fa-arrow-down"></i>&nbsp; <span
-                    ng-hide="loadingFlg">Move Here</span><span *ngIf="loadingFlg"
-                    style="color: white; font-size: 14px;"><i class="fa fa-spinner fa-spin"></i>
-                    Loading...</span></button>
+                class="btn btn-success roundButton"><i class="fa fa-arrow-down"></i>&nbsp; Move Here</button>
             <button [disabled]="optionType=='movement'"
                 *ngIf="selectedTerritory.treatyStatus==4 && selectedTerritory.nation==99"
-                (click)="changeOptionType('movement')" id="" type="button" class="btn btn-success roundButton"><i
-                    class="fa fa-ship"></i>&nbsp; <span ng-hide="loadingFlg">Load Ships</span><span *ngIf="loadingFlg"
-                    style="color: white; font-size: 14px;"><i class="fa fa-spinner fa-spin"></i>
-                    Loading...</span></button>
+                (click)="changeOptionType('movement')" type="button" class="btn btn-success roundButton"><i
+                    class="fa fa-ship"></i>&nbsp; Load Ships</button>
             <button [disabled]="optionType=='loadPlanes'" *ngIf="selectedTerritory.bomberCount>0"
                 (click)="changeOptionType('loadPlanes')" id="loadPlaneButton" type="button"
                 class="btn btn-success roundButton"
                 title="Each bomber can carry up to 2 infantry, plus hero units."><img
-                    src="assets/graphics/units/piece7u.png" height="20" class="shadowedWhite"> Load
-                Bombers</button>
+                    src="assets/graphics/units/piece7u.png" height="20" class="shadowedWhite"> Load Bombers</button>
             <button [disabled]="optionType=='loadChoppers'" *ngIf="selectedTerritory.cobraCount>0 "
-                (click)="changeOptionType('loadChoppers')" id="loadPlaneButton" type="button"
+                (click)="changeOptionType('loadChoppers')"type="button"
                 class="btn btn-success roundButton" title=""><img src="assets/graphics/units/piece50u.png" height="20"
-                    class="shadowedWhite"> Load
-                Cobras</button>
-            <button *ngIf="selectedTerritory.paratrooperCount>0" (click)="unloadAllParatroopers()" type="button"
+                    class="shadowedWhite"> Load Cobras</button>
+            <button *ngIf="selectedTerritory.paratrooperCount > 0" (click)="unloadAllParatroopers()" type="button"
                 class="btn btn-success roundButton"><i class="fa fa-plane"></i>
                 Un-Load All Paratroopers</button>
             <button
@@ -56,9 +49,9 @@
                 <br>Cruise Missile</button>
             <button *ngIf="selectedTerritory.factoryCount>0" [disabled]="optionType=='bomb'"
                 (click)="changeOptionType('bomb')" type="button" class="btn btn-danger roundButton">
-                <img src="assets/graphics/units/piece7u.png" height="30" class="shadowedWhite" />
-                <br>Strategic
-                Bomb</button>
+                <i class="fa fa-plane" style="font-size: 28px;"></i>
+                <!--<img src="assets/graphics/units/piece7u.png" height="30" class="shadowedWhite" />-->
+                <br>Strategic Bomb</button>
             <button
                 *ngIf="currentPlayer.allies.length>0 && selectedTerritory.nation<99 && selectedTerritory.treatyStatus != 2"
                 (click)="alliesInfoButtonClicked()" type="button" class="btn btn-warning roundButton">
@@ -67,7 +60,7 @@
         <!---- allies buttons-->
         <div *ngIf="showAlliesButtonsIdx == selectedTerritory.id && selectedTerritory.nation<99" class="borderClass3">
             <div style="font-size: 10px;">-Commands to Allies-</div>
-            <button *ngIf="selectedTerritory.treatyStatus==0" (click)="secondaryIndex=1" type="button"
+            <button *ngIf="selectedTerritory.treatyStatus < 3" (click)="secondaryIndex=1" type="button"
                 class="btn btn-warning roundButton"><i class="fa fa-bullseye"></i> Target</button>
             <button *ngIf="selectedTerritory.treatyStatus>2" (click)="secondaryIndex=2" type="button"
                 class="btn btn-warning roundButton"><i class="fa fa-shield"></i> Fortify</button>

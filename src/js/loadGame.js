@@ -236,15 +236,12 @@ function loadPlayers(numPlayers, startingNation, rank) {
 	var humanTurn=Math.floor((Math.random() * numPlayers));
 	if(!rank || rank < 2)
 		humanTurn=0;
-	if(!rank || rank < 2)
-		numPlayers=2;
 
 	var nationsHash={};
 	nationsHash[startingNation]=1;
 	var cpuNum=1;
 	for(var x=0; x<numPlayers; x++) {
 		var cpuFlg=true;
-		var searching=true;
 		var nation=0;
 		var userName = 'CPU'+cpuNum;
 		if(x==humanTurn) {
@@ -253,8 +250,6 @@ function loadPlayers(numPlayers, startingNation, rank) {
 			userName='You';
 		} else
 			cpuNum++;
-		if(rank==0 && x==1)
-			nation=4;
 		while(nation==0) {
 			var possibleNation = Math.floor((Math.random() * 8))+1;
 			if(!nationsHash[possibleNation]) {

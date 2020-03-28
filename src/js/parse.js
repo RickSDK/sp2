@@ -3,20 +3,18 @@ function userObjFromUser() {
 	var rankStr = localStorage.rank || '';
 	var password = localStorage.password || '';
 	var userGraphic = localStorage.userGraphic || 'soldier.JPG';
+	var avatar = localStorage.avatar || 'avatar5.jpg';
 	var ip = localStorage.ip || '';
 	var speedType = localStorage.speedType || '';
 	
 	var rank = numberVal(rankStr);
-	var nextRank = rank+1;
 	if(rank>18)
 		rank=18;
 
 	var code = btoa(password);
-	var ranks=getAllRanks();
-	var desc = '';
-	if(ranks[nextRank] && ranks[nextRank].desc && ranks[nextRank].desc.length>0)
-		desc = ranks[nextRank].desc;
-	return {userName: username, rank: rank, password: password, code: code, userGraphic: userGraphic, currentRank: ranks[rank].name, desc: desc, ip: ip, speedType: speedType, userId: numberVal(localStorage.userId), league_id: numberVal(localStorage.league_id), userLc: username.toLowerCase()};
+	//var src = 'http://www.superpowersgame.com/graphics/avitars/'+userGraphic;
+	var imgSrc = 'assets/graphics/avatars/'+avatar;
+	return {userName: username, rank: rank, password: password, code: code, imgSrc: imgSrc, userGraphic: userGraphic, serverImgFlg: (localStorage.serverImgFlg=='Y'), ip: ip, speedType: speedType, avatar: avatar, userId: numberVal(localStorage.userId), league_id: numberVal(localStorage.league_id), userLc: username.toLowerCase()};
 }
 function getMultObjFromLine(line) {
 	var obj = new Object;

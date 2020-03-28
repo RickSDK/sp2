@@ -24,8 +24,7 @@
         <th style="padding: 5px;"></th>
         <th style="padding: 5px;">Player</th>
         <th style="padding: 5px;"><span title="Income">Inc</span></th>
-        <th style="padding: 5px;"><span title="Coins"><img src="assets/graphics/images/coin.png"
-                    height=20></span></th>
+        <th style="padding: 5px;"><i class="fa fa-usd"></i></th>
         <th style="padding: 5px;"><span title="General Alive?"><img
                     src="assets/graphics/units/piece10u.png" height=20></span></th>
         <th style="padding: 5px;"><span title="Leader Alive?"><img
@@ -91,28 +90,28 @@
 <table class="spTable" *ngIf="gameObj && segmentIdx==1">
     <tr>
         <th valign=top></th>
-        <th valign=top>Player</th>
-        <th valign=top><span title="Superpowers (10 coins each)">SP</span>
-            <div style="color: #fc0;">+10</div>
+        <th valign=top class="centerText">Player</th>
+        <th valign=top class="centerText"><span title="Superpowers (10 coins each)">SP</span>
+            <div style="color: #def;">+10</div>
         </th>
-        <th><span title="Capitals (10 coins each)">Cap</span>
-            <div style="color: #fc0;">+10</div>
+        <th><span title="Capitals (10 coins each)" class="centerText">Cap</span>
+            <div style="color: #def;">+10</div>
         </th>
-        <th title="Leader Bonus? (10 coins)"><img src="assets/graphics/units/piece11u.png" height=20>
-            <div style="color: #fc0;">+10</div>
+        <th title="Leader Bonus? (10 coins)" class="centerText"><img src="assets/graphics/units/piece11u.png" height=20>
+            <div style="color: #def;">+10</div>
         </th>
-        <th title="Economic Centers (5 coins each)">
+        <th title="Economic Centers (5 coins each)" class="centerText">
             <div><img src="assets/graphics/units/piece19.gif" height=15></div>
-            <div style="color: #fc0;">+5</div>
+            <div style="color: #def;">+5</div>
         </th>
-        <th title="Economic Techs Owned (5 coins each)"><i class="fa fa-flask"></i>
-            <div style="color: #fc0;">+5</div>
+        <th title="Economic Techs Owned (5 coins each)" class="centerText"><i class="fa fa-flask"></i>
+            <div style="color: #def;">+5</div>
         </th>
-        <th title="Bombed Factories (-5 coins each)"><img src="assets/graphics/units/piece103.gif"
+        <th title="Bombed Factories (-5 coins each)" class="centerText"><img src="assets/graphics/units/piece103.gif"
                 height=15>
-            <div style="color: #fc0;">-5</div>
+            <div style="color: #def;">-5</div>
         </th>
-        <th valign=top>Income<div><img src="assets/graphics/images/coin.png" height=20></div>
+        <th valign=top class="centerText">Income<div><i class="fa fa-usd"></i></div>
         </th>
     </tr>
     <tr *ngFor="let player of gameObj.players" [ngStyle]="ngStyleLogs(player.nation, !player.alive)"
@@ -189,10 +188,7 @@
 
 
 <div class="borderClass2" *ngIf="segmentIdx==0">
-    <div><b>Inc</b>: Income</div>
-    <div><b>K</b>: Kills</div>
-    <div><b>D</b>: Deaths</div>
-    <div><b>K/D</b>: Kill to Death ratio</div>
+    <div><b>Inc</b>: Income, <b>K</b>: Kills, <b>D</b>: Deaths, <b>K/D</b>: Kill to Death ratio</div>
 </div>
 <div class="borderClass2" *ngIf="segmentIdx==1">
     <b>Ways to increase income:</b><br>

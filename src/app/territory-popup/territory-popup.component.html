@@ -188,14 +188,14 @@
 							(click)="retreatButtonPressed()" type="button" class="btn btn-primary roundButton"><i
 								class="fa fa-flag"></i> Retreat!</button>
 						<button *ngIf="displayBattle.round>0 && displayBattle.militaryObj.includesGeneral"
-							ng-click="pullUnitsButtonPressed(1)" type="button" class="btn btn-warning roundButton"><i
+							(click)="pullSelectTroopsMidBattle(1)" type="button" class="btn btn-warning roundButton"><i
 								class="fa fa-arrow-left"></i> Pull General</button>
 						<button *ngIf="displayBattle.round>0 && displayBattle.militaryObj.airunits>0"
-							id="pullPlanesButton" ng-click="pullUnitsButtonPressed(2)" type="button"
+							id="pullPlanesButton" (click)="pullSelectTroopsMidBattle(2)" type="button"
 							class="btn btn-warning roundButton"><i class="fa fa-arrow-left"></i> Pull
 							Planes</button>
 						<button *ngIf="displayBattle.round>0 && displayBattle.militaryObj.bomberCount>0"
-							id="pullBombersButton" ng-click="pullUnitsButtonPressed(3)" type="button"
+							id="pullBombersButton" (click)="pullSelectTroopsMidBattle(3)" type="button"
 							class="btn btn-warning roundButton"><i class="fa fa-arrow-left"></i> Pull
 							Bombers</button>
 
@@ -359,7 +359,7 @@
 							</div>
 
 						</div> <!-- each terr-->
-						<div *ngIf="totalUnitsThatCanMove==0" style="background-color: yellow; border: 1px solid red;">
+						<div *ngIf="totalUnitsThatCanMove==0" [ngStyle]="ngStyleLogs(selectedTerritory.nation)" style="border: 1px solid red;">
 							<div style="color: red;"><b><i class="fa fa-exclamation-triangle"></i> None
 									of your units can reach {{selectedTerritory.name}}!</b>
 								<button (click)="infoFlg=!infoFlg" type="button"
@@ -435,7 +435,7 @@
 			<div class="modal-header" style="background-color: #337ab7;  border: 0">
 				<button (click)="closeModal('#territoryPopup')" type="button"
 					class="btn btn-secondary roundButton">Close</button>
-					<button *ngIf="ableToTakeThisTurn && optionType=='production' && gameObj.round>1" (click)="completePurchaseButtonClicked()" type="button"
+					<button *ngIf="ableToTakeThisTurn && optionType=='production'" (click)="completePurchaseButtonClicked()" type="button"
 					class="btn btn-success roundButton">Purchase Complete</button>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
