@@ -27,7 +27,9 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
         attacker: attackPlayer.nation,
         militaryObj: {},
         battleDetails: '',
-        bonusUnitsFlg: (selectedTerritory.owner == 0 && !selectedTerritory.capital)
+        terrX: selectedTerritory.x,
+        terrY: selectedTerritory.y,
+        bonusUnitsFlg: (selectedTerritory.owner == 0 && selectedTerritory.nation < 99)
     };
     var defendingUnits = [];
     var fighterDefenseFlg = false;
@@ -302,6 +304,7 @@ function landTheNukeBattle(player, targetTerr, attackUnits, gameObj, superpowers
     addhitsToList(battle.attTargets, 'nuke', battle.attHits);
     markCasualties(battle);
     nukeBattleCompleted(battle, targetTerr, player, launchTerritories, gameObj, superpowersData, false);
+    return battle;
 }
 function landTheCruiseBattle(player, targetTerr, attackUnits, gameObj, superpowersData) {
     playSound('bomb2.mp3');
@@ -312,6 +315,7 @@ function landTheCruiseBattle(player, targetTerr, attackUnits, gameObj, superpowe
     addhitsToList(battle.attTargets, 'default', battle.attHits);
     markCasualties(battle);
     nukeBattleCompleted(battle, targetTerr, player, [], gameObj, superpowersData, true);
+    return battle;
 }
 function strategicBombBattle(player, targetTerr, attackUnits, gameObj, superpowersData) {
     playSound('bombers.mp3');
@@ -343,9 +347,7 @@ function strategicBombBattle(player, targetTerr, attackUnits, gameObj, superpowe
         }
     }
     wrapUpBattle(battle, player, gameObj, superpowersData, 'Strategic Bombing Run', targetTerr, [], 1200, 'bomb');
-
-    console.log('strategicBombBattle', battle);
-
+    return battle;
 }
 function addhitsToList(field, type, amount) {
     for (var x = 0; x < amount; x++)
@@ -661,26 +663,27 @@ function battleCompleted(displayBattle, selectedTerritory, currentPlayer, moveTe
             playVoiceSound(81 + Math.floor((Math.random() * 2)));
     }
     wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, 'Battle', selectedTerritory, moveTerr);
-
-    if (!currentPlayer.cpu && displayBattle.militaryObj.wonFlg && displayBattle.allowGeneralRetreat) {
+    if (!currentPlayer.cpuFlg && displayBattle.militaryObj.wonFlg && displayBattle.allowGeneralRetreat) {
         localStorage.generalTerr2 = selectedTerritory.id;
         displayFixedPopup('generalWithdrawPopup');
+        $('#territoryPopup').modal('hide');
     }
 }
 function wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, title, selectedTerritory, moveTerr, delay = 0, weaponType = '') {
     removeCasualties(displayBattle, gameObj, currentPlayer, true, superpowersData);
 
-    if (displayBattle.bonusUnitsFlg && displayBattle.militaryObj.wonFlg && currentPlayer.cpu) {
-        if (selectedTerritory.capital)
+    if (displayBattle.bonusUnitsFlg && displayBattle.militaryObj.wonFlg && currentPlayer.cpuFlg) {
+        if (selectedTerritory.capital) {
             addNewUnitToBoard(gameObj, selectedTerritory, 15, superpowersData);
-        else {
+            playSound('Swoosh.mp3');
+        } else {
             addNewUnitToBoard(gameObj, selectedTerritory, 2, superpowersData);
             addNewUnitToBoard(gameObj, selectedTerritory, 2, superpowersData);
             addNewUnitToBoard(gameObj, selectedTerritory, 3, superpowersData);
+            playSound('Swoosh.mp3');
             setTimeout(() => { playSound('Swoosh.mp3'); }, 100);
             setTimeout(() => { playSound('Swoosh.mp3'); }, 200);
         }
-        playSound('Swoosh.mp3');
     }
 
     var units = [];
@@ -725,7 +728,7 @@ function wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, ti
     if (displayBattle.round == 0)
         displayBattle.round = 1
     logItem(gameObj, currentPlayer, title, msg, displayBattle.battleDetails + '|' + displayBattle.attCasualties.join('+') + '|' + displayBattle.defCasualties.join('+') + '|' + displayBattle.medicHealedCount + '|' + displayBattle.round, selectedTerritory.id, displayBattle.defender, '', '', displayBattle.defender);
-    popupNationMessage(currentPlayer.nation, msg, selectedTerritory.owner, selectedTerritory.x, selectedTerritory.y);
+    //popupNationMessage(currentPlayer.nation, msg, selectedTerritory.owner, selectedTerritory.x, selectedTerritory.y);
 
     setTimeout(() => {
         refreshTerritory(selectedTerritory, gameObj, currentPlayer, superpowersData, currentPlayer);

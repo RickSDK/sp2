@@ -46,6 +46,7 @@ import { AlliesViewComponent } from './allies-view/allies-view.component';
 import { StatsViewComponent } from './stats-view/stats-view.component';
 import { GameViewComponent } from './game-view/game-view.component';
 import { MenuPopupComponent } from './menu-popup/menu-popup.component';
+import { TerritoriesViewComponent } from './territories-view/territories-view.component';
 
 @NgModule({
   declarations: [
@@ -92,7 +93,8 @@ import { MenuPopupComponent } from './menu-popup/menu-popup.component';
     AlliesViewComponent,
     StatsViewComponent,
     GameViewComponent,
-    MenuPopupComponent
+    MenuPopupComponent,
+    TerritoriesViewComponent
   ],
   imports: [
     BrowserModule,

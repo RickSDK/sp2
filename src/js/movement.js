@@ -56,13 +56,14 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
     return false;
 }
 function selectAllUnits(terr, optionType, currentPlayer) {
+    console.log('selectAllUnits', terr.name)
     var t = document.getElementById('ter' + terr.id);
     var checked = (t && t.checked);
     for (var x = 0; x < terr.units.length; x++) {
         var unit = terr.units[x];
         var cm = checkMovement(terr.distObj, unit, optionType, currentPlayer, terr);
         var e = document.getElementById('unit' + unit.id);
-        if (e && cm && unit.piece != 13)
+        if (e  && unit.piece != 13) // && cm
             e.checked = checked;
     }
 }
@@ -154,7 +155,7 @@ function findTransportForThisCargo(unit, terr) {
         var bestShip;
         for (var u = 0; u < terr.units.length; u++) {
             var ship = terr.units[u];
-            if (ship.type == 3 && (!bestShip || ship.cas > bestShip.cas))
+            if (ship.type == 3 && ship.piece !=5 && (!bestShip || ship.cas > bestShip.cas))
                 bestShip = ship;
         }
         loadThisUnitOntoThisTransport(unit, bestShip);

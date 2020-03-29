@@ -123,10 +123,14 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
     }
     if (segmentIdx == 2 || segmentIdx == 3) { //special
       var num2 = parseInt(this.currentPlayer.nation) + 19;
-      this.tryThisUnit(num2);
-      this.tryThisUnit(num2 + 8);
-      this.tryThisUnit(num2 + 16);
-      this.tryThisUnit(num2 + 24);
+      if (this.user.rank >= 4)
+        this.tryThisUnit(num2);
+      if (this.user.rank >= 7)
+        this.tryThisUnit(num2 + 8);
+      if (this.user.rank >= 10)
+        this.tryThisUnit(num2 + 16);
+      if (this.user.rank >= 14)
+        this.tryThisUnit(num2 + 24);
     }
   }
   tryThisUnit(id: number) {

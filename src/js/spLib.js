@@ -321,7 +321,7 @@ function scrollToCapital(num) {
 	if (e) {
 		e.style.display = 'block';
 		e.className = 'targetFadeOut';
-	} 
+	}
 	var x = window.pageXOffset;
 	var y = window.pageYOffset;
 	var centerXs = [0, 307, 635, 856, 1184, 993, 783, 664, 384];
@@ -362,14 +362,14 @@ function smoothScrollToCapital(num) {
 function pingNation(x, y) {
 	playSound('zap.mp3');
 	var e2 = document.getElementById('target');
-	if(e2) {
-		e2.style.left=(x- 103).toString()+'px';
-		e2.style.top=(y+27).toString()+'px';
+	if (e2) {
+		e2.style.left = (x - 103).toString() + 'px';
+		e2.style.top = (y + 27).toString() + 'px';
 	}
 	changeClass('target', 'targetSign fadeOut');
-	setTimeout(function() { changeClass('target', 'targetFadeIn'); }, 100);	
-	setTimeout(function() { changeClass('target', 'targetSign fadeOut'); }, 2000);	
-	setTimeout(function() { changeClass('target', 'offAndOut'); }, 2500);	
+	setTimeout(function () { changeClass('target', 'targetFadeIn'); }, 100);
+	setTimeout(function () { changeClass('target', 'targetSign fadeOut'); }, 2000);
+	setTimeout(function () { changeClass('target', 'offAndOut'); }, 2500);
 }
 function locationOfCapital(nation) {
 	var locs = capitalLocs();
@@ -385,6 +385,19 @@ function popupNationMessage(nation1, msg, nation2, x, y, diploFlg) {
 	e.className = 'popupMsg fadeOut';
 	document.getElementById((diploFlg) ? 'popupFlag1b' : 'popupFlag1').src = 'assets/graphics/images/flag' + nation1 + '.gif';
 	document.getElementById((diploFlg) ? 'popupFlag2b' : 'popupFlag2').src = 'assets/graphics/images/flag' + nation2 + '.gif';
+	setTimeout(function () { popupMessageFadeIn(boxId); }, 100);
+	setTimeout(function () { popupMessageFadeOut(boxId); }, 3000);
+	setTimeout(function () { popupMessageOff(boxId); }, 4000);
+}
+function popupBattleReport(reportObj) {
+	playSound('drip.mp3');
+	var boxId = 'battlePopup';
+	var e = document.getElementById(boxId);
+	if (e) {
+		e.style.left = reportObj.terrX + 'px';
+		e.style.top = reportObj.terrY + 'px';
+		e.className = 'popupMsg fadeOut';
+	}
 	setTimeout(function () { popupMessageFadeIn(boxId); }, 100);
 	setTimeout(function () { popupMessageFadeOut(boxId); }, 3000);
 	setTimeout(function () { popupMessageOff(boxId); }, 4000);

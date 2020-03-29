@@ -21,5 +21,6 @@ export class AlliesViewComponent extends BaseComponent implements OnInit {
   }
   offerTreaty(type: number, nation: number) {
     offerTreaty(type, nation, this.gameObj, this.currentPlayer, this.superpowersData);
+    this.closeModal('#gamePlayersPopup');
   }
 }

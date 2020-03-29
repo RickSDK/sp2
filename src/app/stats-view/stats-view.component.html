@@ -42,6 +42,7 @@
     <div *ngIf="!player.alive"><img src="assets/graphics/misc/skull.png" height=25 title="Eliminated"></div>
     <div style="font-size: 10px;">-Capitals-</div>
     <img *ngFor="let nation of player.capitals" src="assets/graphics/images/flag{{nation}}.gif" height=20>
+    <div *ngIf="player.capitals.length==0">None</div>
     <hr style="margin: 2px;">
     <div>
         <img src="assets/graphics/units/piece10u.png" height=20 width=15 title="General">

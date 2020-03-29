@@ -36,6 +36,13 @@ export class BaseComponent implements OnInit {
     return ngUnitSrc(piece, nation);
   }
   //-----ngStyles---
+  ngStyleLogs2(nation: number, deadFlg = false) {
+    var bg = this.ngStyleLogs(nation, deadFlg);
+    bg['border'] = '1px solid black';
+    bg['padding'] = '5px';
+    bg['border-radius'] = '10px';
+    return bg;
+  }
   ngStyleLogs(nation: number, deadFlg = false) {
     if (nation == 99)
       return { 'background-color': '#7df', 'color': 'black' };
@@ -53,6 +60,19 @@ export class BaseComponent implements OnInit {
     else
       return 'btn btn-light roundButton';
   }
+  ngClassUnit(num1: number, num2: number) {
+    if (num1 == num2)
+      return 'shadowedYellow';
+    else
+      return 'shadowed';
+  }
+  ngClassClickableFlag(num1: number, num2: number) {
+    if (num1 == num2)
+      return 'shadowedYellow flagBig';
+    else
+      return 'shadowed flagCapital';
+  }
+
 
   //-----views---
   initView(gameObj: any, ableToTakeThisTurn: any, currentPlayer: any, user: any) {

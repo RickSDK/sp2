@@ -111,12 +111,6 @@ export class UnitsPopupComponent extends BaseComponent implements OnInit {
 		else
 			return "assets/graphics/units/piece" + piece + ".gif";
 	}
-	ngClassUnit(num1: number, num2: number) {
-		if (num1 == num2)
-			return 'shadowedYellow';
-		else
-			return 'shadowed';
-	}
 	uploadStrategyPressed(unit) {
 	}
 	loadStrategyItems(id) {

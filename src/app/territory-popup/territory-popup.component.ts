@@ -54,6 +54,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   @Input('adminModeFlg') adminModeFlg: string;
   @Output() messageEvent = new EventEmitter<string>();
   @Output() battleHappened = new EventEmitter<string>();
+  @Output() battleCompletedEmit = new EventEmitter<any>();
   @ViewChild(TerrButtonsComponent) terrButtonsComp: TerrButtonsComponent;
   @ViewChild(TerrPurchaseComponent) terrPurchaseComp: TerrPurchaseComponent;
   public selectedTerritory: any;
@@ -237,6 +238,8 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
         this.displayBattle = initializeBattle(this.currentPlayer, this.selectedTerritory, attackUnits, this.gameObj);
         this.optionType = 'battle';
         playSoundForPiece(this.displayBattle.militaryObj.pieceId, this.superpowersData);
+        if (this.displayBattle.defendingUnits.length == 0)
+          this.autoCompleteFlg = true;
       }
       return;
     }
@@ -262,17 +265,21 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   landTheNuke(fromTerrId: number, attackUnits: any, targetTerr: any, launchTerritories: any, player: any, gameObj: any, superpowersData: any) {
     var obj = { t1: fromTerrId, t2: targetTerr.id, id: 14, nukeFlg: true };
     this.moveSpriteBetweenTerrs(obj);
-    landTheNukeBattle(player, targetTerr, attackUnits, gameObj, superpowersData, launchTerritories);
+    var battle = landTheNukeBattle(player, targetTerr, attackUnits, gameObj, superpowersData, launchTerritories);
+    this.battleCompletedEmit.emit(battle);
   }
   landTheCruise(fromTerrId: number, attackUnits: any, targetTerr: any, player: any, gameObj: any, superpowersData: any) {
     var obj = { t1: fromTerrId, t2: targetTerr.id, id: 144, cruiseFlg: true };
     this.moveSpriteBetweenTerrs(obj);
-    landTheCruiseBattle(player, targetTerr, attackUnits, gameObj, superpowersData);
+    var battle = landTheCruiseBattle(player, targetTerr, attackUnits, gameObj, superpowersData);
+    battle.cruiseFlg = true;
+    this.battleCompletedEmit.emit(battle);
   }
   strategicBomingRun(fromTerrId: number, attackUnits: any, targetTerr: any, player: any, gameObj: any, superpowersData: any) {
     var obj = { t1: fromTerrId, t2: targetTerr.id, id: 7, cruiseFlg: true };
     this.moveSpriteBetweenTerrs(obj);
-    strategicBombBattle(player, targetTerr, attackUnits, gameObj, superpowersData);
+    var battle = strategicBombBattle(player, targetTerr, attackUnits, gameObj, superpowersData);
+    this.battleCompletedEmit.emit(battle);
   }
   fightButtonPressed() {
     //emit 
@@ -320,8 +327,11 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   }
   rollDefenderDice() {
     rollDefenderDice(this.displayBattle, this.selectedTerritory, this.currentPlayer, this.moveTerr, this.gameObj, this.superpowersData);
-    if (!this.displayBattle.militaryObj.battleInProgress && this.displayBattle.militaryObj.wonFlg) {
-      this.battleHappened.emit('battle won');
+    if (!this.displayBattle.militaryObj.battleInProgress) {
+      console.log('+rollDefenderDice');
+      this.battleCompletedEmit.emit(this.displayBattle);
+      if (this.displayBattle.militaryObj.wonFlg)
+        this.battleHappened.emit('battle won');
     }
 
     if (this.autoCompleteFlg) {
@@ -427,10 +437,14 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     }
     if (segmentIdx == 2 || segmentIdx == 3) { //special
       var num2 = parseInt(this.currentPlayer.nation) + 19;
-      this.tryThisUnit(num2);
-      this.tryThisUnit(num2 + 8);
-      this.tryThisUnit(num2 + 16);
-      this.tryThisUnit(num2 + 24);
+      if (this.user.rank >= 4)
+        this.tryThisUnit(num2);
+      if (this.user.rank >= 7)
+        this.tryThisUnit(num2 + 8);
+      if (this.user.rank >= 10)
+        this.tryThisUnit(num2 + 16);
+      if (this.user.rank >= 14)
+        this.tryThisUnit(num2 + 24);
     }
   }
   tryThisUnit(id: number) {

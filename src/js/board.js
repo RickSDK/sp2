@@ -563,24 +563,11 @@ function scrubGameObj(gameObj, gUnits) {
 		gameObj.unitPurchases = [];
 }
 function scrubUnitsOfPlayer(player, gameObj, gUnits) {
-	var railway = player.tech[19];
-
-	var stealth = player.tech[0];
+	console.log('scrubUnitsOfPlayer');
 	var mav = player.tech[1];
 	var radar = player.tech[2];
 
-	var rocket = player.tech[3];
-	var chem = player.tech[4];
-	var anthrax = player.tech[5];
-
 	var torpedoes = player.tech[6];
-
-	var heavy = player.tech[12];
-	var smart = player.tech[13];
-	var nukes = player.tech[14];
-
-	var range = player.tech[15];
-	var mobility = player.tech[17];
 
 	player.cruiseButton = (player.nation == 4 || player.tech[7]);
 	var stratBombButton = false;
@@ -969,7 +956,7 @@ function checkGameTeams(incomes, capitals, gameObj) {
 		var numPlayers = 0;
 		var teamPlayers = [];
 		gameObj.players.forEach(function (player) {
-			if (player.team == team.name && player.capitals.length > 0) {
+			if (player.team == team.name) {
 				if (player.alive) {
 					numPlayers++;
 					alive = true;
@@ -1044,12 +1031,16 @@ function getTeamIndex(player, gameObj) {
 }
 function addTechForPlayer(player) {
 	var totalTech = 0;
+	var techCount = 0;
+	var x = 0;
 	player.tech.forEach(function (tech) {
 		if (tech)
 			totalTech++;
+		if (x++ < 18 && tech)
+			techCount++
 	});
 	player.totalTech = totalTech;
-	player.techCount = totalTech;
+	player.techCount = techCount;
 }
 function getDamageReport(player, gameObj, superpowersData) {
 	var lostUnits = 0;
@@ -1463,7 +1454,7 @@ function neutralMessageForNation(nation) {
 
 function warMessageForNation(terr, player, gameObj) {
 	var p2 = playerOfNation(terr.owner, gameObj);
-	if (p2.income >= player.income-20) {
+	if (p2.income >= player.income - 20) {
 		var m = [
 			'We will not take kindly to enemy troops in our territory. Prepare for war!',
 			'Now you have really made me angry. You are not only a loser, but a big loser. A really, really big loser.',
@@ -1673,7 +1664,7 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 	gameObj.currentSituation = winnningPlayer + ' is winning!';
 	var victoryRound = numberVal(gameObj.victoryRound);
 	if (victoryMet) {
-		var msg = 'Victory Conditions met! ' + winnningPlayer + ' controls ' + maxCapitalsHeld + ' capitals. Game will end in round ' + vRound + ' if they are held.';
+		var msg = 'Victory Conditions met! ' + winnningPlayer + ' controls ' + maxCapitalsHeld + ' capitals. Game will end in round ' + victoryRound + ' if they are held.';
 		gameObj.currentSituation = msg;
 		if (victoryRound == 0) {
 			gameObj.victoryRound = gameObj.round + 1;
@@ -1693,8 +1684,6 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 				playSound('tada.mp3');
 				gameObj.gameOver = true;
 				gameObj.actionButtonMessage = '';
-				if (!gameObj.multiPlayerFlg)
-					clearCurrentGameId();
 			}
 		}
 	} else {

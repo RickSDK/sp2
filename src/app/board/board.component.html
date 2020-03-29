@@ -38,10 +38,8 @@
 <!---top bar--->
 <section *ngIf="currentPlayer" class="gradient"
 	style="z-index: 201; text-align: center; position: fixed; width: 100%; top: 0px; height: 44px; background-color: #ccc; box-shadow: 2px 2px 3px #000; max-height: 44px; line-height: 1.5em; overflow: hidden;">
-	<a routerLink="/"><button id="homeButton" type="button" class="btn btn-secondary roundButton"><i
-				class="fa fa-home"></i></button></a>
-	<button id="" (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 4)" type="button"
-		class="btn btn-primary roundButton"><i class="fa fa-info-circle"></i></button>
+	<a routerLink="/"><button type="button" class="btn btn-secondary roundButton"><i class="fa fa-arrow-left"></i>
+			Exit</button></a>
 	<button *ngIf="ableToTakeThisTurn && gameObj.actionButtonMessage.length>0 && !hideActionButton"
 		(click)="completeTurnButtonPressed()" id="completeTurnButton" type="button"
 		class="btn btn-success roundButton">{{gameObj.actionButtonMessage}}</button>
@@ -74,7 +72,7 @@
 <div [style.background-color]="adminModeFlg?'red':'gray'"
 	style="z-index: 201; opacity: .75; background-color: gray; text-align: center;  position: fixed; top: 45px; width: 100%; height: 55px;">
 	<span *ngIf="!showControls" style="color: white; font-size: 24px;"><i class="fa fa-spinner fa-spin"></i>&nbsp;
-		<span *ngIf="loadingFlg">Loading...</span><span *ngIf="allowBotToAct"><img
+		<span *ngIf="loadingFlg">Loading...</span><span *ngIf="currentPlayer && currentPlayer.cpuFlg"><img
 				src="assets/graphics/images/flag{{currentPlayer.nation || 1}}.gif" height="50"> <i
 				class="fa fa-android"></i> Computer
 			taking
@@ -115,8 +113,9 @@
 			style="line-height: 14px;"><i *ngIf="!haltActionFlg" class="fa fa-pause"></i><i *ngIf="haltActionFlg"
 				class="fa fa-play"></i><br><span style="font-size: 10px;">
 				Halt</span></button>-->
-		<button *ngIf="user.userName=='Rick'" (click)="toggleAdminFlg()" type="button" class="btn btn-secondary tight roundButton"
-			style="line-height: 14px;"><i *ngIf="!haltActionFlg" class="fa fa-lock"></i><br>
+		<button *ngIf="user.userName=='Rick'" (click)="toggleAdminFlg()" type="button"
+			class="btn btn-secondary tight roundButton" style="line-height: 14px;"><i *ngIf="!haltActionFlg"
+				class="fa fa-lock"></i><br>
 			<span style="font-size: 10px;">
 				Admin</span></button>
 	</span>
@@ -132,7 +131,8 @@
 	</span>
 </div>
 <!---------- menu button-->
-<button *ngIf="showControls " id="menu1Button" ng-click="openCloseSlider('menu1')" type="button"
+<button *ngIf="showControls " id="menu1Button"
+	(click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 4)" type="button"
 	class="btn btn-primary roundButton" style="z-index: 300; position: fixed; left: -2px;"><i class="fa fa-bars"></i>
 	Menu</button>
 
@@ -171,21 +171,36 @@
 	</div>
 </div>
 
-<button *ngIf="!showPanelsFlg" type="button" style="position: fixed; bottom: 0;"
-	(click)="showPanelsFlg = !showPanelsFlg" class="btn btn-secondary roundButton"><i class="fa fa-eye"></i></button>
-
-
 
 <img (click)="dismissArrow()" id="arrow" src="assets/graphics/images/arrow.png"
 	style="z-index: 999; position: fixed; top: 45px; left: 100px; height: 100px; display: none;">
 
+
+<div id="battlePopup" onClick="closePopup('battlePopup')" class="popupMsg off"
+	style="padding: 0; position: absolute; text-align: center; border-radius: 10px; overflow:hidden;">
+	<div class="darkBlueBg" style="font-size: 14px; padding-left: 5px; padding-right: 5px;"><b><img
+				src="assets/graphics/misc/skull.png" height="15"> Casualties</b></div>
+	<table width="95%" align="center">
+		<tr>
+			<td *ngIf="!battleReport.cruiseFlg">
+				<div><img src="assets/graphics/images/flag{{battleReport.attNation}}.gif" height="20"></div>
+				<div>{{battleReport.attCasualties}}</div>
+			</td>
+			<td>
+				<div><img src="assets/graphics/images/flag{{battleReport.defNation}}.gif" height="20"></div>
+				<div>{{battleReport.defCasualties}}</div>
+			</td>
+		</tr>
+	</table>
+	<div class="darkBlueBg" style="font-size: 10px;">{{battleReport.result}}</div>
+</div>
 <div id="popupMsgBox" onClick="closePopup('popupMsgBox')" class="popupMsg off"
 	style="padding: 5px; position: absolute; width: 240px;">
 	<table padding=3 style="width: 100%; background-color: yellow;">
 		<tr>
-			<td valign=middle><img id="popupFlag1" src="assets/graphics/images/flag1.gif" height=40></td>
-			<td valign=middle><span id="popupMsg">Done!</span></td>
-			<td valign=middle><img id="popupFlag2" src="assets/graphics/images/flag1.gif" height=40></td>
+			<td valign=middle><img id="popupFlag1" src="assets/graphics/images/flag1.gif" height=30></td>
+			<td valign=middle><span id="popupMsg" style="font-size: 12px;">Done!</span></td>
+			<td valign=middle><img id="popupFlag2" src="assets/graphics/images/flag1.gif" height=30></td>
 		</tr>
 	</table>
 </div>
@@ -194,7 +209,8 @@
 	<table padding=3 style="width: 100%;">
 		<tr>
 			<td valign=middle><img id="popupFlag1b" src="assets/graphics/images/flag1.gif" height=40></td>
-			<td valign=middle><i class="fa fa-users"></i> &nbsp;<span id="popupMsgb">Done!</span></td>
+			<td valign=middle><i class="fa fa-users"></i> &nbsp;<span id="popupMsgb"
+					style="font-size: 12px;">Done!</span></td>
 			<td valign=middle><img id="popupFlag2b" src="assets/graphics/images/flag1.gif" height=40></td>
 		</tr>
 	</table>
@@ -246,6 +262,14 @@
 			class="btn btn-primary roundButton medium"><span id="statusOkButton">OK</span></button>
 		<div id="statusMsg">Note: Don't leave page until this completes. If it hangs, refresh page and try again.</div>
 	</div>
+</div>
+
+<div id="computerTakeTurnPopup" class="popupScreen2" style="width: 300px;">
+	<div>Allow computer to take your turn?</div>
+	<button onClick="closePopup('computerTakeTurnPopup')" type="button"
+		class="btn btn-danger roundButton tall2"><i class="fa fa-times"></i> Cancel</button>
+	<button (click)="computerGoClicked()" type="button" class="btn btn-success roundButton tall2"><i
+			class="fa fa-check"></i> Go!</button>
 </div>
 
 <div id="generalWithdrawPopup" class="popupScreen2" style="width: 300px;">
@@ -321,7 +345,8 @@
 
 <div id="surrenderPopup" class="popupScreenNoPad" style="max-width: 400px;">
 	<img src="assets/graphics/misc/cityNuked.jpg" width="100%">
-	<div style="font-size: 12px;">Do you wish to surrender? Single player games are not saved to your record. Feel free to surrender at any time without penalty.</div>
+	<div style="font-size: 12px;">Do you wish to surrender? Single player games are not saved to your record. Feel free
+		to surrender at any time without penalty.</div>
 	<button onClick="closePopup('surrenderPopup')" type="button"
 		class="btn btn-primary roundButton medium">Cancel</button>
 	<button (click)="surrenderConfirmButtonPressed()" type="button"
@@ -374,7 +399,8 @@
 <app-loading-popup #loadingPopup></app-loading-popup>
 <app-message-popup #messagePopup></app-message-popup>
 <app-territory-popup #territoryPopup (messageEvent)="moveSpriteBetweenTerrs($event)"
-	(battleHappened)="battleHappened($event)" [adminModeFlg]="adminModeFlg"></app-territory-popup>
+	(battleHappened)="battleHappened($event)" (battleCompletedEmit)="battleCompletedEmit($event)"
+	[adminModeFlg]="adminModeFlg"></app-territory-popup>
 
 <app-game-players-popup #gamePlayersPopup></app-game-players-popup>
 <app-production-queue-popup #productionQueuePopup></app-production-queue-popup>

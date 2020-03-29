@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { BaseComponent } from '../base/base.component';
 
 declare var displayFixedPopup: any;
 declare var $: any;
@@ -8,15 +9,22 @@ declare var $: any;
   templateUrl: './game-view.component.html',
   styleUrls: ['./game-view.component.scss']
 })
-export class GameViewComponent implements OnInit {
+export class GameViewComponent extends BaseComponent implements OnInit {
   @Input('gameObj') gameObj: any;
 
-  constructor() { }
+  constructor() { super(); }
 
   ngOnInit(): void {
   }
   surrenderButtonPressed() {
     displayFixedPopup('surrenderPopup');
+    $('#gamePlayersPopup').modal('hide');
+  }
+  computerGo() {
+    this.closeModal('#gamePlayersPopup');
+    displayFixedPopup('computerTakeTurnPopup');
+  }  
+  reportBug() {
     $('#gamePlayersPopup').modal('hide');
   }
 }

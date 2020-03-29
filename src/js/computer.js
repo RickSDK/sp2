@@ -50,12 +50,14 @@ function purchaseCPUUnits(player, gameObj, superpowersData) {
         }
         player.placedInf = 3;
     }
-    if (terr1.adCount <= 2)
+    if (terr1.adCount <= 2) {
+        console.log('+++aaGun', terr1.name, terr1.adCount);
         addUniToQueue(13, 1, superpowersData, player, gameObj, terr1);
-    if (terr2.adCount <= 2)
-        addUniToQueue(13, 1, superpowersData, player, gameObj, terr1);
-    var items = [];
-
+    }
+    if (terr2.adCount <= 2) {
+        console.log('+++aaGun', terr2.name, terr2.adCount);
+       addUniToQueue(13, 1, superpowersData, player, gameObj, terr2);
+    }
     if (num <= 6) {
         addComputerFactory(player, superpowersData, gameObj);
     }
@@ -276,11 +278,15 @@ function spreadOutUnits(player, gameObj, superpowersData) {
     });
     return obj;
 }
+/*
 function refreshPlayerTerritories(gameObj, player, superpowersData) {
+    console.log('player', player);
+    if(!player.territories)
+        return;
     player.territories.forEach(function (terr) {
         refreshTerritory(terr, gameObj, player, superpowersData, player);
     });
-}
+}*/
 function moveAFewUnitsFromTerrToTerr(terr, toTerr, player, gameObj) {
     var count = 0;
     var obj = { t1: 0, t2: 0, id: 0 };
@@ -666,8 +672,11 @@ function recallBoats(gameObj, player) {
         var terr = gameObj.territories[id - 1];
         if (terr.owner == player.nation) {
             gameObj.units.forEach(function (unit) {
-                if (unit.owner == player.nation && unit.movesLeft > 0 && (unit.terr == terr.enemyWater || unit.terr == terr.enemyWater2))
-                    unit.terr = terr.id;
+                if (unit.owner == player.nation && unit.movesLeft > 0 && (unit.terr == terr.enemyWater || unit.terr == terr.enemyWater2)) {
+                    //unit.terr = terr.id;
+                    console.log('recall!');
+                }
+                    
             });
         }
     }
@@ -722,6 +731,7 @@ function getAmphibiousAttackObj(player, homeBase, enemyWaterTerr, enemyLandTerr,
     });
     homeWaterTerr.units.forEach(function (unit) {
         if (unit.owner == player.nation) {
+            pieceId = unit.piece;
             attackFleet.push(unit);
         }
     });
@@ -729,7 +739,7 @@ function getAmphibiousAttackObj(player, homeBase, enemyWaterTerr, enemyLandTerr,
         if (isUnitOkToAttack(unit, player.nation) && (unit.piece == 2 || unit.piece == 3)) {
             if (cargoSpace - unit.cargoUnits >= 0) {
                 attackUnits.push(unit);
-                pieceId = unit.piece;
+ //               pieceId = unit.piece;
                 cargoSpace -= unit.cargoUnits;
             }
         }
@@ -747,8 +757,8 @@ function getAmphibiousAttackObj(player, homeBase, enemyWaterTerr, enemyLandTerr,
         return {
             attackUnits: attackUnits,
             defUnits: defUnits,
-            t1: homeBase.id,
-            t2: enemyLandTerr.id,
+            t1: homeWaterTerr.id,
+            t2: enemyWaterTerr.id,
             id: pieceId,
             terr: enemyLandTerr,
             attTerr: homeBase,
@@ -760,4 +770,18 @@ function getAmphibiousAttackObj(player, homeBase, enemyWaterTerr, enemyLandTerr,
         };
     }
     return obj;
+}
+function addTestScore(gameObj) {
+    var humanPlayer = getHumanPlayer(gameObj);
+    var winLoss = (gameObj.winningTeamFlg) ? 'Win' : 'Loss';
+	var gameScores = JSON.parse(localStorage.getItem("gameScores")) || [];
+	gameScores.push({ id: gameScores.length + 1, created: gameObj.created, type: gameObj.type, winLoss: winLoss, round: gameObj.round, nation: humanPlayer.nation });
+	localStorage.setItem("gameScores", JSON.stringify(gameScores));
+}
+function getHumanPlayer(gameObj) {
+    for(var x=0; x<gameObj.players.length; x++) {
+        var player = gameObj.players[x];
+        if(!player.cpu)
+            return player;
+    }
 }

@@ -205,7 +205,7 @@
 
 						<span>
 							<div class="squaredOne" style="display: inline-block; padding: 0; margin: 1px;">
-								<input [checked]="autoCompleteFlg" (click)="autoCompletePressed()" type="checkbox"
+								<input [checked]="autoCompleteFlg" [disabled]="displayBattle.defendingUnits.length == 0" (click)="autoCompletePressed()" type="checkbox"
 									value="None" id="finalAttackBox" name="check" />
 								<label for="finalAttackBox"></label>
 							</div> <span style="font-size: 10px;">Auto</span>

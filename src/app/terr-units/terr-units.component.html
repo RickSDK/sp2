@@ -49,8 +49,10 @@
             </div>
         </div>
         <!------------------fog----------------------------->
-        <div *ngIf="selectedTerritory.fogOfWar">
+        <div *ngIf="selectedTerritory.fogOfWar && selectedTerritory.unitCount>0">
             <div>-Fog of War-</div>
+            <div *ngIf="selectedTerritory.piece<60 && selectedTerritory.unitCount>0"><img src="{{ngUnitSrc(selectedTerritory.piece, selectedTerritory.owner)}}" height="30"> {{selectedTerritory.displayUnitCount}} units (unknown types)</div>
+            
             <div *ngIf="gameObj.hardFog=='Y'">
                 <button ng-click="showInfo()" id="" type="button" class="btn btn-secondary roundButton"><i
                         class="fa fa-info-circle"></i> HardCore Fog
@@ -63,9 +65,8 @@
                 </div>
             </div>
             <div ng-hide="gameObj.hardFog=='Y'">
-                <button ng-click="showInfo()" id="" type="button" class="btn btn-secondary roundButton"><i
-                        class="fa fa-info-circle"></i> Fog of War
-                    Info</button>
+                <button (click)="infoFlg = !infoFlg" type="button" class="btn btn-secondary roundButton"><i
+                        class="fa fa-info-circle"></i> Fog of War Info</button>
                 <div class="borderClass2" *ngIf="infoFlg">
                     <div>With Fog of War enemy units are hidden from view. Instead you will be given an
                         approximate size of their force, without knowing which units are present:</div>
@@ -80,7 +81,6 @@
                         <div>etc...</div>
                 </div>
             </div>
-            <div *ngIf="selectedTerritory.piece<60">({{selectedTerritory.piece}})</div>
         </div>
     </div>
     <!--colored unit section-->

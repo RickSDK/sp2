@@ -28,7 +28,7 @@ export class MainPageComponent extends BaseComponent implements OnInit {
     this.user = userObjFromUser();
     this.flexSprite(100);
     this.singleGameId = localStorage.currentGameId;
-    console.log('main-page ngOnInit', this.user);
+ //   console.log('main-page ngOnInit', this.user);
   }
   multiplayGameClicked(login: any) {
     if (this.user.userId > 0)
