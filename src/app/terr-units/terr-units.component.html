@@ -21,9 +21,8 @@
             <!------------------large img units------------------unitDetailPopup.show(unit, true)----------->
             <div *ngIf="!unitDetailFlg">
                 <span *ngFor="let unit of selectedTerritory.militaryUnits2" style="display: inline-block;">
-                    <img *ngIf="unit.piece>0" (click)="showUnitPopup(unit)" 
-                        src="{{ngUnitSrc(unit.piece, unit.owner)}}" [ngStyle]="ngStyleUnitTop(currentPlayer.status)"
-                        title="{{unit.name}}" style="cursor: pointer;">
+                    <img *ngIf="unit.piece>0" (click)="showUnitPopup(unit)" src="{{ngUnitSrc(unit.piece, unit.owner)}}"
+                        [ngStyle]="ngStyleUnitTop(currentPlayer.status)" title="{{unit.name}}" style="cursor: pointer;">
                     <div style="font-size: 10px;">
                         <span *ngIf="unit.amount>1">({{unit.amount}})</span>
                         <span *ngIf="unit.amount==1">{{unit.name}}</span>
@@ -39,6 +38,7 @@
                             *ngIf="unit.piece>0" src="{{ngUnitSrc(unit.piece, unit.nation)}}"
                             style="max-height: 20px; max-width: 40px; cursor: pointer;"
                             title="{{superpowersData.units[unit.piece].name}}">
+                            <span *ngIf="unit.cargoOf>0">.</span>
                         <img *ngFor="let cargo of unit.cargo" src="assets/graphics/units/piece{{cargo.piece}}u.png"
                             title="{{superpowersData.units[cargo.piece].name}}" height=10></div>
                     <img src="assets/graphics/images/flag{{unit.nation}}.gif" height="15"
@@ -51,25 +51,23 @@
         <!------------------fog----------------------------->
         <div *ngIf="selectedTerritory.fogOfWar && selectedTerritory.unitCount>0">
             <div>-Fog of War-</div>
-            <div *ngIf="selectedTerritory.piece<60 && selectedTerritory.unitCount>0"><img src="{{ngUnitSrc(selectedTerritory.piece, selectedTerritory.owner)}}" height="30"> {{selectedTerritory.displayUnitCount}} units (unknown types)</div>
-            
+            <div *ngIf="selectedTerritory.piece<60 && selectedTerritory.unitCount>0"><img
+                    src="{{ngUnitSrc(selectedTerritory.piece, selectedTerritory.owner)}}" height="30">
+                <div style="font-size: 12px;">{{selectedTerritory.displayUnitCount}}</div>
+            </div>
+            <button (click)="infoFlg = !infoFlg" type="button" class="btn btn-secondary roundButton"><i
+                    class="fa fa-info-circle"></i> Fog of War</button>
+
             <div *ngIf="gameObj.hardFog=='Y'">
-                <button ng-click="showInfo()" id="" type="button" class="btn btn-secondary roundButton"><i
-                        class="fa fa-info-circle"></i> HardCore Fog
-                    of War</button>
                 <div class="borderClass2" *ngIf="infoFlg">
-                    <p>In Hardcore Fog-of-war mode, you can see all troops in yours and your ally's
-                        territories.</p>
-                    <p>For all other territories, if you have at least 1 unit that borders the
-                        territory, you can see approximate troop counts.</p>
+                    <p><b>Hardcore Fog-of-War:</b> Most enemy units are completely hidden. If you have a military unit
+                        bordering an enemy territory, you will see regular fog-of-war counts.</p>
                 </div>
             </div>
             <div ng-hide="gameObj.hardFog=='Y'">
-                <button (click)="infoFlg = !infoFlg" type="button" class="btn btn-secondary roundButton"><i
-                        class="fa fa-info-circle"></i> Fog of War Info</button>
                 <div class="borderClass2" *ngIf="infoFlg">
-                    <div>With Fog of War enemy units are hidden from view. Instead you will be given an
-                        approximate size of their force, without knowing which units are present:</div>
+                    <div><b>Fog of War:</b> Enemy units are hidden from view. Instead you will be given an
+                        approximate size of their force, without knowing specifics:</div>
                     <li>1 = 1 unit
                     <li>2 = 2 units
                     <li>3 = 3 units
@@ -91,8 +89,8 @@
 
 <div id="unitPopup" class="popupScreenNoPad" style="z-index: 9999; position: absolute; min-width: 320px; cursor: auto;">
     <div class="darkBlueBg" style="height: 44px;">Unit Detail
-        <button onClick="closePopup('unitPopup')" type="button" class="btn btn-secondary roundButton" style="float: right;"><i
-            class="fa fa-times"></i></button>
+        <button onClick="closePopup('unitPopup')" type="button" class="btn btn-secondary roundButton"
+            style="float: right;"><i class="fa fa-times"></i></button>
     </div>
     <div *ngIf="selectedUnit" style="padding: 10px;">
         <app-unit-detail nation="1" [selectedUnit]="selectedUnit" [hideUnitDetailFlg]="true"></app-unit-detail>

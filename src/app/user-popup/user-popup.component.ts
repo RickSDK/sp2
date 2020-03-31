@@ -1,10 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter  } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
 declare var userObjFromUser: any;
 declare var playClick: any;
 declare var valueOfInput: any;
+declare var getGameScores: any;
 
 @Component({
   selector: 'app-user-popup',
@@ -25,14 +26,21 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
     'avatar6.jpg',
     'avatar7.jpg',
     'avatar8.jpg'
-  ]
+  ];
+  public gameScores = [];
 
   constructor() { super(); }
 
   ngOnInit(): void {
+
   }
   show() {
     $("#userPopup").modal();
+    this.gameScores = getGameScores();
+  }
+  openRanksModal() {
+    this.closeModal('#userPopup');
+    $('#ranksPopup').modal();
   }
   changeImage(image) {
     playClick();
@@ -50,6 +58,6 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
   }
   updateUserProfile() {
     this.user = userObjFromUser();
-    this.messageEvent.emit('done'); 
+    this.messageEvent.emit('done');
   }
 }

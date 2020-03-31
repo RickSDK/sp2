@@ -23,15 +23,13 @@
 
 				<app-terr-header [selectedTerritory]="selectedTerritory" [ableToTakeThisTurn]="ableToTakeThisTurn"></app-terr-header>
 				
-				<div *ngIf="displayBattle && optionType == 'battle'">allowGeneralRetreat {{displayBattle.allowGeneralRetreat}}
-					<div *ngIf="currentPlayer.nation<=6 && displayBattle.generalUnit>0" style="background-color: #ccf;">
+				<div *ngIf="displayBattle && optionType == 'battle'">
+					<div *ngIf="currentPlayer.nation==6 && displayBattle.generalUnit>0" style="background-color: #ccf;">
 						<img src="assets/graphics/units/piece10u.png" height=20>
-						General
-						took out unit <img src="{{ngUnitSrc(displayBattle.generalUnit)}}" height=20></div>
+						General	took out unit <img src="{{ngUnitSrc(displayBattle.generalUnit)}}" height=20></div>
 					<div *ngIf="currentPlayer.nation==4 && displayBattle.generalUnit>0" style="background-color: #ccf;">
 						<img src="assets/graphics/units/piece10u.png" height=20>
-						General
-						converted unit <img src="{{ngUnitSrc(displayBattle.generalUnit)}}" height=20></div>
+						General	converted unit <img src="{{ngUnitSrc(displayBattle.generalUnit)}}" height=20></div>
 					<div *ngIf="displayBattle.hijackerUnit>0" style="background-color: #ccf;"><img
 							src="assets/graphics/units/piece41u.png" height=20> Hijacker converted unit <img
 							src="{{ngUnitSrc(displayBattle.hijackerUnit)}}" height=20></div>
@@ -90,10 +88,10 @@
 								<td>4</td>
 								<td>5+</td>
 							</tr>
-							<tr [ngStyle]="ngStyleLogs(displayBattle.defNation)" *ngIf="selectedTerritory.fogOfWar">
+							<tr [ngStyle]="ngStyleLogs(displayBattle.defNation)" *ngIf="selectedTerritory.fogOfWar && displayBattle.round==0">
 								<td colspan=5>-Fog of War-</td>
 							</tr>
-							<tr [ngStyle]="ngStyleLogs(displayBattle.defNation)" *ngIf="!selectedTerritory.fogOfWar">
+							<tr [ngStyle]="ngStyleLogs(displayBattle.defNation)" *ngIf="!selectedTerritory.fogOfWar || displayBattle.round>0">
 								<td *ngFor="let i of boardCols">
 									<div *ngFor="let unit of displayBattle.defendingUnits"
 										style="display: inline-block;">
@@ -421,7 +419,6 @@
 				<app-terr-purchase *ngIf="optionType=='production' || adminModeFlg" [selectedTerritory]="selectedTerritory"
 					[currentPlayer]="currentPlayer" [superpowersData]="superpowersData" [gameObj]="gameObj"
 					[user]="user" [optionType]="optionType" [ableToTakeThisTurn]="ableToTakeThisTurn"
-					[productionDisplayUnits]="productionDisplayUnits"
 					[allowFactoryFlg]="allowFactoryFlg" [adminModeFlg]="adminModeFlg"></app-terr-purchase>
 					
 				<app-terr-advice

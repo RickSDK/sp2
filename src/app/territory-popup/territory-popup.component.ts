@@ -198,8 +198,9 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     this.checkAllTroops = !this.checkAllTroops;
     selectAllButtonChecked(this.moveTerr, this.checkAllTroops, this.optionType, this.currentPlayer);
     this.checkSendButtonStatus(null);
-    if (this.optionType == 'attack')
-      this.moveTroopsButtonPressed();
+    if (this.optionType == 'attack') {
+        this.moveTroopsButtonPressed();
+    }
   }
   autoButtonPressed() {
     playClick();
@@ -224,9 +225,9 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       loadParatroopers(this.selectedTerritory, this.optionType);
     }
     if (this.optionType == 'movement') {
-      var obj = moveSelectedUnits(this.moveTerr, this.selectedTerritory);
+      var obj = moveSelectedUnits(this.moveTerr, this.selectedTerritory, this.gameObj);
       setTimeout(() => {
-        refreshBoardFromMove(this.moveTerr, this.selectedTerritory, this.gameObj, this.superpowersData, this.currentPlayer);
+        refreshBoardFromMove(this.moveTerr, this.selectedTerritory, this.gameObj, this.superpowersData, this.currentPlayer, this.currentPlayer);
       }, 1000);
       if (this.moveTerr.length > 0) {
         this.moveSpriteBetweenTerrs(obj);
@@ -299,7 +300,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     playSound('9mm.mp3');
 
     if (this.displayBattle.airDefenseUnits.length > 0) {
-      startToRollAAGuns(this.displayBattle);
+      startToRollAAGuns(this.displayBattle, this.selectedTerritory);
       this.changeDiceUnitsToImg(this.displayBattle.airDefenseUnits, 'spin.gif');
       setTimeout(() => {
         this.aaGunsRoll();
@@ -310,7 +311,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     }
   }
   aaGunsRoll() {
-    rollAAGuns(this.displayBattle);
+    rollAAGuns(this.displayBattle, this.selectedTerritory);
     this.changeDiceUnitsToImg(this.displayBattle.attackUnits, 'spin.gif');
     this.changeDiceUnitsToImg(this.displayBattle.defendingUnits, 'dice.png');
     setTimeout(() => {
@@ -340,12 +341,6 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       else
         this.closeModal('#territoryPopup');
     }
-    //    if (this.user.rank == 0 && this.gameObj.round == 1 && !this.displayBattle.militaryObj.battleInProgress) {
-    //     setTimeout(() => {
-    //       showAlertPopup('Good job! Click "Complete Turn" at the top to finish your turn.');
-    //       highlightCompleteTurnButton();
-    //      }, 3500);
-    //   }
   }
   removeCasualties() {
     playClick();
@@ -410,6 +405,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   }
 
   changeProdType(segmentIdx: number) {
+    /*
     this.segmentIdx = segmentIdx;
     this.productionDisplayUnits = [];
     if (this.selectedTerritory.nation < 99 && this.selectedTerritory.factoryCount == 0)
@@ -445,7 +441,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
         this.tryThisUnit(num2 + 16);
       if (this.user.rank >= 14)
         this.tryThisUnit(num2 + 24);
-    }
+    }*/
   }
   tryThisUnit(id: number) {
     var unit = this.superpowersData.units[id];

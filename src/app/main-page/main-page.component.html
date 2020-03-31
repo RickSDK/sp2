@@ -3,7 +3,7 @@
 
 <div style="max-width: 800px; display: block; margin-left: auto; margin-right: auto; text-align: center;">
 	<img id="spLogo" src="assets/graphics/images/superpowers.png" title="Superpowers!"
-		style="width: 100%; cursor: pointer;">
+		style="width: 100%;">
 	<div class="container-fluid" style="text-align: center;">
 		<div class="row">
 			<div class="col-sm-4">
@@ -15,31 +15,31 @@
 			</div>
 			<div class="col-sm-4" style="padding-top: 10px;">
 
-				<div *ngIf="user" class="roundedCard" style="cursor: pointer;" (click)="userPopup.show()">
-					<div style="background-color: #444; color: white; min-width: 130px; height: 32px;">
-						<img src="{{user.imgSrc}}" style="height: 32px; max-width: 44px; float: left;">
-						<span style="padding: 5px;">{{user.userName}}</span>
-						<img style="float: right;" *ngIf="user.empCount>0" src="assets/graphics/units/piece52u.png"
-							height=25>
-						<img style="float: right;" *ngIf="user.empCount>1" src="assets/graphics/units/piece52u.png"
-							height=25>
-					</div>
-					<div style="padding: 5px;">
-						<div style="font-size: 14px;"><img src="assets/graphics/ranks/rank{{user.rank}}.png"
-								style="max-height: 45px; max-width: 120px;"
-								title="{{superpowersData.ranks[user.rank].name}}"></div>
-					</div>
-					<div *ngIf="superpowersData" style="background-color: #444; color: white;">
-						{{superpowersData.ranks[user.rank].name}}
+				<div *ngIf="user" class="spCard" style="cursor: pointer;" (click)="userPopup.show()">
+					<div>
+						<div class="spTitle" style="height: 32px;">
+							<img src="{{user.imgSrc}}" style="height: 32px; max-width: 44px; float: left;">
+							<span style="padding: 5px;">{{user.userName}}</span>
+							<img style="float: right;" *ngIf="user.empCount>0" src="assets/graphics/units/piece52u.png"
+								height=25>
+							<img style="float: right;" *ngIf="user.empCount>1" src="assets/graphics/units/piece52u.png"
+								height=25>
+							<i class="fa fa-pencil-square-o"
+								style="float: right; padding-right: 5px; padding-top: 3px;"></i>
+						</div>
+						<div style="padding: 5px; background-color: white;">
+							<div style="font-size: 14px;"><img src="assets/graphics/ranks/rank{{user.rank}}.png"
+									style="max-height: 45px; max-width: 120px;"
+									title="{{superpowersData.ranks[user.rank].name}}"></div>
+						</div>
+						<div *ngIf="superpowersData" style="background-color: #444; color: white;">
+							{{superpowersData.ranks[user.rank].name}}
+						</div>
 					</div>
 				</div>
 				<div>
 					<a routerLink="/info"><button type="button" class="btn btn-primary roundButton"><i
 								class="fa fa-info-circle"></i> Info & Rules </button></a>
-					<div class="hidden-sm">
-						<button (click)="scoreboardPopup.show()" type="button" class="btn btn-primary roundButton"><i
-								class="fa fa-chevron-right"></i> Scoreboard </button>
-					</div>
 					<!--<span *ngIf="owner_flg"><a href="#!userStats"><button type="button" class="btn btn-primary roundButton"><i class="fa fa-user"></i> User Stats</button></a> </span>-->
 					<!--<span *ngIf="showInstallButton && user.rank<5"><button type="button" class="btn ptp-gray roundButton"><i class="fa fa-map-pin"></i> Install/Setup</button></span>-->
 					<!--<a href="#!forum" *ngIf="0"><button type="button" class="btn btn-primary roundButton"><i class="fa fa-comment"></i> Forum <span *ngIf="forumCount>0">({{forumCount}})</span></button></a>-->

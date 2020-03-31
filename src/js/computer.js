@@ -264,7 +264,7 @@ function checkDiplomacy(player, gameObj) {
 function spreadOutUnits(player, gameObj, superpowersData) {
     var obj = { t1: 0, t2: 0, id: 0 };
     player.territories.forEach(function (terr) {
-        if (terr.id < 79 && terr.groundForce >= 4 && !terr.generalFlg && !terr.leaderFlg && numberVal(terr.defeatedByNation) == 0 && terr.land.length > 0) {
+        if (terr.id < 79 && terr.owner == player.nation && terr.groundForce >= 4 && !terr.generalFlg && !terr.leaderFlg && numberVal(terr.defeatedByNation) == 0 && terr.land.length > 0) {
             for (var x = 0; x < terr.land.length; x++) {
                 var toId = terr.land[x];
                 var toTerr = gameObj.territories[toId - 1];
@@ -278,15 +278,6 @@ function spreadOutUnits(player, gameObj, superpowersData) {
     });
     return obj;
 }
-/*
-function refreshPlayerTerritories(gameObj, player, superpowersData) {
-    console.log('player', player);
-    if(!player.territories)
-        return;
-    player.territories.forEach(function (terr) {
-        refreshTerritory(terr, gameObj, player, superpowersData, player);
-    });
-}*/
 function moveAFewUnitsFromTerrToTerr(terr, toTerr, player, gameObj) {
     var count = 0;
     var obj = { t1: 0, t2: 0, id: 0 };
@@ -455,8 +446,6 @@ function okToAttack(player, terr, gameObj) {
         return false;
     if (terr.nuked)
         return false;
-    if (terr.attackedByNation == player.nation && terr.attackedRound == gameObj.round)
-        return false;
     if (gameObj.round < gameObj.attack)
         return false;
     if (gameObj.round == gameObj.attack) {
@@ -536,7 +525,7 @@ function attemptToAttack(targetId, currentPlayer, gameObj) {
     var min = 0;
     targetTerr.land.forEach(function (t) {
         var ter = gameObj.territories[t - 1];
-        if (ter.owner == currentPlayer.nation && ter.attStrength > targetTerr.defStrength && ter.attStrength > min) {
+        if (ter.owner == currentPlayer.nation && ter.attStrength > targetTerr.defStrength && ter.attStrength > min && okToAttack(currentPlayer, ter, gameObj)) {
             min = ter.attStrength;
             biggestAttacker = ter;
         }
@@ -638,6 +627,7 @@ function respositionMainBase(player, gameObj) {
     }
     if (newTerr) {
         player.mainBaseID = newTerr.id;
+        console.log('+++moving base to ', newTerr.name);
         terr1.units.forEach(function (unit) {
             if (unit.owner == player.nation && (unit.piece == 10 || unit.piece == 11))
                 unit.terr = newTerr.id;
@@ -651,7 +641,7 @@ function fortifyThisTerritory(player, gameObj) {
         if (ter.owner == player.nation) {
             var x = 0;
             ter.units.forEach(function (unit) {
-                if (isUnitOkToAttack(unit, player.nation)) {
+                if (isUnitOkToMove(unit, player.nation)) {
                     unit.movesLeft = 0;
                     if (x++ >= 2)
                         unit.terr = player.hotSpotId;
@@ -673,8 +663,7 @@ function recallBoats(gameObj, player) {
         if (terr.owner == player.nation) {
             gameObj.units.forEach(function (unit) {
                 if (unit.owner == player.nation && unit.movesLeft > 0 && (unit.terr == terr.enemyWater || unit.terr == terr.enemyWater2)) {
-                    //unit.terr = terr.id;
-                    console.log('recall!');
+                    unit.terr = terr.id;
                 }
                     
             });
@@ -752,6 +741,7 @@ function getAmphibiousAttackObj(player, homeBase, enemyWaterTerr, enemyLandTerr,
             ampFlg = false;
             attackFleet.forEach(function (unit) {
                 unit.terr = enemyWaterTerr.id; // move the fleet!
+                unit.movesLeft = 0;
             });
         }
         return {
@@ -774,9 +764,12 @@ function getAmphibiousAttackObj(player, homeBase, enemyWaterTerr, enemyLandTerr,
 function addTestScore(gameObj) {
     var humanPlayer = getHumanPlayer(gameObj);
     var winLoss = (gameObj.winningTeamFlg) ? 'Win' : 'Loss';
-	var gameScores = JSON.parse(localStorage.getItem("gameScores")) || [];
+	var gameScores = getGameScores();
 	gameScores.push({ id: gameScores.length + 1, created: gameObj.created, type: gameObj.type, winLoss: winLoss, round: gameObj.round, nation: humanPlayer.nation });
 	localStorage.setItem("gameScores", JSON.stringify(gameScores));
+}
+function getGameScores() {
+    return JSON.parse(localStorage.getItem("gameScores")) || [];
 }
 function getHumanPlayer(gameObj) {
     for(var x=0; x<gameObj.players.length; x++) {

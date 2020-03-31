@@ -13,7 +13,8 @@
                     height=30></span>
             <hr style="margin: 3px;">
             <div style="font-size: 10px;">-Capitals-</div>
-            <img *ngFor="let nation of team.nations" src="assets/graphics/images/flag{{nation}}.gif" height=20>
+            <img *ngFor="let nation of team.capitals" src="assets/graphics/images/flag{{nation}}.gif" height=20>
+            <div *ngIf="team.capitals.length==0">None</div>
             <hr style="margin: 3px;">
             <div style="font-size: 10px;">-Income-</div>
             <div style="font-size: 22px; color: #007; font-weight: 700;">{{team.income}}</div>

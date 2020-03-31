@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 
 declare var getHostname: any;
 declare var userObjFromUser: any;
-declare var playSound: any;
 
 @Component({
   selector: 'app-main-page',
@@ -28,9 +27,13 @@ export class MainPageComponent extends BaseComponent implements OnInit {
     this.user = userObjFromUser();
     this.flexSprite(100);
     this.singleGameId = localStorage.currentGameId;
+    localStorage.loadGameId = 0; // clear out any multiplayer game
+
  //   console.log('main-page ngOnInit', this.user);
   }
   multiplayGameClicked(login: any) {
+    this.showAlertPopup('Not coded yet!',1);
+    return;
     if (this.user.userId > 0)
       this.router.navigate(['/multiplayer']);
     else

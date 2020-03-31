@@ -64,13 +64,13 @@
     </div>
     <!---------purchase form--------->
     <div class="btn-group" *ngIf="selectedTerritory.factoryCount>0">
-        <button (click)="changeProdType(0)" [ngClass]="ngClassSegment(segmentIdx,0)" type="button"
+        <button (click)="changeProdType(0, selectedTerritory)" [ngClass]="ngClassSegment(segmentIdx,0)" type="button"
             class="btn btn-default"><i class="fa fa-truck"></i> Ground</button>
-        <button (click)="changeProdType(1)" [ngClass]="ngClassSegment(segmentIdx,1)" type="button"
+        <button (click)="changeProdType(1, selectedTerritory)" [ngClass]="ngClassSegment(segmentIdx,1)" type="button"
             class="btn btn-default"><i class="fa fa-fighter-jet"></i> Air</button>
-        <button (click)="changeProdType(2)" [ngClass]="ngClassSegment(segmentIdx,2)" type="button"
+        <button (click)="changeProdType(2, selectedTerritory)" [ngClass]="ngClassSegment(segmentIdx,2)" type="button"
             class="btn btn-default"><i class="fa fa-anchor"></i> Sea</button>
-        <button *ngIf="gameObj.restrict_units_flg !='Y' && user.rank>=4" (click)="changeProdType(3)"
+        <button *ngIf="gameObj.restrict_units_flg !='Y' && user.rank>=4" (click)="changeProdType(3, selectedTerritory)"
             [ngClass]="ngClassSegment(segmentIdx,3)" type="button" class="btn btn-default"><i class="fa fa-star"></i>
             Sp</button>
     </div>

@@ -131,7 +131,7 @@
 	</span>
 </div>
 <!---------- menu button-->
-<button *ngIf="showControls " id="menu1Button"
+<button *ngIf="showControls" id="menu1Button"
 	(click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 4)" type="button"
 	class="btn btn-primary roundButton" style="z-index: 300; position: fixed; left: -2px;"><i class="fa fa-bars"></i>
 	Menu</button>
@@ -271,6 +271,13 @@
 	<button (click)="computerGoClicked()" type="button" class="btn btn-success roundButton tall2"><i
 			class="fa fa-check"></i> Go!</button>
 </div>
+
+<div id="invalidGamePopup" class="popupScreen2" style="width: 300px;">
+	<div><i class="fa fa-exclamation-triangle"></i> Error: Invalid Game!</div>
+	<a routerLink="/"><button type="button" class="btn btn-danger roundButton tall2">
+		<i class="fa fa-arrow-left"></i> Exit!</button></a>
+</div>
+
 
 <div id="generalWithdrawPopup" class="popupScreen2" style="width: 300px;">
 	<div *ngIf="displayBattle && displayBattle.wonFlg" style="font-size: 24px; color: green; font-weight: 800;">You Won!

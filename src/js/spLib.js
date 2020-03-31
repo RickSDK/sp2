@@ -197,8 +197,8 @@ function getIPInfo(userName, pwd) {
 			console.log('ipify', JSON.stringify(data, null, 2));
 		});
 }
-function getDisplayUnitCount(terr, fogOfWar, hardFog) {
-	if (terr.isAlly || fogOfWar != 'Y')
+function getDisplayUnitCount(terr, fogOfWar, hardFog, yourPlayer=null) {
+	if (terr.treatyStatus >= 3 || fogOfWar != 'Y')
 		return terr.unitCount.toString();
 	if (hardFog == 'Y' && !terr.illuminateFlg) {
 		return '?';
@@ -422,12 +422,6 @@ function awardsForYear(year, awards) {
 	});
 	return yearAwards;
 }
-function addTestScore(created, type, winFlg, round, nation) {
-	var winLoss = (winFlg) ? 'Win' : 'Loss';
-	var gameScores = JSON.parse(localStorage.getItem("gameScores")) || [];
-	gameScores.push({ id: gameScores.length + 1, created: created, type: type, winLoss: winLoss, round: round, nation: nation });
-	localStorage.setItem("gameScores", JSON.stringify(gameScores));
-}
 function ngStyleRank(num1, num2) {
 	if (num1 == num2)
 		return { 'background-color': 'yellow' };
@@ -481,6 +475,39 @@ function displayTerrPopup(name, terr, moveFlg) {
 }
 function clearCurrentGameId() {
 	localStorage.removeItem('currentGameId');
+	localStorage.removeItem('startingNation');
+	localStorage.removeItem('loadGameId');
 	localStorage.currentGameId = 0;
+}
+function computerAnnouncement(user, msg) {
+	console.log('computerAnnouncement', msg);
+	/*
+	var url = getHostname()+"/webSuperpowers.php";
+		$.post(url,
+		{
+			user_login: user.userName || 'test',
+			code: user.code,
+			msg: msg,
+			action: 'computerAnnouncement'
+		},
+		function(data, status){
+			console.log(data, status);
+		});
+*/
+
+		const url = getHostname() + "/webSuperpowers.php";
+		var body = JSON.stringify({ user_login: user.userName, code: user.code, action: 'computerAnnouncement', msg: msg });
+
+		const postData = {
+			method: 'POST',
+			headers: new Headers(),
+			body: body
+		};
+		fetch(url, postData).then((resp) => resp.text())
+			.then((data) => {
+				console.log(data);
+			})
+			.catch(error => {
+			});
 }
 

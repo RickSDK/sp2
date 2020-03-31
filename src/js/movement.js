@@ -18,6 +18,8 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
         return false;
     if (optionType == 'attack' && unit.subType == 'missile')
         return false;
+    if (optionType == 'attack' && unit.type == 1 && toTerr.nation == 99)
+        return false;
     if (optionType == 'nuke' && unit.subType != 'missile')
         return false;
     if (optionType == 'bomb' && unit.piece != 7)
@@ -63,7 +65,7 @@ function selectAllUnits(terr, optionType, currentPlayer) {
         var unit = terr.units[x];
         var cm = checkMovement(terr.distObj, unit, optionType, currentPlayer, terr);
         var e = document.getElementById('unit' + unit.id);
-        if (e  && unit.piece != 13) // && cm
+        if (e && unit.piece != 13) // && cm
             e.checked = checked;
     }
 }
@@ -113,49 +115,44 @@ function findBomberForParatrooper(unit, selectedTerritory, optinType) {
     else
         console.log('no transport found!')
 }
-function moveSelectedUnits(moveTerr, selectedTerritory) {
+function moveSelectedUnits(moveTerr, selectedTerritory, gameObj) {
     var terr1Id = 1;
     var piece = 3;
-    for (var x = 0; x < moveTerr.length; x++) {
-        var terr = moveTerr[x];
-        for (var u = 0; u < terr.units.length; u++) {
-            var unit = terr.units[u];
-
-            var e = document.getElementById('unit' + unit.id);
-            if (e && e.checked) {
-                terr1Id = unit.terr;
-                piece = unit.piece;
-                unit.terr = selectedTerritory.id;
-                if (unit.piece == 4)
-                    unit.movesLeft--;
-                else
-                    unit.movesLeft = 0;
-                if (unit.cargoOf > 0 && unit.type == 1 && selectedTerritory.nation < 99)
-                    unit.cargoOf = 0;
-                if ((unit.type == 1 || unit.type == 2) && selectedTerritory.nation == 99)
-                    findTransportForThisCargo(unit, selectedTerritory);
-                if (unit.cargo && unit.cargo.length > 0)
-                    moveCargoWithThisUnit(unit, terr);
-            }
-        }
-    }
+    var units = getSelectedUnits(moveTerr);
+    units.forEach(function (unit) {
+        terr1Id = unit.terr;
+        piece = unit.piece;
+        unit.terr = selectedTerritory.id;
+        if (unit.piece == 4)
+            unit.movesLeft--;
+        else
+            unit.movesLeft = 0;
+        if (unit.cargoOf > 0 && unit.type == 1 && selectedTerritory.nation < 99)
+            unit.cargoOf = 0;
+        if ((unit.type == 1 || unit.type == 2) && selectedTerritory.nation == 99)
+            findTransportForThisCargo(unit, selectedTerritory, gameObj);
+        if (unit.cargo && unit.cargo.length > 0)
+            moveCargoWithThisUnit(unit, selectedTerritory);
+    });
+    squareUpAllCargo(units, gameObj);
+    illuminateThisTerritory(selectedTerritory, gameObj);
     return { t1: terr1Id, t2: selectedTerritory.id, id: piece };
 }
 function moveCargoWithThisUnit(unit, terr) {
     for (var u = 0; u < terr.units.length; u++) {
         var cargo = terr.units[u];
-        if (cargo.cargoOf && cargo.cargoOf == unit.id) {
+        if (cargo.cargoOf && cargo.cargoOf == unit.id && cargo.owner == unit.owner) {
             cargo.terr = unit.terr;
         }
     }
 }
-function findTransportForThisCargo(unit, terr) {
+function findTransportForThisCargo(unit, terr, gameObj) {
     unit.movesLeft = 2;
     if (unit.piece == 10 || unit.piece == 11 || unit.piece == 13) {
         var bestShip;
         for (var u = 0; u < terr.units.length; u++) {
             var ship = terr.units[u];
-            if (ship.type == 3 && ship.piece !=5 && (!bestShip || ship.cas > bestShip.cas))
+            if (ship.type == 3 && ship.piece != 5 && (!bestShip || ship.cas > bestShip.cas))
                 bestShip = ship;
         }
         loadThisUnitOntoThisTransport(unit, bestShip);
@@ -170,13 +167,28 @@ function findTransportForThisCargo(unit, terr) {
     }
     for (var u = 0; u < terr.units.length; u++) {
         var transport = terr.units[u];
-        if (transport.piece == 8 && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits) {
+        if (transport.piece == 8 && unit.subType == 'fighter' && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits) {
             loadThisUnitOntoThisTransport(unit, transport);
             return;
         }
     }
+    if (unit.subType == 'fighter') {
+        for (var u = 0; u < gameObj.units.length; u++) {
+            var transport = gameObj.units[u];
+            if (transport.piece == 8 && unit.terr == terr.id && transport.owner == unit.owner && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits) {
+                loadThisUnitOntoThisTransport(unit, transport);
+                return;
+            }
+        }
+    }
+    console.log('no transport found!!!', terr.units);
 }
 function loadThisUnitOntoThisTransport(unit, transport) {
+    if (unit.owner != transport.owner) {
+        console.log('whoa invalid cargo!!', transport.owner, transport);
+        showAlertPopup('invalid cargo', 1);
+        return;
+    }
     if (!transport.cargoLoadedThisTurn)
         transport.cargoLoadedThisTurn = 0;
     transport.cargoUnits += unit.cargoUnits;
@@ -186,12 +198,12 @@ function loadThisUnitOntoThisTransport(unit, transport) {
         transport.cargo = [];
     transport.cargo.push({ id: unit.id, piece: unit.piece, cargoUnits: unit.cargoUnits });
 }
-function refreshBoardFromMove(moveTerr, selectedTerritory, gameObj, superpowersData, currentPlayer) {
+function refreshBoardFromMove(moveTerr, selectedTerritory, gameObj, superpowersData, currentPlayer, yourPlayer) {
     for (var x = 0; x < moveTerr.length; x++) {
         var terr = moveTerr[x];
-        refreshTerritory(terr, gameObj, currentPlayer, superpowersData, currentPlayer);
+        refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPlayer);
     }
-    refreshTerritory(selectedTerritory, gameObj, currentPlayer, superpowersData, currentPlayer);
+    refreshTerritory(selectedTerritory, gameObj, currentPlayer, superpowersData, yourPlayer);
 }
 function expectedHitsFromStrength(strength) {
     if (strength >= 18)

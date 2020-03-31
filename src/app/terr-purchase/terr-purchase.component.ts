@@ -8,6 +8,7 @@ declare var addUniToQueue: any;
 declare var displayFixedPopup: any;
 declare var isFactoryAllowedOnTerr: any;
 declare var unitOfId: any;
+declare var isUnitFighterUnit: any;
 
 @Component({
   selector: 'app-terr-purchase',
@@ -22,12 +23,10 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
   @Input('user') user: any;
   @Input('ableToTakeThisTurn') ableToTakeThisTurn: any;
   @Input('optionType') optionType: any;
-  @Input('productionDisplayUnits') productionDisplayUnits: any;
   @Input('allowFactoryFlg') allowFactoryFlg: any;
   @Input('adminModeFlg') adminModeFlg: string;
   public facBombedFlg = false;
-  // public allowEcoCenterFlg = true;
-  //  public allowFactoryFlg = true;
+  public productionDisplayUnits: any;
 
   constructor() { super(); }
 
@@ -36,7 +35,7 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
   initChild(terr: any) {
     this.allowFactoryFlg = isFactoryAllowedOnTerr(terr, this.gameObj);
     this.segmentIdx = (terr.nation < 99) ? 0 : 2;
-    this.changeProdType(this.segmentIdx);
+    this.changeProdType(this.segmentIdx, terr);
     this.facBombedFlg = terr.facBombed;
   }
 
@@ -49,6 +48,14 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
       playSound('Swoosh.mp3');
       return;
     }
+    if (this.selectedTerritory.nation == 99 && isUnitFighterUnit(piece)) {
+      var carrierSpace = this.selectedTerritory.carrierSpace + this.numCarriersInQueue() * 2;
+      var carrierCargo = this.selectedTerritory.carrierCargo + this.numFightersInQueue();
+      if (carrierSpace < carrierCargo+count) {
+        this.showAlertPopup('no room for this fighter!', 1);
+        return;
+      }
+    }
     playSound('clink.wav');
     if (piece == 15 || piece == 19) {
       if (this.facBombedFlg)
@@ -57,6 +64,22 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
         this.allowFactoryFlg = false;
     }
     addUniToQueue(piece, count, this.superpowersData, this.currentPlayer, this.gameObj, this.selectedTerritory);
+  }
+  numFightersInQueue() {
+    var num = 0;
+    this.gameObj.unitPurchases.forEach(unitPurch => {
+      if (isUnitFighterUnit(unitPurch.piece))
+        num++;
+    });
+    return num;
+  }
+  numCarriersInQueue() {
+    var num = 0;
+    this.gameObj.unitPurchases.forEach(unitPurch => {
+      if (unitPurch.piece==8)
+        num++;
+    });
+    return num;
   }
   clearQueue() {
     playSound('clink.wav');
@@ -95,10 +118,10 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
     this.selectedTerritory.displayQueue = getDisplayQueueFromQueue(this.selectedTerritory, this.gameObj);
   }
 
-  changeProdType(segmentIdx: number) {
+  changeProdType(segmentIdx: number, terr: any) {
     this.segmentIdx = segmentIdx;
     this.productionDisplayUnits = [];
-    if (this.selectedTerritory.factoryCount == 0)
+    if (terr.factoryCount == 0 && terr.nation < 99)
       return;
     if (segmentIdx == 0) { //ground
       this.productionDisplayUnits.push(this.superpowersData.units[1]);

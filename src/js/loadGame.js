@@ -49,11 +49,11 @@ function createNewGameFromInitObj(obj, pieces) {
 	gameObj.teams = loadTeams(obj.players.length);
 	return gameObj;
 }
-function createNewGameSimple(type, numPlayers, name, startingNation, pObj) {
+function createNewGameSimple(type, numPlayers, name, startingNation, pObj, user) {
 	var gUnits = populateUnits();
-	return createNewGame(3, type, numPlayers, name, 6, gUnits, startingNation, localStorage.fogOfWar, 1, localStorage.customGame, pObj, localStorage.hardFog);
+	return createNewGame(3, type, numPlayers, name, 6, gUnits, startingNation, localStorage.fogOfWar, 1, localStorage.customGame, pObj, localStorage.hardFog, false, user);
 }
-function createNewGame(id, type, numPlayers, name, attack, pieces, startingNation, fogOfWar, rank, customGame, pObj, hardFog, turboFlg) {
+function createNewGame(id, type, numPlayers, name, attack, pieces, startingNation, fogOfWar, rank, customGame, pObj, hardFog, turboFlg, user) {
 	// this is for single player games
 	var gameObj = new Object;
 	gameObj.name = name;
@@ -90,7 +90,7 @@ function createNewGame(id, type, numPlayers, name, attack, pieces, startingNatio
 		gameObj.players = loadPlayers2(pObj, type);
 //		gameObj.players = loadPlayersFromObj(pObj);
 	} else {		
-		gameObj.players = loadPlayers(numPlayers, startingNation, rank);
+		gameObj.players = loadPlayers(numPlayers, startingNation, rank, user);
 	}
 	gameObj.territories=getGameTerritories();
 	updateTerritories(gameObj.territories, gameObj.players);
@@ -231,7 +231,7 @@ function loadPlayersFromObj(pObj, userName) {
 	});
 	return players;
 }
-function loadPlayers(numPlayers, startingNation, rank) {
+function loadPlayers(numPlayers, startingNation, rank, user) {
 	var players = [];
 	var humanTurn=Math.floor((Math.random() * numPlayers));
 	if(!rank || rank < 2)
@@ -247,7 +247,7 @@ function loadPlayers(numPlayers, startingNation, rank) {
 		if(x==humanTurn) {
 			cpuFlg=false;
 			nation=startingNation;
-			userName='You';
+			userName=user.userName;
 		} else
 			cpuNum++;
 		while(nation==0) {

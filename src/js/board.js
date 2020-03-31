@@ -61,6 +61,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	var units = [];
 	var unitUniqueHash = {};
 	var movableTroopCount = 0;
+	var aircraftCarriers = [];
 	gameObj.units.forEach(function (unit) {
 		if (unit.dead)
 			console.log('unit dead!!!', unit.piece);
@@ -75,6 +76,8 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 			if (unit.moveAtt > 0 && unit.owner == currentPlayer.nation)
 				movableTroopCount++;
 			totalUnitCount++;
+			if (unit.piece == 8)
+				aircraftCarriers.push(unit);
 			if (unit.piece == 9)
 				battleshipAACount++;
 			if (unit.subType == 'fighter')
@@ -206,6 +209,8 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 				unitCount++;
 		}
 	});
+	if (aircraftCarriers.length > 0)
+		squareUpAllCargo(aircraftCarriers, gameObj);
 	units.sort(function (a, b) { return a.piece - b.piece; });
 	terr.units = units;
 	terr.movableTroopCount = movableTroopCount;
@@ -298,7 +303,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 			userName = player.userName;
 			terr.shieldTech = player.tech[18];
 		}
-		if (player.tech[16]) {
+		if (player.tech[16] && terr.nation < 99) {
 			adCount++;
 		}
 		if (!player.tech[2])
@@ -355,7 +360,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	terr.treatyStatusAtStart = obj.statusAtStart;
 	terr.isAlly = obj.isAlly;
 	terr.enemyForce = getEnemyForceForTerr(terr, gameObj);
-	terr.displayUnitCount = getDisplayUnitCount(terr, gameObj.fogOfWar, gameObj.hardFog)
+	terr.displayUnitCount = getDisplayUnitCount(terr, gameObj.fogOfWar, gameObj.hardFog, yourPlayer);
 	var titleUnitCount = unitCount;
 	if (terr.fogOfWar)
 		titleUnitCount = terr.displayUnitCount;
@@ -971,9 +976,10 @@ function checkGameTeams(incomes, capitals, gameObj) {
 		team.teamPlayers = teamPlayers;
 		team.numPlayers = numPlayers;
 		team.alive = alive;
-		team.nations = nations;
+		team.nations = teamPlayers;
 		team.income = incomes[x];
-		team.capitals = capitals[x];
+		team.capitals2 = capitals[x];
+		team.capitals = nations;
 		x++;
 	});
 }
@@ -1683,7 +1689,6 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 				setInnerHTMLFromElement('winningTeam', msg);
 				playSound('tada.mp3');
 				gameObj.gameOver = true;
-				gameObj.actionButtonMessage = '';
 			}
 		}
 	} else {
@@ -1850,5 +1855,20 @@ function isCountOfNation(nation, count) {
 		return true;
 	return false;
 }
-
+function illuminateTerritories(gameObj) {
+	gameObj.territories.forEach(function (t) {
+		t.illuminateFlg = t.treatyStatus >= 3;
+		if (t.illuminateFlg)
+			illuminateThisTerritory(t, gameObj);
+	});
+}
+function illuminateThisTerritory(t, gameObj) {
+	if (t.unitCount > 0) {
+		var borders = t.borders.split('+');
+		borders.forEach(function (b) {
+			var terr = gameObj.territories[b - 1];
+			terr.illuminateFlg = true;
+		});
+	}
+}
 

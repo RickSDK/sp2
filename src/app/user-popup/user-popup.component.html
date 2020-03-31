@@ -7,65 +7,138 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" *ngIf="user">
+            <div class="modal-body" *ngIf="user" style="text-align: center;">
 
-                <table>
-                    <tr>
-                        <td><img class="terr-card" (click)="editUserImageFlg = !editUserImageFlg" src="{{user.imgSrc}}"
-                                width="100%"></td>
-                        <td>
-                            <div class="terr-card" (click)="editUseNameFlg = !editUseNameFlg">
-                                <div>{{user.userName}}</div>
-                                <div style="background-color: white; color: black;">
-                                    <img src="assets/graphics/ranks/rank{{user.rank}}.png" width="100%">
-                                    <div class="darkBlueBg">{{superpowersData.ranks[user.rank].name}}</div>
-                                </div>
+
+                <div style="text-align: center; padding-bottom: 5px;">
+                    <div class="btn-group">
+                        <button (click)="segmentIdx=0" type="button" class="btn btn-default roundButton"
+                            [ngClass]="ngClassSegment(segmentIdx,0)" style="min-width: 60px;">
+                            <i class="fa fa-picture-o" style="font-size: 26px;"></i>
+                            <div style="font-size: 10px;">Profile</div>
+                        </button>
+                        <button (click)="segmentIdx=1" type="button" class="btn btn-default roundButton"
+                            [ngClass]="ngClassSegment(segmentIdx,1)" style="min-width: 60px;">
+                            <i class="fa fa-user" style="font-size: 26px;"></i>
+                            <div style="font-size: 10px;">Single Player</div>
+                        </button>
+                        <button (click)="segmentIdx=2" type="button" class="btn btn-default roundButton"
+                            [ngClass]="ngClassSegment(segmentIdx,2)" style="min-width: 60px;">
+                            <i class="fa fa-users" style="font-size: 26px;"></i>
+                            <div style="font-size: 10px;">Multi-Player</div>
+                        </button>
+                        <button (click)="segmentIdx=3" type="button" class="btn btn-default roundButton"
+                            [ngClass]="ngClassSegment(segmentIdx,3)" style="min-width: 60px;">
+                            <i class="fa fa-trophy" style="font-size: 26px;"></i>
+                            <div style="font-size: 10px;">Match-Making</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-------profile--------------------->
+                <div *ngIf="segmentIdx==0">
+                    <div class="spCard" style="cursor: pointer;" (click)="editUserImageFlg = !editUserImageFlg">
+                        <div>
+                            <div class="spTitle">Profile Image <i class="fa fa-pencil-square-o"
+                                    style="float: right; padding-right: 5px; padding-top: 3px;"></i></div>
+                            <img src="{{user.imgSrc}}" style="max-width: 300px; max-height: 185px;">
+                        </div>
+                    </div>
+
+                    <div class="spCard" style="cursor: pointer;" (click)="editUseNameFlg = !editUseNameFlg">
+                        <div>
+                            <div class="spTitle">{{user.userName}} <i class="fa fa-pencil-square-o"
+                                    style="float: right; padding-right: 5px; padding-top: 3px;"></i></div>
+                            <div style="background-color: white; color: black;">
+                                <img src="assets/graphics/ranks/rank{{user.rank}}.png" width="100%" style="max-width: 200px; max-height: 160px;">
                             </div>
-                        </td>
-                    </tr>
-                </table>
-
-                <div *ngIf="editUserImageFlg" class="terr-card" style="text-align: center;">
-                    <div style="height: 48px;">Choose a new Profile Image
-                        <button (click)="editUserImageFlg=false" type="button" class="btn btn-primary roundButton"
-                            style="float: right;"><i class="fa fa-times"></i>
-                        </button>
+                            <div>{{superpowersData.ranks[user.rank].name}}</div>
+                        </div>
                     </div>
-                    <img *ngFor="let image of localAvatars" src="assets/graphics/avatars/{{image}}" height="100"
-                        class="roundedPanel" (click)="changeImage(image)">
+
+                    <div *ngIf="editUserImageFlg" class="spCard" style="text-align: center;">
+                        <div>
+                            <div style="height: 48px;">Choose a new Profile Image
+                                <button (click)="editUserImageFlg=false" type="button"
+                                    class="btn btn-primary roundButton" style="float: right;"><i
+                                        class="fa fa-times"></i>
+                                </button>
+                            </div>
+                            <img *ngFor="let image of localAvatars" src="assets/graphics/avatars/{{image}}" height="100"
+                                class="roundedPanel" (click)="changeImage(image)">
+                        </div>
+                    </div>
+
+                    <div *ngIf="editUseNameFlg" class="spCard" style="text-align: center;">
+                        <div>
+                            <div style="height: 48px;">Choose a User Name
+                                <button (click)="editUseNameFlg=false" type="button" class="btn btn-primary roundButton"
+                                    style="float: right;"><i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                            <div>
+                                <input type="text" id="userName" name="userName" placeholder="User Name" maxlength="16"
+                                    (click)="clearValue($event)" [value]="user.userName">
+                                <button (click)="updateUsername()" type="button"
+                                    class="btn btn-primary roundButton tall">Update
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="spCard" (click)="openRanksModal()" style="max-width: 200px;">
+                        <div>
+                            <div class="spTitle">Your Next Rank</div>
+                            <table class="spTable">
+                                <tr>
+                                    <td style="font-size: 12px;"><img src="assets/graphics/ranks/rank{{user.rank+1}}.png" height="40"><br>
+                                        <b>{{superpowersData.ranks[user.rank+1].name}}</b>
+                                    </td>
+                                    <td class="darkBlue">{{superpowersData.ranks[user.rank+1].desc}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-
-                <div *ngIf="editUseNameFlg" class="terr-card" style="text-align: center;">
-                    <div style="height: 48px;">Choose a User Name
-                        <button (click)="editUseNameFlg=false" type="button" class="btn btn-primary roundButton"
-                            style="float: right;"><i class="fa fa-times"></i>
-                        </button>
-                    </div>
-                    <div>
-                        <input type="text" id="userName" name="userName" placeholder="Email" maxlength="16"
-                            (click)="clearValue($event)" [value]="user.userName">
-                        <button (click)="updateUsername()" type="button" class="btn btn-primary roundButton tall"
-                        >Update
-                        </button>
+                <div *ngIf="segmentIdx==1">
+                    <div class="spCard" style="width: 100%">
+                        <div style="width: 100%">
+                            <div class="spTitle">Single Player Games</div>
+                            <table class="spTable">
+                                <tr>
+                                    <th>nation</th>
+                                    <th>created</th>
+                                    <th>type</th>
+                                    <th>round</th>
+                                    <th>winLoss</th>
+                                </tr>
+                                <tr *ngFor="let game of gameScores">
+                                    <td><img src="assets/graphics/images/flag{{game.nation}}.gif" height="50"></td>
+                                    <td>{{game.created}}</td>
+                                    <td>{{game.type}}</td>
+                                    <td>{{game.round}}</td>
+                                    <td>{{game.winLoss}}</td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                 </div>
-
-                <div class="terr-card">
-                    <table>
-                        <tr>
-                            <td>Next Rank:</td>
-                            <td><img src="assets/graphics/ranks/rank{{user.rank+1}}.png" height="40"><br>
-                                {{superpowersData.ranks[user.rank+1].name}} 
-                            </td>
-                            <td>{{superpowersData.ranks[user.rank+1].desc}}</td>
-                        </tr>
-                    </table>
-                 </div>
-
+                <div *ngIf="segmentIdx==2">
+                    Not coded yet!
+                </div>
+                <div *ngIf="segmentIdx==3">
+                    Not coded yet!
+                </div>
 
             </div>
             <div class="modal-footer">
+                <button (click)="openRanksModal()" type="button" class="btn btn-secondary roundButton">
+                    <i class="fa fa-star"></i> Ranks
+                </button>
             </div>
         </div>
     </div>
 </div>
+
+<app-ranks-popup #ranksPopup></app-ranks-popup>
