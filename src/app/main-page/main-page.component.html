@@ -2,13 +2,19 @@
 
 
 <div style="max-width: 800px; display: block; margin-left: auto; margin-right: auto; text-align: center;">
-	<img id="spLogo" src="assets/graphics/images/superpowers.png" title="Superpowers!"
-		style="width: 100%;">
+	<img id="spLogo" src="assets/graphics/images/superpowers.png" title="Superpowers!" style="width: 100%;">
 	<div class="container-fluid" style="text-align: center;">
 		<div class="row">
-			<div class="col-sm-4">
+			<div class="col-sm-4" style="padding: 0;">
 
-				<button (click)="multiplayGameClicked(loginPopup)" type="button" class="btn btn-primary circleButton"
+
+				<img (click)="singlePlayerGame(startGamePopup)" class="shadowed"
+					src="assets/graphics/buttons/singleButton.png" height="220" style="cursor: pointer;">
+
+				<div *ngIf="singleGameId>0" style="color: #337ab7; margin-top: -20px; z-index: 100; font-size: 12px;"><b>Game in Progress!</b></div>
+
+				<button *ngIf="0" (click)="multiplayGameClicked(loginPopup)" type="button"
+					class="btn btn-primary circleButton"
 					style="width: 180px; height: 180px; background-size: cover; background-image: url('assets/graphics/buttons/multiplayer.png'); background-position: center; background-size: cover;">
 				</button>
 
@@ -49,11 +55,18 @@
 
 
 			</div>
-			<div class="col-sm-4">
-				<button (click)="singlePlayerGame(startGamePopup)" type="button" class="btn btn-primary circleButton"
+			<div class="col-sm-4" style="padding: 0;">
+
+				<img (click)="multiplayGameClicked(loginPopup)" class="shadowed"
+					src="assets/graphics/buttons/multiButton.png" height="220" style="cursor: pointer;">
+
+
+				<button *ngIf="0" (click)="singlePlayerGame(startGamePopup)" type="button"
+					class="btn btn-primary circleButton"
 					style="width: 180px; height: 180px; background-image: url('assets/graphics/buttons/singlePlayer.png'); background-position: center; background-size: cover;">
 				</button>
-				<div *ngIf="singleGameId>0" style="color: #337ab7;"><b>Game in Progress!</b></div>
+
+
 			</div>
 		</div>
 	</div>

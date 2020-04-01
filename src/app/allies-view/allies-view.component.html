@@ -160,7 +160,7 @@
                 <img *ngIf="player.team==team.name" src="assets/graphics/images/flag{{player.nation}}.gif" height=25>
             </span>
         </td>
-        <td> <img *ngFor="let nation of team.nations" src="assets/graphics/images/flag{{nation}}.gif" height=18></td>
+        <td> <img *ngFor="let nation of team.capitals" src="assets/graphics/images/flag{{nation}}.gif" height=18></td>
         <td> {{team.income}} </td>
     </tr>
 </table>

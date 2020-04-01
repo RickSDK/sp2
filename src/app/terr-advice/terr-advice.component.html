@@ -1,68 +1,94 @@
 <!------------------leader----------------------------->
-<div class="terr-card">
-    <div style="color: white;"><img src="assets/graphics/images/flag{{selectedTerritory.nation}}.gif" height=20>&nbsp;
-        <span *ngIf="selectedTerritory.nation>0">{{superpowersData.superpowers[selectedTerritory.nation]}}
-            Leader</span>
-        <span *ngIf="selectedTerritory.nation==0">{{selectedTerritory.leaderName}} </span>
+<div class="spCard">
+    <div>
+        <div style="color: white;"><img src="assets/graphics/images/flag{{selectedTerritory.nation}}.gif"
+                height=20>&nbsp;
+            <span *ngIf="selectedTerritory.nation>0">{{superpowersData.superpowers[selectedTerritory.nation]}}
+                Leader</span>
+            <span *ngIf="selectedTerritory.nation==0">{{selectedTerritory.leaderName}} </span>
+        </div>
+        <table width=100%>
+            <tr [ngStyle]="ngStyleLogs(selectedTerritory.owner)">
+                <td [style.width]="optionType == 'home'?'90px':'40px'"
+                    style="background-size: cover;  background-position: center; background-image: url('assets/graphics/advisors/{{selectedTerritory.leaderPic}}')">
+                    &nbsp;
+                    <img *ngIf="0" src="assets/graphics/advisors/{{selectedTerritory.leaderPic}}" style="float: left; "
+                        [style.height]="optionType == 'home'?'110px':'40px'" title="{{selectedTerritory.leaderName}}">
+                </td>
+                <td>
+                    <div *ngIf="optionType == 'home'"><b>{{selectedTerritory.leaderName}}</b></div>
+                    <div *ngIf="optionType == 'home'" style="font-size: 12px;">"{{selectedTerritory.leaderMessage}}"
+                    </div>
+                    <div *ngIf="optionType == 'attack'" style="font-size: 12px;">
+                        "{{battleAnalysisObj.battleLeaderMessage}}"</div>
+
+                    <div *ngIf="1">
+                        <div *ngIf="currentPlayer.diplomacyFlg && currentPlayer.treatyOfferedNation>0"
+                            class="borderClass3" style="font-size: 12px; padding: 2px;">
+                            <i class="fa fa-flag"></i> Treaty has been offered to
+                            {{superpowersData.superpowers[currentPlayer.treatyOfferedNation]}}
+                        </div>
+                        <div *ngIf="selectedTerritory.owner>0 && selectedTerritory.treatyStatus < 4">
+                            <button *ngIf="!currentPlayer.diplomacyFlg && selectedTerritory.treatyStatus < 2"
+                                (click)="offerTreaty(2)" style="font-size: 12px;" type="button"
+                                class="btn btn-warning roundButton"><i class="fa fa-flag"></i> Offer
+                                Peace</button>
+
+                            <button
+                                *ngIf="!currentPlayer.diplomacyFlg && selectedTerritory.treatyStatus == 2 && gameObj.allowAlliances && gameObj.type!='barbarian' && gameObj.type!='battlebots'"
+                                (click)="offerTreaty(3)" style="font-size: 12px;" type="button"
+                                class="btn btn-success roundButton"><i class="fa fa-flag"></i> Offer
+                                Alliance</button>
+
+                            <button *ngIf="selectedTerritory.treatyStatus > 0" style="font-size: 12px;"
+                                (click)="declareWar()" type="button" class="btn btn-danger roundButton"><i
+                                    class="fa fa-bell"></i>
+                                Declare War!</button>
+                        </div>
+                        <span *ngIf="selectedTerritory.requestedHotSpot>0"
+                            style="border: 1px solid black; background-color: #cfc;" title="Territory Fortified"><img
+                                src="assets/graphics/images/flag{{selectedTerritory.requestedHotSpot}}.gif" height=15>
+                            <i class="fa fa-shield"></i></span>
+                        <span *ngIf="selectedTerritory.requestedTarget>0"
+                            style="border: 1px solid black; background-color: #fcc;" title="Territory Targeted"><img
+                                src="assets/graphics/images/flag{{selectedTerritory.requestedTarget}}.gif" height=15> <i
+                                class="fa fa-bullseye"></i></span>
+                    </div>
+                </td>
+            </tr>
+        </table>
     </div>
-    <table width=100%>
-        <tr [ngStyle]="ngStyleLogs(selectedTerritory.owner)">
-            <td>
-                <img src="assets/graphics/advisors/{{selectedTerritory.leaderPic}}"
-                    style="height: 100%; max-height: 120px;" title="{{selectedTerritory.leaderName}}">
-            </td>
-            <td>
-                <div><b>{{selectedTerritory.leaderName}}</b></div>
-                <div style="font-size: 12px;">"{{selectedTerritory.leaderMessage}}"</div>
-
-                <div *ngIf="currentPlayer.status=='Attack'">
-                    <div *ngIf="currentPlayer.diplomacyFlg && currentPlayer.treatyOfferedNation>0" class="borderClass2">
-                        <i class="fa fa-flag"></i> Treaty has been offered to
-                        {{superpowersData.superpowers[currentPlayer.treatyOfferedNation]}}
-                    </div>
-                    <div *ngIf="selectedTerritory.owner>0 && selectedTerritory.treatyStatus < 4">
-                        <button *ngIf="!currentPlayer.diplomacyFlg && selectedTerritory.treatyStatus < 2"
-                            (click)="offerTreaty(2)" style="font-size: 12px;" type="button"
-                            class="btn btn-warning roundButton"><i class="fa fa-flag"></i> Offer
-                            Peace</button>
-
-                        <button
-                            *ngIf="!currentPlayer.diplomacyFlg && selectedTerritory.treatyStatus == 2 && gameObj.allowAlliances && gameObj.type!='barbarian' && gameObj.type!='battlebots'"
-                            (click)="offerTreaty(3)" style="font-size: 12px;" type="button"
-                            class="btn btn-success roundButton"><i class="fa fa-flag"></i> Offer
-                            Alliance</button>
-
-                        <button *ngIf="selectedTerritory.treatyStatus > 0" style="font-size: 12px;"
-                            (click)="declareWar()" type="button" class="btn btn-danger roundButton"><i
-                                class="fa fa-bell"></i>
-                            Declare War!</button>
-                    </div>
-                    <span *ngIf="selectedTerritory.requestedHotSpot>0"
-                        style="border: 1px solid black; background-color: #cfc;" title="Territory Fortified"><img
-                            src="assets/graphics/images/flag{{selectedTerritory.requestedHotSpot}}.gif" height=15> <i
-                            class="fa fa-shield"></i></span>
-                    <span *ngIf="selectedTerritory.requestedTarget>0"
-                        style="border: 1px solid black; background-color: #fcc;" title="Territory Targeted"><img
-                            src="assets/graphics/images/flag{{selectedTerritory.requestedTarget}}.gif" height=15> <i
-                            class="fa fa-bullseye"></i></span>
-                </div>
-            </td>
-        </tr>
-    </table>
 </div>
 <!------------------strategyHint----------------------------->
-<div *ngIf="selectedTerritory.strategyHint.length>0 && selectedTerritory.nation<99" class="terr-card">
-    <div style="color: white;">
-        <img src="assets/graphics/images/flag{{currentPlayer.nation}}.gif" height=20>
-        {{superpowersData.superpowers[currentPlayer.nation]}} Military Advisor
+<div *ngIf="optionType != 'battle' && selectedTerritory.strategyHint.length>0 && selectedTerritory.nation<99"
+    class="spCard">
+    <div>
+        <div style="color: white;">
+            <img src="assets/graphics/images/flag{{currentPlayer.nation}}.gif" height=20>
+            {{superpowersData.superpowers[currentPlayer.nation]}} Military Advisor
+        </div>
+        <table width=100%>
+            <tr [ngStyle]="ngStyleLogs(currentPlayer.nation)">
+                <td [style.width]="optionType == 'home'?'100px':'50px'"
+                    style="background-size: cover;  background-position: center; background-image: url('assets/graphics/advisors/general{{currentPlayer.nation}}.jpg')">
+                    &nbsp;
+                    <img *ngIf="0" src="assets/graphics/advisors/general{{currentPlayer.nation}}.jpg"
+                        style="float: left;" [style.height]="optionType == 'home'?'80px':'40px'">
+                </td>
+                <td style="font-size: 12px;">
+                    <div *ngIf="optionType == 'home'">"{{selectedTerritory.strategyHint}}"</div>
+                    <div *ngIf="optionType == 'attack'">
+                        <div *ngIf="battleAnalysisObj.expectedHits==0">"Select the troops you would like to send into
+                            battle, then press 'Go'."</div>
+                        <div *ngIf="battleAnalysisObj.expectedHits>0">
+                            <div *ngIf="battleAnalysisObj.expectedHits < battleAnalysisObj.expectedLosses*2">"You need
+                                more troops.</div>
+                            <div *ngIf="battleAnalysisObj.expectedHits >= battleAnalysisObj.expectedLosses*2">"Launch
+                                the attack!</div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
     </div>
-    <table width=100%>
-        <tr [ngStyle]="ngStyleLogs(currentPlayer.nation)">
-            <td><img src="assets/graphics/advisors/general{{currentPlayer.nation}}.jpg"
-                    style="height: 100%; max-height: 70px;"></td>
-            <td style="font-size: 12px;"><i class="fa fa-flag"></i> {{selectedTerritory.strategyHint}}
-            </td>
-        </tr>
-    </table>
 </div>
-

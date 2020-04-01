@@ -38,7 +38,7 @@
                             *ngIf="unit.piece>0" src="{{ngUnitSrc(unit.piece, unit.nation)}}"
                             style="max-height: 20px; max-width: 40px; cursor: pointer;"
                             title="{{superpowersData.units[unit.piece].name}}">
-                            <span *ngIf="unit.cargoOf>0">.</span>
+                        <span *ngIf="unit.cargoOf>0">.</span>
                         <img *ngFor="let cargo of unit.cargo" src="assets/graphics/units/piece{{cargo.piece}}u.png"
                             title="{{superpowersData.units[cargo.piece].name}}" height=10></div>
                     <img src="assets/graphics/images/flag{{unit.nation}}.gif" height="15"
@@ -46,6 +46,37 @@
                         *ngIf="unit.piece==28 && gameObj.round <= unit.medicRound+1"
                         title="Medic on cooldown">{{unit.medicRound}}</i>
                 </span>
+            </div>
+            <div *ngFor="let unit of selectedTerritory.units">
+                <div *ngIf="unit.piece==12" class="spCard">
+                    <div>
+                        <div class="spTitle">Super Battleship</div>
+                        <div style="background-color: white; color: black;">
+                            <div><img src="assets/graphics/units/piece12u.png" title="Super Battleship" height=40></div>
+                            <div><img src="assets/graphics/images/flag{{unit.nation}}.gif" height="20">
+                                <b>{{unit.sbName}}</b></div>
+                            <div title="Attack {{unit.att}} x {{unit.numAtt}}"><i class="fa fa-bolt"></i>
+                                <img src="assets/graphics/dice/diceh{{unit.att}}.png" height="20"> 
+                                <img *ngIf="unit.numAtt>1" src="assets/graphics/dice/diceh{{unit.att}}.png" height="20"> 
+                                <img *ngIf="unit.numAtt>2" src="assets/graphics/dice/diceh{{unit.att}}.png" height="20"> 
+                            </div>
+                            <div title="Defend {{unit.def}} x {{unit.numDef}}"><i class="fa fa-shield"></i>
+                                <img src="assets/graphics/dice/diceh{{unit.def}}.png" height="20"> 
+                                <img *ngIf="unit.numDef>1" src="assets/graphics/dice/diceh{{unit.def}}.png" height="20"> 
+                                <img *ngIf="unit.numDef>2" src="assets/graphics/dice/diceh{{unit.def}}.png" height="20"> 
+                            </div>
+                            <div><img *ngIf="unit.adCount>0" src="assets/graphics/units/piece13u.png" height=20><img *ngIf="unit.adCount>1" src="assets/graphics/units/piece13u.png" height=20></div>
+                            <div>HP:
+                                <img src="assets/graphics/misc/green.png" height="25">
+                                <img *ngIf="unit.bcHp>1 && unit.damage<1" src="assets/graphics/misc/green.png" height="25">
+                                <img *ngIf="unit.bcHp>2 && unit.damage<2" src="assets/graphics/misc/green.png" height="25">
+                                <img *ngIf="unit.bcHp>1 && unit.damage>0" src="assets/graphics/misc/red.png" height="25">
+                                <img *ngIf="unit.bcHp>2 && unit.damage>1" src="assets/graphics/misc/red.png" height="25">
+                            </div>
+                            <div style="font-size: 10px; color: gray;">(Damage: {{unit.damage}})</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <!------------------fog----------------------------->

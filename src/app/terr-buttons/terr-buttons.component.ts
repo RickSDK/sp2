@@ -6,6 +6,7 @@ declare var allowHostileAct: any;
 declare var refreshTerritory: any;
 declare var transferControlOfTerr: any;
 declare var $: any;
+declare var popupNationMessage: any;
 
 @Component({
   selector: 'app-terr-buttons',
@@ -21,6 +22,7 @@ export class TerrButtonsComponent extends BaseComponent implements OnInit {
   @Input('ableToTakeThisTurn') ableToTakeThisTurn: any;
   @Input('optionType') optionType: any;
   @Input('hostileMessage') hostileMessage: any;
+  @Input('totalUnitsThatCanMove') totalUnitsThatCanMove: any;
 
   @Output() messageEvent = new EventEmitter<string>();
 
@@ -74,7 +76,8 @@ export class TerrButtonsComponent extends BaseComponent implements OnInit {
   requestTranferConfirmButtonClicked() {
     playClick();
     this.selectedTerritory.requestTransfer = this.currentPlayer.nation;
-    //   $('#territoryPopup').modal('toggle');
+    $('#territoryPopup').modal('toggle');
+    popupNationMessage(this.currentPlayer.nation, 'Transfer request sent!', this.selectedTerritory.nation, this.selectedTerritory.x, this.selectedTerritory.y, false);
   }
   tranferConfirmButtonClicked() {
     playClick();
@@ -82,16 +85,19 @@ export class TerrButtonsComponent extends BaseComponent implements OnInit {
     this.initChild();
     refreshTerritory(this.selectedTerritory, this.gameObj, this.currentPlayer, this.superpowersData, this.currentPlayer);
     $('#territoryPopup').modal('toggle');
+    popupNationMessage(this.currentPlayer.nation, 'Territory Transferred!', this.selectedTerritory.nation, this.selectedTerritory.x, this.selectedTerritory.y, false);
   }
   requestFortifyButtonClicked() {
     playClick();
     this.selectedTerritory.requestedHotSpot = this.allyNation;
-    //   $('#territoryPopup').modal('toggle');
+    $('#territoryPopup').modal('toggle');
+    popupNationMessage(this.currentPlayer.nation, 'Fortify request sent!', this.selectedTerritory.nation, this.selectedTerritory.x, this.selectedTerritory.y, false);
   }
   requestTargetButtonClicked() {
     playClick();
     this.selectedTerritory.requestedTarget = this.allyNation;
-    //    $('#territoryPopup').modal('toggle');
+    $('#territoryPopup').modal('toggle');
+    popupNationMessage(this.currentPlayer.nation, 'Target request sent!', this.selectedTerritory.nation, this.selectedTerritory.x, this.selectedTerritory.y, false);
   }
   unloadAllParatroopers() {
     playClick();

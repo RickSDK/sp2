@@ -103,6 +103,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
         }
       }
     });
+    this.checkAllTroops = false;
     this.selectedTerritory = terr;
     console.log(terr.name, terr);
     var totalUnitsThatCanMove = 0;
@@ -184,6 +185,8 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     var obj = showUnitsForMovementBG2(this.optionType, this.gameObj, this.currentPlayer, this.totalMoveTerrs, this.selectedTerritory);
     this.moveTerr = obj.moveTerr;
     this.totalUnitsThatCanMove = obj.totalUnitsThatCanMove;
+    if (obj.totalUnitsThatCanMove == 0 && this.optionType == 'attack')
+      this.selectedTerritory.leaderMessage = ''; // avoid leader message
     this.loadingFlg = false;
     this.checkSendButtonStatus(null);
   }
@@ -199,7 +202,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     selectAllButtonChecked(this.moveTerr, this.checkAllTroops, this.optionType, this.currentPlayer);
     this.checkSendButtonStatus(null);
     if (this.optionType == 'attack') {
-        this.moveTroopsButtonPressed();
+      this.moveTroopsButtonPressed();
     }
   }
   autoButtonPressed() {
@@ -329,7 +332,6 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   rollDefenderDice() {
     rollDefenderDice(this.displayBattle, this.selectedTerritory, this.currentPlayer, this.moveTerr, this.gameObj, this.superpowersData);
     if (!this.displayBattle.militaryObj.battleInProgress) {
-      console.log('+rollDefenderDice');
       this.battleCompletedEmit.emit(this.displayBattle);
       if (this.displayBattle.militaryObj.wonFlg)
         this.battleHappened.emit('battle won');

@@ -325,15 +325,15 @@ th {
 	background-color: #444;
 	color: white;
 	text-align: center;
-	box-shadow: 2px 2px 5px #444; 
+	box-shadow: 2px 2px 5px #777; 
 	border-radius: 10px; 
 	overflow: hidden;
 	margin: 2px;
-	cursor: pointer;
 }
 .spCard:hover {
 	background-color: #222;
-	box-shadow: 5px 5px 8px black; 
+	box-shadow: 3px 3px 8px #444; 
+	border: 1px solid cyan;
 }
 .spTable {
   border: 1px solid black;
@@ -1503,7 +1503,7 @@ h2 {
 }
 @media screen and (max-width: 479px) {
 	#spLogo {
-		height: 100px;
+		height: 80px;
 	}
 	#topLogo {
 		height: 50px;

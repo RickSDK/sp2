@@ -1335,7 +1335,7 @@ function getDisplayQueueFromQueue(terr, gameObj) {
 	return queue;
 }
 
-function updateAdvisorInfo(terr, currentPlayer, user, gameObj, superpowers) {
+function updateAdvisorInfo(terr, currentPlayer, user, gameObj, superpowers, optionType) {
 	var strategyHint = '';
 	if (currentPlayer.status == 'Purchase' && terr.treatyStatus == 4 && user.rank <= 3) {
 		strategyHint = "Time to build troops. Buy your desired units, close this panel and then press 'Purchase Complete'.";
@@ -1359,13 +1359,22 @@ function updateAdvisorInfo(terr, currentPlayer, user, gameObj, superpowers) {
 			strategyHint = 'This capital is strongly defended but will increase our income and give us a factory if we can defeat it. Start massing troops on the border!';
 		if (gameObj.round == 5)
 			strategyHint = 'Last round before full-out war breaks out. Make sure your defenses are in place.';
+		if (optionType == 'attack')
+			strategyHint = 'What the??';
 	}
 	if (terr.treatyStatus == 0 && terr.owner > 0) {
 		var p2 = playerOfNation(terr.owner, gameObj);
-		if (currentPlayer.income >= p2.income)
-			strategyHint = superpowers[terr.owner] + ' is a very weak enemy that needs to be attacked and defeated! Prepare to move troops into position.';
+		var powerStrength = currentPlayer.income - p2.income;
+		if (powerStrength > 50)
+			strategyHint = superpowers[terr.owner] + ' is a very weak and completely pathetic enemy that can easily be eliminated! Consider moving troops in to take over vital resources.';
+		else if (powerStrength > 25)
+			strategyHint = superpowers[terr.owner] + ' is weak and in disarray. We should move units into position to finish them off.';
+		else if (powerStrength > 0)
+			strategyHint = superpowers[terr.owner] + ' is at war with us, but can be stopped with a good war strategy. Push the attack on all fronts.';
+		else if (powerStrength > -25)
+			strategyHint = superpowers[terr.owner] + ' is dangerous and at war with us. We should avoid entanglements if possible.';
 		else
-			strategyHint = superpowers[terr.owner] + ' is a very dangerous enemy that is at war with us. Consider getting additional help from allies or making peace.';
+			strategyHint = superpowers[terr.owner] + ' is a very dangerous enemy that is at war with us. Avoid all contact and attempt making peace.';
 	}
 	if (terr.treatyStatus == 1 && terr.owner > 0) {
 		strategyHint = superpowers[terr.owner] + ' is not to be trusted. We need to keep an eye on these guys.';
@@ -1384,8 +1393,8 @@ function updateAdvisorInfo(terr, currentPlayer, user, gameObj, superpowers) {
 function getMaxAllies(player, gameObj) {
 	return gameObj.maxAllies;
 }
-function displayLeaderAndAdvisorInfo(terr, currentPlayer, yourPlayer, user, gameObj, superpowers) {
-	updateAdvisorInfo(terr, currentPlayer, user, gameObj, superpowers);
+function displayLeaderAndAdvisorInfo(terr, currentPlayer, yourPlayer, user, gameObj, superpowers, optionType) {
+	updateAdvisorInfo(terr, currentPlayer, user, gameObj, superpowers, optionType);
 	terr.leader = terr.owner || 0;
 	if (terr.leader == 0)
 		terr.leader = terr.nation || 0;
@@ -1410,12 +1419,12 @@ function displayLeaderAndAdvisorInfo(terr, currentPlayer, yourPlayer, user, game
 			//			else
 			//				terr.leaderMessage = "Time to build troops. Buy your desired units, close this panel and then press 'Purchase Complete'.";
 		} else {
-			if (terr.owner == 0)
+			if (terr.owner == 0) {
 				if (terr.nation == 0)
 					terr.leaderMessage = neutralRandomMessage(terr.id);
 				else
 					terr.leaderMessage = neutralSuperpowerMessage(terr.nation);
-			else {
+			} else {
 				var status = treatyStatus(yourPlayer, terr.leader);
 				if (status == 0)
 					terr.leaderMessage = warMessageForNation(terr, currentPlayer, gameObj);
@@ -1439,7 +1448,7 @@ function neutralSuperpowerMessage(nation) {
 		'Communism is a beautiful system, but only works once we have imposed total domination on the rest of the world. Please help us reach these ends.',
 		'We welcome anyone who shares our views on religion, politics and life. Everyone else must die!',
 		'We will crush your imperialist desires! You are not welcome in any of our lands. Go away!',
-		'Greetings weak dictator. You are your bombs are not welcome here.',
+		'Saludos weak dictator. You are your bombs are not welcome here.',
 	];
 	return m[nation];
 }
@@ -1453,7 +1462,7 @@ function neutralMessageForNation(nation) {
 		'The people\'s communist army will rise up with one voice and one cannon and defeat you!',
 		'Death to the infidels! Convert to our way of extreme happiness or be destroyed!',
 		'We bring good tidings and gifts to your people. Unless you anger us, then we kill you!',
-		'Soon all of the world will share in the friendship and good fortune that our tanks and guided missiles will bring.',
+		'Buenos dias! Soon all of the world will share in the friendship and good fortune that our tanks and guided missiles will bring.',
 	];
 	return m[nation];
 }
@@ -1470,7 +1479,7 @@ function warMessageForNation(terr, player, gameObj) {
 			'The people\'s cannon is pointed at your hearts! Surrender now or we will point it at your heads!',
 			'Prepare for jihad! First we will attack you with a million strikes of total destruction. Then we will make more threats!',
 			'We tried to bring peace to your nation, but have failed. Now we must kill you.',
-			'Please send us the coordinates of your leadership bunker. Guided missiles have already been launched!',
+			'Qué pasa? Please send us the coordinates of your leadership bunker. Guided missiles have already been launched!',
 		];
 		return m[terr.owner];
 
@@ -1484,7 +1493,7 @@ function warMessageForNation(terr, player, gameObj) {
 			'We have discussed things and, good news, we have decided to allow you to live. Let\'s sign a peace agreement right away.',
 			'What\'s a little jihad amongst friends? It is time for us to join forces and all live in harmony sharing our great values equally.',
 			'you know what? We were wrong about you. I think we might just be able to live side by side in harmony. Sign this agreement quickly before we change our minds.',
-			'Hola amigos! We are all good and friendly people. Let\'s sign an agreement and dane the night away.',
+			'Hola amigos! We are all good and friendly people. Let\'s sign an agreement and dance the night away.',
 		];
 		return m[terr.owner];
 
@@ -1649,8 +1658,8 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 	var maxCapitalsHeld;
 	var winningTeam = 0;
 	gameObj.teams.forEach(function (team) {
-		if (team.capitals >= maxCapitals) {
-			maxCapitalsHeld = team.capitals;
+		if (team.capitals.length >= maxCapitals) {
+			maxCapitalsHeld = team.capitals.length;
 			victoryMet = true;
 			winningTeam = team.name;
 		}

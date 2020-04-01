@@ -47,6 +47,7 @@ import { StatsViewComponent } from './stats-view/stats-view.component';
 import { GameViewComponent } from './game-view/game-view.component';
 import { MenuPopupComponent } from './menu-popup/menu-popup.component';
 import { TerritoriesViewComponent } from './territories-view/territories-view.component';
+import { BattleshipPopupComponent } from './battleship-popup/battleship-popup.component';
 
 @NgModule({
   declarations: [
@@ -94,7 +95,8 @@ import { TerritoriesViewComponent } from './territories-view/territories-view.co
     StatsViewComponent,
     GameViewComponent,
     MenuPopupComponent,
-    TerritoriesViewComponent
+    TerritoriesViewComponent,
+    BattleshipPopupComponent
   ],
   imports: [
     BrowserModule,

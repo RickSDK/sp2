@@ -19,6 +19,8 @@ export class TerrAdviceComponent implements OnInit {
   @Input('superpowersData') superpowersData: any;
   @Input('gameObj') gameObj: any;
   @Input('user') user: any;
+  @Input('optionType') optionType: any;
+  @Input('battleAnalysisObj') battleAnalysisObj: any;
 
   constructor() { }
 
@@ -34,7 +36,7 @@ export class TerrAdviceComponent implements OnInit {
     playSound('warning.mp3');
     declareWarOnNation(this.selectedTerritory.owner, this.gameObj, this.currentPlayer, this.superpowersData)
     refreshTerritory(this.selectedTerritory, this.gameObj, this.currentPlayer, this.superpowersData, this.currentPlayer);
-    displayLeaderAndAdvisorInfo(this.selectedTerritory, this.currentPlayer, this.currentPlayer, this.user, this.gameObj, this.superpowersData.superpowers);
+    displayLeaderAndAdvisorInfo(this.selectedTerritory, this.currentPlayer, this.currentPlayer, this.user, this.gameObj, this.superpowersData.superpowers, this.optionType);
   }
   offerTreaty(type: number) {
     offerTreatyToNation(this.selectedTerritory.owner, this.gameObj, this.currentPlayer, this.superpowersData);

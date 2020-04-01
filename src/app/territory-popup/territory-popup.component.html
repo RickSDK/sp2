@@ -225,7 +225,7 @@
 					*ngIf="ableToTakeThisTurn && currentPlayer.status!='Purchase' && optionType != 'battle'"
 					[selectedTerritory]="selectedTerritory" [currentPlayer]="currentPlayer"
 					[superpowersData]="superpowersData" [gameObj]="gameObj" [user]="user" [optionType]="optionType"
-					[ableToTakeThisTurn]="ableToTakeThisTurn" [hostileMessage]="hostileMessage"
+					[ableToTakeThisTurn]="ableToTakeThisTurn" [hostileMessage]="hostileMessage" [totalUnitsThatCanMove]="totalUnitsThatCanMove"
 					(messageEvent)="buttonClicked($event)"></app-terr-buttons>
 
 				<app-terr-units *ngIf="optionType=='home' || optionType=='production'"
@@ -357,13 +357,13 @@
 							</div>
 
 						</div> <!-- each terr-->
-						<div *ngIf="totalUnitsThatCanMove==0" [ngStyle]="ngStyleLogs(selectedTerritory.nation)" style="border: 1px solid red;">
-							<div style="color: red;"><b><i class="fa fa-exclamation-triangle"></i> None
-									of your units can reach {{selectedTerritory.name}}!</b>
+						<div *ngIf="totalUnitsThatCanMove==0" [ngStyle]="ngStyleLogs(selectedTerritory.nation)" style="border: 1px solid red; padding: 5px;">
+							<div style="color: #700;"><b><i class="fa fa-exclamation-triangle"></i> 
+								None of your units can reach {{selectedTerritory.name}}!</b>
 								<button (click)="infoFlg=!infoFlg" type="button"
 									class="btn btn-secondary roundButton"><i class="fa fa-info-circle"></i>
 									Help</button>
-								<div *ngIf="infoFlg" class="borderClass2" style="text-align: left;">
+								<div *ngIf="infoFlg" class="borderClass3" style="text-align: left; font-size: 12px; padding: 5px;">
 									Reasons why you might not be able reach this territory:<br>
 									<ol>
 										<li>It's too far away.</li>
@@ -420,11 +420,11 @@
 					[currentPlayer]="currentPlayer" [superpowersData]="superpowersData" [gameObj]="gameObj"
 					[user]="user" [optionType]="optionType" [ableToTakeThisTurn]="ableToTakeThisTurn"
 					[allowFactoryFlg]="allowFactoryFlg" [adminModeFlg]="adminModeFlg"></app-terr-purchase>
-					
 				<app-terr-advice
-					*ngIf="ableToTakeThisTurn && optionType=='home' && selectedTerritory.leaderMessage.length>0"
+					*ngIf="ableToTakeThisTurn && selectedTerritory.leaderMessage.length>0 && (optionType=='home' || optionType == 'attack')"
 					[selectedTerritory]="selectedTerritory" [currentPlayer]="currentPlayer"
-					[superpowersData]="superpowersData" [gameObj]="gameObj" [user]="user"></app-terr-advice>
+					[superpowersData]="superpowersData" [gameObj]="gameObj" [user]="user" 
+					[optionType]="optionType" [battleAnalysisObj]="battleAnalysisObj"></app-terr-advice>
 
 			</div>
 			<!--modal-body-->

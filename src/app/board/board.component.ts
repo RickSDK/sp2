@@ -45,6 +45,7 @@ declare var promoteSuperpowersUser: any;
 declare var isUnitFighterUnit: any;
 declare var findTransportForThisCargo: any;
 declare var computerAnnouncement: any;
+declare var moveTheseUnitsToThisTerritory: any;
 //---board.js
 declare var displayLeaderAndAdvisorInfo: any;
 declare var getDisplayQueueFromQueue: any;
@@ -874,9 +875,13 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	doThisBattle(obj: any) {
 		if (obj && obj.attackUnits && obj.attackUnits.length > 0) {
 			this.moveSpriteBetweenTerrs(obj);
-			this.displayBattle = initializeBattle(this.currentPlayer, obj.terr, obj.attackUnits, this.gameObj);
-			startBattle(obj.terr, this.currentPlayer, this.gameObj, this.superpowersData);
-			this.computerBattleRound(obj);
+			if(obj.terr.owner == this.currentPlayer.nation) {
+				moveTheseUnitsToThisTerritory(obj.attackUnits, obj.terr, this.gameObj);
+			} else {
+				this.displayBattle = initializeBattle(this.currentPlayer, obj.terr, obj.attackUnits, this.gameObj);
+				startBattle(obj.terr, this.currentPlayer, this.gameObj, this.superpowersData);
+				this.computerBattleRound(obj);	
+			}
 		}
 	}
 	computerBattleRound(obj: any) {
@@ -899,6 +904,20 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.warAudio.pause();
 
 		recallBoats(this.gameObj, this.currentPlayer);
+
+		if (this.gameObj.round != 6) {
+			var obj = findAmphibiousAttacks(this.gameObj, this.currentPlayer, true);
+			console.log('hey', obj);
+			if (obj && obj.attackUnits.length > 0) {
+				this.doThisBattle(obj);
+				if (obj && obj.ampFlg) {
+	//				this.doThisBattle({ attackUnits: obj.ampAttUnits, defUnits: obj.ampDefUnits, t1: obj.ampAttTerr.id, t2: obj.ampDefTerr.id, id: 2, terr: obj.ampDefTerr, attTerr: obj.ampAttTerr });
+				}
+				refreshTerritory(obj.ampAttTerr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
+				refreshTerritory(obj.ampDefTerr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
+			}
+		}
+
 
 		var obj = moveCPUUnits(this.currentPlayer, this.gameObj, this.superpowersData);
 		if (obj.t1 > 0)
@@ -987,7 +1006,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			changeClass('completeTurnButton', 'glowButton');
 
 		refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
-		displayLeaderAndAdvisorInfo(terr, currentPlayer, this.yourPlayer, user, gameObj, this.superpowersData.superpowers);
+		displayLeaderAndAdvisorInfo(terr, currentPlayer, this.yourPlayer, user, gameObj, this.superpowersData.superpowers, 'home');
 		//		terr.units = unitsForTerr(terr, gameObj.units);
 		terr.displayQueue = getDisplayQueueFromQueue(terr, this.gameObj);
 		this.selectedTerritory = terr;

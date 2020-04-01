@@ -20,7 +20,7 @@
 
 <table class="spTable" *ngIf="gameObj && segmentIdx==0">
     <tr>
-        <th class="centerText"></th>
+        <th class="centerText">Nation</th>
         <th class="centerText">Player</th>
         <th class="centerText"><span title="Income">Inc</span></th>
         <th class="centerText"><i class="fa fa-usd"></i></th>
@@ -77,12 +77,12 @@
 
 <table class="spTable" *ngIf="gameObj && segmentIdx==1">
     <tr>
-        <th valign=top></th>
-        <th valign=top class="centerText">Player</th>
-        <th valign=top class="centerText"><span title="Superpowers (10 coins each)">SP</span>
+        <th valign=top class="centerText" style="font-size: 12px;">Nation</th>
+        <th class="centerText" valign=top class="centerText">Player</th>
+        <th class="centerText" valign=top class="centerText"><span title="Superpowers (10 coins each)">SP</span>
             <div style="color: #def;">+10</div>
         </th>
-        <th><span title="Capitals (10 coins each)" class="centerText">Cap</span>
+        <th class="centerText"><span title="Capitals (10 coins each)" class="centerText">Cap</span>
             <div style="color: #def;">+10</div>
         </th>
         <th title="Leader Bonus? (10 coins)" class="centerText"><img src="assets/graphics/units/piece11u.png" height=20>
@@ -117,8 +117,8 @@
             <div *ngIf="player.turn==gameObj.turnId" style="color: gray; font-size: 12px;">
                 ({{player.status}})</div>
         </td>
-        <td>{{player.sp}}</td>
-        <td>{{player.cap}}</td>
+        <td class="centerText">{{player.sp}}</td>
+        <td class="centerText">{{player.cap}}</td>
         <td>
             <i *ngIf="player.leaderFlg" class="fa fa-check" style="color: green;" title="Leader Alive"></i>
             <i *ngIf="!player.leaderFlg" class="fa fa-times" style="color: #900;" title="Leader Dead"></i>
@@ -132,12 +132,12 @@
 
 <table class="spTable" *ngIf="segmentIdx==2 && gameObj && gameObj.territories && gameObj.territories.length>0">
     <tr>
-        <th valign=top>Nation</th>
-        <th valign=top>Player</th>
-        <th valign=top>Base</th>
-        <th valign=top>Fortify</th>
-        <th valign=top>Primary</th>
-        <th valign=top>Secondary</th>
+        <th valign=top class="centerText">Nation</th>
+        <th valign=top class="centerText">Player</th>
+        <th valign=top class="centerText">Base</th>
+        <th valign=top class="centerText">Fortify</th>
+        <th valign=top class="centerText">Primary</th>
+        <th valign=top class="centerText">Secondary</th>
     </tr>
     <tr *ngFor="let player of gameObj.players" [ngStyle]="ngStyleLogs(player.nation, !player.alive)"
         style="font-size: 12px;">

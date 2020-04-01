@@ -1,15 +1,16 @@
 <!------------------action buttons----------------------------->
 <div class="terr-card">
-    <div style="color: white;"><button (click)="changeOptionType('home')" *ngIf="optionType!='home'" type="button"
-            class="btn btn-primary roundButton">
-            <i class="fa fa-arrow-left"></i> Back</button>Action Panel</div>
+    <div class="spTitle">Action Panel</div>
     <div *ngIf="currentPlayer.status != 'Purchase'" style="background-color: #ccc; color: black;">
         <!-- troop movement-->
         <div
             *ngIf="(selectedTerritory.treatyStatus>=3 || (selectedTerritory.nation==99 && selectedTerritory.unitCount==0))">
             <div *ngIf="0" style="font-size: 10px;">-Troop Movement-</div>
 
-            <button [disabled]="optionType=='movement'" (click)="changeOptionType('movement')" type="button"
+            <button (click)="changeOptionType('home')" *ngIf="optionType!='home'" type="button"
+                class="btn btn-primary roundButton">
+                <i class="fa fa-times"></i> Cancel</button>
+           <button [disabled]="optionType=='movement'" (click)="changeOptionType('movement')" type="button"
                 class="btn btn-success roundButton"><i class="fa fa-arrow-down"></i>&nbsp; Move Here</button>
             <button [disabled]="optionType=='movement'"
                 *ngIf="selectedTerritory.treatyStatus==4 && selectedTerritory.nation==99"
@@ -21,9 +22,9 @@
                 title="Each bomber can carry up to 2 infantry, plus hero units."><img
                     src="assets/graphics/units/piece7u.png" height="20" class="shadowedWhite"> Load Bombers</button>
             <button [disabled]="optionType=='loadChoppers'" *ngIf="selectedTerritory.cobraCount>0 "
-                (click)="changeOptionType('loadChoppers')"type="button"
-                class="btn btn-success roundButton" title=""><img src="assets/graphics/units/piece50u.png" height="20"
-                    class="shadowedWhite"> Load Cobras</button>
+                (click)="changeOptionType('loadChoppers')" type="button" class="btn btn-success roundButton"
+                title=""><img src="assets/graphics/units/piece50u.png" height="20" class="shadowedWhite"> Load
+                Cobras</button>
             <button *ngIf="selectedTerritory.paratrooperCount > 0" (click)="unloadAllParatroopers()" type="button"
                 class="btn btn-success roundButton"><i class="fa fa-plane"></i>
                 Un-Load All Paratroopers</button>
@@ -37,6 +38,9 @@
             *ngIf="selectedTerritory.treatyStatus <= 2 && (selectedTerritory.unitCount>0 || selectedTerritory.nation<99)">
             <div *ngIf="0" style="font-size: 10px;">-Attack-</div>
 
+            <button (click)="changeOptionType('home')" *ngIf="optionType!='home'" type="button"
+                class="btn btn-primary roundButton">
+                <i class="fa fa-times"></i> Cancel</button>
             <button (click)="changeOptionType('attack')" [disabled]="optionType=='attack'" type="button"
                 class="btn btn-danger roundButton">
                 <i class="fa fa-crosshairs" style="font-size: 28px;"></i><br>Attack</button>
@@ -129,8 +133,8 @@
 
 
 
-        <button *ngIf="optionType=='attack'" (click)="infoFlg = !infoFlg" id="" type="button"
-            class="btn btn-secondary roundButton"><i class="fa fa-info-circle"></i> Battle</button>
+        <button *ngIf="infoFlg || (optionType=='attack' && totalUnitsThatCanMove>0)" (click)="infoFlg = !infoFlg" id=""
+            type="button" class="btn btn-secondary roundButton"><i class="fa fa-info-circle"></i> Battle</button>
 
 
         <div *ngIf="infoFlg" class="borderClass2" style="text-align: left; font-size: 12px;">
@@ -153,5 +157,6 @@
 
 
     </div>
-    <div style="background-color: #444; color: #fc0;" *ngIf="hostileMessage.length>0"><i class="fa fa-exclamation-triangle"></i> {{hostileMessage}}</div>
+    <div style="background-color: #444; color: #fc0;" *ngIf="hostileMessage.length>0"><i
+            class="fa fa-exclamation-triangle"></i> {{hostileMessage}}</div>
 </div>

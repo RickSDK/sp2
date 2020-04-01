@@ -56,7 +56,7 @@ function purchaseCPUUnits(player, gameObj, superpowersData) {
     }
     if (terr2.adCount <= 2) {
         console.log('+++aaGun', terr2.name, terr2.adCount);
-       addUniToQueue(13, 1, superpowersData, player, gameObj, terr2);
+        addUniToQueue(13, 1, superpowersData, player, gameObj, terr2);
     }
     if (num <= 6) {
         addComputerFactory(player, superpowersData, gameObj);
@@ -665,26 +665,26 @@ function recallBoats(gameObj, player) {
                 if (unit.owner == player.nation && unit.movesLeft > 0 && (unit.terr == terr.enemyWater || unit.terr == terr.enemyWater2)) {
                     unit.terr = terr.id;
                 }
-                    
+
             });
         }
     }
 }
-function findAmphibiousAttacks(gameObj, player) {
+function findAmphibiousAttacks(gameObj, player, moveFlg = false) {
     var obj = stageAttackBetweenTerritories(null, null, player, 0);
     player.territories.forEach(function (terr) {
         if (terr.transportSpace > 0 && (terr.id == 101 || terr.id == 110 || terr.id == 112 || terr.id == 141 || terr.id == 131 || terr.id == 118 || terr.id == 96 || terr.id == 98)) {
             var homeBase = gameObj.territories[terr.homeBase - 1];
             if (homeBase.groundForce > 0 && homeBase.owner == player.nation) {
-                obj = attemptAmbibiousLanding(player, homeBase, terr.enemyWater, terr.enemyZone, terr, gameObj, obj);
+                obj = attemptAmbibiousLanding(player, homeBase, terr.enemyWater, terr.enemyZone, terr, gameObj, obj, moveFlg);
                 if (obj.t1 == 0) //try second spot
-                    obj = attemptAmbibiousLanding(player, homeBase, terr.enemyWater2, terr.enemyZone2, terr, gameObj, obj);
+                    obj = attemptAmbibiousLanding(player, homeBase, terr.enemyWater2, terr.enemyZone2, terr, gameObj, obj, moveFlg);
             }
         }
     });
     return obj;
 }
-function attemptAmbibiousLanding(player, homeBase, enemyWaterId, enemyZoneId, homeWaterTerr, gameObj, obj) {
+function attemptAmbibiousLanding(player, homeBase, enemyWaterId, enemyZoneId, homeWaterTerr, gameObj, obj, moveFlg) {
     var enemyWaterTerr = gameObj.territories[enemyWaterId - 1];
     var enemyLandTerr = gameObj.territories[enemyZoneId - 1];
     if (enemyWaterTerr.shipDefense > 0 && gameObj.round <= 6)
@@ -694,7 +694,10 @@ function attemptAmbibiousLanding(player, homeBase, enemyWaterId, enemyZoneId, ho
     if (enemyLandTerr.defStrength > homeWaterTerr.transportCount * 4)
         return obj;
 
-    if (okToAttack(player, enemyLandTerr, gameObj)) {
+    var goodToGoFlg = okToAttack(player, enemyLandTerr, gameObj);
+    if (moveFlg)
+        goodToGoFlg = enemyLandTerr.owner == player.nation;
+    if (goodToGoFlg) {
         obj = getAmphibiousAttackObj(player, homeBase, enemyWaterTerr, enemyLandTerr, homeWaterTerr, gameObj, obj);
         return obj;
     }
@@ -728,7 +731,7 @@ function getAmphibiousAttackObj(player, homeBase, enemyWaterTerr, enemyLandTerr,
         if (isUnitOkToAttack(unit, player.nation) && (unit.piece == 2 || unit.piece == 3)) {
             if (cargoSpace - unit.cargoUnits >= 0) {
                 attackUnits.push(unit);
- //               pieceId = unit.piece;
+                //               pieceId = unit.piece;
                 cargoSpace -= unit.cargoUnits;
             }
         }
@@ -764,17 +767,17 @@ function getAmphibiousAttackObj(player, homeBase, enemyWaterTerr, enemyLandTerr,
 function addTestScore(gameObj) {
     var humanPlayer = getHumanPlayer(gameObj);
     var winLoss = (gameObj.winningTeamFlg) ? 'Win' : 'Loss';
-	var gameScores = getGameScores();
-	gameScores.push({ id: gameScores.length + 1, created: gameObj.created, type: gameObj.type, winLoss: winLoss, round: gameObj.round, nation: humanPlayer.nation });
-	localStorage.setItem("gameScores", JSON.stringify(gameScores));
+    var gameScores = getGameScores();
+    gameScores.push({ id: gameScores.length + 1, created: gameObj.created, type: gameObj.type, winLoss: winLoss, round: gameObj.round, nation: humanPlayer.nation });
+    localStorage.setItem("gameScores", JSON.stringify(gameScores));
 }
 function getGameScores() {
     return JSON.parse(localStorage.getItem("gameScores")) || [];
 }
 function getHumanPlayer(gameObj) {
-    for(var x=0; x<gameObj.players.length; x++) {
+    for (var x = 0; x < gameObj.players.length; x++) {
         var player = gameObj.players[x];
-        if(!player.cpu)
+        if (!player.cpu)
             return player;
     }
 }

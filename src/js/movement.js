@@ -1,7 +1,7 @@
 
 function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
-    //   if (unit.owner != currentPlayer.nation)
-    //       return false;
+    if (unit.owner != currentPlayer.nation)
+        return false;
     if (optionType == 'cruise') {
         if (distObj.air > 1)
             return false;
@@ -116,9 +116,12 @@ function findBomberForParatrooper(unit, selectedTerritory, optinType) {
         console.log('no transport found!')
 }
 function moveSelectedUnits(moveTerr, selectedTerritory, gameObj) {
+    var units = getSelectedUnits(moveTerr);
+    return moveTheseUnitsToThisTerritory(units, selectedTerritory, gameObj);
+}
+function moveTheseUnitsToThisTerritory(units, selectedTerritory, gameObj) {
     var terr1Id = 1;
     var piece = 3;
-    var units = getSelectedUnits(moveTerr);
     units.forEach(function (unit) {
         terr1Id = unit.terr;
         piece = unit.piece;

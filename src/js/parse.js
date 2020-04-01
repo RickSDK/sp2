@@ -2,7 +2,7 @@ function userObjFromUser() {
 	var spFlg = localStorage.spFlg || '';
 	if (spFlg != 'Y') {
 		localStorage.rank = 0;
-		spFlg = 'Y'; //make sure no one grandfathers in
+		localStorage.spFlg = 'Y'; //make sure no one grandfathers in
 	}
 	var username = localStorage.username || 'Guest';
 	var rankStr = localStorage.rank || '';

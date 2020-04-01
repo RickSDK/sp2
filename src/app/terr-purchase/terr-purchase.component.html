@@ -52,8 +52,7 @@
         <div class="darkBlueBg" style="font-size: 10px;"><i class="fa fa-industry"></i> Production
             Queue
         </div>
-        <span
-            style="border: 1px solid black; height: 15px; min-width: 15px;"><span
+        <span style="border: 1px solid black; height: 15px; min-width: 15px;"><span
                 *ngIf="selectedTerritory.displayQueue.length==0">&nbsp;</span>
             <span *ngFor="let unit of selectedTerritory.displayQueue"><img *ngIf="unit.piece>0"
                     src="{{ngUnitSrc(unit.piece, 1)}}" height=15><span
@@ -70,7 +69,7 @@
             class="btn btn-default"><i class="fa fa-fighter-jet"></i> Air</button>
         <button (click)="changeProdType(2, selectedTerritory)" [ngClass]="ngClassSegment(segmentIdx,2)" type="button"
             class="btn btn-default"><i class="fa fa-anchor"></i> Sea</button>
-        <button *ngIf="gameObj.restrict_units_flg !='Y' && user.rank>=4" (click)="changeProdType(3, selectedTerritory)"
+        <button *ngIf="adminModeFlg || (gameObj.restrict_units_flg !='Y' && user.rank>=4)" (click)="changeProdType(3, selectedTerritory)"
             [ngClass]="ngClassSegment(segmentIdx,3)" type="button" class="btn btn-default"><i class="fa fa-star"></i>
             Sp</button>
     </div>
@@ -94,7 +93,7 @@
                 <td></td>
             </tr>
             <tr *ngFor="let unit of productionDisplayUnits">
-                <td style="font-size: 8px;" align=center> 
+                <td style="font-size: 8px;" align=center>
                     <img (click)="showUnitPopup(unit)" src="{{ngUnitSrc(unit.id, 1)}}"
                         style="max-width: 60px; max-height: 40px; cursor: pointer;"
                         title="{{unit.name}}"><br>{{unit.name}}</td>
@@ -112,19 +111,20 @@
                     <font color=blue>{{unit.def}}</font>
                 </td>
                 <td>
-                    <button *ngIf="unit.id != 19 || allowFactoryFlg" [disabled]="currentPlayer.money<unit.cost" id="{{'buy'+unit.id}}"
-                        (click)="addUniToQueue(unit.id, 1)" type="button" class="btn btn-secondary roundButton"><i
-                            class="fa fa-lock" *ngIf="unit.locked"></i><span ng-hide="unit.locked">buy</span></button>
-                    <button *ngIf="unit.id != 12 && unit.id != 19" [disabled]="currentPlayer.money<unit.cost*2" id="{{'buy5'+unit.id}}"
-                        (click)="addUniToQueue(unit.id, 5)" type="button"
+                    <button *ngIf="unit.id != 19 || allowFactoryFlg" [disabled]="currentPlayer.money<unit.cost || (unit.id==12 && currentPlayer.battleshipCost>0)"
+                        id="{{'buy'+unit.id}}" (click)="addUniToQueue(unit.id, 1)" type="button"
+                        class="btn btn-secondary roundButton"><i class="fa fa-lock" *ngIf="unit.locked"></i><span
+                            ng-hide="unit.locked">buy</span></button>
+                    <button *ngIf="unit.id != 12 && unit.id != 19" [disabled]="currentPlayer.money<unit.cost*2"
+                        id="{{'buy5'+unit.id}}" (click)="addUniToQueue(unit.id, 5)" type="button"
                         class="btn btn-secondary roundButton">x5</button>
                 </td>
             </tr>
             <!------factory-->
             <tr *ngIf="selectedTerritory.factoryCount==0 && selectedTerritory.id<79 && allowFactoryFlg">
-                <td style="font-size: 8px;" align=center><img
-                        (click)="showUnitPopup({piece: 15})" src="{{ngUnitSrc(15, 1)}}"
-                        style="max-width: 60px; max-height: 40px; cursor: pointer;" title="Factory"><br>Factory</td>
+                <td style="font-size: 8px;" align=center><img (click)="showUnitPopup({piece: 15})"
+                        src="{{ngUnitSrc(15, 1)}}" style="max-width: 60px; max-height: 40px; cursor: pointer;"
+                        title="Factory"><br>Factory</td>
                 <td align=center>
                     <font color=#c80>15</font>
                 </td>
@@ -165,8 +165,8 @@
                 </td>
             </tr>
         </table>
-        <div *ngIf="facBombedFlg && segmentIdx==0"><img src="assets/graphics/units/piece103.gif"
-                height=20 title="Repair bombed factory"> <i class="fa fa-arrow-right"></i>
+        <div *ngIf="facBombedFlg && segmentIdx==0"><img src="assets/graphics/units/piece103.gif" height=20
+                title="Repair bombed factory"> <i class="fa fa-arrow-right"></i>
             <img src="assets/graphics/units/piece15.gif" height=20 title="Repair bombed factory">
             <font color=#fc0>15</font> <button id="" (click)="addUniToQueue(15, 1)" type="button"
                 class="btn btn-secondary roundButton">buy</button>
@@ -181,12 +181,110 @@
 
 <app-unit-detail-popup #unitDetailPopup></app-unit-detail-popup>
 
-<div id="unitPopup2" class="popupScreenNoPad" style="z-index: 9999; position: absolute; min-width: 320px; cursor: auto;">
+<div id="unitPopup2" class="popupScreenNoPad"
+    style="z-index: 9999; position: absolute; min-width: 320px; cursor: auto;">
     <div class="darkBlueBg" style="height: 44px;">Unit Detail
-        <button onClick="closePopup('unitPopup2')" type="button" class="btn btn-secondary roundButton" style="float: right;"><i
-            class="fa fa-times"></i></button>
+        <button onClick="closePopup('unitPopup2')" type="button" class="btn btn-secondary roundButton"
+            style="float: right;"><i class="fa fa-times"></i></button>
     </div>
     <div *ngIf="selectedUnit" style="padding: 10px;">
         <app-unit-detail nation="1" [selectedUnit]="selectedUnit" [hideUnitDetailFlg]="true"></app-unit-detail>
+    </div>
+</div>
+
+<div id="battleshipPopup" class="popupScreen2" style="text-align:center; padding: 0;">
+    <div class="darkBlueBg">
+        <i class="fa fa-ship"></i> Battleship Construction
+    </div>
+
+    <div style="padding: 10px;">
+        <img src="assets/graphics/units/piece12u.png" height="60">
+        <table style="width: 100%; background-color: transparent;">
+            <tr>
+                <td>
+                    Extra HP:</td>
+                <td>
+                    <div class="squaredOne" style="display: inline-block; padding: 0; margin: 1px;">
+                        <input (click)="addUpBattleShipCost()" type="checkbox" value="None" id="bsb1" name="check" />
+                        <label for="bsb1"></label>
+                    </div>
+                    <div class="squaredOne" style="display: inline-block; padding: 0; margin: 1px;">
+                        <input (click)="addUpBattleShipCost()" type="checkbox" value="None" id="bsb2" name="check" />
+                        <label for="bsb2"></label>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>Air Defense:</td>
+                <td>
+                    <div class="squaredOne" style="display: inline-block; padding: 0; margin: 1px;">
+                        <input (click)="addUpBattleShipCost()" type="checkbox" value="None" id="bsb3" name="check" />
+                        <label for="bsb3"></label>
+                    </div>
+                    <div class="squaredOne" style="display: inline-block; padding: 0; margin: 1px;">
+                        <input (click)="addUpBattleShipCost()" type="checkbox" value="None" id="bsb4" name="check" />
+                        <label for="bsb4"></label>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>Extra Attack:</td>
+                <td>
+                    <div class="squaredOne" style="display: inline-block; padding: 0; margin: 1px;">
+                        <input (click)="addUpBattleShipCost()" type="checkbox" value="None" id="bsb5" name="check" />
+                        <label for="bsb5"></label>
+                    </div>
+                    <div class="squaredOne" style="display: inline-block; padding: 0; margin: 1px;">
+                        <input (click)="addUpBattleShipCost()" type="checkbox" value="None" id="bsb6" name="check" />
+                        <label for="bsb6"></label>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>Extra Defend:</td>
+                <td>
+                    <div class="squaredOne" style="display: inline-block; padding: 0; margin: 1px;">
+                        <input (click)="addUpBattleShipCost()" type="checkbox" value="None" id="bsb7" name="check" />
+                        <label for="bsb7"></label>
+                    </div>
+                    <div class="squaredOne" style="display: inline-block; padding: 0; margin: 1px;">
+                        <input (click)="addUpBattleShipCost()" type="checkbox" value="None" id="bsb8" name="check" />
+                        <label for="bsb8"></label>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>Attack at 5:</td>
+                <td>
+                    <div class="squaredOne" style="display: inline-block; padding: 0; margin: 1px;">
+                        <input (click)="addUpBattleShipCost()" type="checkbox" value="None" id="bsb9" name="check" />
+                        <label for="bsb9"></label>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>Defend at 5:</td>
+                <td>
+                    <div class="squaredOne" style="display: inline-block; padding: 0; margin: 1px;">
+                        <input (click)="addUpBattleShipCost()" type="checkbox" value="None" id="bsb10" name="check" />
+                        <label for="bsb10"></label>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <hr>
+        Select All:
+        <div class="squaredOne" style="display: inline-block; padding: 0; margin: 1px;">
+            <input (click)="selectAllBattleShipUpg()" type="checkbox" value="None" id="bsb99" name="check" />
+            <label for="bsb99"></label>
+        </div>
+        <hr>
+        <div>
+            <button onClick="closePopup('battleshipPopup')" type="button"
+                class="btn btn-danger roundButton"><i class="fa fa-times"></i> Cancel</button>
+            <button [disabled]="brokeFlg" (click)="buyBattleShipButtonClicked()" type="button"
+                class="btn btn-success roundButton"><i class="fa fa-check"></i> Purchase</button>
+            Cost: <span class="bgHighlight">{{battleshipCost}}</span>
+        </div>
     </div>
 </div>
