@@ -3,21 +3,27 @@
     <img src="assets/graphics/images/flag{{gameObj.top1Nation}}.gif" height=15> <b>{{gameObj.top1}}</b>
     and
     <img src="assets/graphics/images/flag{{gameObj.top2Nation}}.gif" height=15> <b>{{gameObj.top2}}</b>
-    cannot be allies with each other in this game.</div>
+    cannot be allies with each other in this game.
+</div>
 
 <table align="center">
     <tr>
         <td>
-            <div class="borderClass3">
-                <div class="blueBg" style="font-size: 12px;">{{gameObj.name}} ({{gameObj.typeName}})</div>
-                <div style="text-align: center"><b>Round:</b> {{gameObj.round}}, <b>Max-Allies:</b>
-                    {{gameObj.maxAllies}}</div>
-                <div style="padding: 3px; font-size: 12px;"><b>Status:</b> {{gameObj.currentSituation}}</div>
+            <div class="spCard">
+                <div>
+                    <div class="spTitle" style="font-size: 12px;">{{gameObj.name}} ({{gameObj.typeName}})</div>
+                    <div class="spCardBody">
+                        <div style="text-align: center"><b>Round:</b> {{gameObj.round}}, <b>Max-Allies:</b>
+                            {{gameObj.maxAllies}}</div>
+                        <div style="padding: 3px; font-size: 12px;"><b>Status:</b> {{gameObj.currentSituation}}</div>
+                    </div>
+                </div>
             </div>
         </td>
         <td>
             <button (click)="infoFlg=!infoFlg" type="button" class="btn btn-secondary roundButton"><i
-                    class="fa fa-info-circle" style="font-size: 24px;"></i><br><span style="font-size: 12px;">Diplomacy Info</span></button>
+                    class="fa fa-info-circle" style="font-size: 24px;"></i><br><span style="font-size: 12px;">Diplomacy
+                    Info</span></button>
         </td>
     </tr>
 </table>
@@ -26,141 +32,156 @@
 
 
 
-<div class="borderClass2" *ngIf="infoFlg">
-
-    Offer up to 1 treaty per turn, however you can declare war as much as you want.<br>
-    <table class="spTable" border=1 style="text-align: left;">
-        <tr>
-            <th>Treaty</th>
-            <th>Description</th>
-            <th>Cost</th>
-        </tr>
-        <tr>
-            <td>Non-Agression</td>
-            <td style="text-align: left; font-size: 12px;">At the beginning of the game you have a
-                non-agression pact with other players. It will cost you
-                5 coins to attack another player. However if you declare war, you can attack at no cost
-                starting with your next turn.</td>
-            <td>5 <img src="assets/graphics/images/coin.png" height=30></td>
-        </tr>
-        <tr>
-            <td><img src="assets/graphics/misc/news2.png" height=50 title="Peace"> Peace</td>
-            <td style="text-align: left; font-size: 12px;">You are allowed to offer peace treaties to
-                anyone in the game.
-                Upon accepting, you each get 1 fighter <img src="assets/graphics/units/piece6u.png" height=20> placed on
-                your capital as a sign of increased
-                trade relations. Attacking someone you are at peace with will cost you 10 coins.</td>
-            <td>10 <img src="assets/graphics/images/coin.png" height=30></td>
-        </tr>
-        <tr>
-            <td><img src="assets/graphics/misc/news3.png" height=50 title="Alliance"> Alliances</td>
-            <td style="text-align: left; font-size: 12px;">Maximum alliance partners in this game:
-                {{gameObj.maxAllies}}. If you already have a peace treaty with another player, you can
-                offer
-                an alliance. If accepted this means you are now on the same team and can win the game
-                together by controlling 6 of the 8 capitals.. Attacking someone you have an alliance
-                with
-                will cost you 15 coins.</td>
-            <td>15 <img src="assets/graphics/images/coin.png" height=30></td>
-        </tr>
-        <tr>
-            <td><img src="assets/graphics/misc/news0.png" height=50 title="War"> War</td>
-            <td style="text-align: left; font-size: 12px;">Players at war can attack each other at no
-                cost.</td>
-            <td>n/a</td>
-        </tr>
-    </table>
+<div class="spCard" *ngIf="infoFlg">
+    <div>
+        <div class="spTitle">Diplomacy Info</div>
+        <div class="spCardBody">
+            Offer up to 1 treaty per turn, however you can declare war as much as you want.<br>
+            <table class="spTable" border=1 style="text-align: left;">
+                <tr>
+                    <th>Treaty</th>
+                    <th>Description</th>
+                    <th>Cost</th>
+                </tr>
+                <tr>
+                    <td>Non-Agression</td>
+                    <td style="text-align: left; font-size: 12px;">At the beginning of the game you have a
+                        non-agression pact with other players. It will cost you
+                        5 coins to attack another player. However if you declare war, you can attack at no cost
+                        starting with your next turn.</td>
+                    <td>5 <img src="assets/graphics/images/coin.png" height=30></td>
+                </tr>
+                <tr>
+                    <td><img src="assets/graphics/misc/news2.png" height=50 title="Peace"> Peace</td>
+                    <td style="text-align: left; font-size: 12px;">You are allowed to offer peace treaties to
+                        anyone in the game.
+                        Upon accepting, you each get 1 fighter <img src="assets/graphics/units/piece6u.png" height=20>
+                        placed on
+                        your capital as a sign of increased
+                        trade relations. Attacking someone you are at peace with will cost you 10 coins.</td>
+                    <td>10 <img src="assets/graphics/images/coin.png" height=30></td>
+                </tr>
+                <tr>
+                    <td><img src="assets/graphics/misc/news3.png" height=50 title="Alliance"> Alliances</td>
+                    <td style="text-align: left; font-size: 12px;">Maximum alliance partners in this game:
+                        {{gameObj.maxAllies}}. If you already have a peace treaty with another player, you can
+                        offer
+                        an alliance. If accepted this means you are now on the same team and can win the game
+                        together by controlling 6 of the 8 capitals.. Attacking someone you have an alliance
+                        with
+                        will cost you 15 coins.</td>
+                    <td>15 <img src="assets/graphics/images/coin.png" height=30></td>
+                </tr>
+                <tr>
+                    <td><img src="assets/graphics/misc/news0.png" height=50 title="War"> War</td>
+                    <td style="text-align: left; font-size: 12px;">Players at war can attack each other at no
+                        cost.</td>
+                    <td>n/a</td>
+                </tr>
+            </table>
+        </div>
+    </div>
 </div>
 
-<div class="blueBg">Treaties</div>
-<table class="spTable" border=1>
-    <tr>
-        <th *ngIf="gameObj.allowAlliances" class="centerText">T<span class="hidden-xxs">eam</span></th>
-        <th class="centerText">Player</th>
-        <th style="text-align: center; font-size: 10px;"><img src="assets/graphics/misc/news0.png" height=30
-                title="War"><br>
-            War</th>
-        <th style="text-align: center; font-size: 10px;"><img src="assets/graphics/misc/news2.png" height=30
-                title="Peace"><br>Peace</th>
-        <th *ngIf="gameObj.maxAllies>0" style="text-align: center; font-size: 10px;"><img
-                src="assets/graphics/misc/news3.png" height=30 title="Alliance"><br>Ally</th>
-        <th *ngIf="ableToTakeThisTurn" class="centerText">Offer</th>
-    </tr>
-    <tr *ngFor="let player of displayPlayers" [ngStyle]="ngStyleLogs(player.team, !player.alive)">
-        <td *ngIf="gameObj.allowAlliances">{{player.team}}</td>
-        <td align=center>
-            <i class="fa fa-check" style="font-size: 20px; color: green;" *ngIf="gameObj.gameOver && player.wonFlg"
-                title="Victory!"></i>
-            <img src="assets/graphics/images/flag{{player.nation}}.gif" height=30>
-            <div style="font-size: 10px;"><i *ngIf="player.cpu" class="fa fa-android"></i>
-                {{player.userName}} <span *ngIf="!player.alive">(dead)</span></div>
-        </td>
-        <td ng-style="ngStyleAllies(player, 'red')">
-            <img *ngIf="player.treaties[0]==0" src="assets/graphics/images/flag1.gif" height=25>
-            <img *ngIf="player.treaties[1]==0" src="assets/graphics/images/flag2.gif" height=25>
-            <img *ngIf="player.treaties[2]==0" src="assets/graphics/images/flag3.gif" height=25>
-            <img *ngIf="player.treaties[3]==0" src="assets/graphics/images/flag4.gif" height=25>
-            <img *ngIf="player.treaties[4]==0" src="assets/graphics/images/flag5.gif" height=25>
-            <img *ngIf="player.treaties[5]==0" src="assets/graphics/images/flag6.gif" height=25>
-            <img *ngIf="player.treaties[6]==0" src="assets/graphics/images/flag7.gif" height=25>
-            <img *ngIf="player.treaties[7]==0" src="assets/graphics/images/flag8.gif" height=25>
-        </td>
-        <td ng-style="ngStyleAllies(player, 'yellow')">
-            <img *ngIf="player.treaties[0]==2" src="assets/graphics/images/flag1.gif" height=25>
-            <img *ngIf="player.treaties[1]==2" src="assets/graphics/images/flag2.gif" height=25>
-            <img *ngIf="player.treaties[2]==2" src="assets/graphics/images/flag3.gif" height=25>
-            <img *ngIf="player.treaties[3]==2" src="assets/graphics/images/flag4.gif" height=25>
-            <img *ngIf="player.treaties[4]==2" src="assets/graphics/images/flag5.gif" height=25>
-            <img *ngIf="player.treaties[5]==2" src="assets/graphics/images/flag6.gif" height=25>
-            <img *ngIf="player.treaties[6]==2" src="assets/graphics/images/flag7.gif" height=25>
-            <img *ngIf="player.treaties[7]==2" src="assets/graphics/images/flag8.gif" height=25>
-        </td>
-        <td *ngIf="gameObj.maxAllies>0" ng-style="ngStyleAllies(player, '#00FF00')">
-            <img *ngIf="player.treaties[0]==3" src="assets/graphics/images/flag1.gif" height=25>
-            <img *ngIf="player.treaties[1]==3" src="assets/graphics/images/flag2.gif" height=25>
-            <img *ngIf="player.treaties[2]==3" src="assets/graphics/images/flag3.gif" height=25>
-            <img *ngIf="player.treaties[3]==3" src="assets/graphics/images/flag4.gif" height=25>
-            <img *ngIf="player.treaties[4]==3" src="assets/graphics/images/flag5.gif" height=25>
-            <img *ngIf="player.treaties[5]==3" src="assets/graphics/images/flag6.gif" height=25>
-            <img *ngIf="player.treaties[6]==3" src="assets/graphics/images/flag7.gif" height=25>
-            <img *ngIf="player.treaties[7]==3" src="assets/graphics/images/flag8.gif" height=25>
-        </td>
-        <td *ngIf="ableToTakeThisTurn && currentPlayer" ng-style="ngStyleAllies(player, 'white')">
-            <div *ngIf="currentPlayer.diplomacyFlg && currentPlayer.treatyOfferedNation==player.nation">
-                <i class="fa fa-flag"></i> Treaty Offered!</div>
+<div class="spCard">
+    <div>
+        <div class="spTitle">Treaties</div>
+        <table class="spTable" border=1>
+            <tr>
+                <th *ngIf="gameObj.allowAlliances" class="centerText">T<span class="hidden-xxs">eam</span></th>
+                <th class="centerText">Player</th>
+                <th style="text-align: center; font-size: 10px;"><img src="assets/graphics/misc/news0.png" height=30
+                        title="War"><br>
+                    War</th>
+                <th style="text-align: center; font-size: 10px;"><img src="assets/graphics/misc/news2.png" height=30
+                        title="Peace"><br>Peace</th>
+                <th *ngIf="gameObj.maxAllies>0" style="text-align: center; font-size: 10px;"><img
+                        src="assets/graphics/misc/news3.png" height=30 title="Alliance"><br>Ally</th>
+                <th *ngIf="ableToTakeThisTurn" class="centerText">Offer</th>
+            </tr>
+            <tr *ngFor="let player of displayPlayers" [ngStyle]="ngStyleLogs(player.team, !player.alive)">
+                <td *ngIf="gameObj.allowAlliances">{{player.team}}</td>
+                <td align=center>
+                    <i class="fa fa-check" style="font-size: 20px; color: green;"
+                        *ngIf="gameObj.gameOver && player.wonFlg" title="Victory!"></i>
+                    <img src="assets/graphics/images/flag{{player.nation}}.gif" height=30>
+                    <div style="font-size: 10px;"><i *ngIf="player.cpu" class="fa fa-android"></i>
+                        {{player.userName}} <span *ngIf="!player.alive">(dead)</span></div>
+                </td>
+                <td ng-style="ngStyleAllies(player, 'red')">
+                    <img *ngIf="player.treaties[0]==0" src="assets/graphics/images/flag1.gif" height=25>
+                    <img *ngIf="player.treaties[1]==0" src="assets/graphics/images/flag2.gif" height=25>
+                    <img *ngIf="player.treaties[2]==0" src="assets/graphics/images/flag3.gif" height=25>
+                    <img *ngIf="player.treaties[3]==0" src="assets/graphics/images/flag4.gif" height=25>
+                    <img *ngIf="player.treaties[4]==0" src="assets/graphics/images/flag5.gif" height=25>
+                    <img *ngIf="player.treaties[5]==0" src="assets/graphics/images/flag6.gif" height=25>
+                    <img *ngIf="player.treaties[6]==0" src="assets/graphics/images/flag7.gif" height=25>
+                    <img *ngIf="player.treaties[7]==0" src="assets/graphics/images/flag8.gif" height=25>
+                </td>
+                <td ng-style="ngStyleAllies(player, 'yellow')">
+                    <img *ngIf="player.treaties[0]==2" src="assets/graphics/images/flag1.gif" height=25>
+                    <img *ngIf="player.treaties[1]==2" src="assets/graphics/images/flag2.gif" height=25>
+                    <img *ngIf="player.treaties[2]==2" src="assets/graphics/images/flag3.gif" height=25>
+                    <img *ngIf="player.treaties[3]==2" src="assets/graphics/images/flag4.gif" height=25>
+                    <img *ngIf="player.treaties[4]==2" src="assets/graphics/images/flag5.gif" height=25>
+                    <img *ngIf="player.treaties[5]==2" src="assets/graphics/images/flag6.gif" height=25>
+                    <img *ngIf="player.treaties[6]==2" src="assets/graphics/images/flag7.gif" height=25>
+                    <img *ngIf="player.treaties[7]==2" src="assets/graphics/images/flag8.gif" height=25>
+                </td>
+                <td *ngIf="gameObj.maxAllies>0" ng-style="ngStyleAllies(player, '#00FF00')">
+                    <img *ngIf="player.treaties[0]==3" src="assets/graphics/images/flag1.gif" height=25>
+                    <img *ngIf="player.treaties[1]==3" src="assets/graphics/images/flag2.gif" height=25>
+                    <img *ngIf="player.treaties[2]==3" src="assets/graphics/images/flag3.gif" height=25>
+                    <img *ngIf="player.treaties[3]==3" src="assets/graphics/images/flag4.gif" height=25>
+                    <img *ngIf="player.treaties[4]==3" src="assets/graphics/images/flag5.gif" height=25>
+                    <img *ngIf="player.treaties[5]==3" src="assets/graphics/images/flag6.gif" height=25>
+                    <img *ngIf="player.treaties[6]==3" src="assets/graphics/images/flag7.gif" height=25>
+                    <img *ngIf="player.treaties[7]==3" src="assets/graphics/images/flag8.gif" height=25>
+                </td>
+                <td *ngIf="ableToTakeThisTurn && currentPlayer" ng-style="ngStyleAllies(player, 'white')">
+                    <div *ngIf="currentPlayer.diplomacyFlg && currentPlayer.treatyOfferedNation==player.nation">
+                        <i class="fa fa-flag"></i> Treaty Offered!</div>
 
-            <button title="Offer Peace"
-                *ngIf="player.alive && ableToTakeThisTurn && !currentPlayer.diplomacyFlg && player.treaties[currentPlayer.nation-1]!=2 && player.treaties[currentPlayer.nation-1]!=3 && player.nation != currentPlayer.nation"
-                (click)="offerTreaty(2, player.nation)" type="button" class="btn btn-warning roundButton"><img
-                    src="assets/graphics/misc/news2.png" height=25>
-                <div style="font-size: 10px; margin-top: -2px;">Peace</div>
-            </button>
-            <button title="Offer Alliance"
-                *ngIf="player.alive && ableToTakeThisTurn && gameObj.allowAlliances && !currentPlayer.diplomacyFlg && player.treaties[currentPlayer.nation-1]==2 && gameObj.type!='barbarian' && gameObj.type!='battlebots'"
-                (click)="offerTreaty(3, player.nation)" type="button" class="btn btn-success roundButton"><img
-                    src="assets/graphics/misc/news3.png" height=25>
-                <div style="font-size: 10px; margin-top: -2px;">Ally</div>
-            </button>
-        </td>
-    </tr>
-</table>
-<hr>
-<div class="blueBg">Teams/Capitals</div>
-<table class="spTable">
-    <tr>
-        <th class="centerText">Team</th>
-        <th class="centerText">Players</th>
-        <th class="centerText">Capitals</th>
-        <th class="centerText">Income</th>
-    </tr>
-    <tr *ngFor="let team of displayTeams" [ngStyle]="ngStyleLogs(team.name)">
-        <td align=center> {{team.name}}</td>
-        <td>
-            <span *ngFor="let player of gameObj.players">
-                <img *ngIf="player.team==team.name" src="assets/graphics/images/flag{{player.nation}}.gif" height=25>
-            </span>
-        </td>
-        <td> <img *ngFor="let nation of team.capitals" src="assets/graphics/images/flag{{nation}}.gif" height=18></td>
-        <td> {{team.income}} </td>
-    </tr>
-</table>
+                    <button title="Offer Peace"
+                        *ngIf="player.alive && ableToTakeThisTurn && !currentPlayer.diplomacyFlg && player.treaties[currentPlayer.nation-1]!=2 && player.treaties[currentPlayer.nation-1]!=3 && player.nation != currentPlayer.nation"
+                        (click)="offerTreaty(2, player.nation)" type="button" class="btn btn-warning roundButton"><img
+                            src="assets/graphics/misc/news2.png" height=25>
+                        <div style="font-size: 10px; margin-top: -2px;">Peace</div>
+                    </button>
+                    <button title="Offer Alliance"
+                        *ngIf="player.alive && ableToTakeThisTurn && gameObj.allowAlliances && !currentPlayer.diplomacyFlg && player.treaties[currentPlayer.nation-1]==2 && gameObj.type!='barbarian' && gameObj.type!='battlebots'"
+                        (click)="offerTreaty(3, player.nation)" type="button" class="btn btn-success roundButton"><img
+                            src="assets/graphics/misc/news3.png" height=25>
+                        <div style="font-size: 10px; margin-top: -2px;">Ally</div>
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="spCard">
+    <div>
+        <div class="cpTitle">Teams/Capitals</div>
+        <table class="spTable">
+            <tr>
+                <th class="centerText">Team</th>
+                <th class="centerText">Players</th>
+                <th class="centerText">Capitals</th>
+                <th class="centerText">Income</th>
+            </tr>
+            <tr *ngFor="let team of displayTeams" [ngStyle]="ngStyleLogs(team.name)">
+                <td align=center> {{team.name}}</td>
+                <td>
+                    <span *ngFor="let player of gameObj.players">
+                        <img *ngIf="player.team==team.name" src="assets/graphics/images/flag{{player.nation}}.gif"
+                            height=25>
+                    </span>
+                </td>
+                <td> <img *ngFor="let nation of team.capitals" src="assets/graphics/images/flag{{nation}}.gif"
+                        height=18></td>
+                <td> {{team.income}} </td>
+            </tr>
+        </table>
+    </div>
+</div>

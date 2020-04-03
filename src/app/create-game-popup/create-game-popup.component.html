@@ -1,0 +1,156 @@
+<div class="modal fade" id="createGamePopup" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <b><i class="fa fa-plus"></i> Create New Game</b>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+
+
+
+
+                <div *ngIf="!sendingFlg">
+
+                    <div style="background-color: gray; padding: 5px;"><input style="width: 100%;" type=text
+                            id="nameField" name="nameField" placeholder="Game Name" value="" maxlength=20>
+                    </div>
+                    <div>
+                        <button (click)="changeType()" type="button" class="btn btn-primary roundButton">Change
+                            Type</button>
+                        <span class="formField" style="background-color: #def; padding: 2px;"><i
+                                [ngClass]="ngClassGameType(gameType.type)"></i> {{gameType.name}}</span>
+                        <button (click)="infoFlg = ! infoFlg" type="button" class="btn btn-secondary roundButton"><i
+                                class="fa fa-info-circle"></i></button>
+                        <div *ngIf="infoFlg" class="borderClass3"><b><i [ngClass]="ngClassGameType(gameType.type)"></i>
+                                {{gameType.name}}:</b> {{gameType.desc}}
+                            <div style="color: #337ab7;" ng-hide="gameType.type=='co-op'">Win: 3 points (Lose nothing
+                                for
+                                loss)</div>
+                            <div style="color: #337ab7;" ng-show="gameType.type=='co-op'">No points for co-op</div>
+                            <span *ngFor="let game of gameTypes">
+                                <span class="borderClass2" [style.background-color]="game==gameType?'orange':'white'"
+                                    style="margin: 1px; cursor: pointer;" (click)="loadType(game)"><i
+                                        [ngClass]="ngClassGameType(game.type)"></i>{{game.name}}</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 8px;">
+                        <button id="numPlayersButton" (click)="changeNumPlayers()" type="button"
+                            class="btn btn-primary roundButton"># Players</button>
+                        <span class="formField" style="background-color: #def; padding: 2px;">{{numberPlayers}}</span>
+                    </div>
+
+                    <div style="border: 1px solid black; margin: 3px; background-color: #ddd;">
+                        <div class="btn-group">
+                            <button (click)="fogIdx=0" type="button" class="btn btn-default roundButton"
+                                [ngClass]="ngClassSegment(fogIdx,0)"> Standard</button>
+                            <button (click)="fogIdx=1" type="button" class="btn btn-default roundButton"
+                                [ngClass]="ngClassSegment(fogIdx,1)"> Fog-of-War</button>
+                            <button (click)="fogIdx=2" type="button" class="btn btn-default roundButton"
+                                [ngClass]="ngClassSegment(fogIdx,2)"> Hardcore Fog</button>
+                        </div>
+                        <div class="borderClass2">
+                            <div *ngIf="fogIdx==0"><b>Standard:</b> All units are visible to all players.</div>
+                            <div *ngIf="fogIdx==1"><b>Fog:</b> You get approximate unit counts for each territory but
+                                not specific
+                                units.
+                            </div>
+                            <div *ngIf="fogIdx==2"><b>Hardcore:</b> Total fog blackout for all territories unless you
+                                have a unit that
+                                borders it.</div>
+                        </div>
+                    </div>
+
+
+                    <div class="borderClass2"
+                        style="text-align: left; padding: 5px; display: inline-block; min-width: 200 px;">
+                        <div>
+                            <div class="squaredOne" style="display: inline-block; padding: 4px; margin: 1px;">
+                                <input type="checkbox" value="None" id="autoAssign" name="check"
+                                    [checked]="autoAssignFlg" (click)="changeAutoAssign()" />
+                                <label for="autoAssign"></label>
+                            </div> Random auto-assign Nations
+                        </div>
+                        <div>
+                            <div class="squaredOne" style="display: inline-block; padding: 4px; margin: 1px;">
+                                <input type="checkbox" value="None" id="autoStart" name="check" checked />
+                                <label for="autoStart"></label>
+                            </div> Auto-Start when full
+                        </div>
+                        <div>
+                            <div class="squaredOne" style="display: inline-block; padding: 4px; margin: 1px;"
+                                ng-click="autoSkipClicked()">
+                                <input type="checkbox" value="None" id="autoSkip" name="check" checked />
+                                <label for="autoSkip"></label>
+                            </div> Auto-Skip
+                        </div>
+                        <div>
+                            <div class="squaredOne" style="display: inline-block; padding: 4px; margin: 1px;">
+                                <input type="checkbox" value="None" id="noSpecs" name="check" />
+                                <label for="noSpecs"></label>
+                            </div> No Specialty Units
+                        </div>
+                        <div>
+                            <div class="squaredOne" style="display: inline-block; padding: 4px; margin: 1px;">
+                                <input type="checkbox" value="None" id="noStats" name="check" />
+                                <label for="noStats"></label>
+                            </div> No Stats
+                        </div>
+                        <div *ngIf="user.rank>=7">
+                            <div class="squaredOne" style="display: inline-block; padding: 4px; margin: 1px;"
+                                ng-click="officersOnlyClicked()">
+                                <input type="checkbox" value="None" id="officersOnly" name="check" />
+                                <label for="officersOnly"></label>
+                            </div> <i class="fa fa-arrow-up"></i> <b>Warrant Officers</b> and higher only
+                        </div>
+                        <div *ngIf="user.rank<14">
+                            <div class="squaredOne" style="display: inline-block; padding: 4px; margin: 1px;">
+                                <input type="checkbox" value="None" id="noGenerals" name="check" />
+                                <label for="noGenerals"></label>
+                            </div> <i class="fa fa-arrow-down"></i> <b>Colonel</b> and Lower Only
+                        </div>
+                        <div *ngIf="user.rank<15">
+                            <div class="squaredOne" style="display: inline-block; padding: 4px; margin: 1px;">
+                                <input type="checkbox" value="None" id="sameRank" name="check" />
+                                <label for="sameRank"></label>
+                            </div> <span style="font-weight: 900; font-size: 16px;">=</span> Same Rank Only!
+                        </div>
+                        <!--
+                    <div class="squaredOne" style="display: inline-block; padding: 4px; margin: 1px;"
+                        ng-click="privateClicked()">
+                        <input type="checkbox" value="None" id="privateOpt" name="check" />
+                        <label for="privateOpt"></label>
+                    </div> Private
+                    <div ng-show="privateOptChecked"><input type=text id="passField" name="passField"
+                            placeholder="Password" value="" maxlength=20></div>
+                    <div ng-show="1">
+                        <div class="squaredOne" style="display: inline-block; padding: 4px; margin: 1px;"
+                            ng-click="turboChecked()">
+                            <input type="checkbox" value="None" id="turboFlg" name="check" />
+                            <label for="turboFlg"></label>
+                        </div> <i class="fa fa-bolt"></i> Turbo-Game
+                        <div ng-show="turboFlgChecked" class="borderClass">For Turbo games, all players must be online,
+                            at the same time for the entire game. Players each get 2 minutes to take their turns.</div>
+                    </div>-->
+                    </div>
+                    <div *ngIf="!autoAssignFlg">Your Superpower:
+                        <img (click)="changeNation()" class="shadowed"
+                            src="assets/graphics/images/flag{{selectedNation}}.gif" height=60 style="cursor: pointer;">
+                    </div>
+                    <div style="margin-top: 8px;"><button id="createButton" (click)="createGameButtonPressed()"
+                            type="button" class="btn btn-primary roundButton tall">Create!</button></div>
+                </div>
+
+                <div *ngIf="sendingFlg" style="font-size: 24px;"><i class="fa fa-spinner fa-spin"></i>&nbsp; Working...</div>
+
+
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>

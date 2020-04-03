@@ -6,6 +6,12 @@ declare var getSuperpowersData: any;
 declare var ngUnitSrc: any;
 declare var displayFixedPopup: any;
 declare var showAlertPopup: any;
+declare var userObjFromUser: any;
+declare var playClick: any;
+declare var ngClassGameTypeMain: any;
+declare var getHostname: any;
+declare var getPostDataFromObj: any;
+declare var verifyServerResponse: any;
 
 @Component({
   selector: 'app-base',
@@ -43,6 +49,22 @@ export class BaseComponent implements OnInit {
     bg['border-radius'] = '10px';
     return bg;
   }
+  playClick() {
+    playClick();
+  }
+  userUpdated($event) {
+    console.log('User updated from emit!')
+    this.user = userObjFromUser();
+  }
+  getHostname() {
+    return getHostname();
+  }
+  getPostDataFromObj(obj: any) {
+    return getPostDataFromObj(obj);
+  }
+  verifyServerResponse(data: any) {
+    return verifyServerResponse('success', data);
+  }
   ngStyleLogs(nation: number, deadFlg = false) {
     if (nation == 99)
       return { 'background-color': '#7df', 'color': 'black' };
@@ -53,12 +75,25 @@ export class BaseComponent implements OnInit {
     var color = colors[nation];
     return { 'background-color': color, 'color': 'black' };
   }
+  ngStyleActivity(num: number) {
+    if (num == 3)
+      return { 'background-color': '#0f0' }
+    if (num == 2)
+      return { 'background-color': 'yellow' }
+    if (num == 1)
+      return { 'background-color': 'red' }
+    else
+      return { 'background-color': 'black' }
+  }
   //-----ngClasses---
   ngClassSegment(num: number, buttonIdx: number) {
     if (num == buttonIdx)
       return 'btn btn-primary roundButton';
     else
       return 'btn btn-light roundButton';
+  }
+  ngClassGameType(gameType: string) {
+    return ngClassGameTypeMain(gameType);
   }
   ngClassUnit(num1: number, num2: number) {
     if (num1 == num2)

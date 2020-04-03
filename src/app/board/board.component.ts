@@ -1445,6 +1445,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.currentPlayer.status = 'Waiting';
 		this.ableToTakeThisTurn = false;
 		playSound('Scream.mp3');
+		playSound('CrowdBoo.mp3');
 
 		this.currentPlayer.alive = false;
 		removeAlliancesForNation(this.currentPlayer.nation, this.gameObj);
@@ -1463,7 +1464,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		setTimeout(() => {
 			playVoiceClip('surrendered' + this.currentPlayer.nation + '.mp3');
-		}, 2000);
+		}, 3000);
 
 	}
 	advanceToNextPlayer() {

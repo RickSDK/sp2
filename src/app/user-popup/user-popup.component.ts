@@ -1,11 +1,13 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
+import { Router } from '@angular/router';
 
 declare var $: any;
 declare var userObjFromUser: any;
 declare var playClick: any;
 declare var valueOfInput: any;
 declare var getGameScores: any;
+declare var logOutUser: any;
 
 @Component({
   selector: 'app-user-popup',
@@ -29,7 +31,7 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
   ];
   public gameScores = [];
 
-  constructor() { super(); }
+  constructor(private router: Router) { super(); }
 
   ngOnInit(): void {
 
@@ -53,11 +55,18 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
   updateUsername() {
     playClick();
     this.editUseNameFlg = false;
-    localStorage.username = valueOfInput('userName');
+    localStorage.userName = valueOfInput('userName');
     this.updateUserProfile();
   }
   updateUserProfile() {
     this.user = userObjFromUser();
     this.messageEvent.emit('done');
+  }
+  userLogout() {
+    logOutUser();
+
+    this.messageEvent.emit('done');
+    this.closeModal('#userPopup');
+    this.router.navigate(['']);
   }
 }

@@ -90,7 +90,7 @@ function playVoiceSound(voiceOverId, muteSound) {
 	if (voiceOverId == 22)
 		fileName = "clickCapital.mp3";
 	if (voiceOverId == 23)
-		fileName = "welcome2.mp3";
+		fileName = "welcome.mp3";
 
 
 	if (voiceOverId == 31)

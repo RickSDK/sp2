@@ -15,9 +15,11 @@
 							class="fa fa-clipboard"></i> Show Descriptions</button>
 					<div style="padding: 20px;" *ngIf="infoFlg">
 						<div class="borderClass2">
-							<p><b><i class="fa fa-wrench"></i> Upgrades:</b> Upgrades can be purchased at any time for 10 coins each. Anti-balistics
+							<p><b><i class="fa fa-wrench"></i> Upgrades:</b> Upgrades can be purchased at any time for
+								10 coins each. Anti-balistics
 								or Advanced Railway. You can use this technology on the same turn that you buy it.</p>
-							<p><b><i class="fa fa-flask"></i> Research:</b> Research you aquire randomly. The cost is 10 coins per research tech and
+							<p><b><i class="fa fa-flask"></i> Research:</b> Research you aquire randomly. The cost is 10
+								coins per research tech and
 								you are guaranteed something. For any given type, you will receive Level 1 before Level
 								2, before Level 3. You can buy as much research as you want and get to use it the same
 								turn that you buy it.</p>
@@ -25,183 +27,72 @@
 					</div>
 				</div>
 
+				<div class="spCard" style="width: 100%;">
+					<div style="width: 100%;">
+						<div class="spTitle"><i class="fa fa-wrench"></i> Upgrades</div>
+						<table border=1 width=100% class="spTable">
+							<tr>
+								<td>
+									<div *ngIf="adminModeFlg" style="background-color: yellow;">18</div>
+									<app-tech [tech]="superpowersData.techs[18]" [descFlg]="descFlg"
+										[adminFlg]="adminFlg" [gameObj]="gameObj">
+									</app-tech>
+								</td>
+								<td>
+									<div *ngIf="adminModeFlg" style="background-color: yellow;">19</div>
+									<app-tech [tech]="superpowersData.techs[19]" [descFlg]="descFlg"
+										[adminFlg]="adminFlg" [gameObj]="gameObj">
+									</app-tech>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
 
-				<div class="blueBg"><i class="fa fa-wrench"></i> Upgrades</div>
-				<table border=1 width=100% class="spTable">
-					<tr>
-						<td>
-							<div *ngIf="adminModeFlg" style="background-color: yellow;">18</div>
-							<app-tech [tech]="superpowersData.techs[18]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-						<td>
-							<div *ngIf="adminModeFlg" style="background-color: yellow;">19</div>
-							<app-tech [tech]="superpowersData.techs[19]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-					</tr>
-				</table>
+				<div class="spCard" style="width: 100%;">
+					<div style="width: 100%;">
+						<div class="spTitle"><i class="fa fa-flask"></i> Research</div>
+						<table border="1" class="spTable">
+							<tr>
+								<th class="hidden-xxs centerText">Type</th>
+								<th class="centerText">Level 1</th>
+								<th class="centerText">Level 2</th>
+								<th class="centerText">Level 3</th>
+							</tr>
 
-				<div class="blueBg"><i class="fa fa-flask"></i> Research</div>
-				<table border="1" class="spTable">
-					<tr>
-						<th class="hidden-xxs centerText">Type</th>
-						<th class="centerText">Level 1</th>
-						<th class="centerText">Level 2</th>
-						<th class="centerText">Level 3</th>
-					</tr>
-
-					<tr *ngFor="let item of techItems; let i = index;">
-						<td class="hidden-xxs" valign="top">
-							<div class="blueBgWhite">{{item.name}}</div>
-							<i class="fa fa-{{item.icon}}" style="font-size: 42px;"></i>
-						</td>
-						<td valign="top">
-							<div *ngIf="adminModeFlg" style="background-color: yellow;">{{i*3}}</div>
-							<div class="blueBgWhite visible-xxs" style="font-size: 12px;"><i class="fa fa-{{item.icon}}"></i> {{item.name}}</div>
-							<app-tech [tech]="superpowersData.techs[i*3]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-						<td valign="top">
-							<div *ngIf="adminModeFlg" style="background-color: yellow;">{{i*3+1}}</div>
-							<div class="blueBgWhite visible-xxs" style="font-size: 12px;"><i class="fa fa-{{item.icon}}"></i> {{item.name}}</div>
-							<app-tech [tech]="superpowersData.techs[i*3+1]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-						<td valign="top">
-							<div *ngIf="adminModeFlg" style="background-color: yellow;">{{i*3+2}}</div>
-							<div class="blueBgWhite visible-xxs" style="font-size: 12px;"><i class="fa fa-{{item.icon}}"></i> {{item.name}}</div>
-							<app-tech [tech]="superpowersData.techs[i*3+2]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-					</tr>
-
-				<!--			<tr class="visible-xxs">
-						<td colspan=3><i class="fa fa-fighter-jet"></i> Air Power</td>
-					</tr>
-					<tr>
-						<td class="hidden-xxs" valign="top">
-							<div class="blueBgWhite">Air Power</div>
-							<i class="fa fa-fighter-jet" style="font-size: 48px;"></i>
-						</td>
-						<td>
-							<app-tech [tech]="superpowersData.techs[0]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-						<td>
-							<app-tech [tech]="superpowersData.techs[1]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-						<td>
-							<app-tech [tech]="superpowersData.techs[2]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-					</tr>
-					<tr class="visible-xxs">
-						<td colspan=3><i class="fa fa-crosshairs"></i> Warheads</td>
-					</tr>
-					<tr>
-						<td class="hidden-xxs" valign="top">
-							<div class="blueBgWhite">Warheads</div>
-							<i class="fa fa-crosshairs" style="font-size: 48px;"></i>
-						</td>
-						<td>
-							<app-tech [tech]="superpowersData.techs[3]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-						<td>
-							<app-tech [tech]="superpowersData.techs[4]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-						<td>
-							<app-tech [tech]="superpowersData.techs[5]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-					</tr>
-					<tr class="visible-xxs">
-						<td colspan=3><i class="fa fa-anchor"></i> Torpedoes</td>
-					</tr>
-					<tr>
-						<td class="hidden-xxs" valign="top">
-							<div class="blueBgWhite">Torpedoes</div>
-							<i class="fa fa-anchor" style="font-size: 48px;"></i>
-						</td>
-						<td>
-							<app-tech [tech]="superpowersData.techs[6]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-						<td>
-							<app-tech [tech]="superpowersData.techs[7]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-						<td>
-							<app-tech [tech]="superpowersData.techs[8]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-					</tr>
-					<tr class="visible-xxs">
-						<td colspan=3><i class="fa fa-industry"></i> Economy</td>
-					</tr>
-					<tr>
-						<td class="hidden-xxs" valign="top">
-							<div class="blueBgWhite">Economy</div>
-							<i class="fa fa-industry" style="font-size: 48px;"></i>
-						</td>
-						<td>
-							<app-tech [tech]="superpowersData.techs[9]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-						<td>
-							<app-tech [tech]="superpowersData.techs[10]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-						<td>
-							<app-tech [tech]="superpowersData.techs[11]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-					</tr>
-					<tr class="visible-xxs">
-						<td colspan=3><i class="fa fa-plane"></i> Bombers</td>
-					</tr>
-					<tr>
-						<td class="hidden-xxs" valign="top">
-							<div class="blueBgWhite">Bombers</div>
-							<i class="fa fa-plane" style="font-size: 48px;"></i>
-						<td>
-							<app-tech [tech]="superpowersData.techs[12]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-						<td>
-							<app-tech [tech]="superpowersData.techs[13]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-						<td>
-							<app-tech [tech]="superpowersData.techs[14]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-					</tr>
-					<tr class="visible-xxs">
-						<td colspan=3><i class="fa fa-gear"></i> Tactical</td>
-					</tr>
-					<tr>
-						<td class="hidden-xxs" valign="top">
-							<div class="blueBgWhite">Tactical</div>
-							<i class="fa fa-gear" style="font-size: 48px;"></i>
-						</td>
-						<td>
-							<app-tech [tech]="superpowersData.techs[15]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-						<td>
-							<app-tech [tech]="superpowersData.techs[16]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-						<td>
-							<app-tech [tech]="superpowersData.techs[17]" [descFlg]="descFlg" [adminFlg]="adminFlg" [gameObj]="gameObj">
-							</app-tech>
-						</td>
-					</tr>-->	
-				</table>
+							<tr *ngFor="let item of techItems; let i = index;">
+								<td class="hidden-xxs" valign="top">
+									<div class="blueBgWhite">{{item.name}}</div>
+									<i class="fa fa-{{item.icon}}" style="font-size: 42px;"></i>
+								</td>
+								<td valign="top">
+									<div *ngIf="adminModeFlg" style="background-color: yellow;">{{i*3}}</div>
+									<div class="blueBgWhite visible-xxs" style="font-size: 12px;"><i
+											class="fa fa-{{item.icon}}"></i> {{item.name}}</div>
+									<app-tech [tech]="superpowersData.techs[i*3]" [descFlg]="descFlg"
+										[adminFlg]="adminFlg" [gameObj]="gameObj">
+									</app-tech>
+								</td>
+								<td valign="top">
+									<div *ngIf="adminModeFlg" style="background-color: yellow;">{{i*3+1}}</div>
+									<div class="blueBgWhite visible-xxs" style="font-size: 12px;"><i
+											class="fa fa-{{item.icon}}"></i> {{item.name}}</div>
+									<app-tech [tech]="superpowersData.techs[i*3+1]" [descFlg]="descFlg"
+										[adminFlg]="adminFlg" [gameObj]="gameObj">
+									</app-tech>
+								</td>
+								<td valign="top">
+									<div *ngIf="adminModeFlg" style="background-color: yellow;">{{i*3+2}}</div>
+									<div class="blueBgWhite visible-xxs" style="font-size: 12px;"><i
+											class="fa fa-{{item.icon}}"></i> {{item.name}}</div>
+									<app-tech [tech]="superpowersData.techs[i*3+2]" [descFlg]="descFlg"
+										[adminFlg]="adminFlg" [gameObj]="gameObj">
+									</app-tech>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
 
 				<div *ngIf="gameObj" style="text-align: center;" class="darkBlueBg">
 					<div *ngIf="gameObj.players.length>0" style="color: #ccc;">Total Tech Count</div>
@@ -213,7 +104,7 @@
 				</div>
 
 			</div>
-	<!--		<div class="modal-footer">
+			<!--		<div class="modal-footer">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>

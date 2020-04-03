@@ -245,6 +245,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 		flags.push(k);
 	}
 	terr.cobraCount = cobraCount;
+	terr.cruiseFlg = false;
 	terr.flags = flags;
 	terr.showUnitDetailFlg = (includesCargoFlg || flags.length > 1);
 	terr.cargoTypeUnits = cargoTypeUnits;
@@ -1479,7 +1480,7 @@ function warMessageForNation(terr, player, gameObj) {
 			'The people\'s cannon is pointed at your hearts! Surrender now or we will point it at your heads!',
 			'Prepare for jihad! First we will attack you with a million strikes of total destruction. Then we will make more threats!',
 			'We tried to bring peace to your nation, but have failed. Now we must kill you.',
-			'Qué pasa? Please send us the coordinates of your leadership bunker. Guided missiles have already been launched!',
+			'Qué pasa Hombre? Please send us the coordinates of your leadership bunker. Guided missiles have already been launched!',
 		];
 		return m[terr.owner];
 
@@ -1493,7 +1494,7 @@ function warMessageForNation(terr, player, gameObj) {
 			'We have discussed things and, good news, we have decided to allow you to live. Let\'s sign a peace agreement right away.',
 			'What\'s a little jihad amongst friends? It is time for us to join forces and all live in harmony sharing our great values equally.',
 			'you know what? We were wrong about you. I think we might just be able to live side by side in harmony. Sign this agreement quickly before we change our minds.',
-			'Hola amigos! We are all good and friendly people. Let\'s sign an agreement and dance the night away.',
+			'Hola amigos! We are all good and friendly people. Let\'s sign an agreement and then be friends. Fiesta toda la noche!',
 		];
 		return m[terr.owner];
 

@@ -48,6 +48,10 @@ import { GameViewComponent } from './game-view/game-view.component';
 import { MenuPopupComponent } from './menu-popup/menu-popup.component';
 import { TerritoriesViewComponent } from './territories-view/territories-view.component';
 import { BattleshipPopupComponent } from './battleship-popup/battleship-popup.component';
+import { CreateGamePopupComponent } from './create-game-popup/create-game-popup.component';
+import { GameStandingsComponent } from './game-standings/game-standings.component';
+import { MatchmakingStandingsComponent } from './matchmaking-standings/matchmaking-standings.component';
+import { PlayerNameComponent } from './player-name/player-name.component';
 
 @NgModule({
   declarations: [
@@ -96,7 +100,11 @@ import { BattleshipPopupComponent } from './battleship-popup/battleship-popup.co
     GameViewComponent,
     MenuPopupComponent,
     TerritoriesViewComponent,
-    BattleshipPopupComponent
+    BattleshipPopupComponent,
+    CreateGamePopupComponent,
+    GameStandingsComponent,
+    MatchmakingStandingsComponent,
+    PlayerNameComponent
   ],
   imports: [
     BrowserModule,

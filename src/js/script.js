@@ -109,6 +109,24 @@ function disableButton(id, disableFlg) {
 	if (e)
 		e.disabled = disableFlg;
 }
+function getPostDataFromObj(obj) {
+	var body = JSON.stringify(obj);
+
+	const postData = {
+		method: 'POST',
+		headers: new Headers(),
+		body: body
+	};
+	return postData;
+}
+function executeTextApi(obj, callback) {
+	const url = getHostname() + "/spApiText.php";
+	const postData = getPostDataFromObj(obj);
+
+	fetch(url, postData).then((resp) => resp.text())
+		.then((data) => callback(data))
+		.catch(error => { showAlertPopup('Network API Error! See console logs.', 1); console.log('executeTextApi Error', error); });
+}
 function verifyServerResponse(status, data) {
 	if (status == 'success') {
 		if (data.substring(0, 7) == 'Success')
@@ -260,84 +278,6 @@ function updateProgressBar(num) {
 	if (e)
 		e.style.width = num + '%';
 }
-
-
-
-//----------------------------------------movement------------------------------
-//this.optionType, this.gameObj, this.currentPlayer, this.totalMoveTerrs, this.selectedTerritory
-//function showUnitsForMovementBG(type, units, currentPlayer, territories, selectedTerritory, goButton, round, currentPlayer, optionType, svgs) {
-/*function showUnitsForMovementBG(optionType, gameObj, currentPlayer, territories, selectedTerritory) {
-	// in combination with: 
-	//	showSelectableBox 
-	//	$scope.checkMovement = function;
-	// 	$scope.checkSendButtonStatus = function
-	var obj = {};
-	var showConsole = false;
-	gameObj.units.sort(function (a, b) { return a.terr - b.terr; });
-	obj.moveTerr = [];
-	var tUnits = [];
-	var terId = 0;
-	var maxDist = 2;
-	var distObj = {};
-	var allyHash = getAllyHash(currentPlayer, selectedTerritory);
-	var totalUnitsThatCanMove = 0;
-	for (var x = 0; x < gameObj.units.length; x++) {
-		var unit = gameObj.units[x];
-		if (unit.owner == currentPlayer.nation && unit.mv > 0 && (unit.movesLeft > 0 || unit.terr >= 79)) {
-
-			var movement = (optionType == 'attack' || optionType == 'nuke') ? unit.moveAtt : unit.mv;
-
-			if (optionType == 'cruise')
-				movement = 1;
-			if (movement >= maxDist)
-				maxDist = movement + 1;
-
-			if (unit.terr == terId) {
-				if (showConsole)
-					console.log('unit for showUnitsForMovement: ', unit.piece, movement, unit.terr);
-				if (showSelectableBox(unit, gameObj.territories[terId - 1], selectedTerritory, optionType, 'Go', gameObj.round, currentPlayer)) {
-					tUnits.push(unit);
-				}
-			} else {
-				if (terId > 0) {
-					var unitTerr = gameObj.territories[terId - 1];
-					distObj = distanceBetweenTerrs(unitTerr, selectedTerritory, maxDist, 0, 0, 0, allyHash, gameObj.territories);
-					if (showConsole)
-						console.log('xxx', maxDist, unitTerr.name, distObj, tUnits);
-					if (includeThisTerritoryForDisplay(optionType, unitTerr, selectedTerritory, distObj)) {
-						var nUnits = numberOfUnitsThatCanReach(distObj, tUnits, optionType);
-						if (nUnits > 0) {
-							totalUnitsThatCanMove += nUnits;
-							obj.moveTerr.push({ id: terId, nation: unitTerr.nation, name: unitTerr.name, distObj: distObj, units: tUnits, svg: 'svgs[terId-1]', nUnits: nUnits });
-							unitHash = {};
-						}
-					}
-				}
-				terId = unit.terr;
-				tUnits = [];
-				maxDist = movement + 1;
-				if (showConsole)
-					console.log('xxx', unit.piece, movement, unit.terr);
-				if (showSelectableBox(unit, gameObj.territories[terId - 1], selectedTerritory, optionType, 'Go', gameObj.round, currentPlayer)) {
-					tUnits.push(unit);
-				}
-			}
-		}
-	}
-	if (tUnits.length > 0) {
-		distObj = distanceBetweenTerrs(gameObj.territories[terId - 1], selectedTerritory, maxDist, 0, 0, 0, allyHash, gameObj.territories);
-		var unitTerr = territories[terId - 1];
-		if (includeThisTerritoryForDisplay(optionType, unitTerr, selectedTerritory, distObj)) {
-			var nUnits = numberOfUnitsThatCanReach(distObj, tUnits, optionType);
-			if (nUnits > 0) {
-				totalUnitsThatCanMove += nUnits;
-				obj.moveTerr.push({ id: gameObj.territories[terId - 1].id, nation: gameObj.territories[terId - 1].nation, name: gameObj.territories[terId - 1].name, distObj: distObj, units: tUnits });
-			}
-		}
-	}
-	obj.totalUnitsThatCanMove = totalUnitsThatCanMove;
-	return obj;
-}*/
 function getAllyHash(player, selectedTerritory) {
 	var limit = 3;
 	if (selectedTerritory && selectedTerritory.id && selectedTerritory.id > 79)
@@ -451,7 +391,7 @@ function terrDoesBorder(t1, t2) {
 			return true;
 	}
 	return false;
-}function distanceBetweenTerrs(terr1, terr2, max, land, air, sea, allyHash, territories) {
+} function distanceBetweenTerrs(terr1, terr2, max, land, air, sea, allyHash, territories) {
 	if (terr1.id == terr2.id)
 		return { land: land, air: air, sea: sea };
 
@@ -467,12 +407,12 @@ function terrDoesBorder(t1, t2) {
 		sea = 9;
 	if ((terr1.id == 99 && terr2.id == 86) || (terr1.id == 86 && terr2.id == 99)) {
 		//panama
-		if(territories[51].treatyStatus<3)
+		if (territories[51].treatyStatus < 3)
 			sea = 9;
 	}
 	if ((terr1.id == 115 && terr2.id == 118) || (terr1.id == 118 && terr2.id == 115)) {
 		//suez cannal
-		if(territories[36].treatyStatus<3 && territories[39].treatyStatus<3)
+		if (territories[36].treatyStatus < 3 && territories[39].treatyStatus < 3)
 			sea = 9;
 	}
 

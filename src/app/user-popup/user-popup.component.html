@@ -87,7 +87,7 @@
                     </div>
 
 
-                    <div class="spCard" (click)="openRanksModal()" style="max-width: 200px;">
+                    <div *ngIf="user && user.rank && user.rank<18" class="spCard" (click)="openRanksModal()" style="max-width: 200px;">
                         <div>
                             <div class="spTitle">Your Next Rank</div>
                             <table class="spTable">
@@ -133,6 +133,9 @@
 
             </div>
             <div class="modal-footer">
+                <button *ngIf="user.userId > 0" (click)="userLogout()" type="button" class="btn btn-secondary roundButton">
+                    <i class="fa fa-sign-out"></i> Logout
+                </button>
                 <button (click)="openRanksModal()" type="button" class="btn btn-secondary roundButton">
                     <i class="fa fa-star"></i> Ranks
                 </button>

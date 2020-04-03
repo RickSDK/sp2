@@ -1,0 +1,131 @@
+<div class="modal fade" id="matchmakerStandingsPopup" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <b><i class="fa fa-trophy"></i> Matchmaking League</b>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 0; text-align: center;">
+
+                <div *ngIf="loadingFlg" style="font-size: 24px;">
+                    <i class="fa fa-spinner fa-spin"></i> Loading...
+                </div>
+                <div *ngIf="!loadingFlg">
+                    <div style="background-color: #777; color: white;">
+                        <span style="font-size: 12px;"><span class="hidden-xxs">Max</span> Games:</span>
+                        <button (click)="changeMaxGames(-1)" [disabled]="maxGames==0" type="button"
+                            class="btn btn-primary roundButton"><i class="fa fa-minus"></i></button>
+                        <span class="borderClass2">{{maxGames}}</span>
+                        <button (click)="changeMaxGames(1)" [disabled]="maxGames==5" type="button"
+                            class="btn btn-primary roundButton"><i class="fa fa-plus"></i></button>
+                        <button *ngIf="maxGames>0" (click)="exitLeague()" type="button"
+                            class="btn btn-danger roundButton">
+                            <i class="fa fa-sign-out"></i> Exit League
+                        </button>
+                    </div>
+
+                    <div class="spCard">
+                        <div>
+                            <div class="spTitle">Matchmaking League Details</div>
+                            <div class="spCardBody" style="font-size: 12px;">
+                                <div>
+                                    <button (click)="infoFlg = !infoFlg" type="button"
+                                        class="btn btn-secondary roundButton">
+                                        <i class="fa fa-info-circle"></i> League Info
+                                    </button>
+                                </div>
+                                <div *ngIf="infoFlg" class="borderClass3">
+                                    <div><i class="fa fa-hand-o-right"></i> Games start automatically</div>
+                                    <div><i class="fa fa-hand-o-right"></i> Players are random</div>
+                                    <div><i class="fa fa-hand-o-right"></i> Settings are random</div>
+                                    <div><i class="fa fa-hand-o-right"></i> Can be in up to 5 games at once</div>
+                                    <div><i class="fa fa-hand-o-right"></i> Earn 1 EMP for every 5 games</div>
+                                </div>
+                                <div>
+                                    <button *ngIf="maxGames==0" (click)="joinLeague()" type="button"
+                                        class="btn btn-success roundButton" style="font-size: 26px;">
+                                        <i class="fa fa-sign-in"></i> Join League
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="spCard">
+                        <div>
+                            <div class="spTitle"><i class="fa fa-trophy"></i> Matchmaking Standings</div>
+                            <table class="spTable">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>W</th>
+                                    <th>L</th>
+                                    <th>G</th>
+                                    <th>Stk</th>
+                                    <th class="hidden-xxs"># Playing</th>
+                                    <th class="hidden-xxs">Max</th>
+                                    <th>Pts</th>
+                                </tr>
+                                <tr *ngFor="let player of fullLeaderList; let i = index">
+                                    <td>#{{i+1}}</td>
+                                    <td>
+                                        <app-player-name [player]="player"></app-player-name>
+                                    </td>
+                                    <td>{{player.wins}}</td>
+                                    <td>{{player.losses}}</td>
+                                    <td>{{player.games}}</td>
+                                    <td>{{player.streak}}</td>
+                                    <td class="hidden-xxs">{{player.games_playing}}</td>
+                                    <td class="hidden-xxs">{{player.games_max}}</td>
+                                    <td>{{player.points}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="spCard">
+                        <div>
+                            <div class="spTitle"><i class="fa fa-fire"></i> Hot Streak</div>
+                            <table class="spTable">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Streak</th>
+                                </tr>
+                                <tr *ngFor="let player of hotStreakList">
+                                    <td>
+                                        <app-player-name [player]="player"></app-player-name>
+                                    </td>
+                                    <td> {{player.streak}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="spCard">
+                        <div>
+                            <div class="spTitle"><i class="fa fa-cube"></i> Cold Streak</div>
+                            <table class="spTable">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Streak</th>
+                                </tr>
+                                <tr *ngFor="let player of coldStreakList">
+                                    <td>
+                                        <app-player-name [player]="player"></app-player-name>
+                                    </td>
+                                    <td> {{player.streak}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>

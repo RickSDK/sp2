@@ -54,7 +54,7 @@ export class UnitsPopupComponent extends BaseComponent implements OnInit {
 	ngOnInit(): void {
 		this.units = populateUnits();
 		this.selectButton(0);
-		this.user = userObjFromUser(localStorage.username, localStorage.rank, localStorage.password);
+		this.user = userObjFromUser(localStorage.userName, localStorage.rank, localStorage.password);
 	}
 	show() {
 		//	this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);

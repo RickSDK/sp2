@@ -155,7 +155,7 @@ function findTransportForThisCargo(unit, terr, gameObj) {
         var bestShip;
         for (var u = 0; u < terr.units.length; u++) {
             var ship = terr.units[u];
-            if (ship.type == 3 && ship.piece != 5 && (!bestShip || ship.cas > bestShip.cas))
+            if (ship.type == 3 && ship.owner == unit.owner && ship.piece != 5 && (!bestShip || ship.cas > bestShip.cas))
                 bestShip = ship;
         }
         loadThisUnitOntoThisTransport(unit, bestShip);
@@ -163,14 +163,14 @@ function findTransportForThisCargo(unit, terr, gameObj) {
     }
     for (var u = 0; u < terr.units.length; u++) {
         var transport = terr.units[u];
-        if (transport.piece != 8 && unit.type == 1 && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits) {
+        if (transport.piece != 8 && transport.owner == unit.owner && unit.type == 1 && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits) {
             loadThisUnitOntoThisTransport(unit, transport);
             return;
         }
     }
     for (var u = 0; u < terr.units.length; u++) {
         var transport = terr.units[u];
-        if (transport.piece == 8 && unit.subType == 'fighter' && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits) {
+        if (transport.piece == 8 && transport.owner == unit.owner && unit.subType == 'fighter' && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits) {
             loadThisUnitOntoThisTransport(unit, transport);
             return;
         }
@@ -405,10 +405,10 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
                             e.checked = false;
                         }
                     }
-                    if (unit.piece == 28 && optionType == 'attack' && unit.terr >= 79) {
-                        showAlertPopup('Medics cannot attack from transports.', 1);
-                        e.checked = false;
-                    }
+ //                   if (unit.piece == 28 && optionType == 'attack' && unit.terr >= 79) {
+ //                       showAlertPopup('Medics cannot attack from transports.', 1);
+  //                      e.checked = false;
+  //                  }
                     if (unit.type == 1 && unit.returnFlg && optionType == 'attack' && unit.terr >= 79) {
                         showAlertPopup(unit.name + ' cannot attack from transports.', 1);
                         e.checked = false;
@@ -470,7 +470,7 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
         defendingUnits.push(unit);
     });
 
-    var obj = getBattleAnalysis({ attackUnits: units, defendingUnits: defendingUnits }, selectedTerritory, player, gameObj);
+    var obj = getBattleAnalysis({ attackUnits: units, defendingUnits: defendingUnits, cruiseFlg: (optionType == 'cruise') }, selectedTerritory, player, gameObj);
     if (optionType == 'cruise')
         obj.expectedLosses = 0;
     if (optionType == 'nuke')

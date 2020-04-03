@@ -1,0 +1,88 @@
+<div class="modal fade" id="gameStandingsPopup" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <b><i class="fa fa-list"></i> Superpowers Players</b>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="text-align: center;">
+
+                <div class="spCard">
+                    <div>
+                        <div class="spTitle"><i class="fa fa-list"></i> Regular Game Standings</div>
+                        <table class="spTable">
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th class="hidden-xxs">Flag</th>
+                                <th>W</th>
+                                <th>L</th>
+                                <th class="hidden-xxs">G</th>
+                                <th>Stk</th>
+                                <th>L10</th>
+                                <th>Pts</th>
+                            </tr>
+                            <tr *ngFor="let player of fullPlayerList; let i = index">
+                                <td>#{{i+1}}</td>
+                                <td>
+                                    <app-player-name [player]="player"></app-player-name>
+                               </td>
+                                <td class="hidden-xxs"><img src="assets/graphics/flags/{{player.flag}}" height="22">
+                                </td>
+                                <td>{{player.wins}}</td>
+                                <td>{{player.losses}}</td>
+                                <td class="hidden-xxs">{{player.games}}</td>
+                                <td>{{player.streak}}</td>
+                                <td>{{player.l10}}</td>
+                                <td>{{player.points}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="spCard">
+                    <div>
+                        <div class="spTitle"><i class="fa fa-fire"></i> Hot Streak</div>
+                        <table class="spTable">
+                            <tr>
+                                <th>Name</th>
+                                <th>Streak</th>
+                            </tr>
+                            <tr *ngFor="let player of hotStreakList">
+                                <td>
+                                    <app-player-name [player]="player"></app-player-name>
+                                </td>
+                                <td> {{player.streak}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="spCard">
+                    <div>
+                        <div class="spTitle"><i class="fa fa-cube"></i> Cold Streak</div>
+                        <table class="spTable">
+                            <tr>
+                                <th>Name</th>
+                                <th>Streak</th>
+                            </tr>
+                            <tr *ngFor="let player of coldStreakList">
+                                <td>
+                                    <app-player-name [player]="player"></app-player-name>
+                                 </td>
+                                <td> {{player.streak}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+
+
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>

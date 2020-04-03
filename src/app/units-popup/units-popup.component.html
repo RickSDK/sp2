@@ -20,20 +20,26 @@
 				</div>
 
 
-				<div class="borderClass3" style="background-color: #ccc; border: 1px solid black;">
-					<div><i class="fa {{buttonList[segmentIdx].icon}}"></i> {{classTypes[segmentIdx]}}</div>
-					<div *ngIf="rankTypes[segmentIdx].length>0" style="font-size: 12px;">These units available once you
-						achieve rank of <b>{{rankTypes[segmentIdx]}}</b></div>
-					<span *ngFor="let unit of unitList" (click)="selectUnit(unit)" class="shadowed"
-						[ngClass]="ngClassUnit(selectedUnit.id,unit.id)" style="padding: 5px; display: inline-block;">
-						<img *ngIf="unit.flag>0" src="assets/graphics/images/flag{{unit.flag}}.gif" height=30> <img
-							src="{{ngUnitSrc(unit.id)}}" style="max-height:40px; max-width:80px">
-						<div style="font-size: 10px;">{{unit.name}}</div>
-					</span>
-					<!--				<button *ngFor="let unit of unitList" (click)="selectUnit(unit)" type="button"
+				<div class="spCard">
+					<div>
+						<div class="spTitle"><i class="fa {{buttonList[segmentIdx].icon}}"></i>
+							{{classTypes[segmentIdx]}}</div>
+						<div class="spCardBody">
+							<div *ngIf="rankTypes[segmentIdx].length>0" style="font-size: 12px;">These units available
+								once you achieve rank of <b>{{rankTypes[segmentIdx]}}</b></div>
+							<span *ngFor="let unit of unitList" (click)="selectUnit(unit)" class="shadowed"
+								[ngClass]="ngClassUnit(selectedUnit.id,unit.id)"
+								style="padding: 5px; display: inline-block;">
+								<img *ngIf="unit.flag>0" src="assets/graphics/images/flag{{unit.flag}}.gif" height=30>
+								<img src="{{ngUnitSrc(unit.id)}}" style="max-height:40px; max-width:80px">
+								<div style="font-size: 10px;">{{unit.name}}</div>
+							</span>
+							<!--				<button *ngFor="let unit of unitList" (click)="selectUnit(unit)" type="button"
 							class="btn btn-light roundButton" [ngClass]="ngClassSegment(selectedUnit.id,unit.id)">
 							<img *ngIf="unit.flag>0" src="assets/graphics/images/flag{{unit.flag}}.gif" height=30> <img
 								src="{{ngUnitSrc(unit.id)}}" style="max-height:40px; max-width:80px"></button>-->
+						</div>
+					</div>
 				</div>
 
 				<div *ngIf="adminModeFlg" style="background-color: yellow;">{{selectedUnit.name}}

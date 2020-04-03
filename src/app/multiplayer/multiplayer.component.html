@@ -1,2 +1,248 @@
 <app-header></app-header>
-<p>multiplayer works!</p>
+
+<div style="text-align: center;">
+    <div
+        style="max-width: 800px; display: inline-block; width: 100%; box-shadow: 15px 15px 15px #000; background-color: white;">
+
+        <a routerLink="/">
+            <div style="background-color: #444; text-align: center;">
+                <i class="fa fa-arrow-left" style="font-size: 20px;"></i> <img
+                    src="assets/graphics/images/superpowers.png" title="Superpowers!" height=60>
+                <span style=" color: white;">Multiplayer</span>
+            </div>
+        </a>
+
+        <div *ngIf="loadingFlg" style="font-size: 24px;"><i class="fa fa-spinner fa-spin"></i>&nbsp; Working...</div>
+
+        <div *ngIf="!loadingFlg">
+
+            <div class="mediumBlueBg" style="text-align: center; white-space: nowrap; overflow: hidden;">
+                <button (click)="userPopup.show()" type="button" class="btn btn-secondary roundButton">
+                    <i class="fa fa-user"></i> {{user.userName}}
+                </button>
+                <button (click)="filterGames(1)" [disabled]="buttonIdx==1" type="button"
+                    class="btn btn-success roundButton">
+                    <i class="fa fa-arrow-down" style="font-size: 32px;"></i><br>
+                    Join Game
+                </button>
+
+                <button (click)="createGamePopup.show()" type="button" class="btn btn-primary roundButton">
+                    <i class="fa fa-plus" style="font-size: 32px;"></i><br>
+                    Create Game
+                </button>
+            </div>
+
+            <div style="background-color: #ccc;">
+                <span style="display: inline-block;">
+                    <button (click)="gameStandingsPopup.show()" type="button" class="btn btn-secondary roundButton">
+                        <i class="fa fa-list"></i>
+                    </button><br>
+                    <div style="font-size: 10px; color: gray;">Standings</div>
+                </span>
+                <div class="spCard" style="cursor: pointer; font-size: 12px;" (click)="gameStandingsPopup.show()">
+                    <div>
+                        <div class="spTitle"><i class="fa fa-list"></i> Regular Games</div>
+                        <table class="spTable">
+                            <tr>
+                                <td>Wins</td>
+                                <td>{{user.wins}}</td>
+                            </tr>
+                            <tr>
+                                <td>Losses</td>
+                                <td>{{user.losses}}</td>
+                            </tr>
+                            <tr>
+                                <td>Points</td>
+                                <td style="color: green; font-weight: 700">{{user.points}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="spCard" style="cursor: pointer; font-size: 12px; background-color: purple;"
+                    (click)="matchmakerStandingsPopup.show()">
+                    <div>
+                        <div class="spTitle"><i class="fa fa-trophy"></i> Matchmaking Games</div>
+                        <table class="spTable">
+                            <tr>
+                                <td>Wins</td>
+                                <td>{{user.mmWins}}</td>
+                            </tr>
+                            <tr>
+                                <td>Losses</td>
+                                <td>{{user.mmLosses}}</td>
+                            </tr>
+                            <tr>
+                                <td>Points</td>
+                                <td style="color: green; font-weight: 700">{{user.mmPoints}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <span style="display: inline-block;">
+                    <button (click)="matchmakerStandingsPopup.show()" type="button"
+                        class="btn btn-secondary roundButton">
+                        <i class="fa fa-trophy"></i>
+                    </button><br>
+                    <div style="font-size: 10px; color: gray;">Standings</div>
+                </span>
+            </div>
+
+            <div style="text-align: center; padding-bottom: 5px; background-color: #ccc;">
+                <div class="btn-group">
+                    <button (click)="filterGames(0)" type="button" class="btn btn-default roundButton"
+                        [ngClass]="ngClassSegment(buttonIdx,0)" style="min-width: 60px;">
+                        <i class="fa fa-star" style="font-size: 26px;"></i>
+                        <div style="font-size: 10px;">My Games</div>
+                    </button>
+                    <button (click)="filterGames(1)" type="button" class="btn btn-default roundButton"
+                        [ngClass]="ngClassSegment(buttonIdx,1)" style="min-width: 60px;">
+                        <i class="fa fa-plus" style="font-size: 26px;"></i>
+                        <div style="font-size: 10px;">Open</div>
+                    </button>
+                    <button (click)="filterGames(2)" type="button" class="btn btn-default roundButton"
+                        [ngClass]="ngClassSegment(buttonIdx,2)" style="min-width: 60px;">
+                        <i class="fa fa-play" style="font-size: 26px;"></i>
+                        <div style="font-size: 10px;">Playing</div>
+                    </button>
+                    <button (click)="filterGames(3)" type="button" class="btn btn-default roundButton"
+                        [ngClass]="ngClassSegment(buttonIdx,3)" style="min-width: 60px;">
+                        <i class="fa fa-stop" style="font-size: 26px;"></i>
+                        <div style="font-size: 10px;">Completed</div>
+                    </button>
+                    <button (click)="filterGames(4)" type="button" class="btn btn-default roundButton"
+                        [ngClass]="ngClassSegment(buttonIdx,4)" style="min-width: 60px;">
+                        <i class="fa fa-trophy" style="font-size: 26px;"></i>
+                        <div style="font-size: 10px;">MatchMaking</div>
+                    </button>
+                </div>
+            </div>
+
+            <div class="mediumBlueBg">
+                <div style="font-size: 24px;"><b><i class="fa {{titles[buttonIdx].icon}}"></i>
+                        {{titles[buttonIdx].title}}</b></div>
+                <div *ngFor="let game of gameList" class="spCard" style="width: 100%; max-width: 360px;">
+                    <div style="width: 100%;">
+                        <div class="spTitle" [style.background-color]="game.mmFlg?'purple':'#033a77'">
+                            <div *ngIf="!game.mmFlg"><i class="fa fa-list"></i> Regular Game</div>
+                            <div *ngIf="game.mmFlg"><i class="fa fa-trophy"></i> Matchmaking Game</div>
+                        </div>
+                        <div class="spCardBody">
+                            <div (click)="selectGame(game)" class="darkBlueBg"
+                                style="font-size: 24px; font-weight: 700; cursor: pointer;">
+                                <span class="corner-icon"><i class="fa fa-info-circle"></i></span>
+                                {{game.name}}</div>
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td>
+                                        <div class="gameCard">
+                                            <div class="darkBlueBg"><i class="fa fa-h-square"></i> Host</div>
+                                            <div> {{game.host}}</div>
+                                            <div>{{game.size}} Players</div>
+                                        </div>
+                                        <div *ngIf="game.inGame && game.myNation>0">
+                                            <div style="color: #bbb; font-weight: 700;">You</div>
+                                            <div><img src="assets/graphics/images/flag{{game.myNation}}.gif"
+                                                    height="50">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style="font-size: 12px; color: #777;"><i
+                                                class="fa {{ngClassGameType(game.gameType)}}"></i> {{game.type}}</div>
+                                        <button (click)="enterGame(game)" type="button"
+                                            [ngClass]="ngClassGameButton(game)" class="btn btn-default roundButton"
+                                            style="font-size: 26px;">
+                                            <i class="fa fa-arrow-right"></i> Enter
+                                        </button>
+                                        <div>
+                                            <div class="gameCard">
+                                                <div class="darkBlueBg">Round</div>
+                                                <div
+                                                    style="font-size: 48px; font-weight: 700; height: 65px; margin-top: -15px;">
+                                                    {{game.round}}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="gameCard">
+                                            <div class="darkBlueBg"><i class="fa fa-clock-o"></i> Timer</div>
+                                            <app-player-name [player]="game.turnObj"></app-player-name>
+                                            <div>{{game.timeLeft}}</div>
+                                            <div style="font-size: 10px; color: gray;">Last Login:
+                                                <span
+                                                    style="font-size: 12px; color: green;"><b>{{game.turnObj.last_login_time}}</b></span>
+                                                hr ago</div>
+                                        </div>
+                                        <div *ngIf="game.turnObj.nation>0">
+                                            <div style="color: #bbb; font-weight: 700;">Turn</div>
+                                            <div><img src="assets/graphics/images/flag{{game.turnObj.nation}}.gif"
+                                                    height="50"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div *ngIf="selectedGame == game">
+                                <div class="spCard">
+                                    <div>
+                                        <div class="spTitle">Game Options</div>
+                                        <div class="spCardBody" style="font-size: 12px;">
+                                            <div>{{game.type}}</div>
+                                            <div *ngIf="game.mmFlg"><i class="fa fa-check"></i> Matchmaking</div>
+                                            <div *ngIf="game.autoStart"><i class="fa fa-check"></i> Auto-Start</div>
+                                            <div *ngIf="game.autoSkip"><i class="fa fa-check"></i> Auto-Skip</div>
+                                            <div *ngIf="game.fogofwar"><i class="fa fa-check"></i> Fog-of-War</div>
+                                            <div *ngIf="game.hardFog"><i class="fa fa-check"></i> Hard-Fog</div>
+                                            <div *ngIf="game.auto_assign_flg"><i class="fa fa-check"></i> Auto-Nations</div>
+                                            <div *ngIf="game.restrict_units_flg"><i class="fa fa-check"></i> No Spec Units</div>
+                                            <div *ngIf="game.no_stats_flg"><i class="fa fa-check"></i> No Stats</div>
+                                            <div *ngIf="game.minRank>0"><i class="fa fa-check"></i> Min Rank {{game.minRank}}</div>
+                                            <div *ngIf="game.maxRank>0"><i class="fa fa-check"></i> Max Rank {{game.minRank}}</div>
+                                         </div>
+                                    </div>
+                                </div>
+                                <div class="spCard">
+                                    <div>
+                                        <div class="spTitle">Players in Game</div>
+                                        <table class="spTable">
+                                            <tr>
+                                                <th>N</th>
+                                                <th>Player</th>
+                                                <th>$</th>
+                                                <th><i class="fa fa-clock-o"></i></th>
+                                            </tr>
+                                            <tr *ngFor="let player of game.players">
+                                                <td><img src="assets/graphics/images/flag{{player.nation}}.gif"
+                                                        height="20"></td>
+                                                <td>
+                                                    <i *ngIf="player.top" class="fa fa-star"></i>
+                                                    <i *ngIf="player.name == game.turnObj.name" class="fa fa-check"></i>
+                                                    {{player.name}}
+                                                </td>
+                                                <td style="color: green; font-weight: 700;">{{player.income}}</td>
+                                                <td style="font-size: 12px; color: gray;">{{player.clock}}hr</td>
+                                            </tr>
+                                        </table>
+                                        <div class="spTitle"><i class="fa fa-star"></i>: Top-2 Player, <i
+                                                class="fa fa-check"></i>: Turn</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <!----end card-->
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<app-user-popup #userPopup [user]="user" (messageEvent)="userUpdated($event)"></app-user-popup>
+<app-create-game-popup #createGamePopup [user]="user" (messageEvent)="refreshGames($event)"></app-create-game-popup>
+<app-game-standings #gameStandingsPopup [user]="user"></app-game-standings>
+<app-matchmaking-standings #matchmakerStandingsPopup [user]="user"></app-matchmaking-standings>

@@ -17,159 +17,174 @@
 </div>
 
 
+<div class="spCard">
+    <div>
+        <table class="spTable" *ngIf="gameObj && segmentIdx==0">
+            <tr>
+                <th class="centerText">Nation</th>
+                <th class="centerText">Player</th>
+                <th class="centerText"><span title="Income">Inc</span></th>
+                <th class="centerText"><i class="fa fa-usd"></i></th>
+                <th class="centerText"><img src="assets/graphics/units/piece10u.png" height=30 title="General Alive?">
+                </th>
+                <th class="centerText"><img src="assets/graphics/units/piece11u.png" title="Leader Alive?" height=30>
+                </th>
+                <th class="centerText"><span title="Active Units">units</span></th>
+                <th class="centerText"><span title="Kills">K</span></th>
+                <th class="centerText"><span title="Deaths">D</span></th>
+                <th class="centerText"><span title="Kills/Death">K/D</span></th>
+            </tr>
+            <tr *ngFor="let player of gameObj.players" [ngStyle]="ngStyleLogs(player.nation, !player.alive)"
+                ng-style="ngStyleWinners(player.wonFlg, gameObj.gameOver)">
+                <td class="centerText">
+                    <img src="assets/graphics/images/flag{{player.nation}}.gif" height=40
+                        title="{{superpowersData.superpowers[player.nation]}}">
+                    <i class="fa fa-shield" *ngIf="gameObj.round == gameObj.attack && player.defenseFlg"
+                        title="player has lost a territory"></i>
+                    <i class="fa fa-bolt" *ngIf="gameObj.round == gameObj.attack && player.attackFlg"
+                        title="Play has taken over a territory"></i>
+                </td>
+                <td class="centerText">
+                    <i *ngIf="gameObj.turnId==player.turn && !gameObj.gameOver" class="fa fa-arrow-right"
+                        title="Current Turn" style="color: green;"></i>
+                    <img *ngIf="player.nukes" src="assets/graphics/units/piece14.gif" title="Nukes" height=20>
+                    <i *ngIf="player.sat" class="fa fa-shield" style="color: blue;" title="Anti-balistics"></i>
 
-<table class="spTable" *ngIf="gameObj && segmentIdx==0">
-    <tr>
-        <th class="centerText">Nation</th>
-        <th class="centerText">Player</th>
-        <th class="centerText"><span title="Income">Inc</span></th>
-        <th class="centerText"><i class="fa fa-usd"></i></th>
-        <th class="centerText"><img src="assets/graphics/units/piece10u.png" height=30 title="General Alive?"></th>
-        <th class="centerText"><img src="assets/graphics/units/piece11u.png" title="Leader Alive?" height=30></th>
-        <th class="centerText"><span title="Active Units">units</span></th>
-        <th class="centerText"><span title="Kills">K</span></th>
-        <th class="centerText"><span title="Deaths">D</span></th>
-        <th class="centerText"><span title="Kills/Death">K/D</span></th>
-    </tr>
-    <tr *ngFor="let player of gameObj.players" [ngStyle]="ngStyleLogs(player.nation, !player.alive)"
-        ng-style="ngStyleWinners(player.wonFlg, gameObj.gameOver)">
-        <td class="centerText">
-            <img src="assets/graphics/images/flag{{player.nation}}.gif" height=40
-                title="{{superpowersData.superpowers[player.nation]}}">
-            <i class="fa fa-shield" *ngIf="gameObj.round == gameObj.attack && player.defenseFlg"
-                title="player has lost a territory"></i>
-            <i class="fa fa-bolt" *ngIf="gameObj.round == gameObj.attack && player.attackFlg"
-                title="Play has taken over a territory"></i>
-        </td>
-        <td class="centerText">
-            <i *ngIf="gameObj.turnId==player.turn && !gameObj.gameOver" class="fa fa-arrow-right" title="Current Turn"
-                style="color: green;"></i>
-            <img *ngIf="player.nukes" src="assets/graphics/units/piece14.gif" title="Nukes" height=20>
-            <i *ngIf="player.sat" class="fa fa-shield" style="color: blue;" title="Anti-balistics"></i>
+                    &nbsp;<i *ngIf="player.cpu" class="fa fa-android" title="Computer Player"></i>
+                    <img *ngIf="!player.alive" src="assets/graphics/misc/skull.png" height=15 title="Eliminated">
+                    <span *ngIf="player.alive" style="font-size: 10px;">&nbsp;{{player.userName}}</span>
+                    <span *ngIf="!player.alive" style="color: gray; font-size: 10px;"><s>{{player.userName}}</s></span>
+                    <img *ngIf="gameObj.mmFlg && player.empCount>0" src="assets/graphics/units/emp.png" height=20
+                        title="EMP">
+                    <img *ngIf="gameObj.mmFlg && player.empCount>1" src="assets/graphics/units/emp.png" height=20
+                        title="EMP">
+                    <i *ngIf="player.attackFlg && gameObj.round==6" class="fa fa-bolt"></i>
+                    <i *ngIf="player.defenseFlg && gameObj.round==6" class="fa fa-shield"></i>
+                    <div *ngIf="player.turn==gameObj.turnId && !gameObj.gameOver" style="color: gray; font-size: 12px;">
+                        ({{player.status}})</div>
+                </td>
+                <td class="centerText">{{player.income}}</td>
+                <td class="centerText">{{player.money}}</td>
+                <td class="centerText">
+                    <i *ngIf="player.generalFlg" class="fa fa-check" style="color: green;" title="General Alive"></i>
+                    <i *ngIf="!player.generalFlg" class="fa fa-times" style="color: #900;" title="General Dead"></i>
+                </td>
+                <td class="centerText">
+                    <i *ngIf="player.leaderFlg" class="fa fa-check" style="color: green;" title="Leader Alive"></i>
+                    <i *ngIf="!player.leaderFlg" class="fa fa-times" style="color: #900;" title="Leader Dead"></i>
+                </td>
+                <td class="centerText">{{player.unitCount}}</td>
+                <td class="centerText">{{player.kills}}</td>
+                <td class="centerText">{{player.losses}}</td>
+                <td class="centerText">{{player.kd}}</td>
+            </tr>
+        </table>
+    </div>
+</div>
 
-            &nbsp;<i *ngIf="player.cpu" class="fa fa-android" title="Computer Player"></i>
-            <img *ngIf="!player.alive" src="assets/graphics/misc/skull.png" height=15 title="Eliminated">
-            <span *ngIf="player.alive" style="font-size: 10px;">&nbsp;{{player.userName}}</span>
-            <span *ngIf="!player.alive" style="color: gray; font-size: 10px;"><s>{{player.userName}}</s></span>
-            <img *ngIf="gameObj.mmFlg && player.empCount>0" src="assets/graphics/units/emp.png" height=20 title="EMP">
-            <img *ngIf="gameObj.mmFlg && player.empCount>1" src="assets/graphics/units/emp.png" height=20 title="EMP">
-            <i *ngIf="player.attackFlg && gameObj.round==6" class="fa fa-bolt"></i>
-            <i *ngIf="player.defenseFlg && gameObj.round==6" class="fa fa-shield"></i>
-            <div *ngIf="player.turn==gameObj.turnId && !gameObj.gameOver" style="color: gray; font-size: 12px;">
-                ({{player.status}})</div>
-        </td>
-        <td class="centerText">{{player.income}}</td>
-        <td class="centerText">{{player.money}}</td>
-        <td class="centerText">
-            <i *ngIf="player.generalFlg" class="fa fa-check" style="color: green;" title="General Alive"></i>
-            <i *ngIf="!player.generalFlg" class="fa fa-times" style="color: #900;" title="General Dead"></i>
-        </td>
-        <td class="centerText">
-            <i *ngIf="player.leaderFlg" class="fa fa-check" style="color: green;" title="Leader Alive"></i>
-            <i *ngIf="!player.leaderFlg" class="fa fa-times" style="color: #900;" title="Leader Dead"></i>
-        </td>
-        <td class="centerText">{{player.unitCount}}</td>
-        <td class="centerText">{{player.kills}}</td>
-        <td class="centerText">{{player.losses}}</td>
-        <td class="centerText">{{player.kd}}</td>
-    </tr>
-</table>
+<div class="spCard">
+    <div>
+        <table class="spTable" *ngIf="gameObj && segmentIdx==1">
+            <tr>
+                <th valign=top class="centerText" style="font-size: 12px;">Nation</th>
+                <th class="centerText" valign=top class="centerText">Player</th>
+                <th class="centerText" valign=top class="centerText"><span title="Superpowers (10 coins each)">SP</span>
+                    <div style="color: #def;">+10</div>
+                </th>
+                <th class="centerText"><span title="Capitals (10 coins each)" class="centerText">Cap</span>
+                    <div style="color: #def;">+10</div>
+                </th>
+                <th title="Leader Bonus? (10 coins)" class="centerText"><img src="assets/graphics/units/piece11u.png"
+                        height=20>
+                    <div style="color: #def;">+10</div>
+                </th>
+                <th title="Economic Centers (5 coins each)" class="centerText">
+                    <div><img src="assets/graphics/units/piece19.gif" height=15></div>
+                    <div style="color: #def;">+5</div>
+                </th>
+                <th title="Economic Techs Owned (5 coins each)" class="centerText"><i class="fa fa-flask"></i>
+                    <div style="color: #def;">+5</div>
+                </th>
+                <th title="Bombed Factories (-5 coins each)" class="centerText"><img
+                        src="assets/graphics/units/piece103.gif" height=15>
+                    <div style="color: #def;">-5</div>
+                </th>
+                <th valign=top class="centerText">Income<div><i class="fa fa-usd"></i></div>
+                </th>
+            </tr>
+            <tr *ngFor="let player of gameObj.players" [ngStyle]="ngStyleLogs(player.nation, !player.alive)"
+                ng-style="ngStyleWinners(player.wonFlg, gameObj.gameOver)">
+                <td>
+                    <img src="assets/graphics/images/flag{{player.nation}}.gif" height="40"
+                        title="{{superpowersData.superpowers[player.nation]}}">
+                </td>
+                <td>
+                    <font *ngIf="gameObj.turnId==player.turn && !gameObj.gameOver" color=green size=4><i
+                            class="fa fa-arrow-right"></i></font>
+                    <i *ngIf="player.cpu" class="fa fa-android"></i>
+                    <span *ngIf="player.alive" style="font-size: 10px;">{{player.userName}}</span>
+                    <span *ngIf="!player.alive" style="color: gray; font-size: 10px;"><s>{{player.userName}}</s></span>
+                    <div *ngIf="player.turn==gameObj.turnId" style="color: gray; font-size: 12px;">
+                        ({{player.status}})</div>
+                </td>
+                <td class="centerText">{{player.sp}}</td>
+                <td class="centerText">{{player.cap}}</td>
+                <td>
+                    <i *ngIf="player.leaderFlg" class="fa fa-check" style="color: green;" title="Leader Alive"></i>
+                    <i *ngIf="!player.leaderFlg" class="fa fa-times" style="color: #900;" title="Leader Dead"></i>
+                </td>
+                <td>{{player.economicCount}}</td>
+                <td>{{player.ecoTechCount}}</td>
+                <td>{{player.bombedCount}}</td>
+                <td>{{player.income}} </td>
+            </tr>
+        </table>
+    </div>
+</div>
 
-<table class="spTable" *ngIf="gameObj && segmentIdx==1">
-    <tr>
-        <th valign=top class="centerText" style="font-size: 12px;">Nation</th>
-        <th class="centerText" valign=top class="centerText">Player</th>
-        <th class="centerText" valign=top class="centerText"><span title="Superpowers (10 coins each)">SP</span>
-            <div style="color: #def;">+10</div>
-        </th>
-        <th class="centerText"><span title="Capitals (10 coins each)" class="centerText">Cap</span>
-            <div style="color: #def;">+10</div>
-        </th>
-        <th title="Leader Bonus? (10 coins)" class="centerText"><img src="assets/graphics/units/piece11u.png" height=20>
-            <div style="color: #def;">+10</div>
-        </th>
-        <th title="Economic Centers (5 coins each)" class="centerText">
-            <div><img src="assets/graphics/units/piece19.gif" height=15></div>
-            <div style="color: #def;">+5</div>
-        </th>
-        <th title="Economic Techs Owned (5 coins each)" class="centerText"><i class="fa fa-flask"></i>
-            <div style="color: #def;">+5</div>
-        </th>
-        <th title="Bombed Factories (-5 coins each)" class="centerText"><img src="assets/graphics/units/piece103.gif"
-                height=15>
-            <div style="color: #def;">-5</div>
-        </th>
-        <th valign=top class="centerText">Income<div><i class="fa fa-usd"></i></div>
-        </th>
-    </tr>
-    <tr *ngFor="let player of gameObj.players" [ngStyle]="ngStyleLogs(player.nation, !player.alive)"
-        ng-style="ngStyleWinners(player.wonFlg, gameObj.gameOver)">
-        <td>
-            <img src="assets/graphics/images/flag{{player.nation}}.gif" height="40"
-                title="{{superpowersData.superpowers[player.nation]}}">
-        </td>
-        <td>
-            <font *ngIf="gameObj.turnId==player.turn && !gameObj.gameOver" color=green size=4><i
-                    class="fa fa-arrow-right"></i></font>
-            <i *ngIf="player.cpu" class="fa fa-android"></i>
-            <span *ngIf="player.alive" style="font-size: 10px;">{{player.userName}}</span>
-            <span *ngIf="!player.alive" style="color: gray; font-size: 10px;"><s>{{player.userName}}</s></span>
-            <div *ngIf="player.turn==gameObj.turnId" style="color: gray; font-size: 12px;">
-                ({{player.status}})</div>
-        </td>
-        <td class="centerText">{{player.sp}}</td>
-        <td class="centerText">{{player.cap}}</td>
-        <td>
-            <i *ngIf="player.leaderFlg" class="fa fa-check" style="color: green;" title="Leader Alive"></i>
-            <i *ngIf="!player.leaderFlg" class="fa fa-times" style="color: #900;" title="Leader Dead"></i>
-        </td>
-        <td>{{player.economicCount}}</td>
-        <td>{{player.ecoTechCount}}</td>
-        <td>{{player.bombedCount}}</td>
-        <td>{{player.income}} </td>
-    </tr>
-</table>
+<div class="spCard">
+    <div>
+        <table class="spTable" *ngIf="segmentIdx==2 && gameObj && gameObj.territories && gameObj.territories.length>0">
+            <tr>
+                <th valign=top class="centerText">Nation</th>
+                <th valign=top class="centerText">Player</th>
+                <th valign=top class="centerText">Base</th>
+                <th valign=top class="centerText">Fortify</th>
+                <th valign=top class="centerText">Primary</th>
+                <th valign=top class="centerText">Secondary</th>
+            </tr>
+            <tr *ngFor="let player of gameObj.players" [ngStyle]="ngStyleLogs(player.nation, !player.alive)"
+                style="font-size: 12px;">
+                <td>
+                    <img src="assets/graphics/images/flag{{player.nation}}.gif" height="40"
+                        title="{{superpowersData.superpowers[player.nation]}}">
+                </td>
+                <td>
+                    <font *ngIf="gameObj.turnId==player.turn && !gameObj.gameOver" color=green size=4><i
+                            class="fa fa-arrow-right"></i></font>
+                    <i *ngIf="player.cpu" class="fa fa-android"></i>
+                    <span *ngIf="player.alive">{{player.userName}}</span>
+                    <span *ngIf="!player.alive" style="color: gray;"><s>{{player.userName}}</s></span>
+                    <div *ngIf="player.turn==gameObj.turnId" style="color: gray; font-size: 12px;">
+                        ({{player.status}})</div>
+                </td>
+                <td><span *ngIf="player.mainBaseID > 0"><img
+                            src="assets/graphics/images/flag{{gameObj.territories[player.mainBaseID-1].owner}}.gif"
+                            height=20><br>{{gameObj.territories[player.mainBaseID-1].name}}</span></td>
+                <td><span *ngIf="player.hotSpotId>0"><img
+                            src="assets/graphics/images/flag{{gameObj.territories[player.hotSpotId-1].owner}}.gif"
+                            height=20><br>{{gameObj.territories[player.hotSpotId-1].name}}</span></td>
+                <td><span *ngIf="player.primaryTargetId>0"><img
+                            src="assets/graphics/images/flag{{gameObj.territories[player.primaryTargetId-1].owner}}.gif"
+                            height=20><br>{{gameObj.territories[player.primaryTargetId-1].name}}</span></td>
+                <td><span *ngIf="player.secondaryTargetId>0"><img
+                            src="assets/graphics/images/flag{{gameObj.territories[player.secondaryTargetId-1].owner}}.gif"
+                            height=20><br>{{gameObj.territories[player.secondaryTargetId-1].name}}</span></td>
 
-<table class="spTable" *ngIf="segmentIdx==2 && gameObj && gameObj.territories && gameObj.territories.length>0">
-    <tr>
-        <th valign=top class="centerText">Nation</th>
-        <th valign=top class="centerText">Player</th>
-        <th valign=top class="centerText">Base</th>
-        <th valign=top class="centerText">Fortify</th>
-        <th valign=top class="centerText">Primary</th>
-        <th valign=top class="centerText">Secondary</th>
-    </tr>
-    <tr *ngFor="let player of gameObj.players" [ngStyle]="ngStyleLogs(player.nation, !player.alive)"
-        style="font-size: 12px;">
-        <td>
-            <img src="assets/graphics/images/flag{{player.nation}}.gif" height="40"
-                title="{{superpowersData.superpowers[player.nation]}}">
-        </td>
-        <td>
-            <font *ngIf="gameObj.turnId==player.turn && !gameObj.gameOver" color=green size=4><i
-                    class="fa fa-arrow-right"></i></font>
-            <i *ngIf="player.cpu" class="fa fa-android"></i>
-            <span *ngIf="player.alive">{{player.userName}}</span>
-            <span *ngIf="!player.alive" style="color: gray;"><s>{{player.userName}}</s></span>
-            <div *ngIf="player.turn==gameObj.turnId" style="color: gray; font-size: 12px;">
-                ({{player.status}})</div>
-        </td>
-        <td><span *ngIf="player.mainBaseID > 0"><img
-                    src="assets/graphics/images/flag{{gameObj.territories[player.mainBaseID-1].owner}}.gif"
-                    height=20><br>{{gameObj.territories[player.mainBaseID-1].name}}</span></td>
-        <td><span *ngIf="player.hotSpotId>0"><img
-                    src="assets/graphics/images/flag{{gameObj.territories[player.hotSpotId-1].owner}}.gif"
-                    height=20><br>{{gameObj.territories[player.hotSpotId-1].name}}</span></td>
-        <td><span *ngIf="player.primaryTargetId>0"><img
-                    src="assets/graphics/images/flag{{gameObj.territories[player.primaryTargetId-1].owner}}.gif"
-                    height=20><br>{{gameObj.territories[player.primaryTargetId-1].name}}</span></td>
-        <td><span *ngIf="player.secondaryTargetId>0"><img
-                    src="assets/graphics/images/flag{{gameObj.territories[player.secondaryTargetId-1].owner}}.gif"
-                    height=20><br>{{gameObj.territories[player.secondaryTargetId-1].name}}</span></td>
-
-    </tr>
-</table>
-
+            </tr>
+        </table>
+    </div>
+</div>
 
 <div class="borderClass2" *ngIf="segmentIdx==0">
     <div><b>Inc</b>: Income, <b>K</b>: Kills, <b>D</b>: Deaths, <b>K/D</b>: Kill to Death ratio</div>
@@ -182,7 +197,7 @@
         alive</font><br>
     <font color=green> <img src="assets/graphics/units/piece19.gif" height=15> +5 per Economic Center
     </font><br>
-    <font color=green> <i class="fa fa-flask"></i> +5 for certain techs</font><br>
+    <font color=green> <i class="fa fa-flask"></i> +5 for economic techs</font><br>
     <font color=red> <img src="assets/graphics/units/piece103.gif" height=15> -5 per bombed factory
     </font><br>
 </div>

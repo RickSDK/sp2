@@ -1,3 +1,4 @@
+$darker-blue: #033a77;
 $dark-blue: #337ab7;
 $medium-blue: #17a2b8;
 $light-blue: #def;
@@ -21,6 +22,10 @@ $light-blue: #def;
 .darkBlueBg {
 	background-color: $dark-blue;
 	color: white;
+}
+.mediumBlueBg {
+	background-color: $medium-blue;
+	color: black;
 }
 .modal-dialog {
 	border: 1px solid black;
@@ -314,15 +319,17 @@ th {
 	color: white;
 }
 .spTitle {
-	color: #ccc;
+	color: white;
 	font-size: 12px;
 	font-weight: 700;
+	padding-left: 5px;
+	padding-right: 5px;
 }
 .spCard {
 	display: inline-flex; 
 	vertical-align: top;
 	border: 1px solid black;
-	background-color: #444;
+	background-color: $darker-blue;
 	color: white;
 	text-align: center;
 	box-shadow: 2px 2px 5px #777; 
@@ -333,7 +340,11 @@ th {
 .spCard:hover {
 	background-color: #222;
 	box-shadow: 3px 3px 8px #444; 
-	border: 1px solid cyan;
+	border: 2px solid black;
+}
+.spCardBody {
+	background-color: white;
+	color: black;
 }
 .spTable {
   border: 1px solid black;
@@ -649,6 +660,24 @@ margin: 1px;
 .terr-card2:hover{
     box-shadow: 5px 5px 5px #000;
     background-color: white;
+}
+.corner-icon {
+	float: left;
+	color: white;
+	padding-left: 8px;
+}
+.corner-icon:hover {
+	color: cyan;
+}
+.gameCard {
+	border: 1px solid black; 
+	display: inline-block; 
+	border-radius: 5px; 
+	background-color: #cef;
+	box-shadow: 2px 2px 3px #444;
+	font-size: 12px;
+	overflow: hidden;
+	margin: 2px;
 }
 .popupScreenNoPad {
     display: none;

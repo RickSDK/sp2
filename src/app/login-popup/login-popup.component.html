@@ -10,8 +10,6 @@
             <div class="modal-body" style="text-align: center; background: url('assets/graphics/splash/splash1024.png')">
 
 
-
-
 		<div class="popupScreen" style="display: inline-block; padding:20px; margin-top: 20px;" *ngIf="showLoginFlg">
 			<div><input type=email id="emailField" name="email" placeholder="Username/Email" (click)="clearValue($event)" [value]="email"></div>
 			<div><input type=password id="passwordField" name="password" placeholder="Password" (click)="clearValue($event)" [value]="password"></div>
@@ -28,7 +26,7 @@
 
 		<div class="popupScreen" style="display: inline-block; padding:20px; margin-top: 20px;" *ngIf="!showLoginFlg && !requestSentFlg">
 			<div><input type=email id="emailField2" name="email" placeholder="Email" maxlength="60"  (click)="clearValue($event)" [value]="email"></div>
-			<div><input type=text id="firstName" name="firstName" placeholder="Username" maxlength="20"  (click)="clearValue($event)" [value]="username"></div>
+			<div><input type=text id="firstName" name="firstName" placeholder="Username" maxlength="20"  (click)="clearValue($event)" [value]="userName"></div>
 			<div><input type=password name="password1" id="password1" placeholder="Password" maxlength="20"  (click)="clearValue($event)" [value]="password"></div>
 			<div><input type=password name="password2"id="password2"  placeholder="Retype Password" maxlength="20"  (click)="clearValue($event)" [value]="password2"></div>
 			<div>
@@ -44,7 +42,6 @@
 
             </div>
             <div class="modal-footer">
-			<button *ngIf="user.userId>0" ng-click="displaySPPopup('privacyPopup')" id="" type="button" class="btn btn-primary roundButton"><i class="fa fa-check"></i> Logout</button>
 			<button (click)="displaySPPopup('privacyPopup')" id="" type="button" class="btn btn-primary roundButton"><i class="fa fa-check"></i> Privacy Policy</button>
             </div>
         </div>

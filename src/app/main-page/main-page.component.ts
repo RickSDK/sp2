@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 declare var getHostname: any;
 declare var userObjFromUser: any;
+declare var userUpdateFromWeb: any;
 
 @Component({
   selector: 'app-main-page',
@@ -25,15 +26,28 @@ export class MainPageComponent extends BaseComponent implements OnInit {
     //localStorage.rank=0; //<-- reset rank
     this.hostname = getHostname();
     this.user = userObjFromUser();
+    console.log(this.user);
     this.flexSprite(100);
     this.singleGameId = localStorage.currentGameId;
     localStorage.loadGameId = 0; // clear out any multiplayer game
-
- //   console.log('main-page ngOnInit', this.user);
+    if (this.user.userId > 0)
+      this.getUserData();
+  }
+  getUserData() {
+    const url = getHostname() + "/spApiText.php";
+    const postData = this.getPostDataFromObj({ user_login: this.user.userName, code: this.user.code, action: 'getUserData' });
+  
+    fetch(url, postData).then((resp) => resp.text())
+      .then((data) => {
+        this.user = userUpdateFromWeb(data, true);
+      })
+      .catch(error => { 
+        this.showAlertPopup('Network API Error! See console logs.', 1); 
+        console.log('executeTextApi Error', error); 
+      });
+  
   }
   multiplayGameClicked(login: any) {
-    this.showAlertPopup('Not coded yet!',1);
-    return;
     if (this.user.userId > 0)
       this.router.navigate(['/multiplayer']);
     else
@@ -47,6 +61,7 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   }
   userUpdated($event) {
     this.user = userObjFromUser();
+    console.log('User updated from emit!', this.user);
   }
   flexSprite(width: number) {
     if (this.expandFlg)

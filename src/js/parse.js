@@ -2,25 +2,77 @@ function userObjFromUser() {
 	var spFlg = localStorage.spFlg || '';
 	if (spFlg != 'Y') {
 		localStorage.rank = 0;
+		localStorage.userName = 'Guest';
 		localStorage.spFlg = 'Y'; //make sure no one grandfathers in
 	}
-	var username = localStorage.username || 'Guest';
-	var rankStr = localStorage.rank || '';
-	var password = localStorage.password || '';
-	var userGraphic = localStorage.userGraphic || 'soldier.JPG';
-	var avatar = localStorage.avatar || 'avatar5.jpg';
-	var ip = localStorage.ip || '';
-	var speedType = localStorage.speedType || '';
 
-	var rank = numberVal(rankStr);
-	if (rank > 18)
-		rank = 18;
-
-	var code = btoa(password);
-	//var src = 'http://www.superpowersgame.com/graphics/avitars/'+userGraphic;
-	var imgSrc = 'assets/graphics/avatars/' + avatar;
-	return { userName: username, rank: rank, password: password, code: code, imgSrc: imgSrc, userGraphic: userGraphic, serverImgFlg: (localStorage.serverImgFlg == 'Y'), ip: ip, speedType: speedType, avatar: avatar, userId: numberVal(localStorage.userId), league_id: numberVal(localStorage.league_id), userLc: username.toLowerCase() };
+	var userObj = {};
+	if (localStorage.userObj && localStorage.userObj.length > 0) {
+		userObj = JSON.parse(localStorage.userObj);
+	} else {
+		userObj.userName = localStorage.userName || 'Guest';
+		userObj.password = '******';
+		userObj.userGraphic = '';
+		userObj.avatar = 'avatar5.jpg';
+		userObj.ip = '';
+		userObj.speedType = '';
+		var rank = numberVal(localStorage.rank);
+		if (rank > 18)
+			rank = 18;
+		userObj.rank = rank;
+		userObj.code = btoa(localStorage.password);
+		userObj.imgSrc = 'assets/graphics/avatars/' + userObj.avatar;
+		//http://www.superpowersgame.com/graphics/avitars/avatar10.jpg
+		userObj.userId = 0;
+		userObj.empCount = 0;
+		userObj.league_id = 0;
+		localStorage.userObj = JSON.stringify(userObj);
+	}
+	return userObj;
 }
+function logOutUser() {
+	localStorage.userName = '';
+	localStorage.rank = 2;
+	localStorage.password = '';
+	localStorage.userObj = '';
+}
+function userUpdateFromWeb(data, noUpdateFLg) {
+	var userObj = userObjFromUser();
+
+	var f = data.split('|');
+	var x = 1;
+	userObj.userName = f[x++];
+	userObj.rank = numberVal(f[x++]);
+	userObj.gold_member_flg = f[x++];
+	userObj.forumCount = f[x++];
+	userObj.mailCount = f[x++];
+	userObj.urgentCount = f[x++];
+	userObj.last_login = f[x++];
+	userObj.gamesTurn = f[x++];
+	userObj.userId = f[x++];
+	userObj.empCount = f[x++];
+	userObj.games_max = f[x++];
+	userObj.newlyStarted = f[x++];
+	userObj.newlyCompleted = f[x++];
+	userObj.ip = f[x++];
+	userObj.userGraphic = f[x++];
+	userObj.wins = f[x++];
+	userObj.losses = f[x++];
+	userObj.points = f[x++];
+	userObj.mmWins = f[x++];
+	userObj.mmLosses = f[x++];
+	userObj.mmPoints = f[x++];
+	console.log('saving', userObj);
+	localStorage.userObj = JSON.stringify(userObj);
+
+	if (!noUpdateFLg) {
+		console.log('updating!');
+		localStorage.userName = userObj.userName;
+		localStorage.rank = userObj.rank;
+	}
+	return userObj;
+}
+
 function getMultObjFromLine(line) {
 	var obj = new Object;
 	var c = line.split('|');
@@ -358,7 +410,7 @@ function leaderFromLine(line) {
 	return obj;
 }
 function flagOfCountry(country) {
-	if (!country)
+	if (!country || country == 'null')
 		return 'World.jpg';
 
 	var cName = country.replace(" ", "_");

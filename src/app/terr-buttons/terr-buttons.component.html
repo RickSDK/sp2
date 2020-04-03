@@ -47,7 +47,7 @@
             <button *ngIf="currentPlayer.nukes" [disabled]="optionType=='nuke'" (click)="changeOptionType('nuke')"
                 type="button" class="btn btn-danger roundButton"><img src="assets/graphics/misc/nuke.png" height="30"
                     class="shadowedWhite" /><br>Nuke</button>
-            <button *ngIf="currentPlayer.cruiseButton" [disabled]="optionType=='cruise'"
+            <button *ngIf="selectedTerritory.cruiseFlg" [disabled]="optionType=='cruise'"
                 (click)="changeOptionType('cruise')" type="button" class="btn btn-danger roundButton"><img
                     src="assets/graphics/misc/cruiseMissile.png" height="30" class="shadowedWhite" />
                 <br>Cruise Missile</button>

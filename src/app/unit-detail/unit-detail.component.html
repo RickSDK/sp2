@@ -4,69 +4,71 @@
 
 	<div style="display: inline-flex; vertical-align: top;">
 		<img src="{{ngUnitSrc(selectedUnit.id)}}" class="shadowed"
-		style="max-width: 300px; max-height: 240px; min-width: 180px; ">
+			style="max-width: 300px; max-height: 240px; min-width: 180px; ">
 	</div>
 
-	<div class="borderClass3">
-		<div class="blueBgWhite">{{selectedUnit.name}} stats </div>
-		<table align=center>
-			<tr>
-				<td align=right>Type:</td>
-				<td><i class="fa {{buttonList[selectedUnit.type-1].icon}}"
-						title="{{buttonList[selectedUnit.type-1].title}}"></i></td>
-				<td>(<b>{{buttonList[selectedUnit.type-1].title}}/{{selectedUnit.subType}}</b>)</td>
-			</tr>
-			<tr>
-				<td align=right>Cost:</td>
-				<td><i class="fa fa-usd" title="Coins"></i></td>
-				<td><b>{{selectedUnit.cost}}</b>&nbsp;<span style="font-size: 10px;">coins</span></td>
-			</tr>
-			<tr>
-				<td align=right>Move:</td>
-				<td><i class="fa fa-arrows-alt" title="Movement"></i></td>
-				<td><b>{{selectedUnit.move}}</b></td>
-			</tr>
-			<tr>
-				<td align=right>Attack:</td>
-				<td><i class="fa fa-bolt" title="Attack"></i></td>
-				<td *ngIf="selectedUnit.id==14">12 hits!</td>
-				<td *ngIf="selectedUnit.id!=14">
-					<img *ngIf="selectedUnit.att>0" title="{{selectedUnit.att}}"
-						src="assets/graphics/dice/diceh{{selectedUnit.att}}.png" height="30">
-					<img *ngIf="selectedUnit.numAtt>1" title="{{selectedUnit.att}}"
-						src="assets/graphics/dice/diceh{{selectedUnit.att}}.png" height="30">
-					<img *ngIf="selectedUnit.numAtt>2" title="{{selectedUnit.att}}"
-						src="assets/graphics/dice/diceh{{selectedUnit.att}}.png" height="30">
-					<img *ngIf="selectedUnit.numAtt>3" title="{{selectedUnit.att}}"
-						src="assets/graphics/dice/diceh{{selectedUnit.att}}.png" height="30">
-					<img *ngIf="selectedUnit.numAtt>4" title="{{selectedUnit.att}}"
-						src="assets/graphics/dice/diceh{{selectedUnit.att}}.png" height="30">
-				</td>
-			</tr>
-			<tr>
-				<td align=right>Defend:</td>
-				<td><i class="fa fa-shield" title="Defend"></i></td>
-				<td>
-					<img *ngIf="selectedUnit.def>0" title="{{selectedUnit.def}}"
-						src="assets/graphics/dice/diceh{{selectedUnit.def}}.png" height="30">
-					<img *ngIf="selectedUnit.numDef>1" title="{{selectedUnit.def}}"
-						src="assets/graphics/dice/diceh{{selectedUnit.def}}.png" height="30">
-					<img *ngIf="selectedUnit.numDef>2" title="{{selectedUnit.def}}"
-						src="assets/graphics/dice/diceh{{selectedUnit.def}}.png" height="30">
-				</td>
-			</tr>
-			<tr>
-				<td>Target</td>
-				<td><i class="fa fa-bullseye" title="Target"></i></td>
-				<td style="font-size: 12px;">
-					{{getTargetDesc(selectedUnit.target)}}
-				</td>
-			</tr>
-		</table>
-
-
-		<div *ngIf="selectedUnit.returnFlg && selectedUnit.type==1"><b>* Range Attacker.</b></div>
-		<div *ngIf="selectedUnit.spotterReq"><b>** Spotter required</b></div>
+	<div class="spCard">
+		<div>
+			<div class="spTitle">{{selectedUnit.name}} stats </div>
+			<div class="spCardBody">
+				<table align=center>
+					<tr>
+						<td align=right>Type:</td>
+						<td><i class="fa {{buttonList[selectedUnit.type-1].icon}}"
+								title="{{buttonList[selectedUnit.type-1].title}}"></i></td>
+						<td>(<b>{{buttonList[selectedUnit.type-1].title}}/{{selectedUnit.subType}}</b>)</td>
+					</tr>
+					<tr>
+						<td align=right>Cost:</td>
+						<td><i class="fa fa-usd" title="Coins"></i></td>
+						<td><b>{{selectedUnit.cost}}</b>&nbsp;<span style="font-size: 10px;">coins</span></td>
+					</tr>
+					<tr>
+						<td align=right>Move:</td>
+						<td><i class="fa fa-arrows-alt" title="Movement"></i></td>
+						<td><b>{{selectedUnit.move}}</b></td>
+					</tr>
+					<tr>
+						<td align=right>Attack:</td>
+						<td><i class="fa fa-bolt" title="Attack"></i></td>
+						<td *ngIf="selectedUnit.id==14">12 hits!</td>
+						<td *ngIf="selectedUnit.id!=14">
+							<img *ngIf="selectedUnit.att>0" title="{{selectedUnit.att}}"
+								src="assets/graphics/dice/diceh{{selectedUnit.att}}.png" height="30">
+							<img *ngIf="selectedUnit.numAtt>1" title="{{selectedUnit.att}}"
+								src="assets/graphics/dice/diceh{{selectedUnit.att}}.png" height="30">
+							<img *ngIf="selectedUnit.numAtt>2" title="{{selectedUnit.att}}"
+								src="assets/graphics/dice/diceh{{selectedUnit.att}}.png" height="30">
+							<img *ngIf="selectedUnit.numAtt>3" title="{{selectedUnit.att}}"
+								src="assets/graphics/dice/diceh{{selectedUnit.att}}.png" height="30">
+							<img *ngIf="selectedUnit.numAtt>4" title="{{selectedUnit.att}}"
+								src="assets/graphics/dice/diceh{{selectedUnit.att}}.png" height="30">
+						</td>
+					</tr>
+					<tr>
+						<td align=right>Defend:</td>
+						<td><i class="fa fa-shield" title="Defend"></i></td>
+						<td>
+							<img *ngIf="selectedUnit.def>0" title="{{selectedUnit.def}}"
+								src="assets/graphics/dice/diceh{{selectedUnit.def}}.png" height="30">
+							<img *ngIf="selectedUnit.numDef>1" title="{{selectedUnit.def}}"
+								src="assets/graphics/dice/diceh{{selectedUnit.def}}.png" height="30">
+							<img *ngIf="selectedUnit.numDef>2" title="{{selectedUnit.def}}"
+								src="assets/graphics/dice/diceh{{selectedUnit.def}}.png" height="30">
+						</td>
+					</tr>
+					<tr>
+						<td>Target</td>
+						<td><i class="fa fa-bullseye" title="Target"></i></td>
+						<td style="font-size: 12px;">
+							{{getTargetDesc(selectedUnit.target)}}
+						</td>
+					</tr>
+				</table>
+				<div *ngIf="selectedUnit.returnFlg && selectedUnit.type==1"><b>* Range Attacker.</b></div>
+				<div *ngIf="selectedUnit.spotterReq"><b>** Spotter required</b></div>
+			</div>
+		</div>
 	</div>
 
 
@@ -75,21 +77,22 @@
 	<button (click)="hideUnitDetailFlg = !hideUnitDetailFlg" type="button" class="btn btn-primary roundButton"><i
 			class="fa fa-retweet"></i> Unit Description</button>
 </div>
-<div *ngIf="!hideUnitDetailFlg">
+<div *ngIf="!hideUnitDetailFlg" style="text-align: left;">
 	<hr>
-	<div *ngFor="let desc of selectedUnit.desc" style="padding: 5px; text-align: left;">{{desc}}</div>
-	<p *ngIf="selectedUnit.id>=20 && selectedUnit.id<=51" style="padding: 5px; font-size: 10px; font-weight: 800;">Limit
-		6 units per offensive attack. No limits on defense.</p>
+	<p *ngFor="let desc of selectedUnit.desc" style="padding: 5px;">{{desc}}</p>
+	<p *ngIf="selectedUnit.targetDroneFlg" style="padding: 5px;">When defending, this unit will instantly kill one predator drone in addition to regular defense.</p>
+	<p *ngIf="selectedUnit.id>=20 && selectedUnit.id<=51" style="padding: 5px; font-size: 10px; font-weight: 800;">
+		Special Unit Restriction: Limit 6 {{selectedUnit.name}} units per offensive attack. No limits on defense.</p>
 
 	<div *ngIf="selectedUnit.id==10">
 		<hr>
 		<div>Each General has a unique bonus specific to your Superpower:</div>
 		<table class="spTable">
 			<tr *ngFor="let desc of selectedUnit.generalBonuses; let i = index;" [ngStyle]="ngStyleLogs(i+1)"
-			style="border: 1px solid black;">
-			<td><img src="assets/graphics/images/flag{{i+1}}.gif" height="40"></td> 
-			<td style="text-align: left; font-size: 12px;"><b>{{generalTypes[i]}}: </b>{{desc}}</td>
-		</tr>
+				style="border: 1px solid black;">
+				<td><img src="assets/graphics/images/flag{{i+1}}.gif" height="40"></td>
+				<td style="text-align: left; font-size: 12px;"><b>{{generalTypes[i]}}: </b>{{desc}}</td>
+			</tr>
 
 		</table>
 	</div>

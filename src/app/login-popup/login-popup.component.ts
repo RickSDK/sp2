@@ -1,12 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
-declare var getHostname: any;
+//declare var getHostname: any;
 declare var userObjFromUser: any;
 declare var valueOfInput: any;
 declare var showAlertPopup: any;
+declare var verifyServerResponse: any;
+declare var executeTextApi: any;
+declare var userUpdateFromWeb: any;
 
 @Component({
   selector: 'app-login-popup',
@@ -14,20 +17,22 @@ declare var showAlertPopup: any;
   styleUrls: ['./login-popup.component.scss']
 })
 export class LoginPopupComponent extends BaseComponent implements OnInit {
-  public hostname: string;
+  @Output() messageEvent = new EventEmitter<string>();
+ // public hostname: string;
   public user: any;
   public showLoginFlg = true;
   public requestSentFlg = false;
   public email = '';
-  public username = '';
+  public userName = '';
   public password = '';
   public password2 = '';
 
   constructor(private router: Router) { super(); }
 
   ngOnInit(): void {
-    this.hostname = getHostname();
+  //  this.hostname = getHostname();
     this.user = userObjFromUser();
+    this.userName = this.user.userName;
     this.email = '';
   }
   show() {
@@ -39,14 +44,25 @@ export class LoginPopupComponent extends BaseComponent implements OnInit {
     event.target.value = '';
   }
   loginPressed() {
-    this.username = valueOfInput('emailField');
+    this.userName = valueOfInput('emailField');
     this.password = valueOfInput('passwordField');
-    showAlertPopup('not working yet', 1);
-    if (0) {
-      this.showLoginFlg = false;
-      this.requestSentFlg = true;
-      $("#loginPopup").modal('hide');
-      this.router.navigate(['/multiplayer']);
+    this.showLoginFlg = false;
+    this.requestSentFlg = true;
+
+    localStorage.userName = this.userName;
+    localStorage.password = this.password;
+
+    executeTextApi({ Username: this.userName, Password: this.password, action: 'login' }, this.successCallback);
+
+    setTimeout(() => {
+      this.messageEvent.emit('done');
+    }, 2000);
+  }
+  successCallback(data: any) {
+    $("#loginPopup").modal('hide');
+    if (verifyServerResponse('success', data)) {
+      showAlertPopup('Success');
+      userUpdateFromWeb(data);
     }
   }
   forgotPasswordPressed() {
