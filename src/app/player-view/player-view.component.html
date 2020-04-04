@@ -1,21 +1,22 @@
-<div *ngIf="gameObj && gameObj.allowAlliances && gameObj.multiPlayerFlg && gameObj.top1.length>0"
+<div *ngIf="gameObj && gameObj.allowAlliances && gameObj.multiPlayerFlg && gameObj.top1.length>0 && gameObj.type != 'barbarian'"
     style="background-color: #ace;">Team-balancing enforced. Top 2 players:
     <img src="assets/graphics/images/flag{{gameObj.top1Nation}}.gif" height=15>
-    <b>{{gameObj.top1}}</b> and <img src="graphics/flag{{gameObj.top2Nation}}.gif" height=15>
+    <b>{{gameObj.top1}}</b> and <img src="assets/graphics/images/flag{{gameObj.top2Nation}}.gif" height=15>
     <b>{{gameObj.top2}}</b> cannot be allies with each other in this game.
 </div>
 <div *ngIf="gameObj && gameObj.gameOver" style="background-color: #ace; color: #700; padding: 2px;">
     {{gameObj.finalMessage}}</div>
 
-<div class="btn-group" style="white-space: nowrap; text-align: center;">
-    <button id="" (click)="segmentIdx=0" type="button" [ngClass]="ngClassSegment(segmentIdx,0)"
-        class="btn btn-default roundButton tight"><i class="fa fa-user"></i> Units</button>
-    <button id="" (click)="segmentIdx=1" type="button" [ngClass]="ngClassSegment(segmentIdx,1)"
-        class="btn btn-default roundButton tight"><i class="fa fa-usd"></i> Income</button>
-    <button (click)="segmentIdx=2" type="button" [ngClass]="ngClassSegment(segmentIdx,2)"
-        class="btn btn-default roundButton tight"><i class="fa fa-android"></i> Bots</button>
+<div>
+    <div class="btn-group" style="white-space: nowrap; text-align: center;">
+        <button id="" (click)="segmentIdx=0" type="button" [ngClass]="ngClassSegment(segmentIdx,0)"
+            class="btn btn-default roundButton tight"><i class="fa fa-user"></i> Units</button>
+        <button id="" (click)="segmentIdx=1" type="button" [ngClass]="ngClassSegment(segmentIdx,1)"
+            class="btn btn-default roundButton tight"><i class="fa fa-usd"></i> Income</button>
+        <button (click)="segmentIdx=2" type="button" [ngClass]="ngClassSegment(segmentIdx,2)"
+            class="btn btn-default roundButton tight"><i class="fa fa-android"></i> Bots</button>
+    </div>
 </div>
-
 
 <div class="spCard">
     <div>
@@ -52,8 +53,7 @@
 
                     &nbsp;<i *ngIf="player.cpu" class="fa fa-android" title="Computer Player"></i>
                     <img *ngIf="!player.alive" src="assets/graphics/misc/skull.png" height=15 title="Eliminated">
-                    <span *ngIf="player.alive" style="font-size: 10px;">&nbsp;{{player.userName}}</span>
-                    <span *ngIf="!player.alive" style="color: gray; font-size: 10px;"><s>{{player.userName}}</s></span>
+                    <span style="font-size: 10px;">&nbsp;{{player.userName}}</span>
                     <img *ngIf="gameObj.mmFlg && player.empCount>0" src="assets/graphics/units/emp.png" height=20
                         title="EMP">
                     <img *ngIf="gameObj.mmFlg && player.empCount>1" src="assets/graphics/units/emp.png" height=20
@@ -122,8 +122,7 @@
                     <font *ngIf="gameObj.turnId==player.turn && !gameObj.gameOver" color=green size=4><i
                             class="fa fa-arrow-right"></i></font>
                     <i *ngIf="player.cpu" class="fa fa-android"></i>
-                    <span *ngIf="player.alive" style="font-size: 10px;">{{player.userName}}</span>
-                    <span *ngIf="!player.alive" style="color: gray; font-size: 10px;"><s>{{player.userName}}</s></span>
+                    <span style="font-size: 10px;">{{player.userName}}</span>
                     <div *ngIf="player.turn==gameObj.turnId" style="color: gray; font-size: 12px;">
                         ({{player.status}})</div>
                 </td>
@@ -163,8 +162,7 @@
                     <font *ngIf="gameObj.turnId==player.turn && !gameObj.gameOver" color=green size=4><i
                             class="fa fa-arrow-right"></i></font>
                     <i *ngIf="player.cpu" class="fa fa-android"></i>
-                    <span *ngIf="player.alive">{{player.userName}}</span>
-                    <span *ngIf="!player.alive" style="color: gray;"><s>{{player.userName}}</s></span>
+                    <span>{{player.userName}}</span>
                     <div *ngIf="player.turn==gameObj.turnId" style="color: gray; font-size: 12px;">
                         ({{player.status}})</div>
                 </td>

@@ -286,26 +286,26 @@ function gameFromLine(line, userName) {
 	obj.status = c[x++];
 	obj.gameType = c[x++];
 	obj.size = c[x++];
-	obj.autoStart = c[x++];
-	obj.autoSkip = c[x++];
-	obj.fogofwar = c[x++];
+	obj.autoStart = (c[x++] == 'Y');
+	obj.autoSkip = (c[x++] == 'Y');
+	obj.fogofwar = (c[x++] == 'Y');
 	obj.version = c[x++];
 	obj.lastLogin = c[x++];
 	obj.playerList2 = c[x++];
 	obj.hostId = c[x++];
 	obj.host = c[x++];
 	obj.inGame = (c[x++] == 'Y');
-	obj.auto_assign_flg = c[x++];
-	obj.restrict_units_flg = c[x++];
-	obj.no_stats_flg = c[x++];
+	obj.auto_assign_flg = (c[x++] == 'Y');
+	obj.restrict_units_flg = (c[x++] == 'Y');
+	obj.no_stats_flg = (c[x++] == 'Y');
 	obj.topPlayer1 = c[x++];
 	obj.topPlayer2 = c[x++];
 	obj.nationsPicked = c[x++];
-	obj.needToChooseNation = c[x++];
+	obj.needToChooseNation = (c[x++] == 'Y');
 	obj.top1 = c[x++];
 	obj.top2 = c[x++];
 	obj.secondsElapsed = c[x++];
-	obj.newEngineFlg = c[x++];
+	obj.newEngineFlg = (c[x++] == 'Y');
 	var userInfo = c[x++];
 	obj.lastUpdDate = new Date(c[x++]);
 	obj.prevLoginDate = new Date(c[x++]);
@@ -315,7 +315,7 @@ function gameFromLine(line, userName) {
 	obj.maxRank = c[x++] || 0;
 	obj.ladder_id = c[x++] || 0;
 	obj.password = c[x++] || '';
-	obj.hardFog = c[x++] || '';
+	obj.hardFog = (c[x++] == 'Y');
 	obj.turboFlg = (c[x++] == 'Y');
 
 
@@ -343,8 +343,10 @@ function gameFromLine(line, userName) {
 		var top = (c[4] == 'Y');
 		var minutesReduced = numberVal(c[7]);
 		var clock = (24 - Math.round(minutesReduced / 60));
-		obj.players.push({ id: c[1], name: c[0], nation: nation, income: c[3], top: top, team: c[5], futureTeam: c[6], minutesReduced: c[7], rank: c[8], clock: clock });
+		var turnFlg = c[0] == obj.turnObj.name;
+		obj.players.push({ id: c[1], name: c[0], nation: nation, turnFlg: turnFlg, income: c[3], top: top, team: c[5], futureTeam: c[6], minutesReduced: c[7], rank: c[8], clock: clock });
 	}
+	obj.joinGameFlg = (obj.status == 'Open' && !obj.inGame);
 	obj.numPlayers = obj.players.length;
 	obj.type = gameTypeNameForType(obj.gameType);
 	//	console.log(obj.name, obj.seconds);

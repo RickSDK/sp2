@@ -125,7 +125,9 @@ function executeTextApi(obj, callback) {
 
 	fetch(url, postData).then((resp) => resp.text())
 		.then((data) => callback(data))
-		.catch(error => { showAlertPopup('Network API Error! See console logs.', 1); console.log('executeTextApi Error', error); });
+		.catch(error => { 
+			this.showAlertPopup('Unable to reach server: '+error, 1); 
+		});
 }
 function verifyServerResponse(status, data) {
 	if (status == 'success') {

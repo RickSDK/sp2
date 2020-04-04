@@ -23,12 +23,12 @@
 						<td><i class="fa fa-usd" title="Coins"></i></td>
 						<td><b>{{selectedUnit.cost}}</b>&nbsp;<span style="font-size: 10px;">coins</span></td>
 					</tr>
-					<tr>
+					<tr *ngIf="selectedUnit.move>0">
 						<td align=right>Move:</td>
 						<td><i class="fa fa-arrows-alt" title="Movement"></i></td>
 						<td><b>{{selectedUnit.move}}</b></td>
 					</tr>
-					<tr>
+					<tr *ngIf="selectedUnit.att>0">
 						<td align=right>Attack:</td>
 						<td><i class="fa fa-bolt" title="Attack"></i></td>
 						<td *ngIf="selectedUnit.id==14">12 hits!</td>
@@ -45,7 +45,7 @@
 								src="assets/graphics/dice/diceh{{selectedUnit.att}}.png" height="30">
 						</td>
 					</tr>
-					<tr>
+					<tr *ngIf="selectedUnit.def>0">
 						<td align=right>Defend:</td>
 						<td><i class="fa fa-shield" title="Defend"></i></td>
 						<td>
@@ -57,7 +57,7 @@
 								src="assets/graphics/dice/diceh{{selectedUnit.def}}.png" height="30">
 						</td>
 					</tr>
-					<tr>
+					<tr *ngIf="selectedUnit.att>0">
 						<td>Target</td>
 						<td><i class="fa fa-bullseye" title="Target"></i></td>
 						<td style="font-size: 12px;">
@@ -80,7 +80,8 @@
 <div *ngIf="!hideUnitDetailFlg" style="text-align: left;">
 	<hr>
 	<p *ngFor="let desc of selectedUnit.desc" style="padding: 5px;">{{desc}}</p>
-	<p *ngIf="selectedUnit.targetDroneFlg" style="padding: 5px;">When defending, this unit will instantly kill one predator drone in addition to regular defense.</p>
+	<p *ngIf="selectedUnit.targetDroneFlg" style="padding: 5px;">When defending, this unit will instantly kill one
+		predator drone in addition to regular defense.</p>
 	<p *ngIf="selectedUnit.id>=20 && selectedUnit.id<=51" style="padding: 5px; font-size: 10px; font-weight: 800;">
 		Special Unit Restriction: Limit 6 {{selectedUnit.name}} units per offensive attack. No limits on defense.</p>
 

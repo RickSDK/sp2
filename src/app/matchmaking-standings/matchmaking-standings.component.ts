@@ -96,8 +96,7 @@ export class MatchmakingStandingsComponent extends BaseComponent implements OnIn
       })
       .catch(error => {
         this.loadingFlg = false;
-        this.showAlertPopup('Network API Error! See console logs.', 1);
-        console.log('executeTextApi Error', error);
+        this.showAlertPopup('Unable to reach server: '+error, 1); 
       });
   }
 

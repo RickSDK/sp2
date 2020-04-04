@@ -47,7 +47,6 @@ function isVoiceOn() {
 function playVoiceSound(voiceOverId, muteSound) {
 	//	console.log('playVoiceSound', voiceOverId, muteSound);
 	if (muteSound || !isVoiceOn()) {
-		console.log('no sound ', voiceOverId, muteSound)
 		return;
 	}
 	if (localStorage.muteSound && localStorage.muteSound == 'Y') {
@@ -200,6 +199,9 @@ function playVoiceSound(voiceOverId, muteSound) {
 	playVoiceClip(fileName);
 }
 function playVoiceClip(fileName) {
+	if (!isVoiceOn()) {
+		return;
+	}
 	if (fileName.length > 0) {
 		voiceOverAudio.pause();
 		voiceOverAudio = new Audio('assets/voice/' + fileName);

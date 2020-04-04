@@ -63,6 +63,8 @@ function saveGame(gameObj, user, currentPlayer, sendEmailFlg, endOfTurn, prevPla
 	disableButton('redoMovesButton1', true);
 	disableButton('redoMovesButton2', true);
 	if(gameObj.multiPlayerFlg) {
+		console.log('Not saving game!!!!!');
+		return;
 		setInnerHTMLFromElement('statusOkButton', 'Wait');
 		setInnerHTMLFromElement('statusMsg', 'Note: Do not leave page until this completes. Computer make be taking a turn. If it hangs more than 30 seconds, refresh page and try again.');
 		if(!user || !currentPlayer) {

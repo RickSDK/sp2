@@ -73,6 +73,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   public checkAllTroops = false;
   public autoCompleteFlg = false;
   public battleAnalysisObj: any;
+  public yourPlayer: any;
   public battleDelay = 1200;
   //battle board
   public displayBattle: any;
@@ -83,7 +84,8 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
   }
-  show(terr: any, currentPlayer: any, gameObj: any, ableToTakeThisTurn: boolean, user: any) {
+  show(terr: any, currentPlayer: any, gameObj: any, ableToTakeThisTurn: boolean, user: any, yourPlayer: any) {
+    this.yourPlayer = yourPlayer;
     this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);
     $("#territoryPopup").modal();
 

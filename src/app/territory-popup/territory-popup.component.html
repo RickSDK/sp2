@@ -420,11 +420,13 @@
 					[currentPlayer]="currentPlayer" [superpowersData]="superpowersData" [gameObj]="gameObj"
 					[user]="user" [optionType]="optionType" [ableToTakeThisTurn]="ableToTakeThisTurn"
 					[allowFactoryFlg]="allowFactoryFlg" [adminModeFlg]="adminModeFlg"></app-terr-purchase>
+
 				<app-terr-advice
-					*ngIf="ableToTakeThisTurn && selectedTerritory.leaderMessage.length>0 && (optionType=='home' || optionType == 'attack')"
+					*ngIf="yourPlayer && yourPlayer.alive && selectedTerritory.leaderMessage.length>0 && (optionType=='home' || optionType == 'attack')"
 					[selectedTerritory]="selectedTerritory" [currentPlayer]="currentPlayer"
 					[superpowersData]="superpowersData" [gameObj]="gameObj" [user]="user" 
-					[optionType]="optionType" [battleAnalysisObj]="battleAnalysisObj"></app-terr-advice>
+					[optionType]="optionType" [battleAnalysisObj]="battleAnalysisObj"
+					[ableToTakeThisTurn]="ableToTakeThisTurn" [yourPlayer]="yourPlayer"></app-terr-advice>
 
 			</div>
 			<!--modal-body-->

@@ -8,7 +8,7 @@ class="shadowed" (click)="selectPlayer(player)" style="cursor: pointer;" [ngClas
 ><b>{{terr.name}}:</b>&nbsp; 
 
 <span *ngIf="gameObj.fogOfWar == 'Y' && terr.treatyStatus < 3">
-    <img src="{{ngUnitSrc(terr.piece, terr.owner)}}" height="30"> {{terr.displayUnitCount}} units
+    <img *ngIf="terr.piece>0 || terr.unitCount>0" src="{{ngUnitSrc(terr.piece, terr.owner)}}" height="30"> {{terr.displayUnitCount}} units
 </span>
 <span *ngIf="gameObj.fogOfWar != 'Y' || terr.treatyStatus>=3">
 <img *ngFor="let unit of terr.units" src="{{ngUnitSrc(unit.piece, unit.owner)}}" height="25"></span>

@@ -545,6 +545,10 @@ function capitalOfPlayer(player, gameObj) {
 function getCurrentPlayer(gameObj) {
 	if (!gameObj || !gameObj.players || gameObj.players.length == 0)
 		return null;
+
+
+	return gameObj.players[gameObj.turnId-1]; // this??
+
 	var turnId = gameObj.turnId;
 	var player = gameObj.players[0];
 	gameObj.players.forEach(function (p) {
@@ -569,7 +573,6 @@ function scrubGameObj(gameObj, gUnits) {
 		gameObj.unitPurchases = [];
 }
 function scrubUnitsOfPlayer(player, gameObj, gUnits) {
-	console.log('scrubUnitsOfPlayer');
 	var mav = player.tech[1];
 	var radar = player.tech[2];
 
@@ -1395,7 +1398,7 @@ function getMaxAllies(player, gameObj) {
 	return gameObj.maxAllies;
 }
 function displayLeaderAndAdvisorInfo(terr, currentPlayer, yourPlayer, user, gameObj, superpowers, optionType) {
-	updateAdvisorInfo(terr, currentPlayer, user, gameObj, superpowers, optionType);
+	updateAdvisorInfo(terr, yourPlayer, user, gameObj, superpowers, optionType);
 	terr.leader = terr.owner || 0;
 	if (terr.leader == 0)
 		terr.leader = terr.nation || 0;
@@ -1413,7 +1416,7 @@ function displayLeaderAndAdvisorInfo(terr, currentPlayer, yourPlayer, user, game
 	if (terr.id < 79 && terr.leader < 10) {
 		var names = [terr.name + ' Leader', 'Donald Trump', 'Angela Merkel', 'Vladimir Putin', 'Shinzo Abe', 'Xi Jinping', 'Mohammad bin Salman', 'Idi Amin', 'Hugo Chavez'];
 		terr.leaderName = names[terr.leader];
-		if (terr.owner == currentPlayer.nation) {
+		if (terr.owner == yourPlayer.nation) {
 			terr.leaderMessage = '';
 			//			if (currentPlayer.status == 'Attack')
 			//				terr.leaderMessage = "We need to expand our empire. Find a good target to attack, or press 'Complete Turn' to end your turn.";
@@ -1428,16 +1431,44 @@ function displayLeaderAndAdvisorInfo(terr, currentPlayer, yourPlayer, user, game
 			} else {
 				var status = treatyStatus(yourPlayer, terr.leader);
 				if (status == 0)
-					terr.leaderMessage = warMessageForNation(terr, currentPlayer, gameObj);
+					terr.leaderMessage = warMessageForNation(terr, yourPlayer, gameObj);
 				if (status == 1)
 					terr.leaderMessage = neutralMessageForNation(terr.leader);
 				if (status == 2)
-					terr.leaderMessage = 'Our peace agreement is serving us both well. Do not think of breaking it.';
+					terr.leaderMessage = peaceAgreementMessageFromNation(terr.owner);
 				if (status == 3)
-					terr.leaderMessage = 'Our alliance is strong. Let us work together to defeat the enemies.';
+					terr.leaderMessage = allianceMessageFromNation(terr.owner);
 			}
 		}
 	}
+}
+function allianceMessageFromNation(nation) {
+	var m = [
+		'Our alliance is strong. Let us work together to defeat the enemies.',
+		'I don\'t mind keeping you on this team even though I am doing most of the heavy lifting.',
+		'We consider you to be an honorary member of European Union. Congratulations!',
+		'Mother Russia has embraced you with open arms. We shall die together on the battlefield.',
+		'We now consider all of your lands to be part of our great empire. You should feel very honored.',
+		'We are now working together to help spread communism far and wide. Thank you for your efforts.',
+		'Our alliance is working well. Let us know if you need us to go jihad on anyone.',
+		'The African people are available to help in any way needed. Just say the word.',
+		'Our friendship is mucho bueno! Now lets go stomp on some bad guys.',
+	];
+	return m[nation];
+}
+function peaceAgreementMessageFromNation(nation) {
+	var m = [
+		'Our peace agreement is serving us both well. Do not think of breaking it.',
+		'I have negotiated a really, really good peace agreement with you. Don\'t screw it up!',
+		'Our peace agreement is serving us both well. Do not think of breaking it.',
+		'At the moment, we are happy to honor the current peace agreement.',
+		'Konnichiwa! We are enjoying out peace agreement with you.',
+		'Ni Hao! We are trying to achieve our state of enlightenment and peace.',
+		'Peace is what we are all about! Let us continue working as friends.',
+		'Greetings good friend. Let us enjoy our current state of peace.',
+		'Hola fine amigos. We share your commitment to a lasting peace.',
+	];
+	return m[nation];
 }
 function neutralSuperpowerMessage(nation) {
 	var m = [
@@ -1449,7 +1480,7 @@ function neutralSuperpowerMessage(nation) {
 		'Communism is a beautiful system, but only works once we have imposed total domination on the rest of the world. Please help us reach these ends.',
 		'We welcome anyone who shares our views on religion, politics and life. Everyone else must die!',
 		'We will crush your imperialist desires! You are not welcome in any of our lands. Go away!',
-		'Saludos weak dictator. You are your bombs are not welcome here.',
+		'Saludos weak dictator. You and your bombs are not welcome here. Adios!',
 	];
 	return m[nation];
 }
@@ -1459,7 +1490,7 @@ function neutralMessageForNation(nation) {
 		'Your nation is a loser and we will really, really defeat your puny army.',
 		'We are a peaceful people, but we will not hesitate to bomb your cities and destroy you!',
 		'Greetings weak opponent. We could squish you like a bug, but our excessive kindess allows us to keep you around for now.',
-		'The red sun is rising in the east. We welcome you to be inferior subjects in our divine kingdom.',
+		'The red sun is rising in the east. We welcome you to live as inferior subjects in our divine kingdom.',
 		'The people\'s communist army will rise up with one voice and one cannon and defeat you!',
 		'Death to the infidels! Convert to our way of extreme happiness or be destroyed!',
 		'We bring good tidings and gifts to your people. Unless you anger us, then we kill you!',
@@ -1476,7 +1507,7 @@ function warMessageForNation(terr, player, gameObj) {
 			'Now you have really made me angry. You are not only a loser, but a big loser. A really, really big loser.',
 			'Hey scumbag! It\'s over for you. You do not stand a chance. We will own you!',
 			'The armies of mother Russia never surrender! We will defeat you even if it kills every one of us!',
-			'You have brought great dishonor to your corrupt nation and to your greedy people. Prepare for defeat!',
+			'You have brought great dishonor and shame to your corrupt nation. Prepare to die!',
 			'The people\'s cannon is pointed at your hearts! Surrender now or we will point it at your heads!',
 			'Prepare for jihad! First we will attack you with a million strikes of total destruction. Then we will make more threats!',
 			'We tried to bring peace to your nation, but have failed. Now we must kill you.',

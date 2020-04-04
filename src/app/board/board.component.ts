@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { analyzeAndValidateNgModules } from '@angular/compiler';
 import { DiplomacyPopupComponent } from '../diplomacy-popup/diplomacy-popup.component';
+import { Router } from '@angular/router';
 
 declare var $: any;
 
@@ -46,6 +47,7 @@ declare var isUnitFighterUnit: any;
 declare var findTransportForThisCargo: any;
 declare var computerAnnouncement: any;
 declare var moveTheseUnitsToThisTerritory: any;
+declare var isMusicOn: any;
 //---board.js
 declare var displayLeaderAndAdvisorInfo: any;
 declare var getDisplayQueueFromQueue: any;
@@ -107,6 +109,7 @@ declare var addAAGunesToBattle: any;
 declare var isUnitCruiseUnit: any;
 declare var landTheCruiseBattle: any;
 declare var strategicBombBattle: any;
+declare var loadMultiPlayerGame: any;
 
 @Component({
 	selector: 'app-board',
@@ -139,6 +142,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public hideActionButton = false;
 	public displayBattle: any;
 	public warAudio = new Audio('assets/sounds/war1.mp3');
+	public gameMusic = new Audio('assets/music/menu.mp3');
 	public haltPurchaseFlg = false;
 	public haltCombatActionFlg = false;
 	public haltActionFlg = false;
@@ -158,7 +162,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		'Round 6. Players can now attack other players! This is the limited attack round, meaning you can take at most one other player\'s territory and lose at most one territory.',
 	];
 
-	constructor() { super(); }
+	constructor(private router: Router) { super(); }
 
 	ngOnInit(): void {
 		this.hostname = getHostname();
@@ -170,10 +174,17 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	//----------------load board------------------
 	initBoard() {
+		this.gameMusic.loop = true;
+		this.gameMusic.volume=0.5;
+		if(isMusicOn())
+			this.gameMusic.play();
 		var loadGameId = numberVal(localStorage.loadGameId);
 		var currentGameId = numberVal(localStorage.currentGameId);
+		this.loadingFlg = true;
+		startSpinner('Loading Game', '100px');
+		updateProgressBar(20);
 		if (loadGameId > 0) {
-			console.log('+++ multiplayer....', localStorage.loadGameId);
+			this.getMultiplayerGameObjFromServer();
 		} else {
 			if ((currentGameId > 0)) {
 				//load game
@@ -203,19 +214,34 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				saveGame(this.gameObj, this.user, this.currentPlayer);
 				localStorage.currentGameId = this.gameObj.id;
 			}
+			this.beginToLoadTheBoard();
 		}
+	}
+	getMultiplayerGameObjFromServer() {
+		console.log('+++ multiplayer....', localStorage.loadGameId);
+		const url = this.getHostname() + "/web_join_game2.php";
+		const postData = this.getPostDataFromObj({ user_login: this.user.userName, code: this.user.code, game_id: localStorage.loadGameId, action: 'loadGame' });
+
+		fetch(url, postData).then((resp) => resp.text())
+			.then((data) => {
+				updateProgressBar(40);
+				this.gameObj = loadMultiPlayerGame(data);
+				localStorage.gameUpdDt = this.gameObj.gameUpdDt;
+				console.log('+++gameUpdDt+++', localStorage.gameUpdDt);
+				this.beginToLoadTheBoard();
+			})
+			.catch(error => {
+				this.showAlertPopup('Unable to reach server: ' + error, 1);
+			});
+	}
+	beginToLoadTheBoard() {
 		if (this.gameObj.territories.length > 0) {
-			this.loadingFlg = true;
-			startSpinner('Loading Game', '100px');
-			updateProgressBar(20);
 			scrubGameObj(this.gameObj, this.superpowersData.units);
-			console.log('gameObj', this.gameObj);
 			setTimeout(() => { this.loadBoard(); }, 500);
 		} else {
 			clearCurrentGameId();
 			displayFixedPopup('invalidGamePopup');
 		}
-
 	}
 	loadBoard() {
 		updateProgressBar(70);
@@ -288,7 +314,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			illuminateTerritories(this.gameObj);
 		refreshAllTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 		this.findTargets();
-		console.log('this.currentPlayer.secondaryTargetId', this.currentPlayer.secondaryTargetId);
 
 		this.currentPlayer.allies = alliesFromTreaties(this.currentPlayer);
 		this.currentPlayer.maxAlliesForPlayer = getMaxAllies(this.currentPlayer, this.gameObj);
@@ -336,8 +361,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		if (this.ableToTakeThisTurn)
 			this.displayMilitaryAdvisorMessage();
-		else
+		else {
+//			if(this.gameObj.multiPlayerFlg)
+//			playVoiceClip('nation'+this.currentPlayer.nation+'.mp3');
 			this.initializePlayer();
+		}
+			
 	}
 	findTargets() {
 		var territories = [];
@@ -457,6 +486,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.initializePlayer();
 	}
 	initializePlayer() {
+		playVoiceClip('nation'+this.currentPlayer.nation+'.mp3');
 		this.showControls = !this.currentPlayer.cpu;
 		if (this.currentPlayer.status == 'Waiting' || this.currentPlayer.status == 'Purchase')
 			this.initializePlayerForPurchase();
@@ -875,12 +905,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	doThisBattle(obj: any) {
 		if (obj && obj.attackUnits && obj.attackUnits.length > 0) {
 			this.moveSpriteBetweenTerrs(obj);
-			if(obj.terr.owner == this.currentPlayer.nation) {
+			if (obj.terr.owner == this.currentPlayer.nation) {
 				moveTheseUnitsToThisTerritory(obj.attackUnits, obj.terr, this.gameObj);
 			} else {
 				this.displayBattle = initializeBattle(this.currentPlayer, obj.terr, obj.attackUnits, this.gameObj);
 				startBattle(obj.terr, this.currentPlayer, this.gameObj, this.superpowersData);
-				this.computerBattleRound(obj);	
+				this.computerBattleRound(obj);
 			}
 		}
 	}
@@ -905,13 +935,13 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		recallBoats(this.gameObj, this.currentPlayer);
 
-		if (this.gameObj.round != 6) {
+		if (this.gameObj.round != 6 && this.currentPlayer.nation != 4) {
 			var obj = findAmphibiousAttacks(this.gameObj, this.currentPlayer, true);
 			console.log('hey', obj);
 			if (obj && obj.attackUnits.length > 0) {
 				this.doThisBattle(obj);
 				if (obj && obj.ampFlg) {
-	//				this.doThisBattle({ attackUnits: obj.ampAttUnits, defUnits: obj.ampDefUnits, t1: obj.ampAttTerr.id, t2: obj.ampDefTerr.id, id: 2, terr: obj.ampDefTerr, attTerr: obj.ampAttTerr });
+					//				this.doThisBattle({ attackUnits: obj.ampAttUnits, defUnits: obj.ampDefUnits, t1: obj.ampAttTerr.id, t2: obj.ampDefTerr.id, id: 2, terr: obj.ampDefTerr, attTerr: obj.ampAttTerr });
 				}
 				refreshTerritory(obj.ampAttTerr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 				refreshTerritory(obj.ampDefTerr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
@@ -977,27 +1007,29 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			playSound('error.mp3');
 			return;
 		}
-		if (this.forcedClickNation > 0) {
-			if (terr.id == this.forcedClickNation) {
-				if (this.forcedClickNation == 62) {
-					showAlertPopup('Click "Attack" and send all your units into Ukraine.');
+		if (this.ableToTakeThisTurn) {
+			if (this.forcedClickNation > 0) {
+				if (terr.id == this.forcedClickNation) {
+					if (this.forcedClickNation == 62) {
+						showAlertPopup('Click "Attack" and send all your units into Ukraine.');
+					}
+				} else {
+					this.forcedClickMessage();
+					return;
 				}
-			} else {
-				this.forcedClickMessage();
+			}
+			if (this.gameObj.round == 1 && this.currentPlayer.placedInf < 3) {
+				if (terr.treatyStatus < 4 || terr.nation == 99)
+					showAlertPopup('Click on one of your ' + this.superpowersData.superpowers[this.yourPlayer.nation] + ' territories to place an infantry.', 1);
+				else {
+					this.addUnitToTerr(terr, 2, true, true);
+					this.currentPlayer.placedInf++;
+					if (this.currentPlayer.placedInf >= 3)
+						displayFixedPopup('infantry3Confirm');
+				}
+
 				return;
 			}
-		}
-		if (this.gameObj.round == 1 && this.currentPlayer.placedInf < 3) {
-			if (terr.treatyStatus < 4 || terr.nation == 99)
-				showAlertPopup('Click on one of your ' + this.superpowersData.superpowers[this.yourPlayer.nation] + ' territories to place an infantry.', 1);
-			else {
-				this.addUnitToTerr(terr, 2, true, true);
-				this.currentPlayer.placedInf++;
-				if (this.currentPlayer.placedInf >= 3)
-					displayFixedPopup('infantry3Confirm');
-			}
-
-			return;
 		}
 		this.bonusInfantryFlg = (terr.owner == 0 && !terr.capital && terr.nation < 99);
 		this.bonusFactoryFlg = (terr.owner == 0 && terr.capital && terr.nation < 99);
@@ -1010,7 +1042,22 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		//		terr.units = unitsForTerr(terr, gameObj.units);
 		terr.displayQueue = getDisplayQueueFromQueue(terr, this.gameObj);
 		this.selectedTerritory = terr;
-		popup.show(terr, currentPlayer, gameObj, ableToTakeThisTurn, user);
+		popup.show(terr, currentPlayer, gameObj, ableToTakeThisTurn, user, this.yourPlayer);
+	}
+	musicUpdated($event) {
+		if(isMusicOn()) {
+			this.gameMusic.play();
+		} else {
+			this.gameMusic.pause();
+		}
+	}
+	exitButtonPressed() {
+		this.gameMusic.pause();
+		this.playClick();
+		if (localStorage.loadGameId > 0)
+			this.router.navigate(['/multiplayer']);
+		else
+			this.router.navigate(['/']);
 	}
 	redoMoves() {
 		closePopup('infantry3Confirm');
@@ -1342,10 +1389,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 		this.gameObj.unitPurchases = [];
 
-		if(fighterWaterFlg) {
+		if (fighterWaterFlg) {
 			this.addFightersToTransports(this.currentPlayer);
 		}
-			
+
 		this.purchaseIndex = 0;
 		var numAddedUnitsToAdd = 0;
 		newUnits.forEach(purchUnit => {
@@ -1359,11 +1406,11 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	addFightersToTransports(player: any) {
 		this.gameObj.units.forEach(unit => {
-			if(unit.owner == player.nation && isUnitFighterUnit(unit.piece) && unit.terr>79 && numberVal(unit.cargoOf)==0) {
-				var terr = this.gameObj.territories[unit.terr-1];
+			if (unit.owner == player.nation && isUnitFighterUnit(unit.piece) && unit.terr > 79 && numberVal(unit.cargoOf) == 0) {
+				var terr = this.gameObj.territories[unit.terr - 1];
 				findTransportForThisCargo(unit, terr, this.gameObj);
 			}
-			
+
 		});
 	}
 	doThisPurchaseUnit(newUnits: any, gameObj: any) {
@@ -1414,7 +1461,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					localStorage.rank = 2;
 					this.user = userObjFromUser();
 					promoteSuperpowersUser(this.user);
-					computerAnnouncement(this.user, 'New player '+this.user.userName+' just completed Single Player');
+					computerAnnouncement(this.user, 'New player ' + this.user.userName + ' just completed Single Player');
 				}
 				clearCurrentGameId();
 			}
@@ -1499,11 +1546,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.gameObj.round++;
 			nextPlayer = firstPlayer;
 		}
-		this.gameObj.turnId = nextPlayer.id;
+		this.gameObj.turnId = nextPlayer.turn;
 		this.currentPlayer = getCurrentPlayer(this.gameObj);
 		this.gameObj.currentNation = this.currentPlayer.nation;
 		this.gameObj.actionButtonMessage = '';
-		//		this.loadCurrentPlayer();
 	}
 	logPurchases(player: any) {
 		var unitHash = {};

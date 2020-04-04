@@ -16,11 +16,13 @@ declare var $: any;
 export class TerrAdviceComponent implements OnInit {
   @Input('selectedTerritory') selectedTerritory: any;
   @Input('currentPlayer') currentPlayer: any;
+  @Input('yourPlayer') yourPlayer: any;
   @Input('superpowersData') superpowersData: any;
   @Input('gameObj') gameObj: any;
   @Input('user') user: any;
-  @Input('optionType') optionType: any;
+  @Input('optionType') optionType: any; 
   @Input('battleAnalysisObj') battleAnalysisObj: any;
+  @Input('ableToTakeThisTurn') ableToTakeThisTurn: any;
 
   constructor() { }
 

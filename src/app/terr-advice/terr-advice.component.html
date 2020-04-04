@@ -22,20 +22,20 @@
                     <div *ngIf="optionType == 'attack'" style="font-size: 12px;">
                         "{{battleAnalysisObj.battleLeaderMessage}}"</div>
 
-                    <div *ngIf="1">
-                        <div *ngIf="currentPlayer.diplomacyFlg && currentPlayer.treatyOfferedNation>0"
+                    <div *ngIf="ableToTakeThisTurn">
+                        <div *ngIf="yourPlayer.diplomacyFlg && yourPlayer.treatyOfferedNation>0"
                             class="borderClass3" style="font-size: 12px; padding: 2px;">
                             <i class="fa fa-flag"></i> Treaty has been offered to
-                            {{superpowersData.superpowers[currentPlayer.treatyOfferedNation]}}
+                            {{superpowersData.superpowers[yourPlayer.treatyOfferedNation]}}
                         </div>
                         <div *ngIf="selectedTerritory.owner>0 && selectedTerritory.treatyStatus < 4">
-                            <button *ngIf="!currentPlayer.diplomacyFlg && selectedTerritory.treatyStatus < 2"
+                            <button *ngIf="!yourPlayer.diplomacyFlg && selectedTerritory.treatyStatus < 2"
                                 (click)="offerTreaty(2)" style="font-size: 12px;" type="button"
                                 class="btn btn-warning roundButton"><i class="fa fa-flag"></i> Offer
                                 Peace</button>
 
                             <button
-                                *ngIf="!currentPlayer.diplomacyFlg && selectedTerritory.treatyStatus == 2 && gameObj.allowAlliances && gameObj.type!='barbarian' && gameObj.type!='battlebots'"
+                                *ngIf="!yourPlayer.diplomacyFlg && selectedTerritory.treatyStatus == 2 && gameObj.allowAlliances && gameObj.type!='barbarian' && gameObj.type!='battlebots'"
                                 (click)="offerTreaty(3)" style="font-size: 12px;" type="button"
                                 class="btn btn-success roundButton"><i class="fa fa-flag"></i> Offer
                                 Alliance</button>
@@ -64,15 +64,15 @@
     class="spCard">
     <div>
         <div style="color: white;">
-            <img src="assets/graphics/images/flag{{currentPlayer.nation}}.gif" height=20>
-            {{superpowersData.superpowers[currentPlayer.nation]}} Military Advisor
+            <img src="assets/graphics/images/flag{{yourPlayer.nation}}.gif" height=20>
+            Your Military Advisor
         </div>
         <table width=100%>
-            <tr [ngStyle]="ngStyleLogs(currentPlayer.nation)">
+            <tr [ngStyle]="ngStyleLogs(yourPlayer.nation)">
                 <td [style.width]="optionType == 'home'?'100px':'50px'"
-                    style="background-size: cover;  background-position: center; background-image: url('assets/graphics/advisors/general{{currentPlayer.nation}}.jpg')">
+                    style="background-size: cover;  background-position: center; background-image: url('assets/graphics/advisors/general{{yourPlayer.nation}}.jpg')">
                     &nbsp;
-                    <img *ngIf="0" src="assets/graphics/advisors/general{{currentPlayer.nation}}.jpg"
+                    <img *ngIf="0" src="assets/graphics/advisors/general{{yourPlayer.nation}}.jpg"
                         style="float: left;" [style.height]="optionType == 'home'?'80px':'40px'">
                 </td>
                 <td style="font-size: 12px;">

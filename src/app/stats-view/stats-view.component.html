@@ -4,7 +4,7 @@
     <div><canvas class="borderClass3" id="teamCanvas" height="340"></canvas></div>
 
     <span *ngFor="let team of gameObj.teams">
-        <div *ngIf="team.income>0" class="borderClass3" [ngStyle]="ngStyleLogs(team.teamPlayers[0])"
+        <div *ngIf="team.alive" class="borderClass3" [ngStyle]="ngStyleLogs(team.teamPlayers[0])"
             style="text-align: center;">
             <div class="blueBgWhite">Team {{team.name}}</div>
             <div style="font-size: 10px;">-Players-</div>

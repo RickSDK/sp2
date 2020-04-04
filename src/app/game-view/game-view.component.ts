@@ -11,6 +11,7 @@ declare var $: any;
 })
 export class GameViewComponent extends BaseComponent implements OnInit {
   @Input('gameObj') gameObj: any;
+  @Input('ableToTakeThisTurn') ableToTakeThisTurn: any;
 
   constructor() { super(); }
 

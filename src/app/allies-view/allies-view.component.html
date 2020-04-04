@@ -1,4 +1,4 @@
-<div *ngIf="gameObj.allowAlliances && gameObj.multiPlayerFlg && gameObj.top1.length>0" style="background-color: #ace;">
+<div *ngIf="gameObj.allowAlliances && gameObj.multiPlayerFlg && gameObj.top1.length>0 && gameObj.type != 'barbarian'" style="background-color: #ace;">
     Team-balancing enforced. Top 2 players:
     <img src="assets/graphics/images/flag{{gameObj.top1Nation}}.gif" height=15> <b>{{gameObj.top1}}</b>
     and

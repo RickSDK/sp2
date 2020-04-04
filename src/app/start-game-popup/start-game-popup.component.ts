@@ -45,24 +45,12 @@ export class StartGamePopupComponent extends BaseComponent implements OnInit {
     if (this.yourNation == 0)
       this.yourNation = Math.floor((Math.random() * 8) + 1);
 
- 
     localStorage.startingNation = this.yourNation;
     localStorage.difficultyNum = this.difficultyIdx-1;
     localStorage.hardFog = (this.fogIdx == 2) ? "Y" : "N";
     localStorage.fogOfWar = (this.fogIdx > 0) ? "Y" : "N";
     localStorage.customGameType = (this.segmentIdx==0)?'diplomacy':'freeforall';
     localStorage.gameType = this.segmentIdx;
-
-    console.log(localStorage.customGameType);
-    console.log(localStorage.gameType);
-    console.log(localStorage.fogOfWar, localStorage.hardFog);
-    console.log(localStorage.difficultyNum);
-    console.log(localStorage.startingNation);
- 
-    // localStorage.customGamePlayers=JSON.stringify(gamePlayers);
-    //localStorage.customNumPlayers = gamePlayers.length;
-    //localStorage.customGame='Y';
-
 
     $("#startGamePopup").modal('hide');
     this.router.navigate(['/board']);

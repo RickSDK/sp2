@@ -93,26 +93,43 @@
                         [ngClass]="ngClassSegment(buttonIdx,0)" style="min-width: 60px;">
                         <i class="fa fa-star" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">My Games</div>
+                        <div style="font-size: 12px; font-weight: 700;">({{count0}})</div>
                     </button>
                     <button (click)="filterGames(1)" type="button" class="btn btn-default roundButton"
                         [ngClass]="ngClassSegment(buttonIdx,1)" style="min-width: 60px;">
                         <i class="fa fa-plus" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">Open</div>
+                        <div style="font-size: 12px; font-weight: 700;">({{count1}})</div>
                     </button>
                     <button (click)="filterGames(2)" type="button" class="btn btn-default roundButton"
                         [ngClass]="ngClassSegment(buttonIdx,2)" style="min-width: 60px;">
                         <i class="fa fa-play" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">Playing</div>
+                        <div style="font-size: 12px; font-weight: 700;">({{count2}})</div>
                     </button>
                     <button (click)="filterGames(3)" type="button" class="btn btn-default roundButton"
                         [ngClass]="ngClassSegment(buttonIdx,3)" style="min-width: 60px;">
                         <i class="fa fa-stop" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">Completed</div>
+                        <div style="font-size: 12px; font-weight: 700;">({{count3}})</div>
                     </button>
                     <button (click)="filterGames(4)" type="button" class="btn btn-default roundButton"
                         [ngClass]="ngClassSegment(buttonIdx,4)" style="min-width: 60px;">
                         <i class="fa fa-trophy" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">MatchMaking</div>
+                        <div style="font-size: 12px; font-weight: 700;">({{count4}})</div>
+                    </button>
+                    <button *ngIf="adminFlg" (click)="filterGames(5)" type="button" class="btn btn-default roundButton"
+                        [ngClass]="ngClassSegment(buttonIdx,5)" style="min-width: 60px;">
+                        <i class="fa fa-bug" style="font-size: 26px;"></i>
+                        <div style="font-size: 10px;">Bugs</div>
+                        <div style="font-size: 12px; font-weight: 700;">({{count5}})</div>
+                    </button>
+                    <button *ngIf="adminFlg" (click)="filterGames(6)" type="button" class="btn btn-default roundButton"
+                        [ngClass]="ngClassSegment(buttonIdx,6)" style="min-width: 60px;">
+                        <i class="fa fa-clock-o" style="font-size: 26px;"></i>
+                        <div style="font-size: 10px;">Stale</div>
+                        <div style="font-size: 12px; font-weight: 700;">({{count6}})</div>
                     </button>
                 </div>
             </div>
@@ -130,11 +147,15 @@
                             <div (click)="selectGame(game)" class="darkBlueBg"
                                 style="font-size: 24px; font-weight: 700; cursor: pointer;">
                                 <span class="corner-icon"><i class="fa fa-info-circle"></i></span>
+
+                                <i *ngIf="game.bugFlg" class="fa fa-bug" style="font-size: 12px; color: yellow;"></i>
+                                <i *ngIf="game.chatFlg" class="fa fa-commenting-o"
+                                    style="font-size: 12px; color: yellow;"></i>
                                 {{game.name}}</div>
                             <table style="width: 100%;">
                                 <tr>
                                     <td>
-                                        <div class="gameCard">
+                                        <div class="gameCard" style="min-width: 100px;">
                                             <div class="darkBlueBg"><i class="fa fa-h-square"></i> Host</div>
                                             <div> {{game.host}}</div>
                                             <div>{{game.size}} Players</div>
@@ -152,7 +173,9 @@
                                         <button (click)="enterGame(game)" type="button"
                                             [ngClass]="ngClassGameButton(game)" class="btn btn-default roundButton"
                                             style="font-size: 26px;">
-                                            <i class="fa fa-arrow-right"></i> Enter
+                                            <i class="fa fa-arrow-right"></i>
+                                            <span *ngIf="game.joinGameFlg">Join</span>
+                                            <span *ngIf="!game.joinGameFlg">Enter</span>
                                         </button>
                                         <div>
                                             <div class="gameCard">
@@ -164,7 +187,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="gameCard">
+                                        <div class="gameCard" style="min-width: 100px;">
                                             <div class="darkBlueBg"><i class="fa fa-clock-o"></i> Timer</div>
                                             <app-player-name [player]="game.turnObj"></app-player-name>
                                             <div>{{game.timeLeft}}</div>
@@ -181,23 +204,31 @@
                                     </td>
                                 </tr>
                             </table>
-                            <div *ngIf="selectedGame == game">
+                            <div *ngIf="selectedGameNum == game">
                                 <div class="spCard">
                                     <div>
                                         <div class="spTitle">Game Options</div>
                                         <div class="spCardBody" style="font-size: 12px;">
-                                            <div>{{game.type}}</div>
-                                            <div *ngIf="game.mmFlg"><i class="fa fa-check"></i> Matchmaking</div>
-                                            <div *ngIf="game.autoStart"><i class="fa fa-check"></i> Auto-Start</div>
+                                            <div style="background-color: #ccc;">{{game.type}}</div>
+                                            <div *ngIf="game.mmFlg"><i class="fa fa-trophy"></i> Matchmaking</div>
+                                            <div *ngIf="game.autoStart && game.status=='Open'"><i
+                                                    class="fa fa-check"></i> Auto-Start</div>
                                             <div *ngIf="game.autoSkip"><i class="fa fa-check"></i> Auto-Skip</div>
-                                            <div *ngIf="game.fogofwar"><i class="fa fa-check"></i> Fog-of-War</div>
+                                            <div *ngIf="game.fogofwar && !game.hardFog"><i class="fa fa-check"></i>
+                                                Fog-of-War</div>
                                             <div *ngIf="game.hardFog"><i class="fa fa-check"></i> Hard-Fog</div>
-                                            <div *ngIf="game.auto_assign_flg"><i class="fa fa-check"></i> Auto-Nations</div>
-                                            <div *ngIf="game.restrict_units_flg"><i class="fa fa-check"></i> No Spec Units</div>
-                                            <div *ngIf="game.no_stats_flg"><i class="fa fa-check"></i> No Stats</div>
-                                            <div *ngIf="game.minRank>0"><i class="fa fa-check"></i> Min Rank {{game.minRank}}</div>
-                                            <div *ngIf="game.maxRank>0"><i class="fa fa-check"></i> Max Rank {{game.minRank}}</div>
-                                         </div>
+                                            <div *ngIf="game.auto_assign_flg && game.status=='Open'"><i
+                                                    class="fa fa-check"></i> Auto-Nations</div>
+                                            <div *ngIf="game.restrict_units_flg"><i class="fa fa-check"></i> No Spec
+                                                Units</div>
+                                            <div *ngIf="game.no_stats_flg && !game.mmFlg"><i class="fa fa-check"></i> No
+                                                Stats</div>
+                                            <div *ngIf="game.minRank>0 && game.minRank== game.maxRank"><i
+                                                    class="fa fa-check"></i>
+                                                {{superpowersData.ranks[game.maxRank].name}} only!</div>
+                                            <div *ngIf="game.minRank==7"><i class="fa fa-check"></i> No Newbs</div>
+                                            <div *ngIf="game.maxRank==13"><i class="fa fa-check"></i> No Generals</div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="spCard">
@@ -215,7 +246,7 @@
                                                         height="20"></td>
                                                 <td>
                                                     <i *ngIf="player.top" class="fa fa-star"></i>
-                                                    <i *ngIf="player.name == game.turnObj.name" class="fa fa-check"></i>
+                                                    <i *ngIf="player.turnFlg" class="fa fa-check"></i>
                                                     {{player.name}}
                                                 </td>
                                                 <td style="color: green; font-weight: 700;">{{player.income}}</td>
@@ -240,6 +271,28 @@
 </div>
 
 
+<div id="joinConfirmationPopup" class="popupScreen2">
+    <div *ngIf="selectedGame">
+        <div class="mediumBlueBg">{{selectedGame.name}}</div>
+        <div *ngIf="0"><input type=text id="passField" name="passField" placeholder="Password" value="" maxlength=20>
+        </div>
+        <div *ngIf="selectedGame.gameType=='locked'">Team: <button ng-click="teamButtonClicked()" id="" type="button"
+                class="btn ptp-yellow">{{teamName}}</button></div>
+        <div *ngIf="!selectedGame.auto_assign_flg">
+            <div style="border: 1px solid black;">
+                <div>Nations Available: </div>
+                <img *ngFor="let nation of availableNations"
+                    src="assets/graphics/images/flag{{nation}}.gif" height=20></div>
+            <div>Choose one: <button (click)="cycleNationsButtonPressed()" type="button" class="btn btn-light roundButton"><img
+                        src="assets/graphics/images/flag{{selectedNation}}.gif" height=50></button></div>
+        </div>
+        <button onClick="closePopup('joinConfirmationPopup')" type="button" class="btn btn-danger roundButton"><i
+                class="fa fa-times"></i> Cancel</button>
+        <button (click)="joinAcceptButtonPressed()" id="" type="button" class="btn btn-primary roundButton tall2"><i
+                class="fa fa-check"></i> Join Game</button>
+        <p>
+    </div>
+</div>
 
 
 <app-user-popup #userPopup [user]="user" (messageEvent)="userUpdated($event)"></app-user-popup>

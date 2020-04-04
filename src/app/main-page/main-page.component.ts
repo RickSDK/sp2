@@ -36,16 +36,15 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   getUserData() {
     const url = getHostname() + "/spApiText.php";
     const postData = this.getPostDataFromObj({ user_login: this.user.userName, code: this.user.code, action: 'getUserData' });
-  
+
     fetch(url, postData).then((resp) => resp.text())
       .then((data) => {
         this.user = userUpdateFromWeb(data, true);
       })
-      .catch(error => { 
-        this.showAlertPopup('Network API Error! See console logs.', 1); 
-        console.log('executeTextApi Error', error); 
+      .catch(error => {
+        this.showAlertPopup('Unable to reach server: '+error, 1);
       });
-  
+
   }
   multiplayGameClicked(login: any) {
     if (this.user.userId > 0)

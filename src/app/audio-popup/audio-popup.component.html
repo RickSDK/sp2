@@ -13,20 +13,20 @@
 		<table align=center border=0>
 			<tr>
 			<td>
-			<div (click)="changeAudioSettings()" class="squaredOne" style="display: inline-block; padding: 4px; margin: 1px;">
+			<div (click)="changeMusicSettings()" class="squaredOne" style="display: inline-block; padding: 4px; margin: 1px;">
 				<input type="checkbox" value="None" id="musicBox" name="check" />
 				<label for="musicBox"></label> 
 			</div>
 			</td><td  style="text-align: left;"> <i class="fa fa-volume-up" *ngIf="musicFlg"></i>  &nbsp;: Music</td>
 			</tr>
 			<tr><td>
-			<div (click)="changeAudioSettings()" class="squaredOne" style="display: inline-block; padding: 4px; margin: 1px;">
+			<div (click)="changeSoundSettings()" class="squaredOne" style="display: inline-block; padding: 4px; margin: 1px;">
 				<input type="checkbox" value="None" id="soundBox" name="check" />
 				<label for="soundBox"></label> 
 			</div></td><td style="text-align: left;"> <i class="fa fa-volume-up" *ngIf="soundFlg"></i> &nbsp;: Sound Effects</td>
 			</tr>
 			<tr><td>
-			<div (click)="changeAudioSettings()" class="squaredOne" style="display: inline-block; padding: 4px; margin: 1px;">
+			<div (click)="changeVoiceSettings()" class="squaredOne" style="display: inline-block; padding: 4px; margin: 1px;">
 				<input type="checkbox" value="None" id="voiceBox" name="check" />
 				<label for="voiceBox"></label> 
 			</div></td><td style="text-align: left;"> <i class="fa fa-volume-up" *ngIf="voiceFlg"></i> &nbsp;: Voice Effects</td>
