@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
+import { splitAtColon } from '@angular/compiler/src/util';
 
 declare var $: any;
 declare var messageFromLine: any;
+declare var userObjFromUser: any;
 
 @Component({
   selector: 'app-chat-popup',
@@ -23,40 +25,52 @@ export class ChatPopupComponent extends BaseComponent implements OnInit {
   public editPostMode = false;
   public chatId = 0;
   public editMode = false;
+  public yourPlayer: any;
+  public gameId = 1;
+  public bugFlg = false;
 
   constructor() { super(); }
 
   ngOnInit(): void {
 
   }
-  show(gameObj: any, ableToTakeThisTurn: any, currentPlayer: any, user: any, isMobileFlg: boolean) {
-    this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);
-    this.isMobileFlg = (window.innerWidth < 500);
+  show(gameObj: any, ableToTakeThisTurn: any, currentPlayer: any, user: any, yourPlayer: any, bugFlg = false) {
+    this.user = user;
+    this.bugFlg = bugFlg;
+    console.log('this.bugFlg', this.bugFlg);
+    if (gameObj) {
+      if (!user) {
+        user = userObjFromUser();
+      }
+      this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);
+      this.yourPlayer = yourPlayer;
+      this.isMobileFlg = (window.innerWidth < 500);
 
-    var alivePlayers = [];
-    gameObj.players.forEach(player => {
-      if (player.alive && !player.cpu)
-        alivePlayers.push(player);
-    });
-    this.alivePlayers = alivePlayers;
-
-
+      var alivePlayers = [];
+      gameObj.players.forEach(player => {
+        if (player.alive && !player.cpu)
+          alivePlayers.push(player);
+      });
+      this.alivePlayers = alivePlayers;
+      this.gameId = this.gameObj.id
+    } else {
+      this.gameId = 1;
+    }
     this.loadChatMessages('');
 
     this.openModal('#chatPopup');
   }
   loadChatMessages(noLimitFlg: string) {
     const url = this.getHostname() + "/webChat.php";
-    const postData = this.getPostDataFromObj({ user_login: this.user.userName, code: this.user.code, game_id: this.gameObj.id, noLimitFlg: noLimitFlg });
+    const postData = this.getPostDataFromObj({ user_login: this.user.userName, code: this.user.code, game_id: this.gameId, noLimitFlg: noLimitFlg });
 
     fetch(url, postData).then((resp) => resp.text())
       .then((data) => {
         var items = data.split("<b>");
         var basics = items[0].split("|");
-        console.log(data);
         this.chatCount = this.numberVal(basics[2]);
         var messages = items[1].split("<br>");
-        this.usersOnline = items[2];
+        this.usersOnline = items[2].split('|').join(', ');
         var chatMessages = [];
         messages.forEach(function (msg) {
           if (msg.length > 3)
@@ -70,15 +84,59 @@ export class ChatPopupComponent extends BaseComponent implements OnInit {
 
   }
   postChat(num: number) {
-    this.showAlertPopup('not coded yet');
+    var message1 = this.databaseSafeValueOfInput("msgField");
+    var message2 = this.databaseSafeValueOfInput("msgArea");
+    var message = message1 || message2;
+    var bugFlg = (this.bugFlg) ? 'Y' : '';
+    if (message.length == 0) {
+      this.showAlertPopup('no message', 1);
+      return;
+    }
+    $('#msgField').val('');
+    $('#msgArea').val('');
+
+    if (this.bugFlg)
+      message = '**Bug Alert** ' + message;
+    var treaties = '';
+    if (this.gameId > 1 && this.yourPlayer)
+      this.yourPlayer.treaties.join('+');
+
+    var url = this.getHostname() + "/webChat.php";
+    const postData = this.getPostDataFromObj({
+      user_login: this.user.userName,
+      code: this.user.code,
+      game_id: this.gameId,
+      action: 'postMessage',
+      message: message,
+      treaties: treaties,
+      recipient: this.recipient,
+      chatId: this.chatId,
+      nation: this.recipientNation,
+      bugFlg: bugFlg
+    });
+    console.log(postData);
+    fetch(url, postData).then((resp) => resp.text())
+      .then((data) => {
+        if (this.verifyServerResponse(data)) {
+          this.loadChatMessages('');
+        }
+      })
+      .catch(error => {
+        this.showAlertPopup('Unable to reach server: ' + error, 1);
+      });
   }
   replyToChat(chat: any) {
     if (chat.name == this.user.userName) {
-      if (!this.editPostMode)
+      if (!this.editPostMode) {
         $('#msgField').val('');
+        $('#msgArea').val('');
+      }
       this.chatId = chat.rowId;
     } else {
-      //			$('#msgField').val('');
+      if (this.gameId == 1) {
+        $('#msgField').val('@' + chat.name + ': ');
+        $('#msgArea').val('@' + chat.name + ': ');
+      }
       this.editPostMode = false;
       this.chatId = 0;
       this.recipient = 'Player';
@@ -119,30 +177,31 @@ export class ChatPopupComponent extends BaseComponent implements OnInit {
     if (this.editPostMode) {
       var chatId = this.chatId;
       this.chatMessages.forEach(function (msg) {
-        if (msg.rowId == chatId)
+        if (msg.rowId == chatId) {
+          $('#msgArea').val(msg.message);
           $('#msgField').val(msg.message);
+        }
+
       });
-    } else
+    } else {
       $('#msgField').val('');
+      $('#msgArea').val('');
+    }
+
   }
   deletePost(chat: any) {
-    //startSpinner('Working...', '150px');
-    /*
-      var url = getHostname()+"/webChat.php";
-        $.post(url,
-        {
-            user_login: $scope.user.userName || 'test',
-            code: $scope.user.code,
-            action: 'deleteMessage',
-            chatId: chat.rowId,
-        },
-        function(data, status){
-          stopSpinner();
-          console.log(data);
-      if(verifyServerResponse(status, data)) {
-        updateChatMessages('N');
-      }
-        });*/
+    const url = this.getHostname() + "/webChat.php";
+    const postData = this.getPostDataFromObj({ user_login: this.user.userName, code: this.user.code, action: 'deleteMessage', chatId: chat.rowId });
+    fetch(url, postData).then((resp) => resp.text())
+      .then((data) => {
+        console.log('data', data);
+        if (this.verifyServerResponse(data)) {
+          this.loadChatMessages('');
+        }
+      })
+      .catch(error => {
+        this.showAlertPopup('Unable to reach server: ' + error, 1);
+      });
   }
 
 

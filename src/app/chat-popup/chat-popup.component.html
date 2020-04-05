@@ -1,68 +1,76 @@
 <div class="modal fade" id="chatPopup" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
+            <!--modal-header-->
             <div class="modal-header">
-                <b><i class="fa fa-commenting"></i> Game Chat</b>
+                <b><i class="fa fa-commenting"></i>&nbsp; <span *ngIf="gameObj">Game</span><span
+                        *ngIf="!gameObj">Multiplayer</span> Chat</b>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" *ngIf="gameObj">
+            <!--modal-body-->
+            <div class="modal-body" style="padding: 0;">
 
-
-
-                <section class="gradient" style="text-align: left;">
-                    <div style="background-color: black; color: white; padding: 5px;">
-                        <img *ngFor="let player of alivePlayers" (click)="replyToPlayer(player)"
-                            style="cursor: pointer;" src="assets/graphics/images/flag{{player.nation}}.gif"
-                            height="37" />
-                        <button (click)="changeRecpient()" type="button"
-                            class="btn btn-success roundButton">{{recipient}}</button>
-                        <button *ngIf="recipient=='Player' && recipientNation>0" (click)="changePlayer()" type="button"
-                            class="btn btn-success roundButton"><img
-                                src="assets/graphics/images/flag{{recipientNation}}.gif" height=25></button>
-                        <div *ngIf="isMobileFlg">
-                            <textarea id="msgArea" rows="4" cols="50" style="width: 100%; color: black;"></textarea>
-                        </div>
-                        <input *ngIf="!isMobileFlg" style="width: 100%;" name="msgField" id="msgField" type=text
-                            placeholder="Message" maxlength=256
-                            onkeypress="if (event.which==13) document.getElementById('chatSendButton').click()">
-                        <button id="chatSendButton" (click)="postChat(1)" type="button"
-                            class="btn btn-primary roundButton tall"><span *ngIf="editPostMode">Edit</span><span
-                                *ngIf="!editPostMode">Send</span></button>
-
-                        <!--- chat messages ------->
-                        <div *ngFor="let chat of chatMessages" (click)="replyToChat(chat)">
-                            {{chat.newFlg}} <font color=yellow><b>{{chat.round}}</b></font> <img
-                                src="assets/graphics/images/flag{{chat.nation}}.gif" height=20>
-                            <font color="#ccffcc">{{chat.name}}</font>
-                            <font color="{{chat.fontcolor}}">{{chat.message}}</font>
-                            <font color=gray size=1>{{chat.created}}</font>
-                            <button *ngIf="chatId == chat.rowId || (chat.delFlg=='Y' && editMode)"
-                                (click)="editPost(chat)" type="button" class="btn btn-success roundButton"
-                                style="width: 44px;"><i class="fa fa-pencil"></i></button>
-                            <button *ngIf="chatId == chat.rowId || (chat.delFlg=='Y' && editMode)"
-                                (click)="deletePost(chat)" type="button" class="btn btn-danger roundButton"
-                                style="width: 44px;"><i class="fa fa-trash"></i></button>
-                        </div>
-
+                <div *ngIf="gameObj && !bugFlg" style="background-color: black; color: white; padding: 5px;">
+                    <img *ngFor="let player of alivePlayers" (click)="replyToPlayer(player)" style="cursor: pointer;"
+                        src="assets/graphics/images/flag{{player.nation}}.gif" height="37" />
+                    <button (click)="changeRecpient()" type="button"
+                        class="btn btn-success roundButton">{{recipient}}</button>
+                    <button *ngIf="recipient=='Player' && recipientNation>0" (click)="changePlayer()" type="button"
+                        class="btn btn-success roundButton"><img
+                            src="assets/graphics/images/flag{{recipientNation}}.gif" height=25></button>
+                </div>
+                <div *ngIf="bugFlg">
+                    <div style="font-size: 24px;"><i class="fa fa-bug"></i> File a Bug Report</div>
+                    <div>Explain the problem here and it should be fixed in a few hours.</div>
+                </div>
+                <section class="gradient">
+                    <div *ngIf="isMobileFlg">
+                        <textarea id="msgArea" rows="4" cols="50" style="width: 100%; color: black;"></textarea>
                     </div>
-                    <div style="color: white;">
-                        <button *ngIf="chatMessages.length>0" (click)="toggleEditMode()" type="button"
-                            class="btn btn-secondary roundButton">Edit</button>
-                        <button *ngIf="chatCount>chatMessages.length" 
-                            (click)="showOlderMessages()" type="button" class="btn btn-secondary roundButton">Show Older
-                            Messages</button>
-                        <font color=#ccc>Users Online:</font> {{usersOnline}}
+                    <input *ngIf="!isMobileFlg" style="width: 100%;" name="msgField" id="msgField" type=text
+                        placeholder="Message" maxlength=256
+                        onkeypress="if (event.which==13) document.getElementById('chatSendButton').click()">
+                    <button id="chatSendButton" (click)="postChat(1)" type="button"
+                        class="btn btn-primary roundButton tall"><span *ngIf="editPostMode">Edit</span><span
+                            *ngIf="!editPostMode">Send</span></button>
+
+                </section>
+                <section style="background-color: black; color: white; padding: 5px;">
+                    <!--- chat messages ------->
+                    <div *ngFor="let chat of chatMessages" (click)="replyToChat(chat)">
+                        {{chat.newFlg}} <span *ngIf="gameObj && chat.round>0"><font color=yellow><b>{{chat.round}}</b></font> <img
+                            src="assets/graphics/images/flag{{chat.nation}}.gif" height=20></span>
+
+                        <font color="#ccffcc">{{chat.name}}: </font>
+                        <font color="{{chat.fontcolor}}">{{chat.message}}</font>
+                        <font color=gray size=1>{{chat.created}}</font>
+                        <button *ngIf="chatId == chat.rowId || (chat.delFlg=='Y' && editMode)" (click)="editPost(chat)"
+                            type="button" class="btn btn-success roundButton" style="width: 44px;"><i
+                                class="fa fa-pencil"></i></button>
+                        <button *ngIf="chatId == chat.rowId || (chat.delFlg=='Y' && editMode)"
+                            (click)="deletePost(chat)" type="button" class="btn btn-danger roundButton"
+                            style="width: 44px;"><i class="fa fa-trash"></i></button>
                     </div>
 
                 </section>
-
-
+                <section class="darkBlueBg">
+                    <div style="color: white;">
+                        <button *ngIf="chatMessages.length>0 && gameObj && !bugFlg" (click)="toggleEditMode()" type="button"
+                            class="btn btn-secondary roundButton">Edit</button>
+                        <button *ngIf="chatCount>chatMessages.length && gameObj && !bugFlg" (click)="showOlderMessages()" type="button"
+                            class="btn btn-secondary roundButton">Show Older
+                            Messages</button>
+                        <font color=#ccc>Users Online:</font> {{usersOnline}}
+                    </div>
+                </section>
 
             </div>
+            <!--modal-footer-->
             <div class="modal-footer">
             </div>
+
         </div>
     </div>
 </div>

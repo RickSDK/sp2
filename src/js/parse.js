@@ -10,25 +10,26 @@ function userObjFromUser() {
 	if (localStorage.userObj && localStorage.userObj.length > 0) {
 		userObj = JSON.parse(localStorage.userObj);
 	} else {
+		console.log('creating new user');
 		userObj.userName = localStorage.userName || 'Guest';
+		userObj.rank = 0;
+		userObj.code = '';
 		userObj.password = '******';
 		userObj.userGraphic = '';
 		userObj.avatar = 'avatar5.jpg';
 		userObj.ip = '';
 		userObj.speedType = '';
-		var rank = numberVal(localStorage.rank);
-		if (rank > 18)
-			rank = 18;
-		userObj.rank = rank;
-		userObj.code = btoa(localStorage.password);
 		userObj.imgSrc = 'assets/graphics/avatars/' + userObj.avatar;
 		//http://www.superpowersgame.com/graphics/avitars/avatar10.jpg
 		userObj.userId = 0;
 		userObj.empCount = 0;
 		userObj.league_id = 0;
-		localStorage.userObj = JSON.stringify(userObj);
+		saveUserObj(userObj);
 	}
 	return userObj;
+}
+function saveUserObj(userObj) {
+	localStorage.userObj = JSON.stringify(userObj);
 }
 function logOutUser() {
 	localStorage.userName = '';
@@ -36,7 +37,7 @@ function logOutUser() {
 	localStorage.password = '';
 	localStorage.userObj = '';
 }
-function userUpdateFromWeb(data, noUpdateFLg) {
+function parseServerDataIntoUserObj(data, saveFlg = false) {
 	var userObj = userObjFromUser();
 
 	var f = data.split('|');
@@ -44,38 +45,46 @@ function userUpdateFromWeb(data, noUpdateFLg) {
 	userObj.userName = f[x++];
 	userObj.rank = numberVal(f[x++]);
 	userObj.gold_member_flg = f[x++];
-	userObj.forumCount = f[x++];
-	userObj.mailCount = f[x++];
-	userObj.urgentCount = f[x++];
-	userObj.last_login = f[x++];
-	userObj.gamesTurn = f[x++];
-	userObj.userId = f[x++];
-	userObj.empCount = f[x++];
-	userObj.games_max = f[x++];
-	userObj.newlyStarted = f[x++];
-	userObj.newlyCompleted = f[x++];
+	userObj.forumCount = numberVal(f[x++]);
+	userObj.mailCount = numberVal(f[x++]);
+	userObj.urgentCount = numberVal(f[x++]);
+	userObj.forum_last_login = f[x++];
+	userObj.gamesTurn = numberVal(f[x++]);
+	userObj.userId = numberVal(f[x++]);
+	userObj.empCount = numberVal(f[x++]);
+	userObj.games_max = numberVal(f[x++]);
+	userObj.newlyStarted = numberVal(f[x++]);
+	userObj.newlyCompleted = numberVal(f[x++]);
 	userObj.ip = f[x++];
 	userObj.userGraphic = f[x++];
-	userObj.wins = f[x++];
-	userObj.losses = f[x++];
-	userObj.points = f[x++];
-	userObj.mmWins = f[x++];
-	userObj.mmLosses = f[x++];
-	userObj.mmPoints = f[x++];
-	console.log('saving', userObj);
-	localStorage.userObj = JSON.stringify(userObj);
+	userObj.wins = numberVal(f[x++]);
+	userObj.losses = numberVal(f[x++]);
+	userObj.points = numberVal(f[x++]);
+	userObj.mmWins = numberVal(f[x++]);
+	userObj.mmLosses = numberVal(f[x++]);
+	userObj.mmPoints = numberVal(f[x++]);
+	userObj.code = this.btoa(localStorage.password);
 
-	if (!noUpdateFLg) {
-		console.log('updating!');
-		localStorage.userName = userObj.userName;
-		localStorage.rank = userObj.rank;
+	if (userObj.userName != localStorage.userName) {
+		showAlertPopup('whoa usernames out of sync! Log out!', 1);
 	}
+
+	if (saveFlg)
+		saveUserObj(userObj);
+
 	return userObj;
 }
 
 function getMultObjFromLine(line) {
 	var obj = new Object;
 	var c = line.split('|');
+	obj.netRank = numberVal(c[4]);
+	obj.chatMsg = c[5];
+	obj.updateNeededCount = numberVal(c[6]);
+	obj.userGraphic=userGraphicFromLine(c[7]);
+	obj.lastestUser = c[8];
+	obj.mailCount = numberVal(c[9]);
+	obj.urgentCount = numberVal(c[10]);
 	obj.newGame = c[11];
 	obj.oldGame = c[12];
 	obj.gameResult = c[13];

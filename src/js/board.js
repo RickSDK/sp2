@@ -69,12 +69,17 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 			unitUniqueHash[unit.id] = true;
 
 			units.push(unit);
-			if (currentPlayer && unit.owner != terr.owner && !enemyPiecesExist) {
-				if (currentPlayer.treaties[unit.owner - 1] == 0)
-					enemyPiecesExist = true;
+			if (currentPlayer && currentPlayer.nation && currentPlayer.nation>0) {
+				if (currentPlayer && unit.owner != terr.owner && !enemyPiecesExist) {
+					if (currentPlayer.treaties[unit.owner - 1] == 0)
+						enemyPiecesExist = true;
+				}
+				if (unit.moveAtt > 0 && unit.owner == currentPlayer.nation)
+					movableTroopCount++;
+
+				if (currentPlayer && unit.type == 3 && unit.owner == currentPlayer.nation)
+					gameObj.loadBoatsFlg = true;
 			}
-			if (unit.moveAtt > 0 && unit.owner == currentPlayer.nation)
-				movableTroopCount++;
 			totalUnitCount++;
 			if (unit.piece == 8)
 				aircraftCarriers.push(unit);
@@ -87,8 +92,6 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 			flagHash[unit.owner] = 1;
 			if (unit.cargoOf && unit.cargoOf > 0)
 				includesCargoFlg = true;
-			if (currentPlayer && unit.type == 3 && unit.owner == currentPlayer.nation)
-				gameObj.loadBoatsFlg = true;
 			//			if (cleanDice)
 			//				unit.dice = [];
 			if (unit.def > 0)
@@ -547,7 +550,7 @@ function getCurrentPlayer(gameObj) {
 		return null;
 
 
-	return gameObj.players[gameObj.turnId-1]; // this??
+	return gameObj.players[gameObj.turnId - 1]; // this??
 
 	var turnId = gameObj.turnId;
 	var player = gameObj.players[0];
@@ -1340,6 +1343,8 @@ function getDisplayQueueFromQueue(terr, gameObj) {
 }
 
 function updateAdvisorInfo(terr, currentPlayer, user, gameObj, superpowers, optionType) {
+	if(!currentPlayer)
+		return '';
 	var strategyHint = '';
 	if (currentPlayer.status == 'Purchase' && terr.treatyStatus == 4 && user.rank <= 3) {
 		strategyHint = "Time to build troops. Buy your desired units, close this panel and then press 'Purchase Complete'.";

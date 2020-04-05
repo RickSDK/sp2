@@ -25,8 +25,10 @@ export class GameViewComponent extends BaseComponent implements OnInit {
     this.closeModal('#gamePlayersPopup');
     displayFixedPopup('computerTakeTurnPopup');
   }  
-  reportBug() {
-    this.showAlertPopup('no coded yet.', 1);
-    //$('#gamePlayersPopup').modal('hide');
+  reportBug(id) {
+    this.showAlertPopup('not coded yet.', 1);
+    $('#gamePlayersPopup').modal('hide');
+//    $(id).show(null, null, null, this.user, null);
+//    $('#chatPopup').modal('show');
   }
 }

@@ -1385,6 +1385,23 @@ h2 {
   background-color: yellow;
   color: black;
 }
+.glowYellow {
+	background-color: #ff0;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
+	border: 1px solid black;
+	color: #FFFFFF;
+	cursor: pointer;
+	display: inline-block;
+	font-size: 16px;
+	padding: 5px 10px;
+	text-align: center;
+	text-decoration: none;
+	-webkit-animation: glowingYellow 1500ms infinite;
+	-moz-animation: glowingYellow 1500ms infinite;
+	-o-animation: glowingYellow 1500ms infinite;
+	animation: glowingYellow 1500ms infinite;
+  }
 .shadowed {
     -webkit-filter: drop-shadow(12px 12px 12px rgba(0,0,0,1));
     -ms-filter: "progid:DXImageTransform.Microsoft.Dropshadow(OffX=12, OffY=12, Color='#000')";
@@ -1524,6 +1541,30 @@ h2 {
   100% { background-color: #0000B2; box-shadow: 0 0 3px #0000B2; }
 }
 
+
+@-webkit-keyframes glowingYellow {
+	0% { background-color: #B2B200; -webkit-box-shadow: 0 0 3px #B2B200; }
+	50% { background-color: #FFFF00; -webkit-box-shadow: 0 0 40px #FFFF00; }
+	100% { background-color: #B2B200; -webkit-box-shadow: 0 0 3px #B2B200; }
+  }
+  
+  @-moz-keyframes glowingYellow {
+	0% { background-color: #B2B200; -moz-box-shadow: 0 0 3px #B2B200; }
+	50% { background-color: #FFFF00; -moz-box-shadow: 0 0 40px #FFFF00; }
+	100% { background-color: #B2B200; -moz-box-shadow: 0 0 3px #B2B200; }
+  }
+  
+  @-o-keyframes glowingYellow {
+	0% { background-color: #B2B200; box-shadow: 0 0 3px #B2B200; }
+	50% { background-color: #FFFF00; box-shadow: 0 0 40px #FFFF00; }
+	100% { background-color: #B2B200; box-shadow: 0 0 3px #B2B200; }
+  }
+  
+  @keyframes glowingYellow {
+	0% { background-color: #B2B200; box-shadow: 0 0 3px #B2B200; }
+	50% { background-color: #FFFF00; box-shadow: 0 0 40px #FFFF00; }
+	100% { background-color: #B2B200; box-shadow: 0 0 3px #B2B200; }
+  }
 
 @media screen and (orientation:portrait) {
 	#rotatePopup {

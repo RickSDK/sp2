@@ -13,10 +13,10 @@
                 <section>
                     <div class="btn-group">
                         <button (click)="changeIdx(0)" id="logType1" type="button" class="btn btn-default roundButton"
-                            [ngClass]="ngClassSegment(segmentIdx,0)"><i class="fa fa-list-ol"></i> Turn</button>
+                            [ngClass]="ngClassSegment(segmentIdx,0)"><i class="fa fa-list-ol"></i> Round</button>
                         <button (click)="changeIdx(1)" id="logType2" type="button" class="btn btn-default roundButton"
                             [ngClass]="ngClassSegment(segmentIdx,1)"><i class="fa fa-globe"></i> Nation</button>
-                        <button (click)="changeIdx(2)" id="logType3" type="button" class="btn btn-default roundButton"
+                        <button *ngIf="0" (click)="changeIdx(2)" id="logType3" type="button" class="btn btn-default roundButton"
                             [ngClass]="ngClassSegment(segmentIdx,2)"><i class="fa fa-pencil"></i> Notes</button>
                     </div>
                 </section>
@@ -26,7 +26,7 @@
                     <button [disabled]="logRound<=1" (click)="changeLogRound(-1)" type="button"
                         class="btn btn-primary roundButton" style="width: 80px;"><i
                             class="fa fa-arrow-left"></i></button>
-                    <span class="blueBg">{{logRound}} <span style="font-size: 12px;">of {{gameObj.round}}</span></span>
+                    <span style="font-size: 24px; color: white; font-weight: 700;">{{logRound}}</span> <span style="font-size: 10px; color: white;">of {{gameObj.round}}</span>
                     <button [disabled]="logRound>=gameObj.round" (click)="changeLogRound(1)" type="button"
                         class="btn btn-primary roundButton" style="width: 80px;"><i
                             class="fa fa-arrow-right"></i></button>
@@ -156,15 +156,6 @@
                         </td>
                     </tr>
                 </table>
-
-
-
-
-
-
-
-
-
 
             </div>
             <!--modal body-->

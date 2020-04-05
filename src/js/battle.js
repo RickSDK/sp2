@@ -36,6 +36,7 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
         militaryObj: {},
         battleDetails: '',
         cruiseFlg: cruiseFlg,
+        seaBattleFlg: (selectedTerritory.nation==99),
         terrX: selectedTerritory.x,
         terrY: selectedTerritory.y,
         bonusUnitsFlg: (selectedTerritory.owner == 0 && selectedTerritory.nation < 99)
@@ -232,6 +233,8 @@ function getBattleAnalysis(battle, selectedTerritory, player, gameObj) {
 
 
         var numAtt = unit.numAtt || 1;
+        if (isArtillery(unit) && selectedTerritory.nation == 99)
+            numAtt = 3;
         attStrength += unit.att * numAtt;
         if (battle.cruiseFlg) {
             if (unit.piece == 39)
@@ -320,7 +323,12 @@ function getBattleAnalysis(battle, selectedTerritory, player, gameObj) {
             battleMessage = 'You have lost.';
 
         if (groundUnits == 0 && numDefUnits == 0)
-            endPhrase = ' No ground units to secure the territory.'
+            endPhrase = ' No ground units to secure the territory.';
+
+        if (groundUnits == 0 && numDefUnits == 0 && selectedTerritory.nation == 99) {
+            wonFlg = true;
+            endPhrase = '';
+        }
 
         if (numAttUnits > 0 && airunits == numAttUnits && numDefSubs == numDefUnits) {
             endPhrase = ' Remaining subs dove to avoid attacks.'
@@ -503,6 +511,7 @@ function rollAttackDice(battle, stratFlg = false) {
     battle.attHits = 0;
     battle.attTargets = [];
     specialUnitsFire(battle);
+    console.log('xxx', battle);
     battle.attackUnits.forEach(unit => {
         if (unit.dead)
             return;
@@ -511,7 +520,10 @@ function rollAttackDice(battle, stratFlg = false) {
             unit.cargoOf = 0;
         unit.dice = [];
         var unitHits = 0;
-        for (var x = 0; x < unit.numAtt; x++) {
+        var numAtt = unit.numAtt;
+        if (isArtillery(unit) && battle.seaBattleFlg)
+            numAtt = 3;
+        for (var x = 0; x < numAtt; x++) {
             var diceRoll = Math.floor((Math.random() * 6) + 1);
             if (diceRoll <= unit.att) {
                 unit.dice.push('diceh' + diceRoll + '.png');
@@ -521,20 +533,19 @@ function rollAttackDice(battle, stratFlg = false) {
                     unitHits++;
                 if (unit.piece == 5 || unit.piece == 21 || unit.piece == 47)
                     unitGetsInstantKill(unit, battle);
-                 else
+                else
                     battle.attTargets.push(unit.target);
             }
             else
                 unit.dice.push('dice' + diceRoll + '.png');
         }
         battle.attHits += unitHits;
-        if(unit.piece==43 && battle.numDefDroneKillers > 0) {
+        if (unit.piece == 43 && battle.numDefDroneKillers > 0) {
             battle.numDefDroneKillers--;
             unit.dead = true; // kill drone
             battle.attCasualties.push(43);
         }
     });
-    console.log('targetDroneFlg', battle);
 }
 
 function specialUnitsFire(battle) {

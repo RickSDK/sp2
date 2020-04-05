@@ -14,6 +14,8 @@ declare var getPostDataFromObj: any;
 declare var verifyServerResponse: any;
 declare var closePopup: any;
 declare var numberVal: any;
+declare var databaseSafeValueOfInput: any;
+declare var playSound: any;
 
 @Component({
   selector: 'app-base',
@@ -143,13 +145,22 @@ export class BaseComponent implements OnInit {
   displaySPPopup(id: string) {
     displayFixedPopup(id);
   }
+  displayFixedPopup(id: string, flg=false) {
+    displayFixedPopup(id, flg);
+  }
   closePopup(id: string) {
     closePopup(id);
   }
   showAlertPopup(msg: string, num = 0) {
     showAlertPopup(msg, num);
   }
-  numberVal(val:any) {
+  numberVal(val: any) {
     return numberVal(val);
+  }
+  databaseSafeValueOfInput(id: string) {
+    return databaseSafeValueOfInput(id);
+  }
+  playSound(id: string) {
+    playSound(id);
   }
 }

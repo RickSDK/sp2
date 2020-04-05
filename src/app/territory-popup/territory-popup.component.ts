@@ -252,7 +252,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     }
     if (this.optionType == 'attack') {
       var attackUnits = getSelectedUnits(this.moveTerr);
-      if (verifyUnitsAreLegal(attackUnits)) {
+      if (verifyUnitsAreLegal(attackUnits, this.selectedTerritory)) {
         this.displayBattle = initializeBattle(this.currentPlayer, this.selectedTerritory, attackUnits, this.gameObj);
         this.optionType = 'battle';
         playSoundForPiece(this.displayBattle.militaryObj.pieceId, this.superpowersData);

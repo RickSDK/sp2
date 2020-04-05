@@ -11,15 +11,27 @@
                 <span style=" color: white;">Multiplayer</span>
             </div>
         </a>
+        <div class="darkBlueBg">
+            <button (click)="userPopup.show()" type="button" class="btn btn-secondary roundButton">
+                <i class="fa fa-user"></i> {{user.userName}}
+            </button>
+            <button (click)="userPopup.show()" type="button" class="btn btn-secondary roundButton">
+                <i class="fa fa-envelope"></i> Mail
+            </button>
+            <button (click)="userPopup.show()" type="button" class="btn btn-secondary roundButton">
+                <i class="fa fa-commenting"></i> Forum
+            </button>
+            <button (click)="loadGames()" type="button" class="btn btn-secondary roundButton">
+                <i class="fa fa-refresh"></i>
+            </button>
+        </div>
 
         <div *ngIf="loadingFlg" style="font-size: 24px;"><i class="fa fa-spinner fa-spin"></i>&nbsp; Working...</div>
 
         <div *ngIf="!loadingFlg">
 
+
             <div class="mediumBlueBg" style="text-align: center; white-space: nowrap; overflow: hidden;">
-                <button (click)="userPopup.show()" type="button" class="btn btn-secondary roundButton">
-                    <i class="fa fa-user"></i> {{user.userName}}
-                </button>
                 <button (click)="filterGames(1)" [disabled]="buttonIdx==1" type="button"
                     class="btn btn-success roundButton">
                     <i class="fa fa-arrow-down" style="font-size: 32px;"></i><br>
@@ -87,7 +99,32 @@
                 </span>
             </div>
 
-            <div style="text-align: center; padding-bottom: 5px; background-color: #ccc;">
+            <div>
+                <table width="100%">
+                    <tr style="background-color: #000; color: white; height: 40px; border-bottom: 1px solid gray; ">
+                        <td style="text-align: left; padding-left: 5px;">
+                            <font color=gray><i class="fa fa-comment"></i> Latest Chat:</font> {{multiPlayerObj.chatMsg}}
+                        </td>
+                        <td>
+                            <button (click)="chatPopup.show(null, null, null, user, null)"
+                            style="float: right; padding-right: 8px;" type="button" class="btn btn-primary roundButton"><i class="fa fa-comment"></i>
+                                Chat</button>
+                        </td>
+                    </tr>
+                    <!--<tr *ngIf="0" style="background-color: #000; color: white; height: 40px;" ng-show="multiPlayerObj.newsMsg.length>0">
+                    <td style="text-align: left; padding-left: 5px;">
+                        <font color=gray><i class="fa fa-newspaper-o"></i> Latest News:</font> multiPlayerObj.newsMsg</td>
+                    <td>
+                        <button ng-click="gotoSPPage('news')" type="button" class="btn btn-default roundButton right"><i class="fa fa-newspaper-o"></i> News</button>
+                    </td>
+                    </tr>-->
+                </table>
+            </div>
+            <div style="background-color: #007; text-align: center; padding: 3px; color: white; font-size: 20px; font-weight: 700;"
+                class="gradient">Games</div>
+
+
+            <div class="mediumBlueBg" style="text-align: center; padding-bottom: 5px;">
                 <div class="btn-group">
                     <button (click)="filterGames(0)" type="button" class="btn btn-default roundButton"
                         [ngClass]="ngClassSegment(buttonIdx,0)" style="min-width: 60px;">
@@ -264,7 +301,10 @@
 
                 </div>
                 <!----end card-->
-
+            </div>
+            <div class="darkBlueBg" style="color: #ccc;">
+                Newest User: <span style="color: yellow;">{{multiPlayerObj.lastestUser}}</span>&nbsp;&nbsp;&nbsp;
+                Users Online: <span style="color: white;">{{multiPlayerObj.usersOnline}}</span>
             </div>
         </div>
     </div>
@@ -281,10 +321,11 @@
         <div *ngIf="!selectedGame.auto_assign_flg">
             <div style="border: 1px solid black;">
                 <div>Nations Available: </div>
-                <img *ngFor="let nation of availableNations"
-                    src="assets/graphics/images/flag{{nation}}.gif" height=20></div>
-            <div>Choose one: <button (click)="cycleNationsButtonPressed()" type="button" class="btn btn-light roundButton"><img
-                        src="assets/graphics/images/flag{{selectedNation}}.gif" height=50></button></div>
+                <img *ngFor="let nation of availableNations" src="assets/graphics/images/flag{{nation}}.gif" height=20>
+            </div>
+            <div>Choose one: <button (click)="cycleNationsButtonPressed()" type="button"
+                    class="btn btn-light roundButton"><img src="assets/graphics/images/flag{{selectedNation}}.gif"
+                        height=50></button></div>
         </div>
         <button onClick="closePopup('joinConfirmationPopup')" type="button" class="btn btn-danger roundButton"><i
                 class="fa fa-times"></i> Cancel</button>
@@ -299,3 +340,4 @@
 <app-create-game-popup #createGamePopup [user]="user" (messageEvent)="refreshGames($event)"></app-create-game-popup>
 <app-game-standings #gameStandingsPopup [user]="user"></app-game-standings>
 <app-matchmaking-standings #matchmakerStandingsPopup [user]="user"></app-matchmaking-standings>
+<app-chat-popup #chatPopup></app-chat-popup>

@@ -134,8 +134,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public isMobileFlg = true;
 	public spriteInMotionFlg = false;
 	public spritePieceId = 2;
+	public spriteShipId = 4;
 	public technologyPurchases = [];
-	public spriteObj: any;
+	//	public spriteObj: any;
 	public carrierAddedFlg = false;
 	public adminModeFlg = false;
 	public showPanelsFlg = true;
@@ -175,8 +176,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	//----------------load board------------------
 	initBoard() {
 		this.gameMusic.loop = true;
-		this.gameMusic.volume=0.5;
-		if(isMusicOn())
+		this.gameMusic.volume = 0.5;
+		if (isMusicOn())
 			this.gameMusic.play();
 		var loadGameId = numberVal(localStorage.loadGameId);
 		var currentGameId = numberVal(localStorage.currentGameId);
@@ -248,7 +249,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		var e = document.getElementById('terr1');
 		if (e) {
 			this.yourPlayer = getYourPlayer(this.gameObj, this.user.userName);
-			console.log('yourPlayer', this.yourPlayer);
+			console.log('yourPlayer', this.yourPlayer, this.currentPlayer);
 			refreshAllTerritories(this.gameObj, this.yourPlayer, this.superpowersData, this.yourPlayer)
 			refreshBoard(this.gameObj.territories);
 			var left = window.innerWidth - 55;
@@ -293,17 +294,21 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		//#####################################################################
 		//#####################################################################
 		//-------------------- test
-		//this.gameObj.turnId = 3; //<--- test
+		if (0) {
+			this.gameObj.turnId = 4; //<--- test
+			this.haltActionFlg = true;
+		}
+
 		this.haltPurchaseFlg = false;
 		this.haltCombatActionFlg = false;
-		this.haltActionFlg = false;
+
 		//--------------------end test
 		this.currentPlayer = getCurrentPlayer(this.gameObj);
 		this.gameObj.currentNation = this.currentPlayer.nation;
 		this.gameObj.actionButtonMessage = '';
 		this.currentPlayer.cpuFlg = this.currentPlayer.cpu;
 
-		console.log('========' + this.superpowersData.superpowers[this.currentPlayer.nation] + '======');
+		console.log('========cp: ' + this.superpowersData.superpowers[this.currentPlayer.nation] + '======');
 		if (!this.currentPlayer.news)
 			this.currentPlayer.news = [];
 		if (!this.currentPlayer.botRequests)
@@ -362,11 +367,11 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.ableToTakeThisTurn)
 			this.displayMilitaryAdvisorMessage();
 		else {
-//			if(this.gameObj.multiPlayerFlg)
-//			playVoiceClip('nation'+this.currentPlayer.nation+'.mp3');
+			//			if(this.gameObj.multiPlayerFlg)
+			//			playVoiceClip('nation'+this.currentPlayer.nation+'.mp3');
 			this.initializePlayer();
 		}
-			
+
 	}
 	findTargets() {
 		var territories = [];
@@ -486,7 +491,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.initializePlayer();
 	}
 	initializePlayer() {
-		playVoiceClip('nation'+this.currentPlayer.nation+'.mp3');
+		playVoiceClip('nation' + this.currentPlayer.nation + '.mp3');
 		this.showControls = !this.currentPlayer.cpu;
 		if (this.currentPlayer.status == 'Waiting' || this.currentPlayer.status == 'Purchase')
 			this.initializePlayerForPurchase();
@@ -937,7 +942,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		if (this.gameObj.round != 6 && this.currentPlayer.nation != 4) {
 			var obj = findAmphibiousAttacks(this.gameObj, this.currentPlayer, true);
-			console.log('hey', obj);
 			if (obj && obj.attackUnits.length > 0) {
 				this.doThisBattle(obj);
 				if (obj && obj.ampFlg) {
@@ -1045,7 +1049,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		popup.show(terr, currentPlayer, gameObj, ableToTakeThisTurn, user, this.yourPlayer);
 	}
 	musicUpdated($event) {
-		if(isMusicOn()) {
+		if (isMusicOn()) {
 			this.gameMusic.play();
 		} else {
 			this.gameMusic.pause();
@@ -1187,22 +1191,49 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			refreshTerritory(terr2, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 		}, 1000);
 	}
+	getFreeSprite() {
+		var name = 'spriteInf1';
+		for (var x = 1; x <= 5; x++) {
+			name = 'spriteInf' + x;
+			var e = document.getElementById(name);
+			if (e && e.style.display == 'none')
+				return name;
+		}
+		return name;
+	}
 	moveSpriteBetweenTerrs(obj: any) {
 		// {t1: t1, t2: t2, id: id}
 		var terr = this.gameObj.territories[obj.t1 - 1];
 		var t2 = this.gameObj.territories[obj.t2 - 1];
-		this.spriteObj = { top1: terr.y, left1: terr.x, top2: t2.y, left2: t2.x };
-		this.spriteInMotionFlg = true;
+		var spriteObj = { top1: terr.y, left1: terr.x, top2: t2.y, left2: t2.x, name: 'sprite' };
+		//		this.spriteInMotionFlg = true;
 		this.spritePieceId = obj.id;
 		if (obj.id <= 52)
 			playSoundForPiece(obj.id, this.superpowersData);
-		var e = document.getElementById('sprite');
+
+		if (obj.id == 4 || obj.id == 5 || obj.id == 8 || obj.id == 9 || obj.id == 12 || obj.id == 27 || obj.id == 39 || obj.id == 45 || obj.id == 49) {
+			this.spriteShipId = obj.id;
+			spriteObj.name = 'spriteShip';
+		}
+			
+		if (obj.id == 14)
+			spriteObj.name = 'sprite14';
+		if (obj.id == 144)
+			spriteObj.name = 'sprite144';
+		if (obj.id == 7)
+			spriteObj.name = 'sprite7';
+		if (obj.id == 2)
+			spriteObj.name = this.getFreeSprite();
+
+		var e = document.getElementById(spriteObj.name);
 		if (e) {
+			if (e.style.display == 'block')
+				return;
 			e.style.display = 'block';
 			e.style.left = (terr.x - 10).toString() + 'px';
 			e.style.top = (terr.y + 80).toString() + 'px';
 			e.style.height = '30px';
-			this.moveSprite(100);
+			this.moveSprite(100, spriteObj);
 		}
 		if (obj.nukeFlg) {
 			setTimeout(() => {
@@ -1220,6 +1251,28 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			}, 1200);
 		}
 
+	}
+	moveSprite(amount: number, spriteObj: any) {
+		amount -= 1;
+		var range = spriteObj.left1 - spriteObj.left2;
+		var left = spriteObj.left2 + range * amount / 100;
+
+		var range2 = spriteObj.top1 - spriteObj.top2;
+		var top = spriteObj.top2 + range2 * amount / 100;
+
+		var e = document.getElementById(spriteObj.name);
+		if (e) {
+			e.style.left = (left - 10).toString() + 'px';
+			e.style.top = (top + 80).toString() + 'px';
+			if (amount <= 0) {
+				//				this.spriteInMotionFlg = false;
+				e.style.display = 'none';
+			} else {
+				setTimeout(() => {
+					this.moveSprite(amount, spriteObj);
+				}, 10);
+			}
+		}
 	}
 	positionNuke(t2: any, cruiseFlg: boolean) {
 		this.nukeFrameNum = 1;
@@ -1252,28 +1305,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		setTimeout(() => {
 			this.annimateNuke(num + 1);
 		}, 160);
-	}
-	moveSprite(amount: number) {
-		amount -= 1;
-		var range = this.spriteObj.left1 - this.spriteObj.left2;
-		var left = this.spriteObj.left2 + range * amount / 100;
-
-		var range2 = this.spriteObj.top1 - this.spriteObj.top2;
-		var top = this.spriteObj.top2 + range2 * amount / 100;
-
-		var e = document.getElementById('sprite');
-		if (e) {
-			e.style.left = (left - 10).toString() + 'px';
-			e.style.top = (top + 80).toString() + 'px';
-			if (amount <= 0) {
-				this.spriteInMotionFlg = false;
-				e.style.display = 'none';
-			} else {
-				setTimeout(() => {
-					this.moveSprite(amount);
-				}, 10);
-			}
-		}
 	}
 	annimateUnit(piece: number, terr: any) {
 		playSound('Swoosh.mp3', 0, false);

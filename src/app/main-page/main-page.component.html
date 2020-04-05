@@ -11,7 +11,8 @@
 				<img (click)="singlePlayerGame(startGamePopup)" class="shadowed"
 					src="assets/graphics/buttons/singleButton.png" height="220" style="cursor: pointer;">
 
-				<div *ngIf="singleGameId>0" style="color: #337ab7; margin-top: -20px; z-index: 100; font-size: 12px;"><b>Game in Progress!</b></div>
+				<div *ngIf="singleGameId>0" style="color: #337ab7; margin-top: -15px; z-index: 100; font-size: 12px;">
+					<b>Game in Progress!</b></div>
 
 				<button *ngIf="0" (click)="multiplayGameClicked(loginPopup)" type="button"
 					class="btn btn-primary circleButton"
@@ -60,14 +61,59 @@
 				<img (click)="multiplayGameClicked(loginPopup)" class="shadowed"
 					src="assets/graphics/buttons/multiButton.png" height="220" style="cursor: pointer;">
 
-
-				<button *ngIf="0" (click)="singlePlayerGame(startGamePopup)" type="button"
-					class="btn btn-primary circleButton"
-					style="width: 180px; height: 180px; background-image: url('assets/graphics/buttons/singlePlayer.png'); background-position: center; background-size: cover;">
-				</button>
-
+				<div *ngIf="user && user.gamesTurn > 0"
+					style="color: #337ab7; margin-top: -15px; z-index: 100; font-size: 12px;"><b>Your turn in
+						{{user.gamesTurn}} games!</b>
+				</div>
 
 			</div>
+		</div>
+	</div>
+</div>
+
+<!-------popups------------------>
+<div class="popupScreenNoPad" style="width: 280px; z-index: 5;" id="initPopup"
+	onClick="closePopup('initPopup')">
+	<div style="background-color: #337ab7; color: white; text-align: center;">Superpowers Game Master
+		<button type="button" class="btn btn-secondary roundButton"><i class="fa fa-times"></i></button>
+	</div>
+	<div style="padding: 5px;" *ngIf="user">
+		<img src="assets/graphics/advisors/leader.png" height=170>
+		<div *ngIf="user.rank < 2">
+			Welcome newbie! Want to take over the world? Yes, of course you do! Your first step will be to win a single
+			player game.
+		</div>
+		<div *ngIf="user.rank==2">Nice work! Now you are ready for multi-player!</div>
+		<div *ngIf="user.gamesTurn>0">It's your turn in {{user.gamesTurn}} of the multi-player games!</div>
+		<div *ngIf="user.newGameCount>0">New multiplayer game has started!</div>
+		<div *ngIf="user.endGameCount>0">One of your multi-player Games has ended!</div>
+
+		<div *ngIf="user.newRankFlg">
+			<img src="assets/graphics/misc/crowdCheer.jpg" width="100%">
+			<table width=95%>
+				<tr>
+					<td><img src="assets/graphics/misc/trophy.png" width="75"></td>
+					<td>
+						<div>You have been promoted!</div>
+					</td>
+					<td><img src="assets/graphics/ranks/rank{{user.rank}}.png"
+							style="max-width: 75px; max-height: 100px;">
+						<div style="font-size: 12px; font-weight: 700;">{{superpowersData.ranks[user.rank].name}}</div>
+					</td>
+				</tr>
+			</table>
+			<div class="borderClass2"> Next Rank: <img src="assets/graphics/ranks/rank{{user.rank+1}}.png" height="22">
+				{{superpowersData.ranks[user.rank+1].name}}
+				<div style="font-size: 12px;">{{superpowersData.ranks[user.rank+1].desc}}</div>
+			</div>
+		</div>
+
+		<div *ngIf="user.newEmpFlg">
+			<img class="shadowed" src="assets/graphics/units/emp.png" title="Matchmaking" height="200">
+			<div>You have earned a new EMP! These can be used in matchmaking games only. Check out the units page to see
+				how they work.</div>
+		</div>
+		<div><button type="button" class="btn btn-primary roundButton medium">Got it!</button>
 		</div>
 	</div>
 </div>

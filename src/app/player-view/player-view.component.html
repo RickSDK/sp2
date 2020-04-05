@@ -1,9 +1,4 @@
-<div *ngIf="gameObj && gameObj.allowAlliances && gameObj.multiPlayerFlg && gameObj.top1.length>0 && gameObj.type != 'barbarian'"
-    style="background-color: #ace;">Team-balancing enforced. Top 2 players:
-    <img src="assets/graphics/images/flag{{gameObj.top1Nation}}.gif" height=15>
-    <b>{{gameObj.top1}}</b> and <img src="assets/graphics/images/flag{{gameObj.top2Nation}}.gif" height=15>
-    <b>{{gameObj.top2}}</b> cannot be allies with each other in this game.
-</div>
+
 <div *ngIf="gameObj && gameObj.gameOver" style="background-color: #ace; color: #700; padding: 2px;">
     {{gameObj.finalMessage}}</div>
 
@@ -18,9 +13,9 @@
     </div>
 </div>
 
-<div class="spCard">
+<div *ngIf="gameObj && segmentIdx==0" class="spCard">
     <div>
-        <table class="spTable" *ngIf="gameObj && segmentIdx==0">
+        <table class="spTable">
             <tr>
                 <th class="centerText">Nation</th>
                 <th class="centerText">Player</th>
@@ -82,9 +77,9 @@
     </div>
 </div>
 
-<div class="spCard">
+<div *ngIf="gameObj && segmentIdx==1" class="spCard">
     <div>
-        <table class="spTable" *ngIf="gameObj && segmentIdx==1">
+        <table class="spTable">
             <tr>
                 <th valign=top class="centerText" style="font-size: 12px;">Nation</th>
                 <th class="centerText" valign=top class="centerText">Player</th>
@@ -141,9 +136,9 @@
     </div>
 </div>
 
-<div class="spCard">
+<div *ngIf="segmentIdx==2" class="spCard">
     <div>
-        <table class="spTable" *ngIf="segmentIdx==2 && gameObj && gameObj.territories && gameObj.territories.length>0">
+        <table class="spTable" && gameObj && gameObj.territories && gameObj.territories.length>0">
             <tr>
                 <th valign=top class="centerText">Nation</th>
                 <th valign=top class="centerText">Player</th>
@@ -184,10 +179,10 @@
     </div>
 </div>
 
-<div class="borderClass2" *ngIf="segmentIdx==0">
+<div *ngIf="segmentIdx==0" class="borderClass2">
     <div><b>Inc</b>: Income, <b>K</b>: Kills, <b>D</b>: Deaths, <b>K/D</b>: Kill to Death ratio</div>
 </div>
-<div class="borderClass2" *ngIf="segmentIdx==1">
+<div *ngIf="segmentIdx==1" class="borderClass2">
     <b>Ways to increase income:</b><br>
     <font color=green> +10 for each complete superpower</font><br>
     <font color=green> +10 for each Capital</font><br>
@@ -199,7 +194,7 @@
     <font color=red> <img src="assets/graphics/units/piece103.gif" height=15> -5 per bombed factory
     </font><br>
 </div>
-<div class="borderClass2" *ngIf="segmentIdx==2">
+<div *ngIf="segmentIdx==2" class="borderClass2">
     <div><b>Base</b>: This is the main base for the bot, which is generally well foritified and
         contains hero units.</div>
     <div><b>Fortify</b>: This is an identified front line defensive position. Bots will try to
@@ -208,4 +203,12 @@
         primary target for attacking.</div>
     <div><b>Secondary Target</b>: In case there is no Primary Target, bots will advance toward a
         secondary target.</div>
+</div>
+
+<div *ngIf="gameObj && gameObj.allowAlliances && gameObj.multiPlayerFlg && gameObj.top1.length>0 && gameObj.type != 'barbarian'"
+    class="borderClass3">
+    <div>Team-balancing enforced. Top 2 players cannot be allies with each other in this game:</div>
+    <img src="assets/graphics/images/flag{{gameObj.top1Nation}}.gif" height=15>
+    <b>{{gameObj.top1}}</b> and <img src="assets/graphics/images/flag{{gameObj.top2Nation}}.gif" height=15>
+    <b>{{gameObj.top2}}</b>
 </div>

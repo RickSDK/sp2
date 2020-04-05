@@ -16,10 +16,15 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
         return false;
     if (unit.mv == 0)
         return false;
-    if (optionType == 'attack' && unit.subType == 'missile')
-        return false;
-    if (optionType == 'attack' && unit.type == 1 && toTerr.nation == 99)
-        return false;
+    if (optionType == 'attack') {
+        if (unit.subType == 'missile')
+            return false;
+        if (isArtillery(unit) && toTerr.nation == 99 && distObj.air == 1) {
+            return true;
+        }
+        if (unit.type == 1 && toTerr.nation == 99)
+            return false;
+    }
     if (optionType == 'nuke' && unit.subType != 'missile')
         return false;
     if (optionType == 'bomb' && unit.piece != 7)
@@ -405,10 +410,10 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
                             e.checked = false;
                         }
                     }
- //                   if (unit.piece == 28 && optionType == 'attack' && unit.terr >= 79) {
- //                       showAlertPopup('Medics cannot attack from transports.', 1);
-  //                      e.checked = false;
-  //                  }
+                    //                   if (unit.piece == 28 && optionType == 'attack' && unit.terr >= 79) {
+                    //                       showAlertPopup('Medics cannot attack from transports.', 1);
+                    //                      e.checked = false;
+                    //                  }
                     if (unit.type == 1 && unit.returnFlg && optionType == 'attack' && unit.terr >= 79) {
                         showAlertPopup(unit.name + ' cannot attack from transports.', 1);
                         e.checked = false;
@@ -569,7 +574,7 @@ function getSelectedUnits(moveTerr) {
     });
     return units;
 }
-function verifyUnitsAreLegal(units) {
+function verifyUnitsAreLegal(units, terr) {
     if (units.length == 0) {
         showAlertPopup('No units selected!', 1);
         return false;
@@ -583,7 +588,7 @@ function verifyUnitsAreLegal(units) {
             if (unit.type == 1)
                 spotters++;
     });
-    if (artillery > spotters) {
+    if (artillery > spotters && terr.nation < 99) {
         showAlertPopup('You need ' + (artillery - spotters) + ' more infantry or spotters for your artillery!', 1);
         return false;
     }

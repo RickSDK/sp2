@@ -40,6 +40,7 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
   public availableNations = [];
   public selectedNation = 1;
   public teamName: string;
+  public multiPlayerObj:any;
 
   constructor(private router: Router) { super(); }
 
@@ -58,7 +59,7 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
   }
 
   loadGames() {
-
+    this.loadingFlg = true;
     this.fullGameList = [];
     const url = this.getHostname() + "/web_games3.php";
     const postData = this.getPostDataFromObj({ user_login: this.user.userName, code: this.user.code, version: 'none' });
@@ -70,36 +71,27 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
           var fullGameList = [];
           var items = data.split("<b>");
           var basics = items[0];
-          var c = basics.split('|');
-          var multiPlayerObj = getMultObjFromLine(basics);
-          var newGame = c[11];
-          var oldGame = c[12];
-          var gameResult = c[13];
-          var minutes = c[14];
-          console.log('basics', basics, multiPlayerObj);
-          /*
-                    if (oldGame.length > 0) {
-                      if (gameResult == 'Win')
-                        playSound('Cheer.mp3', 0, $scope.muteSound);
-                      else
-                        playSound('CrowdBoo.mp3', 0, $scope.muteSound);
-                      displayFixedPopup('newGamePopup');
-                      $scope.newGame = false;
-                      $scope.gameName = oldGame;
-                      $scope.gameResult = gameResult;
-                    } else if (newGame.length > 0) {
-                      playSound('tada.mp3', 0, $scope.muteSound);
-                      displayFixedPopup('newGamePopup');
-                      $scope.gameName = newGame;
-                      $scope.newGame = true;
-                    }*/
+          this.multiPlayerObj = getMultObjFromLine(basics);
+          console.log(this.multiPlayerObj);
+
+          if (this.multiPlayerObj.oldGame.length > 0) {
+            if (this.multiPlayerObj.gameResult == 'Win')
+              this.playSound('Cheer.mp3');
+            else
+              this.playSound('CrowdBoo.mp3');
+            this.displayFixedPopup('newGamePopup');
+          } else if (this.multiPlayerObj.newGame.length > 0) {
+            this.playSound('tada.mp3');
+            this.displayFixedPopup('newGamePopup');
+          }
           var games = items[1].split("<a>");
+          this.multiPlayerObj.usersOnline=items[2];
           for (var x = 0; x < games.length; x++) {
             var game = games[x];
             if (game.length > 10) {
               var gameOb = gameFromLine(game, this.user.userName);
               fullGameList.push(gameOb);
-              //             console.log(gameOb);
+              //console.log(gameOb);
             }
           } // <-- for
           this.fullGameList = fullGameList;
@@ -163,16 +155,16 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
     this.gameList = gameList;
   }
   ngClassGameButton(game: any) {
-    if (game.mmFlg)
-      return 'btn btn-info roundButton';
     if (game.turn == this.user.userName)
-      return 'btn btn-warning roundButton';
+      return 'btn btn-warning roundButton glowYellow';
     if (game.status == 'Open')
       return 'btn btn-success roundButton';
     if (game.status == 'Complete')
       return 'btn btn-secondary roundButton';
     if (game.status == 'Playing')
       return 'btn btn-primary roundButton';
+    if (game.mmFlg)
+      return 'btn btn-info roundButton';
   }
   ngClassGame(game) {
     if (game.mmFlg)

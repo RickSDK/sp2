@@ -1,10 +1,4 @@
-<div *ngIf="gameObj.allowAlliances && gameObj.multiPlayerFlg && gameObj.top1.length>0 && gameObj.type != 'barbarian'" style="background-color: #ace;">
-    Team-balancing enforced. Top 2 players:
-    <img src="assets/graphics/images/flag{{gameObj.top1Nation}}.gif" height=15> <b>{{gameObj.top1}}</b>
-    and
-    <img src="assets/graphics/images/flag{{gameObj.top2Nation}}.gif" height=15> <b>{{gameObj.top2}}</b>
-    cannot be allies with each other in this game.
-</div>
+
 
 <table align="center">
     <tr>
@@ -184,4 +178,12 @@
             </tr>
         </table>
     </div>
+</div>
+
+<div *ngIf="gameObj && gameObj.allowAlliances && gameObj.multiPlayerFlg && gameObj.top1.length>0 && gameObj.type != 'barbarian'"
+    class="borderClass3">
+    <div>Team-balancing enforced. Top 2 players cannot be allies with each other in this game:</div>
+    <img src="assets/graphics/images/flag{{gameObj.top1Nation}}.gif" height=15>
+    <b>{{gameObj.top1}}</b> and <img src="assets/graphics/images/flag{{gameObj.top2Nation}}.gif" height=15>
+    <b>{{gameObj.top2}}</b>
 </div>

@@ -91,8 +91,8 @@ function databaseSafeValueOfInput(id) {
 	var e = document.getElementById(id);
 	if (e)
 		return databaseSafe(e.value);
-	else
-		alert('error, no field: ' + id);
+//	else
+//		alert('error, no field: ' + id);
 }
 function getCheckedValueOfField(id) {
 	var e = document.getElementById(id);

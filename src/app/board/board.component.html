@@ -38,8 +38,9 @@
 <!---top bar--->
 <section *ngIf="currentPlayer" class="gradient"
 	style="z-index: 201; text-align: center; position: fixed; width: 100%; top: 0px; height: 44px; background-color: #ccc; box-shadow: 2px 2px 3px #000; max-height: 44px; line-height: 1.5em; overflow: hidden;">
-	<button (click)="exitButtonPressed()" type="button" class="btn btn-secondary roundButton"><i class="fa fa-arrow-left"></i>
-			Exit</button>
+	<button (click)="exitButtonPressed()" type="button" class="btn btn-secondary roundButton"><i
+			class="fa fa-arrow-left"></i>
+		Exit</button>
 	<button *ngIf="ableToTakeThisTurn && gameObj.actionButtonMessage.length>0 && !hideActionButton"
 		(click)="completeTurnButtonPressed()" id="completeTurnButton" type="button"
 		class="btn btn-success roundButton">{{gameObj.actionButtonMessage}}</button>
@@ -62,7 +63,7 @@
 			<span *ngIf="currentPlayer.status != 'Purchase'"> {{currentPlayer.status}}</span>
 		</span>
 	</span>
-	<span *ngIf="currentPlayer.nation != yourPlayer.nation">
+	<span *ngIf="yourPlayer && currentPlayer.nation != yourPlayer.nation">
 		<img (click)="scrollToNation(yourPlayer.nation)" src="assets/graphics/images/flag{{yourPlayer.nation || 1}}.gif"
 			height=42 title="{{superpowersData.superpowers[yourPlayer.nation]}}" style="cursor: pointer;">
 		<span style="background-color: #777; color: white; border: 1px solid black;">{{yourPlayer.userName}}</span>
@@ -96,9 +97,9 @@
 			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-list-ol"></i><br><span
 				style="font-size: 10px;">Logs</span></button>
 		<button *ngIf="gameObj.multiPlayerFlg"
-			(click)="chatPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, isMobileFlg)" type="button"
-			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-commenting"></i><br><span
-				style="font-size: 10px;">Chat</span></button>
+			(click)="chatPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, yourPlayer)" type="button"
+			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i
+				class="fa fa-commenting"></i><br><span style="font-size: 10px;">Chat</span></button>
 		<button id="" (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 2)" type="button"
 			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i
 				class="fa fa-line-chart"></i><br><span style="font-size: 10px;">Stats</span></button>
@@ -266,8 +267,8 @@
 
 <div id="computerTakeTurnPopup" class="popupScreen2" style="width: 300px;">
 	<div>Allow computer to take your turn?</div>
-	<button onClick="closePopup('computerTakeTurnPopup')" type="button"
-		class="btn btn-danger roundButton tall2"><i class="fa fa-times"></i> Cancel</button>
+	<button onClick="closePopup('computerTakeTurnPopup')" type="button" class="btn btn-danger roundButton tall2"><i
+			class="fa fa-times"></i> Cancel</button>
 	<button (click)="computerGoClicked()" type="button" class="btn btn-success roundButton tall2"><i
 			class="fa fa-check"></i> Go!</button>
 </div>
@@ -275,7 +276,7 @@
 <div id="invalidGamePopup" class="popupScreen2" style="width: 300px;">
 	<div><i class="fa fa-exclamation-triangle"></i> Error: Invalid Game!</div>
 	<a routerLink="/"><button type="button" class="btn btn-danger roundButton tall2">
-		<i class="fa fa-arrow-left"></i> Exit!</button></a>
+			<i class="fa fa-arrow-left"></i> Exit!</button></a>
 </div>
 
 
@@ -392,13 +393,31 @@
 
 
 <img id="sprite" src="assets/graphics/units/piece{{spritePieceId}}u.png"
-	style="display: none; position: absolute; left: 0; top: 200px; max-height: 60px;; max-width: 60px;">
+	style="display: none; position: absolute; left: 100px; top: 200px; max-height: 60px;; max-width: 60px;">
+<img id="spriteShip" src="assets/graphics/units/piece{{spriteShipId}}u.png"
+	style="display: none; position: absolute; left: 150px; top: 200px; max-height: 60px;; max-width: 60px;">
+<img id="sprite144" src="assets/graphics/units/piece144u.png"
+	style="display: none; position: absolute; left: 200px; top: 200px; max-height: 60px;; max-width: 60px;">
+<img id="sprite7" src="assets/graphics/units/piece7u.png"
+	style="display: none; position: absolute; left: 250px; top: 200px; max-height: 60px;; max-width: 60px;">
+<img id="sprite14" src="assets/graphics/units/piece14u.png"
+	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 60px;; max-width: 60px;">
+<img id="spriteInf1" src="assets/graphics/units/piece2u.png"
+	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 60px;; max-width: 60px;">
+<img id="spriteInf2" src="assets/graphics/units/piece2u.png"
+	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 60px;; max-width: 60px;">
+<img id="spriteInf3" src="assets/graphics/units/piece2u.png"
+	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 60px;; max-width: 60px;">
+<img id="spriteInf4" src="assets/graphics/units/piece2u.png"
+	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 60px;; max-width: 60px;">
+<img id="spriteInf5" src="assets/graphics/units/piece2u.png"
+	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 60px;; max-width: 60px;">
 
 <img id="nukeSprite" src="assets/graphics/anim/nuke{{nukeFrameNum}}.png"
 	style="display: block; position: absolute; left: -200px; top: 200px; height: 200px;">
 
 <img id="cruiseSprite" src="assets/graphics/anim/ex{{nukeFrameNum}}.png"
-	style="display: block; position: absolute; left: -200px; top: 100px; max-height: 100px;; max-width: 100px;">
+	style="display: block; position: absolute; left: -200px; top: 200px; max-height: 100px;; max-width: 100px;">
 
 
 

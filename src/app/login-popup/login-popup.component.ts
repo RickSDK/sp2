@@ -9,7 +9,7 @@ declare var valueOfInput: any;
 declare var showAlertPopup: any;
 declare var verifyServerResponse: any;
 declare var executeTextApi: any;
-declare var userUpdateFromWeb: any;
+declare var parseServerDataIntoUserObj: any;
 
 @Component({
   selector: 'app-login-popup',
@@ -18,7 +18,7 @@ declare var userUpdateFromWeb: any;
 })
 export class LoginPopupComponent extends BaseComponent implements OnInit {
   @Output() messageEvent = new EventEmitter<string>();
- // public hostname: string;
+  // public hostname: string;
   public user: any;
   public showLoginFlg = true;
   public requestSentFlg = false;
@@ -30,7 +30,7 @@ export class LoginPopupComponent extends BaseComponent implements OnInit {
   constructor(private router: Router) { super(); }
 
   ngOnInit(): void {
-  //  this.hostname = getHostname();
+    //  this.hostname = getHostname();
     this.user = userObjFromUser();
     this.userName = this.user.userName;
     this.email = '';
@@ -44,25 +44,38 @@ export class LoginPopupComponent extends BaseComponent implements OnInit {
     event.target.value = '';
   }
   loginPressed() {
-    this.userName = valueOfInput('emailField');
-    this.password = valueOfInput('passwordField');
+    this.userName = this.databaseSafeValueOfInput('emailField');
+    this.password = this.databaseSafeValueOfInput('passwordField');
+    if (!this.userName || !this.password || this.userName.length == 0 || this.password.length == 0) {
+      this.showAlertPopup('Value is blank!', 1);
+      return;
+    }
     this.showLoginFlg = false;
     this.requestSentFlg = true;
 
     localStorage.userName = this.userName;
     localStorage.password = this.password;
 
-    executeTextApi({ Username: this.userName, Password: this.password, action: 'login' }, this.successCallback);
+    const url = this.getHostname() + "/spApiText.php";
+    const postData = this.getPostDataFromObj({ Username: this.userName, Password: this.password, action: 'login' });
 
-    setTimeout(() => {
-      this.messageEvent.emit('done');
-    }, 2000);
+    fetch(url, postData).then((resp) => resp.text())
+      .then((data) => {
+        if (this.verifyServerResponse(data)) {
+          this.successCallback(data);
+        }
+      })
+      .catch(error => {
+        this.showAlertPopup('Unable to reach server: ' + error, 1);
+      });
   }
   successCallback(data: any) {
-    $("#loginPopup").modal('hide');
-    if (verifyServerResponse('success', data)) {
+    if (this.verifyServerResponse(data)) {
+      var userObj = parseServerDataIntoUserObj(data, true);
+      localStorage.rank = userObj.rank;
       showAlertPopup('Success');
-      userUpdateFromWeb(data);
+      this.messageEvent.emit('done');
+      $("#loginPopup").modal('hide');
     }
   }
   forgotPasswordPressed() {

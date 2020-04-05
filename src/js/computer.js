@@ -7,6 +7,7 @@ function purchaseCPUUnits(player, gameObj, superpowersData) {
     var factoryTerritories = [];
     var waterwayTerritories = [];
     var hotSpotTerr;
+    var allowFacRestorFlg = true;
     player.territories.forEach(function (terr) {
         if (terr.id == player.hotSpotId && terr.owner == player.nation)
             hotSpotTerr = terr;
@@ -15,7 +16,11 @@ function purchaseCPUUnits(player, gameObj, superpowersData) {
             if (terr.water > 0)
                 waterwayTerritories.push(gameObj.territories[terr.water - 1]);
         }
-
+        if (allowFacRestorFlg && terr.facBombed) {
+            terr.facBombed = false;
+            allowFacRestorFlg = false;
+            console.log('fac restored', terr.name)
+        }
     });
     if (factoryTerritories.length == 0) {
         showAlertPopup(superpowers[player.nation] + ' eliminated!');
