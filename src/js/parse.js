@@ -12,7 +12,7 @@ function userObjFromUser() {
 	} else {
 		console.log('creating new user');
 		userObj.userName = localStorage.userName || 'Guest';
-		userObj.rank = 0;
+		userObj.rank = numberVal(localStorage.rank);
 		userObj.code = '';
 		userObj.password = '******';
 		userObj.userGraphic = '';
@@ -28,6 +28,14 @@ function userObjFromUser() {
 	}
 	return userObj;
 }
+function imageSrcFromObj(graphic, avatar) {
+	var imgSrc = 'http://www.superpowersgame.com/graphics/avitars/soldier.JPG';
+	if (graphic && graphic.length > 0)
+		imgSrc = 'http://www.superpowersgame.com/graphics/avitars/' + graphic;
+	if (avatar && avatar.length > 0)
+		imgSrc = 'assets/graphics/avatars/' + avatar;
+	return imgSrc;
+}
 function saveUserObj(userObj) {
 	localStorage.userObj = JSON.stringify(userObj);
 }
@@ -37,7 +45,7 @@ function logOutUser() {
 	localStorage.password = '';
 	localStorage.userObj = '';
 }
-function parseServerDataIntoUserObj(data, saveFlg = false) {
+function parseServerDataIntoUserObj(data) {
 	var userObj = userObjFromUser();
 
 	var f = data.split('|');
@@ -63,14 +71,15 @@ function parseServerDataIntoUserObj(data, saveFlg = false) {
 	userObj.mmWins = numberVal(f[x++]);
 	userObj.mmLosses = numberVal(f[x++]);
 	userObj.mmPoints = numberVal(f[x++]);
+	userObj.avatar = numberVal(f[x++]);
 	userObj.code = this.btoa(localStorage.password);
+	userObj.imgSrc = imageSrcFromObj(userObj.userGraphic, userObj.avatar);
 
 	if (userObj.userName != localStorage.userName) {
 		showAlertPopup('whoa usernames out of sync! Log out!', 1);
 	}
 
-	if (saveFlg)
-		saveUserObj(userObj);
+	saveUserObj(userObj);
 
 	return userObj;
 }
@@ -81,7 +90,7 @@ function getMultObjFromLine(line) {
 	obj.netRank = numberVal(c[4]);
 	obj.chatMsg = c[5];
 	obj.updateNeededCount = numberVal(c[6]);
-	obj.userGraphic=userGraphicFromLine(c[7]);
+	obj.userGraphic = userGraphicFromLine(c[7]);
 	obj.lastestUser = c[8];
 	obj.mailCount = numberVal(c[9]);
 	obj.urgentCount = numberVal(c[10]);
@@ -326,6 +335,7 @@ function gameFromLine(line, userName) {
 	obj.password = c[x++] || '';
 	obj.hardFog = (c[x++] == 'Y');
 	obj.turboFlg = (c[x++] == 'Y');
+	obj.userId = (c[x++] == 'Y');
 
 
 	obj.mmFlg = (obj.ladder_id && obj.ladder_id > 0);
@@ -335,6 +345,7 @@ function gameFromLine(line, userName) {
 	obj.newActionFlg = (obj.seconds < 0);
 
 	obj.turnObj = getUserObjFromLine(userInfo);
+	obj.turnObj.userId = numberVal(obj.turnObj.id);
 	obj.turnObj.timeLeft = obj.timeLeft;
 	//	console.log(obj.turnObj);
 	if (obj.status == 'Open' || obj.status == 'Picking Nations')
@@ -353,7 +364,7 @@ function gameFromLine(line, userName) {
 		var minutesReduced = numberVal(c[7]);
 		var clock = (24 - Math.round(minutesReduced / 60));
 		var turnFlg = c[0] == obj.turnObj.name;
-		obj.players.push({ id: c[1], name: c[0], nation: nation, turnFlg: turnFlg, income: c[3], top: top, team: c[5], futureTeam: c[6], minutesReduced: c[7], rank: c[8], clock: clock });
+		obj.players.push({ id: c[1], name: c[0], nation: nation, turnFlg: turnFlg, income: c[3], top: top, team: c[5], futureTeam: c[6], minutesReduced: c[7], rank: c[8], clock: clock, userId: numberVal(c[9]) });
 	}
 	obj.joinGameFlg = (obj.status == 'Open' && !obj.inGame);
 	obj.numPlayers = obj.players.length;

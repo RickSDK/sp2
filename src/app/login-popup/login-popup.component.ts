@@ -71,7 +71,7 @@ export class LoginPopupComponent extends BaseComponent implements OnInit {
   }
   successCallback(data: any) {
     if (this.verifyServerResponse(data)) {
-      var userObj = parseServerDataIntoUserObj(data, true);
+      var userObj = parseServerDataIntoUserObj(data);
       localStorage.rank = userObj.rank;
       showAlertPopup('Success');
       this.messageEvent.emit('done');
@@ -89,8 +89,53 @@ export class LoginPopupComponent extends BaseComponent implements OnInit {
     this.showLoginFlg = !this.showLoginFlg;
   }
   createNewPressed() {
-    showAlertPopup('not working yet', 1);
-    //    this.requestSentFlg = true;
+    var emailField2 = this.databaseSafeValueOfInput('emailField2');
+    var firstName = this.databaseSafeValueOfInput('firstName');
+    var password1 = this.databaseSafeValueOfInput('password1');
+    var password2 = this.databaseSafeValueOfInput('password2');
+    if (!emailField2.length || !firstName.length || password1.length == 0 || password2.length == 0) {
+      this.showAlertPopup('Value is blank!', 1);
+      return;
+    }
+    console.log(emailField2, firstName, password1, password2);
+    if (firstName.toLowerCase() == 'guest') {
+      this.showAlertPopup('Choose your username. Don\'t use "Guest"', 1);
+      return;
+    }
+    if (password1 != password2) {
+      this.showAlertPopup('Passwords do not match.', 1);
+      return;
+    }
+
+    localStorage.userName = firstName;
+    localStorage.password = password1;
+
+    var obj = { Username: firstName, email: emailField2, Password: password1, action: 'createAccount', avatar: this.user.avatar, appName: 'v4' };
+    console.log(obj);
+
+    var url = this.getHostname() + "/spApiText.php";
+    var postData = this.getPostDataFromObj(obj);
+
+    fetch(url, postData).then((resp) => resp.text())
+      .then((data) => {
+        if (this.verifyServerResponse(data)) {
+          this.accountCreatedResponse();
+        }
+      })
+      .catch(error => {
+        this.showAlertPopup('Unable to reach server: ' + error, 1);
+      });
+
+   }
+  accountCreatedResponse() {
+    var ip = 'ip';
+    var data = 'success|'+localStorage.userName+'|2|N|0|0|0||0|12|0|0|0|0|'+ip+'|soldier.JPG|0|0|0|0|0|0|'+this.user.avatar+'|';
+    console.log(data)
+    var userObj = parseServerDataIntoUserObj(data);
+    console.log(userObj)
+    showAlertPopup('Success');
+    this.messageEvent.emit('done');
+    $("#loginPopup").modal('hide');
   }
 
 }

@@ -119,7 +119,8 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     terr.cruiseFlg = cruiseFlg;
     this.checkAllTroops = false;
     this.selectedTerritory = terr;
-    console.log(terr.name, terr);
+    if(user.userName == 'Rick')
+      console.log(terr.name, terr);
     var totalUnitsThatCanMove = 0;
 
 

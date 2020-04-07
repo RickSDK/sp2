@@ -248,10 +248,11 @@
 </div>
 
 
-<div id="popupSaving" class="popupScreen2" style="max-width: 300px;">
-	<div onClick="closePopup('popupSaving')" style="font-size: 24px; color: #007;"><i class="fa fa-spinner fa-spin"></i>
-		<span id="popupMessage">Saving...</span> </div>
-	<div *ngIf="uploadMultiplayerFlg" id="statusMessage" style="font-size: 24px; color: #007;"></div>
+<div id="popupSaving" class="popupScreen2" style="width: 300px;">
+	<div onClick="closePopup('popupSaving')" style="font-size: 24px; color: #007;"><i *ngIf="!uploadMultiplayerFlg" class="fa fa-spinner fa-spin"></i>
+		<span id="popupMessage">Game Save</span> 
+	</div>
+	<div *ngIf="uploadMultiplayerFlg" id="statusMessage" style="font-size: 20px; color: #007;"><i class="fa fa-spinner fa-spin"></i> Computer Taking Turn</div>
 	<div class="progress">
 		<div id="progressBar" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"
 			aria-valuemin="0" aria-valuemax="100" style="width: 0%">
@@ -259,9 +260,9 @@
 	</div>
 	<div *ngIf="uploadMultiplayerFlg">
 		<img id="statusImg" src="assets/graphics/misc/yellow.png" height=44>
-		<button ng-click="closeMultiplayerStatus()" id="spinnerOKButton" type="button"
+		<button (click)="closeMultiplayerStatus()" id="spinnerOKButton" type="button"
 			class="btn btn-primary roundButton medium"><span id="statusOkButton">OK</span></button>
-		<div id="statusMsg">Note: Don't leave page until this completes. If it hangs, refresh page and try again.</div>
+		<div id="statusMsg">Note: Game is saving, please wait...</div>
 	</div>
 </div>
 

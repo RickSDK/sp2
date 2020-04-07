@@ -71,7 +71,7 @@
 							<tr [ngStyle]="ngStyleLogs(displayBattle.attNation)">
 								<td *ngFor="let i of boardCols">
 									<div *ngFor="let unit of displayBattle.attackUnits" style="display: inline-block;">
-										<span *ngIf="unit.att==i || i==5 && unit.att==6">
+										<span *ngIf="unit.att==i || i==5 && unit.att>=6">
 											<img *ngIf="unit.piece>0" src="{{ngUnitSrc(unit.piece, unit.nation)}}"
 												height=20 title="{{unit.name}}"><br>
 											<span *ngIf="displayBattle.phase > 1">
@@ -95,7 +95,7 @@
 								<td *ngFor="let i of boardCols">
 									<div *ngFor="let unit of displayBattle.defendingUnits"
 										style="display: inline-block;">
-										<span *ngIf="unit.def==i || i==5 && unit.def==6">
+										<span *ngIf="unit.def==i || i==5 && unit.def>=6">
 											<img *ngIf="unit.piece>0" src="{{ngUnitSrc(unit.piece, unit.nation)}}"
 												height=20 title="{{unit.name}}"><br>
 											<span *ngIf="displayBattle.phase > 1">

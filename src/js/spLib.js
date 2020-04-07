@@ -155,6 +155,7 @@ function promoteThisUsertoRank(rank, code) {
 	}
 }
 function getIPInfo(userName, pwd) {
+	showAlertPopup('ip Request!!',1);
 	var code = btoa(pwd);
 	var option = 3;
 	if (option == 1)
@@ -481,20 +482,6 @@ function clearCurrentGameId() {
 }
 function computerAnnouncement(user, msg) {
 	console.log('computerAnnouncement', msg);
-	/*
-	var url = getHostname()+"/webSuperpowers.php";
-		$.post(url,
-		{
-			user_login: user.userName || 'test',
-			code: user.code,
-			msg: msg,
-			action: 'computerAnnouncement'
-		},
-		function(data, status){
-			console.log(data, status);
-		});
-*/
-
 		const url = getHostname() + "/webSuperpowers.php";
 		var body = JSON.stringify({ user_login: user.userName, code: user.code, action: 'computerAnnouncement', msg: msg });
 

@@ -1,13 +1,13 @@
 <div class="modal fade" id="userPopup" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header" *ngIf="user">
-                <b><i class="fa fa-user"></i> {{user.userName}} - User Profile</b>
+            <div class="modal-header" *ngIf="displayUser">
+                <b><i class="fa fa-user"></i> {{displayUser.userName}} - User Profile</b>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" *ngIf="user" style="text-align: center;">
+            <div class="modal-body" *ngIf="displayUser" style="text-align: center;">
 
 
                 <div style="text-align: center; padding-bottom: 5px;">
@@ -17,8 +17,9 @@
                             <i class="fa fa-picture-o" style="font-size: 26px;"></i>
                             <div style="font-size: 10px;">Profile</div>
                         </button>
-                        <button (click)="segmentIdx=1" type="button" class="btn btn-default roundButton"
-                            [ngClass]="ngClassSegment(segmentIdx,1)" style="min-width: 60px;">
+                        <button *ngIf="selfProfileFlg" (click)="segmentIdx=1" type="button"
+                            class="btn btn-default roundButton" [ngClass]="ngClassSegment(segmentIdx,1)"
+                            style="min-width: 60px;">
                             <i class="fa fa-user" style="font-size: 26px;"></i>
                             <div style="font-size: 10px;">Single Player</div>
                         </button>
@@ -35,24 +36,22 @@
                     </div>
                 </div>
 
+                <div *ngIf="loadingFlg">
+                    <i class="fa fa-spinner fa-spin"></i> Loading...
+                </div>
                 <!-------profile--------------------->
                 <div *ngIf="segmentIdx==0">
-                    <div class="spCard" style="cursor: pointer;" (click)="editUserImageFlg = !editUserImageFlg">
-                        <div>
-                            <div class="spTitle">Profile Image <i class="fa fa-pencil-square-o"
-                                    style="float: right; padding-right: 5px; padding-top: 3px;"></i></div>
-                            <img src="{{user.imgSrc}}" style="max-width: 300px; max-height: 185px;">
-                        </div>
-                    </div>
 
-                    <div class="spCard" style="cursor: pointer;" (click)="editUseNameFlg = !editUseNameFlg">
+
+                    <div class="spCard" style="cursor: pointer; max-width: 300px;"
+                        (click)="editProfileImageButtonClicked()">
                         <div>
-                            <div class="spTitle">{{user.userName}} <i class="fa fa-pencil-square-o"
+                            <div class="spTitle">Profile Image <i *ngIf="selfProfileFlg" class="fa fa-pencil-square-o"
                                     style="float: right; padding-right: 5px; padding-top: 3px;"></i></div>
-                            <div style="background-color: white; color: black;">
-                                <img src="assets/graphics/ranks/rank{{user.rank}}.png" width="100%" style="max-width: 200px; max-height: 160px;">
+                            <img src="{{displayUser.imgSrc}}" style="max-width: 300px; max-height: 185px;">
+                            <div class="spCardBody">
+                                <div *ngIf="serverUser" style="color: green;">{{serverUser.message}}</div>
                             </div>
-                            <div>{{superpowersData.ranks[user.rank].name}}</div>
                         </div>
                     </div>
 
@@ -64,8 +63,26 @@
                                         class="fa fa-times"></i>
                                 </button>
                             </div>
-                            <img *ngFor="let image of localAvatars" src="assets/graphics/avatars/{{image}}" height="100"
-                                class="roundedPanel" (click)="changeImage(image)">
+                            <div class="spCardBody">
+                                <div *ngIf="displayUser.userGraphic.length>0">-Picture stored on server-</div>
+                                <div *ngIf="displayUser.userGraphic.length==0">
+                                    <img *ngFor="let image of localAvatars" src="assets/graphics/avatars/{{image}}"
+                                        height="100" class="roundedPanel" (click)="changeImage(image)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="spCard" style="cursor: pointer;" (click)="editUserName()">
+                        <div>
+                            <div class="spTitle">{{displayUser.userName}} <i *ngIf="selfProfileFlg"
+                                    class="fa fa-pencil-square-o"
+                                    style="float: right; padding-right: 5px; padding-top: 3px;"></i></div>
+                            <div style="background-color: white; color: black;">
+                                <img src="assets/graphics/ranks/rank{{displayUser.rank}}.png" width="100%"
+                                    style="max-width: 180px; max-height: 160px;">
+                            </div>
+                            <div>{{superpowersData.ranks[displayUser.rank].name}}</div>
                         </div>
                     </div>
 
@@ -78,7 +95,7 @@
                             </div>
                             <div>
                                 <input type="text" id="userName" name="userName" placeholder="User Name" maxlength="16"
-                                    (click)="clearValue($event)" [value]="user.userName">
+                                    (click)="clearValue($event)" [value]="displayUser.userName">
                                 <button (click)="updateUsername()" type="button"
                                     class="btn btn-primary roundButton tall">Update
                                 </button>
@@ -87,19 +104,40 @@
                     </div>
 
 
-                    <div *ngIf="user && user.rank && user.rank<18" class="spCard" (click)="openRanksModal()" style="max-width: 200px;">
+                    <div *ngIf="selfProfileFlg && displayUser && displayUser.rank && displayUser.rank<18" class="spCard"
+                        (click)="openRanksModal()" style="max-width: 200px;">
                         <div>
                             <div class="spTitle">Your Next Rank</div>
                             <table class="spTable">
                                 <tr>
-                                    <td style="font-size: 12px;"><img src="assets/graphics/ranks/rank{{user.rank+1}}.png" height="40"><br>
-                                        <b>{{superpowersData.ranks[user.rank+1].name}}</b>
+                                    <td style="font-size: 12px;"><img src="assets/graphics/ranks/rank{{nextRank}}.png"
+                                            height="40"><br>
+                                        <b>{{superpowersData.ranks[nextRank].name}}</b>
                                     </td>
-                                    <td class="darkBlue">{{superpowersData.ranks[user.rank+1].desc}}</td>
+                                    <td class="darkBlue">{{superpowersData.ranks[nextRank].desc}}</td>
                                 </tr>
                             </table>
                         </div>
                     </div>
+
+                    <div *ngIf="serverUser && personalInfoObj" class="spCard" style="cursor: pointer;">
+                        <div>
+                            <div class="spTitle"> {{personalInfoObj.title}} </div>
+                            <table class="spTable" style="font-size: 11px;">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Value</th>
+                                </tr>
+                                <tr *ngFor="let row of personalInfoObj.rows">
+                                    <td class="darkBlue"><b>{{row.name}}</b></td>
+                                    <td>{{row.value}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-------end profile--------------------->
+
                 </div>
                 <div *ngIf="segmentIdx==1">
                     <div class="spCard" style="width: 100%">
@@ -124,6 +162,9 @@
                         </div>
                     </div>
                 </div>
+
+
+
                 <div *ngIf="segmentIdx==2">
                     Not coded yet!
                 </div>
@@ -131,9 +172,12 @@
                     Not coded yet!
                 </div>
 
+
+
             </div>
             <div class="modal-footer">
-                <button *ngIf="user.userId > 0" (click)="userLogout()" type="button" class="btn btn-secondary roundButton">
+                <button *ngIf="selfProfileFlg && user.userId > 0" (click)="userLogout()" type="button"
+                    class="btn btn-secondary roundButton">
                     <i class="fa fa-sign-out"></i> Logout
                 </button>
                 <button (click)="openRanksModal()" type="button" class="btn btn-secondary roundButton">

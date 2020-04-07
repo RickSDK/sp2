@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 declare var userObjFromUser: any;
 declare var getMultObjFromLine: any;
 declare var gameFromLine: any;
+declare var createNewGameFromInitObj: any;
+declare var objPiecesFrom: any;
 
 @Component({
   selector: 'app-multiplayer',
@@ -40,7 +42,10 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
   public availableNations = [];
   public selectedNation = 1;
   public teamName: string;
-  public multiPlayerObj:any;
+  public multiPlayerObj: any;
+  public buttonAction: string;
+  public buttonActionMessage: string;
+  public playerId: number;
 
   constructor(private router: Router) { super(); }
 
@@ -71,6 +76,7 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
           var fullGameList = [];
           var items = data.split("<b>");
           var basics = items[0];
+          var gameToStart;
           this.multiPlayerObj = getMultObjFromLine(basics);
           console.log(this.multiPlayerObj);
 
@@ -85,16 +91,25 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
             this.displayFixedPopup('newGamePopup');
           }
           var games = items[1].split("<a>");
-          this.multiPlayerObj.usersOnline=items[2];
+          this.multiPlayerObj.usersOnline = items[2];
           for (var x = 0; x < games.length; x++) {
             var game = games[x];
             if (game.length > 10) {
               var gameOb = gameFromLine(game, this.user.userName);
+              if (gameOb.status == 'Picking Nations') {
+                console.log('start this!', gameOb);
+                gameToStart = gameOb;
+              }
               fullGameList.push(gameOb);
               //console.log(gameOb);
             }
           } // <-- for
           this.fullGameList = fullGameList;
+          if (gameToStart && gameToStart.gameId > 0) {
+            setTimeout(() => {
+              this.startThisMultiplayerGame(gameToStart);
+            }, 500);
+          }
           this.filterGames(0);
 
         }
@@ -104,6 +119,15 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
         this.loadingFlg = false;
         this.showAlertPopup('Unable to reach server: ' + error, 1);
       });
+  }
+  startThisMultiplayerGame(game: any) {
+    console.log('starting!', game);
+    var gameObj = createNewGameFromInitObj(game, this.superpowersData.units);
+    console.log('started this game:', gameObj);
+    var turn = gameObj.players[0].id;
+    var gameData = objPiecesFrom(gameObj);
+    console.log('Starting up the game!!!', gameData);
+    this.createWebServiceCall('gameAFoot', gameData, turn)
   }
   filterGames(num: number) {
     this.buttonIdx = num;
@@ -218,7 +242,94 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
   joinAcceptButtonPressed() {
     this.playClick();
     this.closePopup('joinConfirmationPopup');
-    console.log('hey');
+    this.createWebServiceCall('join', null, 0);
+  }
+  createWebServiceCall(action: string, gameData: any, turn: number) {
+    var url = this.getHostname() + "/web_join_game2.php";
+    var nation = this.selectedNation;
+    console.log('game', this.selectedGame);
+    if (this.selectedGame.auto_assign_flg)
+      nation = 0;
+
+    var objMain = '';
+    var logs = '';
+    var players = '';
+    var territories = '';
+    var units = '';
+    if (gameData) {
+      objMain = JSON.stringify(gameData.objMain)
+      logs = JSON.stringify(gameData.logs)
+      players = JSON.stringify(gameData.players)
+      territories = JSON.stringify(gameData.territories)
+      units = JSON.stringify(gameData.units)
+    }
+
+    var postData = this.getPostDataFromObj({
+      user_login: this.user.userName,
+      code: this.user.code,
+      action: action,
+      game_id: this.selectedGame.gameId,
+      nation: nation,
+      team: this.teamName,
+      playerId: this.playerId,
+      turn: turn,
+      objMain: objMain,
+      logs: logs,
+      players: players,
+      territories: territories,
+      units: units
+    });
+    console.log('postData', postData);
+    fetch(url, postData).then((resp) => resp.text())
+      .then((data) => {
+        console.log('data', data);
+        if (this.verifyServerResponse(data)) {
+          this.showAlertPopup('success');
+          this.loadGames();
+        }
+      })
+      .catch(error => {
+        this.showAlertPopup('Unable to reach server: ' + error, 1);
+      });
+  }
+  removePlayerFromGame(game: any, player: any) {
+    console.log(player);
+    this.buttonAction = 'removePlayer';
+    this.selectedGame = game;
+    this.playerId = player.id;
+    this.buttonActionMessage = 'Remove ' + player.name + ' from this game?';
+    this.displayFixedPopup('actionConfirmationPopup');
+
+  }
+  openGameButtonPressed(game: any, action: string) {
+    this.playClick();
+    this.buttonAction = action;
+    this.selectedGame = game;
+    if (action == 'start') {
+      this.buttonActionMessage = 'Start this game?';
+      var numPlayers = 0;
+      game.players.forEach(player => {
+        if (player.name != 'Computer')
+          numPlayers++;
+      });
+      if (numPlayers < 2) {
+        this.showAlertPopup('You need at least 2 human players to start a game.', 1);
+        return;
+      }
+    }
+    if (action == 'add_computer')
+      this.buttonActionMessage = 'Add a computer player to this game?';
+    if (action == 'cancelGame')
+      this.buttonActionMessage = 'Delete this game?';
+    if (action == 'leaveGame')
+      this.buttonActionMessage = 'Leave this game?';
+
+    this.displayFixedPopup('actionConfirmationPopup');
+  }
+  confirmButtonPressed() {
+    this.playClick();
+    this.createWebServiceCall(this.buttonAction, null, 0);
+    this.closePopup('actionConfirmationPopup');
   }
   cycleNationsButtonPressed() {
     this.nationPointer++;

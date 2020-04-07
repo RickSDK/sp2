@@ -33,6 +33,7 @@ export class BaseComponent implements OnInit {
   public infoFlg = false;
   public selectedUnit: any;
   public unitDetailFlg = false;
+  public loadingFlg = false;
 
   constructor() {
     this.superpowersData = getSuperpowersData();

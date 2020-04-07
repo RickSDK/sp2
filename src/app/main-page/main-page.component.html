@@ -22,9 +22,9 @@
 			</div>
 			<div class="col-sm-4" style="padding-top: 10px;">
 
-				<div *ngIf="user" class="spCard" style="cursor: pointer;" (click)="userPopup.show()">
+				<div *ngIf="user" class="spCard" style="cursor: pointer;" (click)="userPopup.show(user)">
 					<div>
-						<div class="spTitle" style="height: 32px;">
+						<div class="spTitle" style="height: 32px; padding-left: 0;">
 							<img src="{{user.imgSrc}}" style="height: 32px; max-width: 44px; float: left;">
 							<span style="padding: 5px;">{{user.userName}}</span>
 							<img style="float: right;" *ngIf="user.empCount>0" src="assets/graphics/units/piece52u.png"
@@ -47,6 +47,10 @@
 				<div>
 					<a routerLink="/info"><button type="button" class="btn btn-primary roundButton"><i
 								class="fa fa-info-circle"></i> Info & Rules </button></a>
+					<button (click)="scoreboardPopup.show()" type="button" class="btn btn-primary roundButton"><i
+							class="fa fa-book"></i> Rule Changes </button>
+					<a href="http://superpowersgame.com/app/index.html"><button type="button" class="btn btn-primary roundButton"><i
+								class="fa fa-star"></i> Old Game Engine </button></a>
 					<!--<span *ngIf="owner_flg"><a href="#!userStats"><button type="button" class="btn btn-primary roundButton"><i class="fa fa-user"></i> User Stats</button></a> </span>-->
 					<!--<span *ngIf="showInstallButton && user.rank<5"><button type="button" class="btn ptp-gray roundButton"><i class="fa fa-map-pin"></i> Install/Setup</button></span>-->
 					<!--<a href="#!forum" *ngIf="0"><button type="button" class="btn btn-primary roundButton"><i class="fa fa-comment"></i> Forum <span *ngIf="forumCount>0">({{forumCount}})</span></button></a>-->
@@ -72,8 +76,7 @@
 </div>
 
 <!-------popups------------------>
-<div class="popupScreenNoPad" style="width: 280px; z-index: 5;" id="initPopup"
-	onClick="closePopup('initPopup')">
+<div class="popupScreenNoPad" style="width: 280px; z-index: 5;" id="initPopup" onClick="closePopup('initPopup')">
 	<div style="background-color: #337ab7; color: white; text-align: center;">Superpowers Game Master
 		<button type="button" class="btn btn-secondary roundButton"><i class="fa fa-times"></i></button>
 	</div>

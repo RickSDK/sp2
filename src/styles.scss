@@ -936,9 +936,16 @@ input {
     background: rgba(255,255,255,0.5);
     margin: 0 0 10px 0;
 }
-
+.borderRow:hover {
+	border: 2px solid black;
+}
 .gameRow:hover{
    background-color:#88ff88;
+}
+.bgImageClass {
+	background-size: cover;  
+	background-position: center; 
+	background-image: url('assets/graphics/splash/poster02.jpg');
 }
 .gameRow2{
     border: 1px solid gray;

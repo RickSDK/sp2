@@ -52,6 +52,8 @@ import { CreateGamePopupComponent } from './create-game-popup/create-game-popup.
 import { GameStandingsComponent } from './game-standings/game-standings.component';
 import { MatchmakingStandingsComponent } from './matchmaking-standings/matchmaking-standings.component';
 import { PlayerNameComponent } from './player-name/player-name.component';
+import { MailPopupComponent } from './mail-popup/mail-popup.component';
+import { ForumPopupComponent } from './forum-popup/forum-popup.component';
 
 @NgModule({
   declarations: [
@@ -104,7 +106,9 @@ import { PlayerNameComponent } from './player-name/player-name.component';
     CreateGamePopupComponent,
     GameStandingsComponent,
     MatchmakingStandingsComponent,
-    PlayerNameComponent
+    PlayerNameComponent,
+    MailPopupComponent,
+    ForumPopupComponent
   ],
   imports: [
     BrowserModule,

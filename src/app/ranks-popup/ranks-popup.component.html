@@ -47,20 +47,25 @@
                         <th>Needed to reach the level</th>
                     </tr>
                     <tr *ngFor="let rank of ranks" style="border-bottom: 1px solid black;">
-                        <td>
+                        <td><i *ngIf="user && user.rank == rank.id" class="fa fa-hand-o-right" style="font-size: 24px; color: blue;"
+                            title="Your current rank"></i>
                             <img src="assets/graphics/ranks/rank{{rank.id}}.png" title="{{rank.id}}: {{rank.name}}"
                                 style="max-width: 100px; max-height: 44px;">
                             <div style="font-size: 10px;">{{rank.name}}</div>
                         </td>
-                        <td style="text-align: left;"><b>{{rank.name}}</b>: {{rank.desc}}</td>
+                        <td style="text-align: left;">
+                            <b>{{rank.name}}</b>: {{rank.desc}}</td>
                     </tr>
                 </table>
 
                 <div *ngIf="specialUnits.length>0" class="borderClass3" style="text-align: center;">
                     <div class="darkBlueBg">Special Units Available</div>
-                    <img *ngFor="let piece of specialUnits" (click)="showUnitPopup(piece)" src="{{ngUnitSrc(piece)}}"
-                        height="50" title="{{superpowersData.units[piece].name}}">
-                </div>
+                    <span *ngFor="let piece of specialUnits" style="display: inline-block;">
+                        <img (click)="showUnitPopup(piece)" src="{{ngUnitSrc(piece)}}"
+                        height="50" title="{{superpowersData.units[piece].name}}" class="shadowed">
+                        <div style="font-size: 10px;">{{superpowersData.units[piece].name}}</div>
+                    </span>
+                 </div>
 
             </div>
             <!--modal-body-->

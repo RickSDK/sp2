@@ -52,7 +52,7 @@ console.log(postData);
       });
   }
   paserUserData(data) {
-    this.user = parseServerDataIntoUserObj(data, true);
+    this.user = parseServerDataIntoUserObj(data);
  
     localStorage.lastForumLogin = this.user.forum_last_login;
     //  if(this.user.gold_member_flg=='Y' && localStorage.gold_member_flg != 'Y') {

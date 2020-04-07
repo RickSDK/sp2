@@ -113,7 +113,7 @@
                                 <label for="noGenerals"></label>
                             </div> <i class="fa fa-arrow-down"></i> <b>Colonel</b> and Lower Only
                         </div>
-                        <div *ngIf="user.rank<15">
+                        <div *ngIf="user.rank==3 || user.rank==6 || user.rank==9 || user.rank==13">
                             <div class="squaredOne" style="display: inline-block; padding: 4px; margin: 1px;">
                                 <input type="checkbox" value="None" id="sameRank" name="check" />
                                 <label for="sameRank"></label>

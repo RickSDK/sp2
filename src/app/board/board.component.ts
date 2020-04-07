@@ -48,6 +48,7 @@ declare var findTransportForThisCargo: any;
 declare var computerAnnouncement: any;
 declare var moveTheseUnitsToThisTerritory: any;
 declare var isMusicOn: any;
+declare var disableButton: any;
 //---board.js
 declare var displayLeaderAndAdvisorInfo: any;
 declare var getDisplayQueueFromQueue: any;
@@ -95,6 +96,7 @@ declare var isUnitOkToMove: any;
 declare var findMainBase: any;
 declare var allUnitsAttack: any;
 declare var addTestScore: any;
+declare var checkIlluminateFlg: any;
 
 //---combat.js
 declare var playSoundForPiece: any;
@@ -252,6 +254,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			console.log('yourPlayer', this.yourPlayer, this.currentPlayer);
 			refreshAllTerritories(this.gameObj, this.yourPlayer, this.superpowersData, this.yourPlayer)
 			refreshBoard(this.gameObj.territories);
+			this.gameObj.players.sort(function (a, b) { return a.turn - b.turn; });
 			var left = window.innerWidth - 55;
 			if (left > 1282) {
 				setTimeout(() => { playersPanelMoved(); }, 500);
@@ -283,6 +286,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.adminModeFlg)
 			this.ableToTakeThisTurn = true;
 	}
+	closeMultiplayerStatus() {
+		this.uploadMultiplayerFlg = false;
+		closePopup('popupSaving');
+	}
 	newGameStarting() {
 		playVoiceClip('welcome.mp3');
 	}
@@ -303,6 +310,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.haltCombatActionFlg = false;
 
 		//--------------------end test
+		console.log('turn:::::', this.gameObj.turnId);
 		this.currentPlayer = getCurrentPlayer(this.gameObj);
 		this.gameObj.currentNation = this.currentPlayer.nation;
 		this.gameObj.actionButtonMessage = '';
@@ -317,6 +325,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.currentPlayer.offers = [];
 		if (this.gameObj.hardFog == 'Y')
 			illuminateTerritories(this.gameObj);
+
 		refreshAllTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 		this.findTargets();
 
@@ -983,7 +992,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.currentPlayer.status = 'Attack';
 		this.logPurchases(this.currentPlayer);
 		scrubUnitsOfPlayer(this.currentPlayer, this.gameObj, this.superpowersData.units); // in case of tech
-		saveGame(this.gameObj, this.user, this.currentPlayer);
+		if (!this.currentPlayer.cpuFlg)
+			saveGame(this.gameObj, this.user, this.currentPlayer);
 		this.hideActionButton = !this.hideActionButton;
 		this.initializePlayerForAttack();
 	}
@@ -1035,6 +1045,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				return;
 			}
 		}
+		if (gameObj.hardFog && terr.treatyStatus < 3 && !terr.illuminateFlg)
+			terr.illuminateFlg = checkIlluminateFlg(terr, gameObj);
 		this.bonusInfantryFlg = (terr.owner == 0 && !terr.capital && terr.nation < 99);
 		this.bonusFactoryFlg = (terr.owner == 0 && terr.capital && terr.nation < 99);
 		hideArrow();
@@ -1215,7 +1227,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.spriteShipId = obj.id;
 			spriteObj.name = 'spriteShip';
 		}
-			
+
 		if (obj.id == 14)
 			spriteObj.name = 'sprite14';
 		if (obj.id == 144)
@@ -1465,7 +1477,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.user = userObjFromUser();
 			promoteSuperpowersUser(this.user);
 		}
-		startSpinner('Saving...', '150px');
+		this.uploadMultiplayerFlg = this.gameObj.multiPlayerFlg;
+		startSpinner('Saving...', '150px', 'spinnerOKButton');
 		updateProgressBar(30);
 		this.currentPlayer.status = 'Waiting';
 		checkVictoryConditions(this.currentPlayer, this.gameObj, this.superpowersData, this.yourPlayer);
@@ -1484,9 +1497,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.ableToTakeThisTurn = false;
 			this.hideActionButton = false;
 
-			if (this.gameObj.multiPlayerFlg) {
-				// upload stats
-			} else {
+			saveGame(this.gameObj, this.user, this.currentPlayer, false, true, prevPlayer, this.currentPlayer.cpu, 0);
+			if (!this.gameObj.multiPlayerFlg) {
 				addTestScore(this.gameObj);
 				if (this.gameObj.winningTeamFlg && this.user.rank < 2) {
 					localStorage.rank = 2;
@@ -1511,8 +1523,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				this.loadCurrentPlayer();
 			}, 2000);
 		}
-		updateProgressBar(100);
-		stopSpinner();
+		if (0) {
+			updateProgressBar(100);
+			stopSpinner();
+		}
 
 	}
 	surrenderConfirmButtonPressed() {
@@ -1524,12 +1538,17 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.ableToTakeThisTurn = false;
 		playSound('Scream.mp3');
 		playSound('CrowdBoo.mp3');
+		var cp = this.currentPlayer.nation;
+		setTimeout(() => {
+			playVoiceClip('surrendered' + cp + '.mp3');
+		}, 3000);
 
 		this.currentPlayer.alive = false;
 		removeAlliancesForNation(this.currentPlayer.nation, this.gameObj);
-		if (this.gameObj.multiPlayerFlg)
+		if (this.gameObj.multiPlayerFlg) {
+			showAlertPopup('You have surrendered! The computer will play out your turns from here.');
 			this.placeUnitsAndEndTurn();
-		else {
+		} else {
 			this.gameObj.winningTeamFlg = false;
 			addTestScore(this.gameObj);
 			clearCurrentGameId();
@@ -1540,9 +1559,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			}
 		}
 
-		setTimeout(() => {
-			playVoiceClip('surrendered' + this.currentPlayer.nation + '.mp3');
-		}, 3000);
 
 	}
 	advanceToNextPlayer() {

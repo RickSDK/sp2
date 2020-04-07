@@ -113,6 +113,7 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
     var def = arrayOfPieces(displayBattle.defendingUnits);
     displayBattle.battleDetails = att + '|' + def;
     addAAGunesToBattle(displayBattle, selectedTerritory);
+    console.log(displayBattle);
     return displayBattle;
 
 }

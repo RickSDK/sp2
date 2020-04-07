@@ -11,17 +11,20 @@
                 <span style=" color: white;">Multiplayer</span>
             </div>
         </a>
-        <div class="darkBlueBg">
-            <button (click)="userPopup.show()" type="button" class="btn btn-secondary roundButton">
+        <div class="darkBlueBg" style="white-space: nowrap; overflow: hidden;">
+            <button (click)="userPopup.show(user)" type="button" class="btn btn-secondary roundButton">
                 <i class="fa fa-user"></i> {{user.userName}}
             </button>
-            <button (click)="userPopup.show()" type="button" class="btn btn-secondary roundButton">
+            <button (click)="mailPopup.show()" type="button" class="btn btn-secondary roundButton">
                 <i class="fa fa-envelope"></i> Mail
             </button>
-            <button (click)="userPopup.show()" type="button" class="btn btn-secondary roundButton">
+            <button (click)="forumPopup.show()" type="button" class="btn btn-secondary roundButton">
                 <i class="fa fa-commenting"></i> Forum
             </button>
-            <button (click)="loadGames()" type="button" class="btn btn-secondary roundButton">
+            <a routerLink="/info"><button type="button" class="btn btn-secondary roundButton">
+                <i class="fa fa-info-circle"></i> Info
+            </button></a>
+            <button (click)="loadGames()" type="button" class="btn btn-secondary roundButton hidden-xxs">
                 <i class="fa fa-refresh"></i>
             </button>
         </div>
@@ -99,15 +102,17 @@
                 </span>
             </div>
 
-            <div>
+            <div *ngIf="multiPlayerObj">
                 <table width="100%">
                     <tr style="background-color: #000; color: white; height: 40px; border-bottom: 1px solid gray; ">
                         <td style="text-align: left; padding-left: 5px;">
-                            <font color=gray><i class="fa fa-comment"></i> Latest Chat:</font> {{multiPlayerObj.chatMsg}}
+                            <font color=gray><i class="fa fa-comment"></i> Latest Chat:</font>
+                            {{multiPlayerObj.chatMsg}}
                         </td>
                         <td>
                             <button (click)="chatPopup.show(null, null, null, user, null)"
-                            style="float: right; padding-right: 8px;" type="button" class="btn btn-primary roundButton"><i class="fa fa-comment"></i>
+                                style="float: right; padding-right: 8px;" type="button"
+                                class="btn btn-primary roundButton"><i class="fa fa-comment"></i>
                                 Chat</button>
                         </td>
                     </tr>
@@ -120,8 +125,9 @@
                     </tr>-->
                 </table>
             </div>
-            <div style="background-color: #007; text-align: center; padding: 3px; color: white; font-size: 20px; font-weight: 700;"
-                class="gradient">Games</div>
+            <div
+                style="background-color: #007; text-align: center; padding: 3px; color: white; font-size: 20px; font-weight: 700;">
+                Games</div>
 
 
             <div class="mediumBlueBg" style="text-align: center; padding-bottom: 5px;">
@@ -174,6 +180,22 @@
             <div class="mediumBlueBg">
                 <div style="font-size: 24px;"><b><i class="fa {{titles[buttonIdx].icon}}"></i>
                         {{titles[buttonIdx].title}}</b></div>
+                <div *ngIf="buttonIdx==0 && gameList.length==0" class="borderClass3">
+                    <img src="assets/graphics/advisors/leader.png" height=170>
+                    <div style="font-size: 24px; font-weight: 700;">Welcome to Superpowers!</div>
+                    <div style="padding: 10px;">Click a button above to <b>Join</b> or <b>Create</b> a new game!
+                    </div>
+                    <div style="padding: 10px; font-size: 12px; color: gray;">Keep in mind games take several days to
+                        play. Each player has up to 24 hours to take their turn. Check back regularly.</div>
+                    <div class="borderClass2">
+                        <div>Also consider joining Matchmaking.</div>
+                        <button (click)="matchmakerStandingsPopup.show()" type="button"
+                            class="btn btn-primary roundButton">
+                            <i class="fa fa-trophy"></i> Matching League
+                        </button>
+                    </div>
+
+                </div>
                 <div *ngFor="let game of gameList" class="spCard" style="width: 100%; max-width: 360px;">
                     <div style="width: 100%;">
                         <div class="spTitle" [style.background-color]="game.mmFlg?'purple':'#033a77'">
@@ -191,10 +213,10 @@
                                 {{game.name}}</div>
                             <table style="width: 100%;">
                                 <tr>
-                                    <td>
+                                    <td *ngIf="game.status!='Open'">
                                         <div class="gameCard" style="min-width: 100px;">
                                             <div class="darkBlueBg"><i class="fa fa-h-square"></i> Host</div>
-                                            <div> {{game.host}}</div>
+                                            <div (click)="userPopup.show({userId: game.hostId, userName: game.host})"> {{game.host}}</div>
                                             <div>{{game.size}} Players</div>
                                         </div>
                                         <div *ngIf="game.inGame && game.myNation>0">
@@ -214,7 +236,26 @@
                                             <span *ngIf="game.joinGameFlg">Join</span>
                                             <span *ngIf="!game.joinGameFlg">Enter</span>
                                         </button>
-                                        <div>
+                                        <div *ngIf="game.status == 'Open'">
+                                            <button *ngIf="game.host == user.userName"
+                                                (click)="openGameButtonPressed(game, 'start')" type="button"
+                                                class="btn btn-warning roundButton"><i class="fa fa-play"></i> Start
+                                                Game</button>
+                                            <button *ngIf="game.host == user.userName && game.no_stats_flg"
+                                                (click)="openGameButtonPressed(game, 'add_computer')" type="button"
+                                                class="btn btn-warning roundButton"><i class="fa fa-android"></i> Add
+                                                CPU</button>
+                                            <button *ngIf="game.host == user.userName"
+                                                (click)="openGameButtonPressed(game, 'cancelGame')" type="button"
+                                                class="btn btn-warning roundButton"><i class="fa fa-trash"></i>
+                                                Delete</button>
+                                            <button *ngIf="game.inGame && game.host != user.userName"
+                                                (click)="openGameButtonPressed(game, 'leaveGame')" type="button"
+                                                class="btn btn-warning roundButton"><i class="fa fa-sign-out"></i>
+                                                Leave</button>
+                                         </div>
+
+                                        <div *ngIf="game.status!='Open'">
                                             <div class="gameCard">
                                                 <div class="darkBlueBg">Round</div>
                                                 <div
@@ -223,10 +264,10 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td>
+                                    <td *ngIf="game.status!='Open'">
                                         <div class="gameCard" style="min-width: 100px;">
                                             <div class="darkBlueBg"><i class="fa fa-clock-o"></i> Timer</div>
-                                            <app-player-name [player]="game.turnObj"></app-player-name>
+                                            <app-player-name (click)="userPopup.show(game.turnObj)" [player]="game.turnObj"></app-player-name>
                                             <div>{{game.timeLeft}}</div>
                                             <div style="font-size: 10px; color: gray;">Last Login:
                                                 <span
@@ -241,12 +282,14 @@
                                     </td>
                                 </tr>
                             </table>
-                            <div *ngIf="selectedGameNum == game">
+                            <div *ngIf="selectedGameNum == game || game.status=='Open'">
                                 <div class="spCard">
                                     <div>
                                         <div class="spTitle">Game Options</div>
                                         <div class="spCardBody" style="font-size: 12px;">
                                             <div style="background-color: #ccc;">{{game.type}}</div>
+                                            <div><i class="fa fa-h-square"></i> {{game.host}}</div>
+                                            <div>{{game.size}} Players</div>
                                             <div *ngIf="game.mmFlg"><i class="fa fa-trophy"></i> Matchmaking</div>
                                             <div *ngIf="game.autoStart && game.status=='Open'"><i
                                                     class="fa fa-check"></i> Auto-Start</div>
@@ -281,13 +324,18 @@
                                             <tr *ngFor="let player of game.players">
                                                 <td><img src="assets/graphics/images/flag{{player.nation}}.gif"
                                                         height="20"></td>
-                                                <td>
+                                                <td (click)="userPopup.show(player)">
                                                     <i *ngIf="player.top" class="fa fa-star"></i>
                                                     <i *ngIf="player.turnFlg" class="fa fa-check"></i>
                                                     {{player.name}}
                                                 </td>
                                                 <td style="color: green; font-weight: 700;">{{player.income}}</td>
-                                                <td style="font-size: 12px; color: gray;">{{player.clock}}hr</td>
+                                                <td style="font-size: 12px; color: gray;">{{player.clock}}hr
+                                                    <button *ngIf="game.host == user.userName && game.status == 'Open' && player.name != user.userName"
+                                                    (click)="removePlayerFromGame(game, player)" type="button"
+                                                    class="btn btn-danger roundButton"><i class="fa fa-trash"></i>
+                                                    </button>
+                                                </td>
                                             </tr>
                                         </table>
                                         <div class="spTitle"><i class="fa fa-star"></i>: Top-2 Player, <i
@@ -302,7 +350,7 @@
                 </div>
                 <!----end card-->
             </div>
-            <div class="darkBlueBg" style="color: #ccc;">
+            <div *ngIf="multiPlayerObj" class="darkBlueBg" style="color: #ccc;">
                 Newest User: <span style="color: yellow;">{{multiPlayerObj.lastestUser}}</span>&nbsp;&nbsp;&nbsp;
                 Users Online: <span style="color: white;">{{multiPlayerObj.usersOnline}}</span>
             </div>
@@ -335,9 +383,35 @@
     </div>
 </div>
 
+<div id="actionConfirmationPopup" class="popupScreen2">
+    <div *ngIf="selectedGame" class="mediumBlueBg">{{selectedGame.name}}</div>
+    <div>{{buttonActionMessage}}</div>
+    <button onClick="closePopup('actionConfirmationPopup')" type="button" class="btn btn-danger roundButton"><i
+            class="fa fa-times"></i> Cancel</button>
+    <button (click)="confirmButtonPressed()" id="" type="button" class="btn btn-primary roundButton tall2"><i
+            class="fa fa-check"></i> Yes!</button>
+</div>
+
+<div id="newGamePopup" class="popupScreenNoPad" style="max-width: 320px;" onClick="closePopup('newGamePopup')">
+    <div *ngIf="multiPlayerObj && multiPlayerObj.newGame">
+        <img src="assets/graphics/misc/parade.jpg" width=100%>
+        <div>New Game Started!</div>
+        <div class="glowBlue">{{multiPlayerObj.gameName}}</div>
+    </div>
+    <div *ngIf="multiPlayerObj && !multiPlayerObj.newGame">
+        <img *ngIf="multiPlayerObj.gameResult!='Win'" src="assets/graphics/misc/cityNuked.jpg" width=100%>
+        <img *ngIf="multiPlayerObj.gameResult=='Win'" src="assets/graphics/misc/victory.jpg" width=100%>
+        <div style="font-size: 20px;">Multiplayer Game Ended!</div>
+        <div class="glowRed">{{multiPlayerObj.gameName}}</div>
+        <div style="font-size: 30px;">{{multiPlayerObj.gameResult}}</div>
+    </div>
+</div>
+
 
 <app-user-popup #userPopup [user]="user" (messageEvent)="userUpdated($event)"></app-user-popup>
 <app-create-game-popup #createGamePopup [user]="user" (messageEvent)="refreshGames($event)"></app-create-game-popup>
 <app-game-standings #gameStandingsPopup [user]="user"></app-game-standings>
+<app-mail-popup #mailPopup [user]="user"></app-mail-popup>
+<app-forum-popup #forumPopup [user]="user"></app-forum-popup>
 <app-matchmaking-standings #matchmakerStandingsPopup [user]="user"></app-matchmaking-standings>
 <app-chat-popup #chatPopup></app-chat-popup>

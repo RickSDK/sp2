@@ -49,6 +49,7 @@
 				<app-stats-view *ngIf="buttonIdx==2" [gameObj]="gameObj" [displayTeams]="displayTeams"></app-stats-view>
 				<app-territories-view *ngIf="buttonIdx==3" [gameObj]="gameObj"></app-territories-view>
 				<app-game-view *ngIf="buttonIdx==4" [gameObj]="gameObj" [ableToTakeThisTurn]="ableToTakeThisTurn"></app-game-view>
+				<div *ngIf="buttonIdx==4 && user.userName=='Rick'">gameUpdDt: {{gameUpdDt}}</div>
 
 			</div>
 			<div class="modal-footer">

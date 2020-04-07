@@ -130,7 +130,7 @@ function executeTextApi(obj, callback) {
 		});
 }
 function verifyServerResponse(status, data) {
-	if (status == 'success') {
+	if (1) {
 		if (data.substring(0, 7) == 'Success')
 			return true;
 		else {
@@ -149,12 +149,15 @@ function verifyServerResponse(status, data) {
 	return false;
 }
 function startSpinner(title, top, submitButton) {
-	if (submitButton && submitButton.length > 0)
-		disableButton(submitButton, true);
 	updateProgressBar(0);
 	displayFixedPopup('popupSaving');
+	if (submitButton && submitButton.length > 0) {
+		setTimeout(() => {
+			disableButton(submitButton, true);
+		}, 200);
+	}
+		
 	document.getElementById("popupMessage").innerHTML = title;
-
 }
 function stopSpinner(submitButton) {
 	updateProgressBar(100);

@@ -3,6 +3,9 @@ import { BaseComponent } from '../base/base.component';
 
 declare var displayFixedPopup: any;
 declare var $: any;
+declare var userObjFromUser: any;
+declare var getCurrentPlayer: any;
+declare var saveGame: any;
 
 @Component({
   selector: 'app-game-view',
@@ -12,10 +15,12 @@ declare var $: any;
 export class GameViewComponent extends BaseComponent implements OnInit {
   @Input('gameObj') gameObj: any;
   @Input('ableToTakeThisTurn') ableToTakeThisTurn: any;
+  public user: any;
 
   constructor() { super(); }
 
   ngOnInit(): void {
+    this.user = userObjFromUser();
   }
   surrenderButtonPressed() {
     displayFixedPopup('surrenderPopup');
@@ -24,11 +29,48 @@ export class GameViewComponent extends BaseComponent implements OnInit {
   computerGo() {
     this.closeModal('#gamePlayersPopup');
     displayFixedPopup('computerTakeTurnPopup');
-  }  
-  reportBug(id) {
-    this.showAlertPopup('not coded yet.', 1);
-    $('#gamePlayersPopup').modal('hide');
-//    $(id).show(null, null, null, this.user, null);
-//    $('#chatPopup').modal('show');
+  }
+  reportBug() {
+    this.playClick();
+    this.infoFlg = !this.infoFlg;
+  }
+  postChat() {
+    var message = this.databaseSafeValueOfInput("msgField");
+    if (message.length == 0) {
+      this.showAlertPopup('no message', 1);
+      return;
+    }
+    $('#msgField').val('');
+
+    var url = this.getHostname() + "/webChat.php";
+    const postData = this.getPostDataFromObj({
+      user_login: this.user.userName,
+      code: this.user.code,
+      game_id: this.gameObj.id,
+      action: 'postMessage',
+      message: '**Bug Alert** ' + message,
+      recipient: 'All',
+      bugFlg: 'Y'
+    });
+    console.log(postData);
+
+    fetch(url, postData).then((resp) => resp.text())
+      .then((data) => {
+        if (this.verifyServerResponse(data)) {
+          this.infoFlg = false;
+          this.closeModal('#gamePlayersPopup');
+          this.showAlertPopup('Bug message has been submitted. Thanks!');
+        }
+      })
+      .catch(error => {
+        this.showAlertPopup('Unable to reach server: ' + error, 1);
+      });
+
+  }
+  adminSaveGame() {
+    console.log('save');
+    var currentPlayer = getCurrentPlayer(this.gameObj);
+    this.displayFixedPopup('popupSaving');
+//    saveGame(this.gameObj, this.user, currentPlayer);
   }
 }

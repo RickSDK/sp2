@@ -118,34 +118,37 @@ export class CreateGamePopupComponent extends BaseComponent implements OnInit {
     if (nameField.indexOf("'") > -1) {
       nameField = nameField.replace("'", "");
     }
+    var nation = this.selectedNation;
+    if (autoAssign == 'Y')
+      nation = 0;
+
 
     var components = [nameField, this.gameType.type, this.numberPlayers, attackRound, fogOfWar, autoAssign
-      , autoStart, autoSkip, noSpecs, noStats, newEngineFlg, minRank, maxRank, hostRank, password, hardFog, turboFlg, this.selectedNation];
+      , autoStart, autoSkip, noSpecs, noStats, newEngineFlg, minRank, maxRank, hostRank, password, hardFog, turboFlg, nation];
     var data = components.join('|');
-    console.log(components, data);
     this.sendingFlg = true;
-    this.createGame(data); 
+    this.createGame(data, nation);
   }
-  createGame(dataLine: string) {
-   
+  createGame(dataLine: string, nation: number) {
+
     const url = getHostname() + "/web_join_game2.php";
-    const postData = getPostDataFromObj({user_login: localStorage.userName, code: this.user.code, data: dataLine, action: 'createGame', nation: this.selectedNation});
-  
+    const postData = getPostDataFromObj({ user_login: localStorage.userName, code: this.user.code, data: dataLine, action: 'createGame', nation: nation });
+
     fetch(url, postData).then((resp) => resp.text())
-      .then((data) => { 
-        if(verifyServerResponse('success', data)) {
+      .then((data) => {
+        if (verifyServerResponse('success', data)) {
           this.showAlertPopup('Success!');
           this.messageEvent.emit('done');
         } else {
-          this.showAlertPopup('Error! '+data);
+          this.showAlertPopup('Error! ' + data);
         }
         $("#createGamePopup").modal('hide');
         this.sendingFlg = false;
-       })
-      .catch(error => { 
+      })
+      .catch(error => {
         $("#createGamePopup").modal('hide');
         this.sendingFlg = false;
-        this.showAlertPopup('Unable to reach server: '+error, 1); 
+        this.showAlertPopup('Unable to reach server: ' + error, 1);
       });
   }
 }

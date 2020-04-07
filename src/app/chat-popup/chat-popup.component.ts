@@ -37,14 +37,13 @@ export class ChatPopupComponent extends BaseComponent implements OnInit {
   show(gameObj: any, ableToTakeThisTurn: any, currentPlayer: any, user: any, yourPlayer: any, bugFlg = false) {
     this.user = user;
     this.bugFlg = bugFlg;
-    console.log('this.bugFlg', this.bugFlg);
+    this.isMobileFlg = (window.innerWidth < 500);
     if (gameObj) {
       if (!user) {
         user = userObjFromUser();
       }
       this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);
       this.yourPlayer = yourPlayer;
-      this.isMobileFlg = (window.innerWidth < 500);
 
       var alivePlayers = [];
       gameObj.players.forEach(player => {

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
-declare var getAllRanks: any;
+declare var userObjFromUser: any;
 declare var playClick: any;
 
 @Component({
@@ -13,11 +13,12 @@ declare var playClick: any;
 export class RanksPopupComponent extends BaseComponent implements OnInit {
   public ranks = [];
   public specialUnits = [];
+  public user: any;
 
   constructor() { super(); }
 
   ngOnInit(): void {
-    //    this.ranks = getAllRanks();
+    this.user = userObjFromUser();
     this.changeSegment(0);
   }
   show() {

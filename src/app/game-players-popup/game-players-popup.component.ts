@@ -17,6 +17,7 @@ export class GamePlayersPopupComponent extends BaseComponent implements OnInit {
   public showInfoFlg = false;
   public displayPlayers = [];
   public displayTeams = [];
+  public gameUpdDt:string;
 
   constructor() { super(); }
 
@@ -31,6 +32,8 @@ export class GamePlayersPopupComponent extends BaseComponent implements OnInit {
 
     closePopup('diplomacyWarningPopup'); //not sure if needed
 
+    this.gameUpdDt = localStorage.gameUpdDt;
+
     checkVictoryConditions(currentPlayer, gameObj, this.superpowersData);
 
     gameObj.players.forEach(player => {
@@ -38,7 +41,7 @@ export class GamePlayersPopupComponent extends BaseComponent implements OnInit {
     });
 
     //------------------allies
-    this.displayPlayers = gameObj.players;
+    this.displayPlayers = gameObj.players.slice(0);
     this.displayPlayers.sort(function (a, b) { return a.team - b.team; });
 
     var displayTeams = [];

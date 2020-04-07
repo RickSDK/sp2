@@ -69,7 +69,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 			unitUniqueHash[unit.id] = true;
 
 			units.push(unit);
-			if (currentPlayer && currentPlayer.nation && currentPlayer.nation>0) {
+			if (currentPlayer && currentPlayer.nation && currentPlayer.nation > 0) {
 				if (currentPlayer && unit.owner != terr.owner && !enemyPiecesExist) {
 					if (currentPlayer.treaties[unit.owner - 1] == 0)
 						enemyPiecesExist = true;
@@ -550,15 +550,14 @@ function getCurrentPlayer(gameObj) {
 		return null;
 
 
-	return gameObj.players[gameObj.turnId - 1]; // this??
+	//	return gameObj.players[gameObj.turnId - 1]; // this??
 
 	var turnId = gameObj.turnId;
 	var player = gameObj.players[0];
 	gameObj.players.forEach(function (p) {
-		if (p.id == turnId)
+		if (p.turn == turnId)
 			player = p;
 	});
-	gameObj.turnId = player.id;
 	return player;
 }
 function scrubGameObj(gameObj, gUnits) {
@@ -734,6 +733,20 @@ function scrubUnitsOfPlayer(player, gameObj, gUnits) {
 	});
 	player.stratBombButton = stratBombButton;
 	addTechForPlayer(player);
+}
+function checkIlluminateFlg(terr, gameObj) {
+	var borders = terr.borders.split('+');
+	var flag = false;
+	borders.forEach(tId => {
+		var num = numberVal(tId);
+		if (num > 0) {
+			var t = gameObj.territories[num - 1];
+			if (t.treatyStatus >= 3 && t.unitCount > 0)
+				flag = true;
+		}
+
+	});
+	return flag;
 }
 function resetPlayerUnits(player, gameObj) {
 	var unitCount = 0;
@@ -1343,7 +1356,7 @@ function getDisplayQueueFromQueue(terr, gameObj) {
 }
 
 function updateAdvisorInfo(terr, currentPlayer, user, gameObj, superpowers, optionType) {
-	if(!currentPlayer)
+	if (!currentPlayer)
 		return '';
 	var strategyHint = '';
 	if (currentPlayer.status == 'Purchase' && terr.treatyStatus == 4 && user.rank <= 3) {
@@ -1685,12 +1698,19 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 	var maxCapitals = 6;
 	var maxIncome = 0;
 	var winnningPlayer = 'Unknown';
+	var liveHumanPlayerCount = 0;
 	gameObj.players.forEach(function (player) {
+		if (player.alive && !player.cpu)
+			liveHumanPlayerCount++;
 		if (player.income > maxIncome) {
 			maxIncome = player.income;
 			winnningPlayer = superpowersData.superpowers[player.nation];
 		}
 	});
+	if(liveHumanPlayerCount==0 && gameObj.multiPlayerFlg) {
+		showAlertPopup('No humans left! Ending game.');
+		//gameObj.gameOver = true;
+	}
 
 	var maxCapitalsHeld;
 	var winningTeam = 0;
@@ -1902,18 +1922,21 @@ function isCountOfNation(nation, count) {
 	return false;
 }
 function illuminateTerritories(gameObj) {
-	gameObj.territories.forEach(function (t) {
-		t.illuminateFlg = t.treatyStatus >= 3;
-		if (t.illuminateFlg)
-			illuminateThisTerritory(t, gameObj);
-	});
+	for (var x = 0; x < gameObj.territories.length; x++) {
+		var terr = gameObj.territories[x];
+		if (terr.treatyStatus >= 3)
+			illuminateThisTerritory(terr, gameObj);
+	}
 }
 function illuminateThisTerritory(t, gameObj) {
+	t.illuminateFlg = true;
 	if (t.unitCount > 0) {
 		var borders = t.borders.split('+');
 		borders.forEach(function (b) {
 			var terr = gameObj.territories[b - 1];
-			terr.illuminateFlg = true;
+			if (!terr.illuminateFlg && terr.treatyStatus < 3) {
+				terr.illuminateFlg = true;
+			}
 		});
 	}
 }
