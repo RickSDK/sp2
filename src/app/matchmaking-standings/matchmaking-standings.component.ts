@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
@@ -12,6 +12,7 @@ declare var numberVal: any;
 })
 export class MatchmakingStandingsComponent extends BaseComponent implements OnInit {
   @Input('user') user: any;
+  @Output() messageEvent = new EventEmitter<string>();
   public maxGames = 0;
   public loadingFlg = true;
   public ipCheck: string;
@@ -60,6 +61,10 @@ export class MatchmakingStandingsComponent extends BaseComponent implements OnIn
       .catch(error => {
         this.showAlertPopup('Unable to reach server: ' + error, 1);
       });
+  }
+  showPlayer(player) {
+    this.closeModal('#matchmakerStandingsPopup');
+    this.messageEvent.emit(player);
   }
   changeMaxGames(num: number) {
     this.maxGames += num;

@@ -16,6 +16,7 @@ declare var closePopup: any;
 declare var numberVal: any;
 declare var databaseSafeValueOfInput: any;
 declare var playSound: any;
+declare var spVersion: any;
 
 @Component({
   selector: 'app-base',
@@ -34,13 +35,15 @@ export class BaseComponent implements OnInit {
   public selectedUnit: any;
   public unitDetailFlg = false;
   public loadingFlg = false;
+  public appVersion: string;
 
   constructor() {
     this.superpowersData = getSuperpowersData();
+    this.appVersion = spVersion();
     //console.log('superpowersData', this.superpowersData);
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {  }
 
   //-----img---
   ngUnitSrc(piece: number, nation = 1) {
@@ -146,7 +149,7 @@ export class BaseComponent implements OnInit {
   displaySPPopup(id: string) {
     displayFixedPopup(id);
   }
-  displayFixedPopup(id: string, flg=false) {
+  displayFixedPopup(id: string, flg = false) {
     displayFixedPopup(id, flg);
   }
   closePopup(id: string) {

@@ -24,7 +24,7 @@
                                 <th>L10</th>
                                 <th>Pts</th>
                             </tr>
-                            <tr *ngFor="let player of fullPlayerList; let i = index">
+                            <tr *ngFor="let player of fullPlayerList; let i = index" (click)="showPlayer(player)">
                                 <td>#{{i+1}}</td>
                                 <td>
                                     <app-player-name [player]="player"></app-player-name>
@@ -50,7 +50,7 @@
                                 <th>Name</th>
                                 <th>Streak</th>
                             </tr>
-                            <tr *ngFor="let player of hotStreakList">
+                            <tr *ngFor="let player of hotStreakList" (click)="showPlayer(player)">
                                 <td>
                                     <app-player-name [player]="player"></app-player-name>
                                 </td>
@@ -68,7 +68,7 @@
                                 <th>Name</th>
                                 <th>Streak</th>
                             </tr>
-                            <tr *ngFor="let player of coldStreakList">
+                            <tr *ngFor="let player of coldStreakList" (click)="showPlayer(player)">
                                 <td>
                                     <app-player-name [player]="player"></app-player-name>
                                  </td>

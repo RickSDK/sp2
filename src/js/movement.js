@@ -54,6 +54,9 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
     if (optionType == 'movement' && distObj.land == 0)
         return false;
     var movement = (optionType == 'attack' || optionType == 'bomb' || optionType == 'nuke') ? unit.moveAtt : unit.mv;
+    if (unit.subType == 'missile' && distObj.air <= movement) {
+        return true;
+    }
     if (unit.type == 1 && distObj.land <= movement)
         return true;
     if ((unit.type == 2 || unit.type == 4 || unit.subType == 'missile') && distObj.air <= movement)
@@ -189,7 +192,7 @@ function findTransportForThisCargo(unit, terr, gameObj) {
             }
         }
     }
-    console.log('no transport found!!!', terr.units);
+    console.log('no transport found!!!', unit, terr.units.length);
 }
 function loadThisUnitOntoThisTransport(unit, transport) {
     if (unit.owner != transport.owner) {
@@ -226,9 +229,9 @@ function showUnitsForMovementBG2(optionType, gameObj, currentPlayer, totalMoveTe
     var totalUnitsThatCanMove = 0;
     var maxDist = 8;
     if (optionType == 'nuke')
-        maxDist = 5;
+        maxDist = 6;
     if (optionType == 'attack' || optionType == 'bomb')
-        maxDist = 4;
+        maxDist = 5;
     if (optionType == 'cruise')
         maxDist = 2;
 
@@ -299,6 +302,9 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
     var sealCount = 0;
     var nonSealCount = 0;
     var spotterCount = 0;
+    var fightersSelected = 0;
+    var carriersSelected = 0;
+    var fighterUnitClicked;
     var specOpsUnit = false;
     var includesGeneral = false;
     var infParatrooperCount = selectedTerritory.infParatrooperCount;
@@ -323,6 +329,13 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
                         checkAGroundUnitID = 'unit' + unit.id;
                 }
                 if (e && e.checked) {
+                    if (unit.subType == 'fighter') {
+                        fighterUnitClicked = e;
+                        fightersSelected++;
+                    }
+
+                    if (unit.piece == 8)
+                        carriersSelected++;
                     if (u && unit.terr == u.terr) {
                         if (selectedUnitCounts[unit.piece] > 0)
                             selectedUnitCounts[unit.piece]++;
@@ -402,7 +415,7 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
                                 showAlertPopup('No transports there!', 1);
                             e.checked = false;
                         }
-                        if (carrierCargo > selectedTerritory.carrierSpace) {
+                        if (0 && carrierCargo > selectedTerritory.carrierSpace) {
                             if (selectedTerritory.carrierSpace > 0)
                                 showAlertPopup('Not enough room on your carriers. Removing fighters.', 1);
                             else
@@ -437,6 +450,12 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
         }
 
     }
+    if (optionType == 'movement' && fighterUnitClicked && selectedTerritory.nation == 99 && selectedTerritory.carrierSpace == 0 && carriersSelected == 0) {
+        fighterUnitClicked.checked = false;
+        showAlertPopup('No room for your fighter!', 1);
+    }
+    if (fightersSelected > 0 && selectedTerritory.nation == 99)
+        console.log('fighter situation', fightersSelected, carriersSelected, selectedTerritory.carrierSpace, carrierCargo);
     if (u) {
         selectedFormUnit = { piece: u.piece, max: totalUnitCounts[u.piece], num: selectedUnitCounts[u.piece] };
         if (selectedUnitForm > 0 && totalUnitCounts[u.piece] < 5)

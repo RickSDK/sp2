@@ -5,6 +5,7 @@ import { splitAtColon } from '@angular/compiler/src/util';
 declare var $: any;
 declare var messageFromLine: any;
 declare var userObjFromUser: any;
+declare var changeClass: any;
 
 @Component({
   selector: 'app-chat-popup',
@@ -37,6 +38,7 @@ export class ChatPopupComponent extends BaseComponent implements OnInit {
   show(gameObj: any, ableToTakeThisTurn: any, currentPlayer: any, user: any, yourPlayer: any, bugFlg = false) {
     this.user = user;
     this.bugFlg = bugFlg;
+    changeClass('chatButton', 'btn btn-primary tight roundButton');
     this.isMobileFlg = (window.innerWidth < 500);
     if (gameObj) {
       if (!user) {

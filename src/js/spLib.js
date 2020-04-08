@@ -1,3 +1,6 @@
+function spVersion() {
+	return 'v4.0';
+}
 function getScriptV() {
 	return 'v3.5';
 }

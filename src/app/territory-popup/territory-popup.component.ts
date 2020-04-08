@@ -305,7 +305,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     this.battleHappened.emit('yes');
     this.displayBattle.phase = 1;
     playSound('AirHorn.mp3');
-    startBattle(this.selectedTerritory, this.currentPlayer, this.gameObj, this.superpowersData);
+    startBattle(this.selectedTerritory, this.currentPlayer, this.gameObj, this.superpowersData, this.displayBattle);
     this.beginNextRoundOfBattle();
   }
   beginNextRoundOfBattle() {

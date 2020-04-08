@@ -347,6 +347,7 @@ function getAllRanks() {
 		, { id: x++, name: 'Lieutenant General', desc: 'Reach 300 pts then host and win a 6-8-player FFA game' }
 		, { id: x++, name: '4-Star General', desc: 'Win a 1v1 game against someone ranked Lieutenant General or higher' }
 		, { id: x++, name: 'Grand General', desc: 'Highest Ranking General' }
+		, { id: x++, name: 'Grand General2', desc: 'Highest Ranking General2' }
 	];
 }
 function awardNameForNum(num) {

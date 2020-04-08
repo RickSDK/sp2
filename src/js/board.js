@@ -1480,7 +1480,7 @@ function peaceAgreementMessageFromNation(nation) {
 		'I have negotiated a really, really good peace agreement with you. Don\'t screw it up!',
 		'Our peace agreement is serving us both well. Do not think of breaking it.',
 		'At the moment, we are happy to honor the current peace agreement.',
-		'Konnichiwa! We are enjoying out peace agreement with you.',
+		'Konnichiwa! We are enjoying our peace agreement with you.',
 		'Ni Hao! We are trying to achieve our state of enlightenment and peace.',
 		'Peace is what we are all about! Let us continue working as friends.',
 		'Greetings good friend. Let us enjoy our current state of peace.',

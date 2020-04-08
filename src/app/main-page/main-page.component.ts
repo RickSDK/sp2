@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 declare var getHostname: any;
 declare var userObjFromUser: any;
 declare var parseServerDataIntoUserObj: any;
+declare var spVersion: any;
 
 @Component({
   selector: 'app-main-page',
@@ -19,15 +20,14 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   public user: any;
   public expandFlg = false;
   public singleGameId: number;
-
+  
   constructor(private router: Router) { super(); }
 
   ngOnInit(): void {
     //localStorage.rank=0; //<-- reset rank
     this.hostname = getHostname();
-    console.log('localStorage.userName 1', localStorage.userName);
     this.user = userObjFromUser();
-    console.log('localStorage.userName 2', this.user, localStorage.userName);
+    console.log('this.user', this.user.userId, this.user);
     this.flexSprite(100);
     this.singleGameId = localStorage.currentGameId;
     localStorage.loadGameId = 0; // clear out any multiplayer game
@@ -36,7 +36,6 @@ export class MainPageComponent extends BaseComponent implements OnInit {
     else {
       this.displaySPPopup('initPopup');
     }
-
   }
   getUserData() {
     const url = getHostname() + "/spApiText.php";

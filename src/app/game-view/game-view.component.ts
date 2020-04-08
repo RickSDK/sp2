@@ -68,9 +68,18 @@ export class GameViewComponent extends BaseComponent implements OnInit {
 
   }
   adminSaveGame() {
+    this.playClick();
     console.log('save');
     var currentPlayer = getCurrentPlayer(this.gameObj);
     this.displayFixedPopup('popupSaving');
-//    saveGame(this.gameObj, this.user, currentPlayer);
+    saveGame(this.gameObj, this.user, currentPlayer);
+  }
+  turnAllPlayersHuman() {
+    this.playClick();
+    console.log('turnAllPlayersHuman');
+    this.gameObj.players.forEach(player => {
+      if (player.userId != '30')
+        player.cpu = false;
+    });
   }
 }

@@ -54,6 +54,9 @@ import { MatchmakingStandingsComponent } from './matchmaking-standings/matchmaki
 import { PlayerNameComponent } from './player-name/player-name.component';
 import { MailPopupComponent } from './mail-popup/mail-popup.component';
 import { ForumPopupComponent } from './forum-popup/forum-popup.component';
+import { SpTableComponent } from './sp-table/sp-table.component';
+import { SpTimeLeftComponent } from './sp-time-left/sp-time-left.component';
+import { SpUserNameComponent } from './sp-user-name/sp-user-name.component';
 
 @NgModule({
   declarations: [
@@ -108,7 +111,10 @@ import { ForumPopupComponent } from './forum-popup/forum-popup.component';
     MatchmakingStandingsComponent,
     PlayerNameComponent,
     MailPopupComponent,
-    ForumPopupComponent
+    ForumPopupComponent,
+    SpTableComponent,
+    SpTimeLeftComponent,
+    SpUserNameComponent
   ],
   imports: [
     BrowserModule,

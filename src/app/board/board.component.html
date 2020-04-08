@@ -48,9 +48,8 @@
 		class="btn btn-success roundButton"><i class="fa fa-refresh"></i> Redo</button>
 	<button *ngIf="ableToTakeThisTurn && hideActionButton" (click)="completeTurnButtonPressed()" type="button"
 		class="btn btn-success roundButton"><i class="fa fa-arrow-right"></i> End Turn</button>
-	<span *ngIf="this.gameObj.gameOver">
-		<a routerLink="/"><button type="button" class="btn btn-success roundButton glowButton">Game Over! Exit
-				Game</button></a>
+	<span *ngIf="this.gameObj.gameOver" style="font-size: 20px; font-weight: 700;">
+		Game Over!
 	</span>
 	<span *ngIf="!this.gameObj.gameOver">
 		<img (click)="scrollToNation(currentPlayer.nation)"
@@ -96,7 +95,7 @@
 		<button (click)="logsPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button"
 			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-list-ol"></i><br><span
 				style="font-size: 10px;">Logs</span></button>
-		<button *ngIf="gameObj.multiPlayerFlg"
+		<button *ngIf="gameObj.multiPlayerFlg" id="chatButton"
 			(click)="chatPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, yourPlayer)" type="button"
 			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i
 				class="fa fa-commenting"></i><br><span style="font-size: 10px;">Chat</span></button>
@@ -342,7 +341,7 @@
 			</td>
 		</tr>
 	</table>
-	<div class="borderClass2"> Next Rank: <img src="assets/graphics/ranks/rank{{user.rank+1}}.png" height="22">
+	<div *ngIf="user.rank<18" class="borderClass2"> Next Rank: <img src="assets/graphics/ranks/rank{{user.rank+1}}.png" height="22">
 		{{superpowersData.ranks[user.rank+1].name}}
 		<div style="font-size: 12px;">{{superpowersData.ranks[user.rank+1].desc}}</div>
 

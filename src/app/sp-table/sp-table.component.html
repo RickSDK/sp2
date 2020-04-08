@@ -1,0 +1,64 @@
+<div class="spCard" style="cursor: pointer;">
+    <div>
+        <div class="spTitle"><i *ngIf="dataObj.icon" class="fa {{dataObj.icon}}"></i> {{dataObj.title}}
+            <i *ngIf="dataObj.editFlg" class="fa fa-pencil-square-o"
+                style="float: right; padding-right: 5px; padding-top: 3px;"></i>
+        </div>
+        
+        <table *ngIf="!dataObj.type" class="spTable" style="font-size: 11px;">
+            <tr>
+                <th>Name</th>
+                <th>Value</th>
+            </tr>
+            <tr *ngFor="let row of dataObj.rows">
+                <td *ngIf="row.name" class="darkBlue"><b>{{row.name}}</b></td>
+                <td *ngIf="row.src"><img src="{{row.src}}" style="max-width: 80px; max-height: 80px;"></td>
+                <td>{{row.value}}</td>
+            </tr>
+        </table>
+
+        <!--------award table-->
+        <table *ngIf="dataObj.type==1" class="spTable" style="font-size: 11px;">
+            <tr>
+                <th>Awards</th>
+            </tr>
+            <tr *ngFor="let row of dataObj.rows">
+                <td><img src="{{row.src}}" style="max-width: 80px; max-height: 80px;">
+                    <div>{{row.value}}</div>
+                </td>
+            </tr>
+        </table>
+
+       <!--------Game table-->
+       <table *ngIf="dataObj.type==2 || dataObj.type==3" class="spTable" style="font-size: 11px;">
+        <tr>
+            <th>N</th>
+            <th>Name</th>
+            <th>Rd</th>
+            <th *ngIf="dataObj.type==3">R</th>
+        </tr>
+        <tr *ngFor="let row of dataObj.rows" (click)="selectGame(row)">
+            <td><img src="assets/graphics/images/flag{{row.nation}}.gif" height="20">
+            </td>
+            <td>{{row.name}}</td>
+            <td>{{row.round}}</td>
+            <td *ngIf="dataObj.type==3">
+                <span *ngIf="row.result=='Win'" style="color: green;">Win</span>
+                <span *ngIf="row.result!='Win'" style="color: red;">Loss</span>
+            </td>
+        </tr>
+        </table>
+        <div *ngIf="dataObj.type==3 && totalRows.length>10">
+            <button [disabled]="dataObj.index <= 1" (click)="pageDown(1)" type="button" class="btn btn-secondary roundButton">
+                <i class="fa fa-arrow-left"></i>
+            </button>
+            {{dataObj.index}}-{{dataObj.lastIndex}} of
+            {{dataObj.total}}
+            <button [disabled]="dataObj.lastIndex >= totalRows.length" (click)="pageUp(1)" type="button" class="btn btn-secondary roundButton">
+                <i class="fa fa-arrow-right"></i>
+            </button>
+        </div>
+
+
+</div>
+</div>

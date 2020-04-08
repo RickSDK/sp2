@@ -49,6 +49,7 @@ declare var computerAnnouncement: any;
 declare var moveTheseUnitsToThisTerritory: any;
 declare var isMusicOn: any;
 declare var disableButton: any;
+declare var fixSeaCargo: any;
 //---board.js
 declare var displayLeaderAndAdvisorInfo: any;
 declare var getDisplayQueueFromQueue: any;
@@ -179,8 +180,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	initBoard() {
 		this.gameMusic.loop = true;
 		this.gameMusic.volume = 0.5;
-		if (isMusicOn())
-			this.gameMusic.play();
 		var loadGameId = numberVal(localStorage.loadGameId);
 		var currentGameId = numberVal(localStorage.currentGameId);
 		this.loadingFlg = true;
@@ -271,6 +270,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 	//----------------start turn------------------
 	startTheAction() {
+		if (isMusicOn())
+			this.gameMusic.play();
 		this.loadingFlg = false;
 		updateProgressBar(100);
 		stopSpinner();
@@ -502,6 +503,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	initializePlayer() {
 		playVoiceClip('nation' + this.currentPlayer.nation + '.mp3');
 		this.showControls = !this.currentPlayer.cpu;
+		if (localStorage.chatFlg == 'Y') {
+			setTimeout(() => {
+				changeClass('chatButton', 'btn btn-warning tight roundButton glowYellow');
+//				showUpArrowAtElement('chatButton');
+			}, 1000);
+		}
 		if (this.currentPlayer.status == 'Waiting' || this.currentPlayer.status == 'Purchase')
 			this.initializePlayerForPurchase();
 		if (this.currentPlayer.status == 'Attack')
@@ -923,7 +930,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				moveTheseUnitsToThisTerritory(obj.attackUnits, obj.terr, this.gameObj);
 			} else {
 				this.displayBattle = initializeBattle(this.currentPlayer, obj.terr, obj.attackUnits, this.gameObj);
-				startBattle(obj.terr, this.currentPlayer, this.gameObj, this.superpowersData);
+				startBattle(obj.terr, this.currentPlayer, this.gameObj, this.superpowersData, this.displayBattle);
 				this.computerBattleRound(obj);
 			}
 		}
@@ -1053,6 +1060,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (currentPlayer.status == 'Purchase')
 			changeClass('completeTurnButton', 'glowButton');
 
+		if (terr.carrierCargo > 0 || terr.carrierSpace > 0)
+			fixSeaCargo(terr, gameObj);
 		refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 		displayLeaderAndAdvisorInfo(terr, currentPlayer, this.yourPlayer, user, gameObj, this.superpowersData.superpowers, 'home');
 		//		terr.units = unitsForTerr(terr, gameObj.units);

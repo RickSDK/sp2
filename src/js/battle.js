@@ -3,6 +3,8 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
         console.log('whoa!!!');
     }
     var displayBattle = {
+        stratBombFlg: stratBombFlg,
+        cruiseFlg: cruiseFlg,
         generalUnit: 0,
         hijackerUnit: 0,
         medicHealedCount: 0,
@@ -36,7 +38,7 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
         militaryObj: {},
         battleDetails: '',
         cruiseFlg: cruiseFlg,
-        seaBattleFlg: (selectedTerritory.nation==99),
+        seaBattleFlg: (selectedTerritory.nation == 99),
         terrX: selectedTerritory.x,
         terrY: selectedTerritory.y,
         bonusUnitsFlg: (selectedTerritory.owner == 0 && selectedTerritory.nation < 99)
@@ -54,7 +56,7 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
     var numDefDroneKillers = 0;
     selectedTerritory.units.forEach(unit => {
         if (unit.owner != attackPlayer.nation && isUnitOkToDefend(unit)) {
-            if (!stratBombFlg || (stratBombFlg && fighterDefenseFlg && unit.subType == 'fighter')) {
+            if (defenseUnitOkForType(unit, stratBombFlg, displayBattle.seaBattleFlg, fighterDefenseFlg)) {
                 unit.dice = [];
                 var numDef = unit.numDef || 1;
                 for (var i = 0; i < numDef; i++)
@@ -146,15 +148,17 @@ function arrayOfPieces(units) {
     });
     return list.join('+');
 }
-function startBattle(terr, player, gameObj, superpowersData) {
+function startBattle(terr, player, gameObj, superpowersData, battle) {
     var cost = costToAttack(terr, player);
 
     if (cost > 0) {
         var p2 = playerOfNation(terr.owner, gameObj);
         changeTreaty(player, p2, 0, gameObj, superpowersData, cost);
     }
-    terr.attackedByNation = player.nation;
-    terr.attackedRound = gameObj.round;
+    if (!battle.stratBombFlg) {
+        terr.attackedByNation = player.nation;
+        terr.attackedRound = gameObj.round;
+    }
     terr.leaderMessage = ''; //needed to make advisor go away
 }
 function isUnitCruiseUnit(piece) {
@@ -174,6 +178,13 @@ function isUnitOkToDefend(unit) {
         return false;
     else
         return true;
+}
+function defenseUnitOkForType(unit, stratBombFlg, seaBattleFlg, fighterDefenseFlg) {
+    if (stratBombFlg && (!fighterDefenseFlg || unit.subType != 'fighter'))
+        return false;
+    if (seaBattleFlg && unit.type == 1 && unit.piece != 10)
+        return false;
+    return true;
 }
 function isUnitOkToAttack(unit, nation) {
     if (unit.att > 0 && unit.mv > 0 && unit.movesLeft > 0 && unit.owner == nation && unit.subType != 'missile' && unit.piece != 13)
@@ -371,7 +382,7 @@ function battleMessageForNation(nation) {
 function landTheNukeBattle(player, targetTerr, attackUnits, gameObj, superpowersData, launchTerritories) {
     playSound('tornado.mp3');
     var battle = initializeBattle(player, targetTerr, attackUnits, gameObj);
-    startBattle(targetTerr, player, gameObj, superpowersData);
+    startBattle(targetTerr, player, gameObj, superpowersData, battle);
     targetTerr.nuked = true;
     battle.attHits = battle.militaryObj.expectedHits;
     var expectedHits = maximumPossibleNukeHitsForTerr(targetTerr, player, gameObj);
@@ -379,28 +390,28 @@ function landTheNukeBattle(player, targetTerr, attackUnits, gameObj, superpowers
     battle.defHits = attackUnits.length;
     addhitsToList(battle.defTargets, 'default', battle.defHits);
     addhitsToList(battle.attTargets, 'nuke', battle.attHits);
-    markCasualties(battle);
+    markCasualties(battle, gameObj);
     nukeBattleCompleted(battle, targetTerr, player, launchTerritories, gameObj, superpowersData, false);
     return battle;
 }
 function landTheCruiseBattle(player, targetTerr, attackUnits, gameObj, superpowersData) {
     playSound('bomb2.mp3');
     var battle = initializeBattle(player, targetTerr, attackUnits, gameObj, false, true);
-    startBattle(targetTerr, player, gameObj, superpowersData);
+    startBattle(targetTerr, player, gameObj, superpowersData, battle);
     battle.attHits = battle.militaryObj.expectedHits;
     battle.defHits = 0;
     var target = 'default';
     if (player.tech[9])
         target = 'vehicles';
     addhitsToList(battle.attTargets, target, battle.attHits);
-    markCasualties(battle);
+    markCasualties(battle, gameObj);
     nukeBattleCompleted(battle, targetTerr, player, [], gameObj, superpowersData, true);
     return battle;
 }
 function strategicBombBattle(player, targetTerr, attackUnits, gameObj, superpowersData) {
     playSound('bombers.mp3');
     var battle = initializeBattle(player, targetTerr, attackUnits, gameObj, true);
-    startBattle(targetTerr, player, gameObj, superpowersData);
+    startBattle(targetTerr, player, gameObj, superpowersData, battle);
     rollAAGuns(battle, targetTerr);
     removeCasualties(battle, gameObj, player, true, superpowersData);
     rollAttackDice(battle, true);
@@ -623,12 +634,12 @@ function japGeneralAttacks(battle) {
         battle.defCasualties.push(targetUnit.piece);
     }
 }
-function unitGetsInstantKill(unit, battle) {
+function unitGetsInstantKill(unit, battle, gameObj) {
     var targetHash = {};
     targetHash[unit.target] = 1;
     markPlanesAsDead(battle.defendingUnits, targetHash);
     markTanksAsDead(battle.defendingUnits, targetHash);
-    markRemainerAsDead(battle.defendingUnits, targetHash);
+    markRemainerAsDead(battle.defendingUnits, targetHash, gameObj);
 }
 function markSoliderAsDead(battle) {
     for (var x = 0; x < battle.defendingUnits.length; x++) {
@@ -661,7 +672,7 @@ function rollDefenderDice(battle, selectedTerritory, currentPlayer, moveTerr, ga
     });
     if (battle.round == 1)
         removeArtilleryUnits(battle);
-    markCasualties(battle);
+    markCasualties(battle, gameObj);
 
     battle.phase = 3;
     battle.militaryObj = getBattleAnalysis(battle, selectedTerritory, currentPlayer, gameObj);
@@ -710,18 +721,31 @@ function markTanksAsDead(units, targetHash) {
         }
     });
 }
-function markRemainerAsDead(units, targetHash) {
+function sinkCargo(unit, gameObj) {
+    if (!gameObj)
+        console.log('!!! no gameObj sent to sinkCargo');
+    if (unit.cargo && unit.cargo.length > 0) {
+        unit.cargo.forEach(cargoUnit => {
+            var cargo = findUnitOfId(cargoUnit.id, gameObj);
+            if (cargo)
+                cargo.dead = true;
+        });
+    }
+}
+function markRemainerAsDead(units, targetHash, gameObj) {
     units.forEach(unit => {
         if (unit.dead)
             return;
         if (unit.type == 3 && targetHash['noplanes'] > 0) {
             targetHash['noplanes']--;
             unit.dead = true;
+            sinkCargo(unit, gameObj);
             return;
         }
         if ((unit.subType == 'transport' || unit.subType == 'vehicle' || unit.type == 2 || unit.type == 4) && targetHash['kamakazi'] > 0) {
             targetHash['kamakazi']--;
             unit.dead = true;
+            sinkCargo(unit, gameObj);
             return;
         }
         if (unit.subType == 'soldier' && targetHash['soldierOnly'] > 0) {
@@ -732,6 +756,7 @@ function markRemainerAsDead(units, targetHash) {
         if (targetHash['default'] > 0) {
             targetHash['default']--;
             unit.dead = true;
+            sinkCargo(unit, gameObj);
             return;
         }
         if (targetHash['planesTanks'] > 0) {
@@ -752,11 +777,12 @@ function markRemainerAsDead(units, targetHash) {
         if (unit.subType != 'hero' && targetHash['nuke'] > 0) {
             targetHash['nuke']--;
             unit.dead = true;
+            sinkCargo(unit, gameObj);
             return;
         }
     });
 }
-function markCasualties(battle) {
+function markCasualties(battle, gameObj) {
     var logging = false;
     if (logging) {
         console.log('---------markCasualties------')
@@ -789,9 +815,10 @@ function markCasualties(battle) {
     var hits = battle.defHits;
     markPlanesAsDead(battle.attackUnits, targetHash);
     markTanksAsDead(battle.attackUnits, targetHash);
-    markRemainerAsDead(battle.attackUnits, targetHash);
+    markRemainerAsDead(battle.attackUnits, targetHash, gameObj);
 
     //-------------------defending units hit by attackers 
+    console.log('xxx', battle);
     targetHash = {};
     battle.attTargets.forEach(target => {
         if (battle.defSBSHps > 0) {
@@ -815,7 +842,7 @@ function markCasualties(battle) {
     hits = battle.attHits;
     markPlanesAsDead(battle.defendingUnits, targetHash);
     markTanksAsDead(battle.defendingUnits, targetHash);
-    markRemainerAsDead(battle.defendingUnits, targetHash);
+    markRemainerAsDead(battle.defendingUnits, targetHash, gameObj);
 }
 function healInfantryByMedic(units) {
     var healedFlg = false;
@@ -978,16 +1005,24 @@ function wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, ti
         refreshTerritory(selectedTerritory, gameObj, currentPlayer, superpowersData, null);
     }, delay);
 }
+function fixSeaCargo(terr, gameObj) {
+    if (terr.unloadedCargo && terr.unloadedCargo.length > 0) {
+        terr.unloadedCargo.forEach(function (fighterUnit) {
+            findTransportForThisCargo(fighterUnit, terr, gameObj);
+        });
+    }
+}
 function squareUpAllCargo(units, gameObj) {
     units.forEach(function (transport) {
         if (!transport.dead && transport.cargo && transport.cargo.length > 0) {
             var cargo = [];
             var cargoUnits = 0;
             transport.cargo.forEach(function (cargoUnit) {
-                var gameUnit = moveCargoUnitToTerr(transport, cargoUnit, gameObj);
-                if (gameUnit) {
+                var gameUnit = findUnitOfId(cargoUnit, gameObj);
+                if (gameUnit && gameUnit.cargoOf == transport.id) {
                     cargoUnits += cargoUnit.cargoUnits;
                     cargo.push(cargoUnit);
+                    gameUnit.terr = transport.terr;
                 }
 
             });
@@ -995,6 +1030,15 @@ function squareUpAllCargo(units, gameObj) {
             transport.cargoUnits = cargoUnits;
         }
     });
+}
+function findUnitOfId(cargoUnit, gameObj) {
+    var gameUnit;
+    gameObj.units.forEach(function (unit) {
+        if (unit.id == cargoUnit.id) {
+            gameUnit = unit;
+        }
+    });
+    return gameUnit;
 }
 function moveCargoUnitToTerr(transport, cargoUnit, gameObj) {
     var gameUnit;
@@ -1073,17 +1117,17 @@ function hostileActObj(type, terr, gameObj, player) {
 
     if (terr.defeatedByNation == player.nation && terr.defeatedByRound == gameObj.round) {
         message = "This territory has just been conquered.";
-        allowFlg = false;
+        allowFlg = (terr.nation == 99 || type == 'bomb');
     }
     if (terr.attackedByNation == player.nation && terr.attackedRound == gameObj.round) {
         message = "This territory has already been attacked.";
-        allowFlg = terr.nation == 99;
+        allowFlg = (terr.nation == 99 || type == 'bomb');
     }
     //   if (type == 'movement' && terr.defeatedByNation == player.nation && terr.defeatedByRound == gameObj.round) {
     //       message = 'Can\'t move into territories just defeated.';
     //       allowFlg = false;
     //   }
-    if (terr.owner > 0 && gameObj.round < gameObj.attack && terr.treatyStatus <= 2) {
+    if (terr.owner > 0 && gameObj.round < gameObj.attack && terr.treatyStatus <= 2 && terr.nation < 99) {
         message = 'Players cannot be attacked until round ' + gameObj.attack + '.';
         allowFlg = false;
     }
@@ -1108,7 +1152,7 @@ function hostileActObj(type, terr, gameObj, player) {
             message = 'This country has already been bombed.';
             allowFlg = false;
         }
-        if (terr.attackedByNation == player.nation && terr.attackedRound == gameObj.round) {
+        if (type != 'bomb' && terr.attackedByNation == player.nation && terr.attackedRound == gameObj.round) {
             message = 'Can\'t attack the same territory twice.';
             allowFlg = false;
         }

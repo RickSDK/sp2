@@ -103,6 +103,10 @@
 		<i class="fa fa-floppy-o" style="font-size: 26px;"></i>
 		<div style="font-size: 10px;">Save Game</div>
 	</button>
+	<button *ngIf="user.userName=='Rick'" (click)="turnAllPlayersHuman()" type="button" class="btn btn-secondary roundButton">
+		<i class="fa fa-user" style="font-size: 26px;"></i>
+		<div style="font-size: 10px;">Turn all Human</div>
+	</button>
 	<button (click)="reportBug()" type="button" class="btn btn-secondary roundButton">
 		<i class="fa fa-bug" style="font-size: 26px;"></i>
 		<div style="font-size: 10px;">Report Bug</div>

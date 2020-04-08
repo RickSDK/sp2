@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
@@ -11,6 +11,7 @@ declare var leaderFromLine: any;
 })
 export class GameStandingsComponent extends BaseComponent implements OnInit {
   @Input('user') user: any;
+  @Output() messageEvent = new EventEmitter<string>();
   public fullPlayerList = [];
   public hotStreakList = [];
   public coldStreakList = [];
@@ -63,6 +64,10 @@ export class GameStandingsComponent extends BaseComponent implements OnInit {
       });
   }
 
+  showPlayer(player) {
+    this.closeModal('#gameStandingsPopup');
+    this.messageEvent.emit(player);
+  }
 
 
 }

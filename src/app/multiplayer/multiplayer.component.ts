@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { Router } from '@angular/router';
+import { UserPopupComponent } from '../user-popup/user-popup.component';
 
 declare var userObjFromUser: any;
 declare var getMultObjFromLine: any;
 declare var gameFromLine: any;
 declare var createNewGameFromInitObj: any;
 declare var objPiecesFrom: any;
+declare var $: any;
 
 @Component({
   selector: 'app-multiplayer',
@@ -14,6 +16,7 @@ declare var objPiecesFrom: any;
   styleUrls: ['./multiplayer.component.scss']
 })
 export class MultiplayerComponent extends BaseComponent implements OnInit {
+  @ViewChild(UserPopupComponent) userPopupComp: UserPopupComponent;
   public user: any;
   public buttonIdx = 0;
   public selectedGame: any;
@@ -54,7 +57,17 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
     this.adminFlg = (this.user.userId == 10);
     this.loadGames();
   }
+  showPlayer(player: any) {
+    this.userPopupComp.show(player);
+  }
   selectGame(game) {
+    if (game.status == 'Open') {
+      this.playSound('error.mp3');
+      return;
+    }
+    this.playClick();
+    if (this.user.userName == 'Rick')
+      console.log(game);
     this.selectedGameNum = (this.selectedGameNum == game) ? 0 : game;
     this.closePopup('joinConfirmationPopup');
   }
@@ -235,6 +248,8 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
 
     } else {
       // enter game
+      console.log('xxx', game.chatFlg);
+      localStorage.chatFlg = (game.chatFlg)?'Y':'N';
       localStorage.loadGameId = game.gameId;
       this.router.navigate(['/board']);
     }

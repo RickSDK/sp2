@@ -205,7 +205,7 @@
                         <div class="spCardBody">
                             <div (click)="selectGame(game)" class="darkBlueBg"
                                 style="font-size: 24px; font-weight: 700; cursor: pointer;">
-                                <span class="corner-icon"><i class="fa fa-info-circle"></i></span>
+                                <span *ngIf="game.status!='Open'" class="corner-icon"><i class="fa fa-info-circle"></i></span>
 
                                 <i *ngIf="game.bugFlg" class="fa fa-bug" style="font-size: 12px; color: yellow;"></i>
                                 <i *ngIf="game.chatFlg" class="fa fa-commenting-o"
@@ -268,8 +268,8 @@
                                         <div class="gameCard" style="min-width: 100px;">
                                             <div class="darkBlueBg"><i class="fa fa-clock-o"></i> Timer</div>
                                             <app-player-name (click)="userPopup.show(game.turnObj)" [player]="game.turnObj"></app-player-name>
-                                            <div>{{game.timeLeft}}</div>
-                                            <div style="font-size: 10px; color: gray;">Last Login:
+                                            <app-sp-time-left [timeLeftStr]="game.timeLeft"></app-sp-time-left>
+                                             <div style="font-size: 10px; color: gray;">Last Login:
                                                 <span
                                                     style="font-size: 12px; color: green;"><b>{{game.turnObj.last_login_time}}</b></span>
                                                 hr ago</div>
@@ -410,8 +410,8 @@
 
 <app-user-popup #userPopup [user]="user" (messageEvent)="userUpdated($event)"></app-user-popup>
 <app-create-game-popup #createGamePopup [user]="user" (messageEvent)="refreshGames($event)"></app-create-game-popup>
-<app-game-standings #gameStandingsPopup [user]="user"></app-game-standings>
+<app-game-standings #gameStandingsPopup [user]="user" (messageEvent)="showPlayer($event)"></app-game-standings>
 <app-mail-popup #mailPopup [user]="user"></app-mail-popup>
 <app-forum-popup #forumPopup [user]="user"></app-forum-popup>
-<app-matchmaking-standings #matchmakerStandingsPopup [user]="user"></app-matchmaking-standings>
+<app-matchmaking-standings #matchmakerStandingsPopup [user]="user" (messageEvent)="showPlayer($event)"></app-matchmaking-standings>
 <app-chat-popup #chatPopup></app-chat-popup>
