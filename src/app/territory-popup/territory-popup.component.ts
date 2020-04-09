@@ -107,7 +107,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     });
     var cruiseFlg = false;
     if (terr.nation < 99 && terr.owner != currentPlayer.nation && currentPlayer.status == 'Attack') {
-      if (currentPlayer.nation == 4 || currentPlayer.tech[8]) {
+      if (currentPlayer.nation == 4 || currentPlayer.tech[7]) {
         var borders = terr.borders.split('+');
         borders.forEach(terrId => {
           var t = gameObj.territories[terrId - 1];
@@ -231,7 +231,8 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     return checkMovement(distObj, unit, optionType, player, this.selectedTerritory);
   }
   moveTroopsButtonPressed() {
-    if (this.user.rank < 2 && this.gameObj.round == 1 && this.selectedTerritory.id == 62) { //ukraine
+    if (this.user.rank < 2 && this.gameObj.round == 1 && this.selectedTerritory.id == 62) { 
+      //-----------ukraine, basic training--------
       var attackUnits = getSelectedUnits(this.moveTerr);
       if (attackUnits.length < 8) {
         showAlertPopup('Go ahead and select all your troops for this battle.', 1);
@@ -252,7 +253,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       }
     }
     if (this.optionType == 'attack') {
-      var attackUnits = getSelectedUnits(this.moveTerr);
+      var attackUnits = getSelectedUnits(this.moveTerr, this.gameObj);
       if (verifyUnitsAreLegal(attackUnits, this.selectedTerritory)) {
         this.displayBattle = initializeBattle(this.currentPlayer, this.selectedTerritory, attackUnits, this.gameObj);
         this.optionType = 'battle';

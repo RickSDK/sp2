@@ -42,7 +42,7 @@
                 <div *ngIf="currentPlayer.botRequests.length>0" class="borderClass3">
                     <div style="background-color: #444; color: white;"><i class="fa fa-users"></i> Ally Requests</div>
                     <div *ngFor="let botRequests of currentPlayer.botRequests" style="border-bottom: 1px solid gray;">
-                        <img src="assets/graphics/flag{{botRequests.fromN}}.gif" height="20">
+                        <img src="assets/graphics/images/flag{{botRequests.fromN}}.gif" height="20">
                         <span *ngIf="botRequests.type==1">Fortify</span>
                         <span *ngIf="botRequests.type==2">Attack</span>
                         {{gameObj.territories[botRequests.terr-1].name}}!

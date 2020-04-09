@@ -502,7 +502,10 @@ function landDistFromTerr(terr1Id, terr2Id, dist, gameObj) {
 function allUnitsAttack(targetId, currentPlayer, gameObj) {
     var targetTerr = gameObj.territories[targetId - 1];
     if (treatyStatus(currentPlayer, targetTerr.nation) > 0)
-        return;
+        return null;;
+    if (!okToAttack(currentPlayer, targetTerr, gameObj))
+        return null;
+
     var terrHash = {};
     terrHash[targetId] = true;
     targetTerr.land.forEach(function (t) {

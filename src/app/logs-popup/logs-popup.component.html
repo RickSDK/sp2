@@ -9,14 +9,13 @@
             </div>
             <div class="modal-body" style="text-align: center;">
 
-
-                <section>
+               <section>
                     <div class="btn-group">
                         <button (click)="changeIdx(0)" id="logType1" type="button" class="btn btn-default roundButton"
                             [ngClass]="ngClassSegment(segmentIdx,0)"><i class="fa fa-list-ol"></i> Round</button>
                         <button (click)="changeIdx(1)" id="logType2" type="button" class="btn btn-default roundButton"
                             [ngClass]="ngClassSegment(segmentIdx,1)"><i class="fa fa-globe"></i> Nation</button>
-                        <button *ngIf="0" (click)="changeIdx(2)" id="logType3" type="button" class="btn btn-default roundButton"
+                        <button *ngIf="yourNation>0" (click)="changeIdx(2)" id="logType3" type="button" class="btn btn-default roundButton"
                             [ngClass]="ngClassSegment(segmentIdx,2)"><i class="fa fa-pencil"></i> Notes</button>
                     </div>
                 </section>
@@ -142,15 +141,15 @@
                         </td>
                     </tr>
                 </table>
-                <table class="spTable">
+                <table class="spTable" *ngIf="yourNation>0">
                     <tr style="background-color: #007;">
                         <td width="*">
                             <input style="width: 100%;" name="noteField" id="noteField" type=text placeholder="Notes"
                                 maxlength=256
-                                onkeypress="if (event.which==13) document.getElementById('noteSendButton').click()">
+                                (keyup.enter)="postNote()">
                         </td>
                         <td width=50>
-                            <button id="noteSendButton" ng-click="postNote()" type="button"
+                            <button id="noteSendButton" (click)="postNote()" type="button"
                                 class="btn btn-primary roundButton tall2"><span *ngIf="editPostMode">Edit</span><span
                                     *ngIf="!editPostMode">Add</span></button>
                         </td>

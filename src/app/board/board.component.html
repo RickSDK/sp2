@@ -17,12 +17,12 @@
 		title='{{terr.title}}' alt='{{terr.title}}' style="cursor: pointer; z-index: 10;"
 		(mouseenter)="changeSVGColor(true, terr.id, terr.owner)"
 		(mouseleave)="changeSVGColor(false, terr.id, terr.owner)">
-	<div style="padding-top: 0px; margin-top: -6px; width: 60px; white-space: nowrap;" *ngIf="terr.nation<99"><span
+	<div style="padding-top: 0px; margin-top: -6px; max-width: 60px; white-space: nowrap;" *ngIf="terr.nation<99"><span
 			class="boardBlack">{{terr.displayUnitCount}}</span><img *ngIf="terr.piece>0"
-			src="{{ngUnitSrc(terr.piece, terr.owner)}}" title="{{terr.piece}}"
+			src="{{ngUnitSrc(terr.piece, terr.owner)}}" title="{{terr.pieceName}}"
 			style="max-height: 18px; max-width: 24px;"></div>
 	<div style="padding-top: 0px; margin-top: -6px;" *ngIf="terr.nation==99 && terr.totalUnitCount>0"><img
-			*ngIf="terr.piece>0" src="{{ngUnitSrc(terr.piece, terr.owner)}}" title="{{terr.piece}}"
+			*ngIf="terr.piece>0" src="{{ngUnitSrc(terr.piece, terr.owner)}}" title="{{terr.pieceName}}"
 			style="max-height: 22px; max-width: 45px;"></div>
 </div>
 
@@ -92,7 +92,7 @@
 		<button id="alliesButton" (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 1)"
 			type="button" class="btn btn-primary tight roundButton" style="line-height: 14px;"><i
 				class="fa fa-users"></i><br><span style="font-size: 10px;">Allies</span></button>
-		<button (click)="logsPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button"
+		<button (click)="logsPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, yourPlayer)" type="button"
 			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-list-ol"></i><br><span
 				style="font-size: 10px;">Logs</span></button>
 		<button *ngIf="gameObj.multiPlayerFlg" id="chatButton"

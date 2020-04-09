@@ -25,6 +25,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	var cargoSpace = 0;
 	var amphibAtt = 0;
 	var factoryCount = 0;
+	var economicCenterCount = 0;
 	var superBC = false;
 	var shipAttack = 0;
 	var shipDefense = 0;
@@ -144,6 +145,8 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 				adCount++;
 			if (unit.piece == 15 || unit.piece == 19)
 				factoryCount++;
+			if (unit.piece == 19)
+				economicCenterCount++;
 			if (unit.piece == 4) {
 				transportCount++;
 				transportSpace += 4;
@@ -316,7 +319,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 		cleanupTerr(terr, player);
 	}
 	terr.adCount = adCount;
-
+	terr.economicCenterCount = economicCenterCount;
 	terr.fogOfWar = (gameObj.fogOfWar == 'Y' && numberVal(status) < 3);
 	if (terr.fogOfWar)
 		results = ['-fog of war-'];
@@ -326,7 +329,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	terr.defendingFighterId = defendingFighterId;
 	terr.militaryUnits = results;
 	terr.militaryUnits2 = militaryUnits;
-	if (terr.factoryCount == 1) {
+	if (terr.factoryCount >= 1) {
 		if (adCount == 0)
 			highestPiece = 100;
 		if (adCount == 1)
@@ -358,6 +361,11 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	}
 	terr.adCount;
 	terr.piece = highestPiece;
+	terr.pieceName = '';
+	if (highestPiece < superpowersData.units.length)
+		terr.pieceName = superpowersData.units[highestPiece].name;
+	if (highestPiece >= 100)
+		terr.pieceName = 'Defending AA guns: ' + terr.adCount;
 	var obj = getTerritoryType(yourPlayer, terr);
 	terr.territoryType = obj.territoryType;
 	terr.treatyStatus = obj.status;
@@ -438,13 +446,16 @@ function playersPanelMoved() {
 }
 function positionPurchasePanel() {
 	var e = document.getElementById("sidelinePopup");
-	var e2 = document.getElementById("sidelineButton");
 	var e3 = document.getElementById("purchaseSideBar");
-	if (e && e2 && e3) {
+	if (e && e3) {
 		var rect = e.getBoundingClientRect();
 		var top = rect.top + rect.height + 5;
-		e2.style.top = top + 'px';
-		e3.style.top = (top + 50) + 'px';
+		var e2 = document.getElementById("sidelineButton");
+		if (e2) {
+			e2.style.top = top + 'px';
+			e3.style.top = (top + 50) + 'px';
+		} else
+			e3.style.top = (top + 5) + 'px';
 	}
 }
 function isFactoryAllowedOnTerr(terr, gameObj) {
@@ -758,6 +769,7 @@ function resetPlayerUnits(player, gameObj) {
 		if (unit.owner == player.nation && unit.mv > 0 && !unit.dead) {
 			unit.dice = [];
 			unit.moving = false;
+			unit.didAttackFlg = false;
 			unit.usedInCombat = false;
 			if (unit.type == 3)
 				unit.cargoLoadedThisTurn = 0;
@@ -783,10 +795,14 @@ function resetPlayerUnits(player, gameObj) {
 				sbcFlg = true;
 			if (unit.piece == 7)
 				stratBombButton = true;
-			//		if (unit.cargoUnits > 0 && (unit.piece == 4 || unit.piece == 7 || unit.piece == 8))
-			//			doubleCheckCargoUnits(unit);
-			//			if (unit.piece == 44)
-			//				checkSealUnit(unit, player);
+			if (!unit.cargo)
+				unit.cargo = [];
+			if (unit.cargo.length == 0)
+				unit.cargoUnits = 0;
+			if (unit.cargoUnits > 0)
+				doubleCheckCargoUnits(unit, gameObj);
+//				if (unit.piece == 44)
+//					checkSealUnit(unit, player);
 		}
 	});
 	player.stratBombButton = stratBombButton;
@@ -796,6 +812,28 @@ function resetPlayerUnits(player, gameObj) {
 	player.unitCount = unitCount;
 	addTechForPlayer(player);
 	setLastRoundsOfPeaceAndWar(player, gameObj);
+}
+function doubleCheckCargoUnits(unit, gameObj) {
+	var cargoUnits=0;
+	var cargo=[];
+	if(unit.cargo && unit.cargo.length>0) {
+		unit.cargo.forEach(function(cUnit) {
+			if(isUnitValid(cUnit, unit.terr, gameObj)) {
+				cargoUnits+=cUnit.cargoUnits;
+				cargo.push(cUnit);
+			}
+		});
+	}
+	unit.cargo=cargo;
+	unit.cargoUnits=cargoUnits;
+}
+function isUnitValid(cUnit, terrId, gameObj) {
+	var isValid=false;
+	gameObj.units.forEach(function(unit) {
+		if(cUnit.id==unit.id && unit.terr==terrId && !unit.dead)
+			isValid=true;
+	});
+	return isValid;
 }
 function setLastRoundsOfPeaceAndWar(player, gameObj) {
 	if (!player.lastRoundsOfPeace || player.lastRoundsOfPeace.length < 8)
@@ -1238,7 +1276,8 @@ function changeTreaty(p1, p2, type, gameObj, superpowersData, cost = 0) {
 		return;
 	p1.treaties[p2.nation - 1] = type;
 	p2.treaties[p1.nation - 1] = type;
-	logDiplomacyNews(p1, p2, type);
+	if (type > 0 || cost > 0)
+		logDiplomacyNews(p1, p2, type);
 	var msg = '';
 	if (type == 0) {
 		msg = superpowersData.superpowers[p1.nation] + ' has declared war on ' + superpowersData.superpowers[p2.nation];
@@ -1707,7 +1746,7 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 			winnningPlayer = superpowersData.superpowers[player.nation];
 		}
 	});
-	if(liveHumanPlayerCount==0 && gameObj.multiPlayerFlg) {
+	if (liveHumanPlayerCount == 0 && gameObj.multiPlayerFlg) {
 		showAlertPopup('No humans left! Ending game.');
 		//gameObj.gameOver = true;
 	}

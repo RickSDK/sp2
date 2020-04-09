@@ -61,6 +61,8 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
                 var numDef = unit.numDef || 1;
                 for (var i = 0; i < numDef; i++)
                     unit.dice.push('dice.png');
+                if (selectedTerritory.id == 8 && selectedTerritory.owner == 0)
+                    unit.def = 1; // france sucks
                 defendingUnits.push(unit);
                 if (unit.piece == 12)
                     defSBSHps += unit.bcHp - unit.damage - 1;
@@ -82,6 +84,8 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
     attackUnits.forEach(unit => {
         if (unit.piece == 14 || unit.piece == 52)
             nukeFlg = true;
+        if (cruiseFlg)
+            unit.didAttackFlg = true;
         if (unit.piece == 28)
             attActiveMedics++;
         if (unit.piece == 43)
@@ -115,7 +119,6 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
     var def = arrayOfPieces(displayBattle.defendingUnits);
     displayBattle.battleDetails = att + '|' + def;
     addAAGunesToBattle(displayBattle, selectedTerritory);
-    console.log(displayBattle);
     return displayBattle;
 
 }
@@ -150,6 +153,11 @@ function arrayOfPieces(units) {
 }
 function startBattle(terr, player, gameObj, superpowersData, battle) {
     var cost = costToAttack(terr, player);
+    if (cost > 0 && gameObj.round < gameObj.attack) {
+        showAlertPopup('Whoa can\'t attack this turn!', 1);
+        console.log('bad attack!!', terr.name);
+        return;
+    }
 
     if (cost > 0) {
         var p2 = playerOfNation(terr.owner, gameObj);
@@ -160,6 +168,7 @@ function startBattle(terr, player, gameObj, superpowersData, battle) {
         terr.attackedRound = gameObj.round;
     }
     terr.leaderMessage = ''; //needed to make advisor go away
+    return cost;
 }
 function isUnitCruiseUnit(piece) {
     if (piece == 5 || piece == 9 || piece == 12 || piece == 39)
@@ -425,9 +434,12 @@ function strategicBombBattle(player, targetTerr, attackUnits, gameObj, superpowe
     if (hits > 0) {
         if (targetTerr.factoryCount >= 2) {
             targetTerr.factoryCount = 1;
+            var facCount = 0;
             gameObj.units.forEach(unit => {
                 if (unit.terr == targetTerr.id && unit.piece == 19)
                     unit.dead = true;
+                if (unit.terr == targetTerr.id && unit.piece == 15 && facCount++ > 0)
+                    unit.dead = true; // in case extra factory exists
             });
             hits--;
             battle.defCasualties.push(15);
@@ -437,6 +449,7 @@ function strategicBombBattle(player, targetTerr, attackUnits, gameObj, superpowe
             battle.defCasualties.push(15);
         }
     }
+    console.log('x', targetTerr.name, targetTerr.facBombed, targetTerr.factoryCount);
     wrapUpBattle(battle, player, gameObj, superpowersData, 'Strategic Bombing Run', targetTerr, [], 1200, 'bomb');
     return battle;
 }
@@ -459,25 +472,6 @@ function highlightTheseUnits(moveTerr, units) {
             }
         }
     }
-}
-function playSoundForPiece(piece, superpowersData) {
-    var unit = superpowersData.units[piece];
-    if (unit.type == 2)
-        playSound('fighter.mp3');
-    if (unit.type == 3)
-        playSound('foghorn.wav');
-    if (unit.subType == 'soldier')
-        playSound('marching.wav');
-    if (unit.subType == 'chopper')
-        playSound('chopper.mp3');
-    if (unit.subType == 'vehicle')
-        playSound('vehicles.mp3');
-    if (unit.subType == 'hero')
-        playSound('yes.mp3');
-    if (unit.subType == 'seal')
-        playSound('mp5.mp3');
-    if (unit.id == 47 || unit.id == 52)
-        playSound('shock.mp3');
 }
 function addAAGunesToBattle(battle, terr) {
     var aaGunsPerPLane = terr.adCount;
@@ -523,11 +517,11 @@ function rollAttackDice(battle, stratFlg = false) {
     battle.attHits = 0;
     battle.attTargets = [];
     specialUnitsFire(battle);
-    console.log('xxx', battle);
     battle.attackUnits.forEach(unit => {
         if (unit.dead)
             return;
         unit.movesLeft = 0;
+        unit.didAttackFlg = true;
         if (unit.cargoOf > 0)
             unit.cargoOf = 0;
         unit.dice = [];
@@ -582,16 +576,20 @@ function specialUnitsFire(battle) {
             if (!unit.dead && unit.owner == battle.attacker)
                 attackUnits.push(unit);
         });
-        battle.attackUnits = attackUnits;
 
         defendingUnits = [];
         battle.defendingUnits.forEach(unit => {
-            if (!unit.dead && unit.owner != battle.attacker)
-                defendingUnits.push(unit);
+            if (!unit.dead) {
+                if (unit.owner == battle.attacker)
+                    attackUnits.push(unit);
+                else
+                    defendingUnits.push(unit);
+            }
             if (unit.dead)
                 battle.defCasualties.push(unit.piece);
         });
         battle.defendingUnits = defendingUnits;
+        battle.attackUnits = attackUnits;
     }
 }
 function mefGeneralAttacks(battle) {
@@ -619,6 +617,28 @@ function mefGeneralAttacks(battle) {
         battle.generalUnit = targetUnit.piece;
         targetUnit.dead = true;
     }
+}
+function hijackerAttacks(battle) {
+    var targetUnit;
+    battle.defendingUnits.forEach(function (unit) {
+        if (!targetUnit && !unit.dead && unit.owner != battle.attacker && (unit.type == '2' || unit.type == '4')) {
+            targetUnit = unit;
+        }
+    });
+    if (!targetUnit) {
+        battle.defendingUnits.forEach(function (unit) {
+            if (!targetUnit && !unit.dead && unit.owner != battle.attacker && unit.subType == 'vehicle') {
+                targetUnit = unit;
+            }
+        });
+    }
+    if (targetUnit) {
+        battle.hijackerUnit = targetUnit.piece;
+        targetUnit.owner = battle.attacker;
+        targetUnit.nation = battle.attacker;
+        battle.defCasualties.push(targetUnit.piece);
+    }
+
 }
 function japGeneralAttacks(battle) {
     var targetUnit;
@@ -818,7 +838,6 @@ function markCasualties(battle, gameObj) {
     markRemainerAsDead(battle.attackUnits, targetHash, gameObj);
 
     //-------------------defending units hit by attackers 
-    console.log('xxx', battle);
     targetHash = {};
     battle.attTargets.forEach(target => {
         if (battle.defSBSHps > 0) {

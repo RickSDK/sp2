@@ -213,7 +213,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				}
 				this.gameObj = createNewGameSimple(type, numPlayers, name, startingNation, pObj, this.user);
 				this.gameObj.difficultyNum = localStorage.difficultyNum || 1;
-				saveGame(this.gameObj, this.user, this.currentPlayer);
+				saveGame(this.gameObj, this.user, this.gameObj.players[0]);
 				localStorage.currentGameId = this.gameObj.id;
 			}
 			this.beginToLoadTheBoard();
@@ -311,13 +311,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.haltCombatActionFlg = false;
 
 		//--------------------end test
-		console.log('turn:::::', this.gameObj.turnId);
-		this.currentPlayer = getCurrentPlayer(this.gameObj);
+ 		this.currentPlayer = getCurrentPlayer(this.gameObj);
 		this.gameObj.currentNation = this.currentPlayer.nation;
 		this.gameObj.actionButtonMessage = '';
 		this.currentPlayer.cpuFlg = this.currentPlayer.cpu;
 
-		console.log('========cp: ' + this.superpowersData.superpowers[this.currentPlayer.nation] + '======');
+		console.log('===cp: ' + this.superpowersData.superpowers[this.currentPlayer.nation] + '===');
 		if (!this.currentPlayer.news)
 			this.currentPlayer.news = [];
 		if (!this.currentPlayer.botRequests)
@@ -506,7 +505,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (localStorage.chatFlg == 'Y') {
 			setTimeout(() => {
 				changeClass('chatButton', 'btn btn-warning tight roundButton glowYellow');
-//				showUpArrowAtElement('chatButton');
+				//				showUpArrowAtElement('chatButton');
 			}, 1000);
 		}
 		if (this.currentPlayer.status == 'Waiting' || this.currentPlayer.status == 'Purchase')
@@ -916,7 +915,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	allUnitsAttack(id: number) {
 		var obj = allUnitsAttack(id, this.currentPlayer, this.gameObj);
-		this.doThisBattle(obj);
+		if(obj)
+			this.doThisBattle(obj);
 	}
 	attemptToAttack(id: number) {
 		var obj = attemptToAttack(id, this.currentPlayer, this.gameObj);
@@ -930,7 +930,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				moveTheseUnitsToThisTerritory(obj.attackUnits, obj.terr, this.gameObj);
 			} else {
 				this.displayBattle = initializeBattle(this.currentPlayer, obj.terr, obj.attackUnits, this.gameObj);
-				startBattle(obj.terr, this.currentPlayer, this.gameObj, this.superpowersData, this.displayBattle);
+				var cost = startBattle(obj.terr, this.currentPlayer, this.gameObj, this.superpowersData, this.displayBattle);
 				this.computerBattleRound(obj);
 			}
 		}
@@ -1415,9 +1415,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.currentPlayer.status = 'Place Units';
 		this.carrierAddedFlg = false;
 		var numAddedUnitsToAdd = this.addUnitsToBoard();;
-		//		if($scope.gameObj.multiPlayerFlg)
-		//			$scope.uploadMultiplayerStats($scope.currentPlayer.nation);
-		//		else
 		setTimeout(() => {
 			this.endTurn();
 		}, numAddedUnitsToAdd * 95);
@@ -1437,7 +1434,17 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				fighterWaterFlg = true;
 
 			var terr = this.gameObj.territories[unit.terr - 1];
-			this.addUnitToTerr(terr, unit.piece, false, false);
+			if (unit.piece == 15 || unit.piece == 19) {
+				if (terr.facBombed) {
+					terr.facBombed = false;
+					unit.piece = 0;
+				} else {
+					if (unit.piece == 15 && terr.factoryCount > 0)
+						unit.piece = 19;
+				}
+			}
+			if(unit.piece>0)
+				this.addUnitToTerr(terr, unit.piece, false, false);
 		}
 		this.gameObj.unitPurchases = [];
 

@@ -47,19 +47,23 @@
 				<app-unit-detail nation="1" [selectedUnit]="selectedUnit"></app-unit-detail>
 
 
-				<div style="background-color: #ace; border: 1px solid black;">
+				<div *ngIf="loadingFlg"><i class="fa fa-spinner fa-spin"></i> Loading...</div>
+				<div *ngIf="!loadingFlg && gameObj.multiPlayerFlg" class="borderClass3" style="width: 100%;">
 					<div style="background-color: #337ab7; color: white;">User Strategy Tips</div>
-					<div *ngIf="loadingFlg"><i class="fa fa-spinner fa-spin"></i> Loading...</div>
-					<div *ngFor="let strategy of userStrategies" class="borderClass2" style="text-align: left;">
-						<img src="http://www.superpowersgame.com/graphics/avitars/{{strategy.graphic}}"
-							style="max-height: 150px; width: 100px;" align=left>
-						<img src="assets/graphics/ranks/rank{{strategy.rank}}.png"
-							style="height: 25px; max-width: 100px;">
-						<span style="font-size: 24px;"><b>{{strategy.userName}}</b></span>:
-						<div [innerHTML]="strategy.desc" style="max-width: 320px"></div>
+					<div *ngFor="let strategy of userStrategies" class="borderClass3" style="text-align: left; width: 100%;">
 
-						<button ng-click="deleteStratButtonPressed(strategy)" *ngIf="user.userName=='Rick'"
-							id="homeButton" type="button" class="btn ptp-red roundButton"><i
+						<div style="float:left; padding: 5px;">
+							<div><img src="http://www.superpowersgame.com/graphics/avitars/{{strategy.graphic}}"
+									style="max-height: 150px; max-width: 150px;">
+							</div>
+							<img src="assets/graphics/ranks/rank{{strategy.rank}}.png"
+									style="height: 25px; max-width: 100px;">
+							<span style="font-size: 24px;"><b>{{strategy.userName}}</b></span>
+						</div>
+						<div [innerHTML]="strategy.desc"></div>
+
+						<button (click)="deleteStratButtonPressed(strategy)" *ngIf="user.userName==strategy.userName || user.userName=='Rick'"
+							id="homeButton" type="button" class="btn btn-danger roundButton"><i
 								class="fa fa-trash"></i></button>
 					</div>
 					<div *ngIf="user.rank>3" style="color: black;">
@@ -71,7 +75,7 @@
 								</td>
 								<td width=80>
 									<button id="uploadStrategyButton" type="button"
-										(click)="uploadStrategyPressed(selectedUnit)"
+										(click)="uploadStrategyPressed()"
 										class="btn btn-primary roundButton">Upload</button>
 								</td>
 							</tr>
@@ -87,4 +91,12 @@
 			</div>
 		</div>
 	</div>
+</div>
+
+<div id="confirmationPopup" class="popupScreen2" style="width: 300px;">
+	<div>Delete this strategy hint?</div>
+	<button onClick="closePopup('confirmationPopup')" type="button" class="btn btn-danger roundButton tall2"><i
+			class="fa fa-times"></i> Cancel</button>
+	<button (click)="deleteStratConfirmed()" type="button" class="btn btn-success roundButton tall2"><i
+			class="fa fa-trash"></i> Delete!</button>
 </div>

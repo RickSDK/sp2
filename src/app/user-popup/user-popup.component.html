@@ -48,7 +48,6 @@
                     <div class="spCard" style="cursor: pointer; max-width: 300px;"
                         (click)="editProfileImageButtonClicked()">
                         <div>
-
                             <div *ngIf="serverUser" class="spTitle">
                                 <app-player-name [player]="serverUser"></app-player-name>
                             </div>
@@ -57,8 +56,9 @@
                                     style="float: right; padding-right: 5px; padding-top: 3px;"></i></div>
                             <img src="{{displayUser.imgSrc}}" style="max-width: 300px; max-height: 185px;">
                             <div class="spCardBody">
-                                <div *ngIf="serverUser" style="color: #0a0;">
-                                    <b>&nbsp;&nbsp;"{{serverUser.message}}"&nbsp;&nbsp;</b></div>
+                                <div *ngIf="serverUser && serverUser.message" style="color: #0a0;">
+                                    <b>&nbsp;&nbsp;"{{serverUser.message}}"&nbsp;&nbsp;</b>
+                                </div>
                             </div>
                         </div>
                     </div>

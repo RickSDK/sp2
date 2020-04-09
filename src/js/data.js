@@ -179,7 +179,7 @@ function loadSVGs() {
 function getGameTerritories() {
 	var terrs = [];
 	var x = 1;
-	terrs.push({ id: x++, name: 'Eastern USA', x: 300, y: 311, nation: 1, owner: 0, type: 0, capital: true, water: 101, land: [2, 58], enemyWater: 109, enemyZone: 9, enemyWater2: 104, enemyZone2: 43, borders: '2+58+101+100' });
+	terrs.push({ id: x++, name: 'Eastern USA', x: 290, y: 311, nation: 1, owner: 0, type: 0, capital: true, water: 101, land: [2, 58], enemyWater: 109, enemyZone: 9, enemyWater2: 104, enemyZone2: 43, borders: '2+58+101+100' });
 	terrs.push({ id: x++, name: 'Central USA', x: 244, y: 294, nation: 1, owner: 0, type: 0, water: 0, borders: '57+58+1+100+3', land: [1, 3, 57, 58] });
 	terrs.push({ id: x++, name: 'Midwest USA', x: 196, y: 305, nation: 1, owner: 0, type: 0, water: 0, borders: '4+57+2+100+51', land: [4, 56, 57, 2, 51] });
 	terrs.push({ id: x++, name: 'Western USA', x: 138, y: 286, nation: 1, owner: 0, type: 0, water: 0, borders: '82+56+57+3+51', land: [56, 57, 3, 51] });
@@ -199,7 +199,7 @@ function getGameTerritories() {
 	terrs.push({ id: x++, name: 'Taimyr', x: 967, y: 98, nation: 3, owner: 0, type: 0, water: 0, borders: '13+20+19', land: [13, 19, 20] });
 	terrs.push({ id: x++, name: 'Novosibirsk', x: 945, y: 209, nation: 3, owner: 0, type: 0, water: 0, borders: '13+18+20+64+29+17', land: [13, 17, 29, 64, 20, 18] });
 	terrs.push({ id: x++, name: 'Siberia', x: 1055, y: 101, nation: 3, owner: 0, type: 0, water: 0, borders: '18+19+64+24+23+22', land: [18, 19, 64, 24, 23, 22] });
-	terrs.push({ id: x++, name: 'Japan', x: 1178, y: 271, nation: 4, owner: 0, type: 0, capital: true, water: 141, land: [24], enemyWater: 137, enemyZone: 32, enemyWater2: 139, enemyZone2: 26, borders: '24+141+142' });
+	terrs.push({ id: x++, name: 'Japan', x: 1187, y: 271, nation: 4, owner: 0, type: 0, capital: true, water: 141, land: [24], enemyWater: 137, enemyZone: 32, enemyWater2: 139, enemyZone2: 26, borders: '24+141+142' });
 	terrs.push({ id: x++, name: 'Far East', x: 1166, y: 73, nation: 4, owner: 0, type: 0, water: 0, borders: '20+23+144+5', land: [20, 23, 5] });
 	terrs.push({ id: x++, name: 'Okhotsk', x: 1126, y: 211, nation: 4, owner: 0, type: 0, water: 0, borders: '22+20+24+141', land: [22, 20, 24] });
 	terrs.push({ id: x++, name: 'Manchuria', x: 1091, y: 258, nation: 4, owner: 0, type: 0, water: 0, borders: '20+23+141+21+25+30+64', land: [20, 23, 64, 30, 25, 21] });
@@ -247,7 +247,7 @@ function getGameTerritories() {
 	terrs.push({ id: x++, name: 'Solomon Isle', x: 1179, y: 461, nation: 0, owner: 0, type: 0, water: 0, borders: '136', land: [] });
 	terrs.push({ id: x++, name: 'New Guinea', x: 1180, y: 524, nation: 0, owner: 0, type: 0, water: 0, borders: '135', land: [] });
 	terrs.push({ id: x++, name: 'New Zealand', x: 1240, y: 627, nation: 0, owner: 0, type: 0, water: 0, borders: '133', land: [] });
-	terrs.push({ id: x++, name: 'Australia', x: 1060, y: 670, nation: 0, owner: 0, type: 0, water: 0, borders: '129+132', land: [] });
+	terrs.push({ id: x++, name: 'Australia', x: 1080, y: 670, nation: 0, owner: 0, type: 0, water: 0, borders: '129+132', land: [] });
 	terrs.push({ id: x++, name: 'India', x: 929, y: 404, nation: 0, owner: 0, type: 0, water: 0, borders: '120+39+29+28+17', land: [39, 17, 29, 28] });
 	terrs.push({ id: x++, name: 'Madagascar', x: 778, y: 645, nation: 0, owner: 0, type: 0, water: 0, borders: '122+125+127', land: [] });
 	terrs.push({ id: x++, name: 'Mozambique', x: 714, y: 640, nation: 0, owner: 0, type: 0, water: 0, borders: '48+122+49', land: [48, 49] });
@@ -269,7 +269,7 @@ function getGameTerritories() {
 	terrs.push({ id: x++, name: 'South Pacific NE', x: 190, y: 541, nation: 99, owner: 0, type: 0, borders: '87+85+86+91+92+90' });
 	terrs.push({ id: x++, name: 'South Pacific SW', x: 56, y: 669, nation: 99, owner: 0, type: 0, borders: '87+90+133' });
 	terrs.push({ id: x++, name: 'South Pacific SE', x: 162, y: 669, nation: 99, owner: 0, type: 0, borders: '87+88+92+89' });
-	terrs.push({ id: x++, name: 'Peru Waters', x: 264, y: 546, nation: 99, owner: 0, type: 0, borders: '86+88+92+55+54' });
+	terrs.push({ id: x++, name: 'Peru Waters', x: 254, y: 546, nation: 99, owner: 0, type: 0, borders: '86+88+92+55+54' });
 	terrs.push({ id: x++, name: 'W. Argentina Waters', x: 264, y: 669, nation: 99, owner: 0, type: 0, borders: '88+91+90+93+55' });
 	terrs.push({ id: x++, name: 'E. Argentina Waters', x: 400, y: 665, nation: 99, owner: 0, type: 0, borders: '92+55+76+98+94' });
 	terrs.push({ id: x++, name: 'South Atlantic', x: 494, y: 677, nation: 99, owner: 0, type: 0, borders: '93+98+97+96+95' });

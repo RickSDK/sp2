@@ -45,23 +45,23 @@
                     </div>
 
                     <div style="border: 1px solid black; margin: 3px; background-color: #ddd;">
-                        <div class="btn-group">
-                            <button (click)="fogIdx=0" type="button" class="btn btn-default roundButton"
-                                [ngClass]="ngClassSegment(fogIdx,0)"> Standard</button>
-                            <button (click)="fogIdx=1" type="button" class="btn btn-default roundButton"
-                                [ngClass]="ngClassSegment(fogIdx,1)"> Fog-of-War</button>
-                            <button (click)="fogIdx=2" type="button" class="btn btn-default roundButton"
-                                [ngClass]="ngClassSegment(fogIdx,2)"> Hardcore Fog</button>
+                        <div>
+                            <div class="btn-group">
+                                <button (click)="fogIdx=0" type="button" class="btn btn-default roundButton"
+                                    [ngClass]="ngClassSegment(fogIdx,0)"> Standard</button>
+                                <button (click)="fogIdx=1" type="button" class="btn btn-default roundButton"
+                                    [ngClass]="ngClassSegment(fogIdx,1)"> Fog-of-War</button>
+                                <button (click)="fogIdx=2" type="button" class="btn btn-default roundButton"
+                                    [ngClass]="ngClassSegment(fogIdx,2)"> Hardcore Fog</button>
+                            </div>
                         </div>
-                        <div class="borderClass2">
+                        <div class="borderClass3">
                             <div *ngIf="fogIdx==0"><b>Standard:</b> All units are visible to all players.</div>
-                            <div *ngIf="fogIdx==1"><b>Fog:</b> You get approximate unit counts for each territory but
-                                not specific
-                                units.
+                            <div *ngIf="fogIdx==1"><b>Fog:</b> You get approximate unit counts for enemy territories, but
+                                not specific units.
                             </div>
                             <div *ngIf="fogIdx==2"><b>Hardcore:</b> Total fog blackout for all territories unless you
-                                have a unit that
-                                borders it.</div>
+                                have a unit that borders it.</div>
                         </div>
                     </div>
 
@@ -145,7 +145,8 @@
                             type="button" class="btn btn-primary roundButton tall">Create!</button></div>
                 </div>
 
-                <div *ngIf="sendingFlg" style="font-size: 24px;"><i class="fa fa-spinner fa-spin"></i>&nbsp; Working...</div>
+                <div *ngIf="sendingFlg" style="font-size: 24px;"><i class="fa fa-spinner fa-spin"></i>&nbsp; Working...
+                </div>
 
 
             </div>

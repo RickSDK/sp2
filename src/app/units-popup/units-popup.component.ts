@@ -19,6 +19,7 @@ export class UnitsPopupComponent extends BaseComponent implements OnInit {
 	public loadingFlg = true;
 	public unitList = [];
 	public userStrategies = [];
+	public selectedStrategy: any;
 	public classTypes = [
 		'Land Units',
 		'Air Units',
@@ -111,8 +112,6 @@ export class UnitsPopupComponent extends BaseComponent implements OnInit {
 		else
 			return "assets/graphics/units/piece" + piece + ".gif";
 	}
-	uploadStrategyPressed(unit) {
-	}
 	loadStrategyItems(id) {
 		this.loadingFlg = true;
 		const url = getHostname() + "/webSuperpowers.php";
@@ -129,9 +128,10 @@ export class UnitsPopupComponent extends BaseComponent implements OnInit {
 				var items = data.split("<a>");
 				var userStrategies = [];
 				items.forEach(function (item) {
-					if (item.length > 50) {
+					if (item.length > 10) {
 						var c = item.split("|");
-						userStrategies.push({ id: c[0], userName: c[1], rank: c[2], graphic: userGraphicFromLine(c[3]), row_id: c[4], desc: c[5] });
+						if(c.length>2)
+							userStrategies.push({ id: c[0], userName: c[1], rank: c[2], graphic: userGraphicFromLine(c[3]), row_id: c[4], desc: c[5] });
 					}
 				});
 				this.userStrategies = userStrategies;
@@ -139,16 +139,56 @@ export class UnitsPopupComponent extends BaseComponent implements OnInit {
 			.catch(error => {
 				this.loadingFlg = false;
 			});
-
-		/*
-			fetch(url, postData).then( (resp) => resp.json())
-			.then(data=>{ 
-				//this.showPopup('busyPopup');
-				console.log('postGameRequest', JSON.stringify(data));
-				//alert(JSON.stringify(data));
-		  }) 
-			.catch(error=> { console.log('json error!'+error); } );
-			*/
 	}
+	uploadStrategyPressed() {
+		var strategyText = this.databaseSafeValueOfInput('strategyText');
+		if (strategyText.length == 0) {
+		  this.showAlertPopup('no strategyText', 1);
+		  return;
+		}
+		this.playClick();
+		this.playSound('Cheer.mp3');
+		$('#strategyText').val('');
+
+		const url = this.getHostname() + "/webSuperpowers.php";
+		const postData = this.getPostDataFromObj({ userId: this.user.userId, code: this.user.code, action: 'uploadStrategy', unitId: this.selectedUnit.id, strategyText: strategyText });
+		console.log(postData);
+
+		fetch(url, postData).then((resp) => resp.text())
+		  .then((data) => {
+			if (this.verifyServerResponse(data)) {
+				this.loadStrategyItems(this.selectedUnit.id);
+			}
+		  })
+		  .catch(error => {
+			this.showAlertPopup('Unable to reach server: ' + error, 1);
+		  });
+
+		
+	}
+	deleteStratButtonPressed(strategy:any) {
+		this.playClick();
+		this.selectedStrategy = strategy;
+		this.displayFixedPopup('confirmationPopup');
+		console.log(strategy);
+	}
+	deleteStratConfirmed() {
+		this.playClick();
+		this.closePopup('confirmationPopup');
+		const url = this.getHostname() + "/webSuperpowers.php";
+		const postData = this.getPostDataFromObj({ userId: this.user.userId, code: this.user.code, action: 'deleteStrategy', id: this.selectedStrategy.row_id });
+
+		fetch(url, postData).then((resp) => resp.text())
+		  .then((data) => {
+			console.log(data);
+			if (this.verifyServerResponse(data)) {
+				this.loadStrategyItems(this.selectedUnit.id);
+			}
+		  })
+		  .catch(error => {
+			this.showAlertPopup('Unable to reach server: ' + error, 1);
+		  });
+
+		}
 
 }

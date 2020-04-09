@@ -131,7 +131,7 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
   changeProdType(segmentIdx: number, terr: any) {
     this.segmentIdx = segmentIdx;
     this.productionDisplayUnits = [];
-    if (terr.factoryCount == 0 && terr.nation < 99)
+    if (terr.factoryCount == 0 && terr.nation < 99 && !this.adminModeFlg)
       return;
     if (segmentIdx == 0) { //ground
       this.productionDisplayUnits.push(this.superpowersData.units[1]);

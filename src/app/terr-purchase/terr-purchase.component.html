@@ -62,7 +62,7 @@
             class="btn btn-secondary roundButton"><i class="fa fa-times"></i> Clear</button>
     </div>
     <!---------purchase form--------->
-    <div class="btn-group" *ngIf="selectedTerritory.factoryCount>0">
+    <div class="btn-group" *ngIf="selectedTerritory.factoryCount>0 || adminModeFlg">
         <button (click)="changeProdType(0, selectedTerritory)" [ngClass]="ngClassSegment(segmentIdx,0)" type="button"
             class="btn btn-default"><i class="fa fa-truck"></i> Ground</button>
         <button (click)="changeProdType(1, selectedTerritory)" [ngClass]="ngClassSegment(segmentIdx,1)" type="button"

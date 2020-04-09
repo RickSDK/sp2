@@ -385,7 +385,7 @@
 							<button *ngIf="totalUnitsThatCanMove>0" (click)="selectAllButtonChecked()" type="button"
 								[disabled]="totalUnitsThatCanMove==0" class="btn btn-secondary roundButton"><i
 									class="fa fa-check-square-o"></i> All</button>
-							<button (click)="moveTroopsButtonPressed()" [disabled]="battleAnalysisObj.expectedHits==0"
+							<button (click)="moveTroopsButtonPressed()" [disabled]="battleAnalysisObj.numAttUnits==0"
 								type="button" class="btn btn-success roundButton"
 								style="min-width: 120px; height: 50px;"><i class="fa fa-arrow-right"></i> Go</button>
 

@@ -44,6 +44,27 @@ function isSoundOn() {
 function isVoiceOn() {
 	return (!localStorage.voiceBox || localStorage.voiceBox.length == 0);
 }
+function playSoundForPiece(piece, superpowersData) {
+	var unit = superpowersData.units[piece];
+	if (unit.type == 2)
+		playSound('fighter.mp3');
+	if (unit.type == 3)
+		playSound('foghorn.wav');
+	if (unit.subType == 'soldier')
+		playSound('marching.wav');
+	if (unit.subType == 'chopper')
+		playSound('chopper.mp3');
+	if (unit.subType == 'vehicle')
+		playSound('vehicles.mp3');
+	if (unit.subType == 'hero')
+		playSound('yes.mp3');
+	if (unit.subType == 'seal')
+		playSound('mp5.mp3');
+	if (unit.id == 47 || unit.id == 52)
+		playSound('shock.mp3');
+	if (unit.id == 13)
+		playSound('gun.mp3');
+}
 function playVoiceSound(voiceOverId, muteSound) {
 	//	console.log('playVoiceSound', voiceOverId, muteSound);
 	if (muteSound || !isVoiceOn()) {
