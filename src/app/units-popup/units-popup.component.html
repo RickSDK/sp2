@@ -48,7 +48,7 @@
 
 
 				<div *ngIf="loadingFlg"><i class="fa fa-spinner fa-spin"></i> Loading...</div>
-				<div *ngIf="!loadingFlg && gameObj.multiPlayerFlg" class="borderClass3" style="width: 100%;">
+				<div *ngIf="!loadingFlg && user && user.userId>0" class="borderClass3" style="width: 100%;">
 					<div style="background-color: #337ab7; color: white;">User Strategy Tips</div>
 					<div *ngFor="let strategy of userStrategies" class="borderClass3" style="text-align: left; width: 100%;">
 

@@ -449,8 +449,7 @@ function strategicBombBattle(player, targetTerr, attackUnits, gameObj, superpowe
             battle.defCasualties.push(15);
         }
     }
-    console.log('x', targetTerr.name, targetTerr.facBombed, targetTerr.factoryCount);
-    wrapUpBattle(battle, player, gameObj, superpowersData, 'Strategic Bombing Run', targetTerr, [], 1200, 'bomb');
+    wrapUpBattle(battle, player, gameObj, superpowersData, 'Strategic Bombing', targetTerr, [], 1200, 'bomb');
     return battle;
 }
 function addhitsToList(field, type, amount) {
@@ -890,12 +889,14 @@ function removeCasualties(battle, gameObj, player, finalFlg, superpowersData) {
     if (!battle.defCasualties)
         battle.defCasualties = [];
     var attackUnits = [];
+    var heroKilledFlg = false;
     battle.attackUnits.forEach(unit => {
         if (unit.dead) {
             battle.attCasualties.push(unit.piece);
             if (unit.piece == 10 || unit.piece == 11) {
                 if (unit.owner == 1)
                     removeAllSeals(gameObj);
+                heroKilledFlg = true;
                 logItem(gameObj, player, 'Hero Killed', superpowersData.superpowers[unit.owner] + ' ' + unit.name + ' killed!', '', 0, player.nation);
             }
         } else
@@ -910,6 +911,7 @@ function removeCasualties(battle, gameObj, player, finalFlg, superpowersData) {
             if (unit.piece == 10 || unit.piece == 11) {
                 if (unit.owner == 1)
                     removeAllSeals(gameObj);
+                heroKilledFlg = true;
                 logItem(gameObj, player, 'Hero Killed', superpowersData.superpowers[unit.owner] + ' ' + unit.name + ' killed!', '', 0, battle.defender);
             }
         } else
@@ -917,6 +919,9 @@ function removeCasualties(battle, gameObj, player, finalFlg, superpowersData) {
     });
     if (!finalFlg)
         battle.defendingUnits = defendingUnits;
+    if (heroKilledFlg) {
+        setTimeout(() => { playSound('torture.mp3'); }, 2500);
+    }
 }
 function removeAllSeals(gameObj) {
     gameObj.units.forEach(unit => {
@@ -947,7 +952,8 @@ function battleCompleted(displayBattle, selectedTerritory, currentPlayer, moveTe
     }
     wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, 'Battle', selectedTerritory, moveTerr);
     if (!currentPlayer.cpuFlg && displayBattle.militaryObj.wonFlg && displayBattle.allowGeneralRetreat) {
-        localStorage.generalTerr2 = selectedTerritory.id;
+        var generalRetreatObj = { gameId: gameObj.id, terrId1: numberVal(localStorage.generalTerr1), terrId2: selectedTerritory.id };
+        localStorage.generalRetreatObj = JSON.stringify(generalRetreatObj);
         displayFixedPopup('generalWithdrawPopup');
         $('#territoryPopup').modal('hide');
     }

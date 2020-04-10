@@ -67,6 +67,80 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
         return true;
     return false;
 }
+function distanceBetweenTerrs(terr1, terr2, max, land, air, sea, allyHash, territories) {
+    if (terr1.id == terr2.id)
+        return { land: land, air: air, sea: sea };
+
+    land++;
+    air++;
+    sea++;
+    var maxLand = 9;
+    var maxAir = 9;
+    var maxSea = 9;
+
+    //------
+    if (terr2.nation < 99)
+        sea = 9;
+    if ((terr1.id == 99 && terr2.id == 86) || (terr1.id == 86 && terr2.id == 99)) {
+        //panama
+        if (territories[51].treatyStatus < 3)
+            sea = 9;
+    }
+    if ((terr1.id == 115 && terr2.id == 118) || (terr1.id == 118 && terr2.id == 115)) {
+        //suez cannal
+        if (territories[36].treatyStatus < 3 && territories[39].treatyStatus < 3)
+            sea = 9;
+    }
+
+    //------
+    //		if(air>=max || (terr1.defeatedByNation>0 && terr1.nation<99))
+    //			return {land: maxLand, air: maxAir, sea: maxSea};
+    //return {land: 1, air: 1, sea: 1};
+    if (air >= max)
+        return { land: maxLand, air: maxAir, sea: maxSea };
+
+    if (land > 1 && (terr1.defeatedByNation > 0 || terr1.attackedByNation > 0))
+        land = 9;
+
+    //		console.log('here', terr1.id, terr2.id, land);
+    var neighbors = terr1.borders.split('+');
+    for (var x = 0; x < neighbors.length; x++) {
+        var id = neighbors[x];
+        //			console.log(id, terr2.id, land);
+        if (id == terr2.id) {
+            return { land: land, air: air, sea: sea };
+        }
+        var terr = territories[id - 1];
+        var nextLand = land;
+        var nextSea = sea;
+        if (terr.nation < 99) {
+            nextSea = 9;
+            if (isTerritoryBlocked(terr1.owner, terr, allyHash))
+                nextLand = 9;
+        }
+        if (terr.nation == 99) {
+            nextLand = 9;
+            if (isTerritoryBlocked(terr1.owner, terr, allyHash))
+                nextSea = 9;
+        }
+
+        var obj = distanceBetweenTerrs(terr, terr2, max, nextLand, air, nextSea, allyHash, territories);
+        if (obj.land < maxLand)
+            maxLand = obj.land;
+        if (obj.air < maxAir)
+            maxAir = obj.air;
+        if (obj.sea < maxSea)
+            maxSea = obj.sea;
+    }
+    return { land: maxLand, air: maxAir, sea: maxSea };
+}
+function isTerritoryBlocked(fromNation, terr, allyHash) {
+    if (terr.owner == fromNation || terr.unitCount == 0)
+        return false;
+    if (allyHash[terr.owner] == 1)
+        return false;
+    return true;
+}
 function selectAllUnits(terr, optionType, currentPlayer) {
     var t = document.getElementById('ter' + terr.id);
     var checked = (t && t.checked);
@@ -135,9 +209,19 @@ function moveTheseUnitsToThisTerritory(units, selectedTerritory, gameObj) {
         terr1Id = unit.terr;
         piece = unit.piece;
         unit.terr = selectedTerritory.id;
-        if (unit.piece == 4)
-            unit.movesLeft--;
-        else
+        if (unit.piece == 4) {
+            var oneSpaceFlg = false;
+            var terrIds = selectedTerritory.borders.split('+');
+            terrIds.forEach(function (terrId) {
+                var terr = gameObj.territories[terrId - 1];
+                if (terr.id == terr1Id)
+                    oneSpaceFlg = true;
+            });
+            if (oneSpaceFlg)
+                unit.movesLeft--;
+            else
+                unit.movesLeft = 0;
+        } else
             unit.movesLeft = 0;
 
         if (unit.cargoOf > 0 && unit.type == 1 && selectedTerritory.nation < 99)
@@ -145,16 +229,16 @@ function moveTheseUnitsToThisTerritory(units, selectedTerritory, gameObj) {
         if ((unit.type == 1 || unit.type == 2) && selectedTerritory.nation == 99)
             findTransportForThisCargo(unit, selectedTerritory, gameObj);
         if (unit.cargo && unit.cargo.length > 0)
-            moveCargoWithThisUnit(unit, selectedTerritory);
+            moveCargoWithThisUnit(unit, selectedTerritory, terr1Id);
     });
     squareUpAllCargo(units, gameObj);
     illuminateThisTerritory(selectedTerritory, gameObj);
     return { t1: terr1Id, t2: selectedTerritory.id, id: piece };
 }
-function moveCargoWithThisUnit(unit, terr) {
+function moveCargoWithThisUnit(unit, terr, terr1Id) {
     for (var u = 0; u < terr.units.length; u++) {
         var cargo = terr.units[u];
-        if (cargo.cargoOf && cargo.cargoOf == unit.id && cargo.owner == unit.owner) {
+        if (cargo.cargoOf && cargo.cargoOf == unit.id && cargo.owner == unit.owner && cargo.terr == terr1Id) {
             cargo.terr = unit.terr;
         }
     }
@@ -177,6 +261,7 @@ function findTransportForThisCargo(unit, terr, gameObj) {
         for (var u = 0; u < terr.units.length; u++) {
             var transport = terr.units[u];
             if (transport.subType == 'transport' && transport.owner == unit.owner && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits) {
+                console.log('here', transport.id, transport.cargoUnits, transport.cargoSpace)
                 loadThisUnitOntoThisTransport(unit, transport);
                 return;
             }
@@ -245,9 +330,13 @@ function showUnitsForMovementBG2(optionType, gameObj, currentPlayer, totalMoveTe
     if (optionType == 'cruise')
         maxDist = 2;
 
+    var allyHash = {};
+    currentPlayer.allies.forEach(function (ally) {
+        allyHash[ally] = true;
+    });
+    console.log('allyHash', allyHash);
     for (var x = 0; x < totalMoveTerrs.length; x++) {
         var terr = totalMoveTerrs[x];
-        var allyHash = {};
         terr.distObj = distanceBetweenTerrs(terr, selectedTerritory, maxDist, 0, 0, 0, allyHash, gameObj.territories);
         var moveUnits = 0;
         terr.units.forEach(function (unit) {

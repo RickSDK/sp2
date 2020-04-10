@@ -7,15 +7,15 @@
 			</tr>
 			<tr>
 				<td><b>Type:</b></td>
-				<td>{{gameObj.typeName}}</td>
+				<td> <i class="{{gameObj.icon}}"></i> {{gameObj.typeName}}</td>
+			</tr>
+			<tr>
+				<td><b>Description:</b></td>
+				<td style="font-size: 12px;">{{gameObj.desc}}</td>
 			</tr>
 			<tr>
 				<td><b>Created:</b></td>
 				<td>{{gameObj.created}}</td>
-			</tr>
-			<tr>
-				<td><b>Attack Round:</b></td>
-				<td>{{gameObj.attack}}</td>
 			</tr>
 			<tr>
 				<td><b>Max Allies:</b></td>
@@ -23,7 +23,7 @@
 			</tr>
 			<tr *ngIf="gameObj.multiPlayerFlg">
 				<td><b>Host:</b></td>
-				<td>{{gameObj.host}}</td>
+				<td><i class="fa fa-h-square"></i> {{gameObj.host}}</td>
 			</tr>
 			<tr *ngIf="gameObj.turboFlg">
 				<td><b>Turbo Game:</b></td>
@@ -34,19 +34,19 @@
 			<tr *ngIf="gameObj.fogOfWar!='Y' && gameObj.hardFog!='Y'">
 				<td><b>Visibility:</b></td>
 				<td>
-					<font color=#08f>Standard</font>
+					<font color=#08f><i class="fa fa-sun-o"></i> Standard</font>
 				</td>
 			</tr>
 			<tr *ngIf="gameObj.fogOfWar=='Y' && gameObj.hardFog!='Y'">
 				<td><b>Visibility:</b></td>
 				<td>
-					<font color=#08f>Fog-of-War</font>
+					<font color=#08f><i class="fa fa-moon-o"></i> Fog-of-War</font>
 				</td>
 			</tr>
 			<tr *ngIf="gameObj.hardFog=='Y'">
 				<td><b>Visibility:</b></td>
 				<td>
-					<font color=#08f>Hardcore Fog</font>
+					<font color=#08f><i class="fa fa-question-circle"></i> Hardcore Fog</font>
 				</td>
 			</tr>
 			<tr *ngIf="gameObj.autoSkip=='Y'">
@@ -107,7 +107,7 @@
 		<i class="fa fa-user" style="font-size: 26px;"></i>
 		<div style="font-size: 10px;">Turn all Human</div>
 	</button>
-	<button (click)="reportBug()" type="button" class="btn btn-secondary roundButton">
+	<button (click)="reportBug()" type="button" class="btn btn-warning roundButton">
 		<i class="fa fa-bug" style="font-size: 26px;"></i>
 		<div style="font-size: 10px;">Report Bug</div>
 	</button>

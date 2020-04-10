@@ -1,7 +1,13 @@
+var clickSound = new Audio('assets/sounds//click.mp3');
+var cannonSound = new Audio('assets/sounds//Cannon.mp3');
+var cheerSound = new Audio('assets/sounds//Cheer.mp3');
+var crowdBooSound = new Audio('assets/sounds//CrowdBoo.mp3');
+/*
 var clickSound = new Audio('http://www.superpowersgame.com/app/sounds/click.mp3');
 var cannonSound = new Audio('http://www.superpowersgame.com/app//sounds/Cannon.mp3');
 var cheerSound = new Audio('http://www.superpowersgame.com/app//sounds/Cheer.mp3');
-var crowdBooSound = new Audio('http://www.superpowersgame.com/app//sounds/CrowdBoo.mp3');
+var crowdBooSound = new Audio('http://www.superpowersgame.com/app//sounds/CrowdBoo.mp3');*/
+
 var voiceOverAudio = new Audio('assets/voice/bt01welcome.mp3');
 //clickSound.play();
 function playClick(muteSound) {
@@ -22,7 +28,8 @@ function playSound(fileName, num, muteSound) {
 	if (num && num > 0)
 		fileName = '';
 	if (fileName && fileName.length > 0) {
-		var audio = new Audio('http://www.superpowersgame.com/app/sounds/' + fileName);
+		var audio = new Audio('assets/sounds/' + fileName);
+//		var audio = new Audio('http://www.superpowersgame.com/app/sounds/' + fileName);
 		audio.play();
 	}
 	if (num == 1 && clickSound)

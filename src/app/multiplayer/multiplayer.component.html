@@ -22,8 +22,8 @@
                 <i class="fa fa-commenting"></i> Forum
             </button>
             <a routerLink="/info"><button type="button" class="btn btn-secondary roundButton">
-                <i class="fa fa-info-circle"></i> Info
-            </button></a>
+                    <i class="fa fa-info-circle"></i> Info
+                </button></a>
             <button (click)="loadGames()" type="button" class="btn btn-secondary roundButton hidden-xxs">
                 <i class="fa fa-refresh"></i>
             </button>
@@ -205,7 +205,8 @@
                         <div class="spCardBody">
                             <div (click)="selectGame(game)" class="darkBlueBg"
                                 style="font-size: 24px; font-weight: 700; cursor: pointer;">
-                                <span *ngIf="game.status!='Open'" class="corner-icon"><i class="fa fa-info-circle"></i></span>
+                                <span *ngIf="game.status!='Open'" class="corner-icon"><i
+                                        class="fa fa-info-circle"></i></span>
 
                                 <i *ngIf="game.bugFlg" class="fa fa-bug" style="font-size: 12px; color: yellow;"></i>
                                 <i *ngIf="game.chatFlg" class="fa fa-commenting-o"
@@ -213,17 +214,12 @@
                                 {{game.name}}</div>
                             <table style="width: 100%;">
                                 <tr>
-                                    <td *ngIf="game.status!='Open'">
-                                        <div class="gameCard" style="min-width: 100px;">
+                                    <td>
+                                        <div *ngIf="game.status!='Open'" class="gameCard" style="min-width: 100px;">
                                             <div class="darkBlueBg"><i class="fa fa-h-square"></i> Host</div>
-                                            <div (click)="userPopup.show({userId: game.hostId, userName: game.host})"> {{game.host}}</div>
+                                            <div (click)="userPopup.show({userId: game.hostId, userName: game.host})">
+                                                {{game.host}}</div>
                                             <div>{{game.size}} Players</div>
-                                        </div>
-                                        <div *ngIf="game.inGame && game.myNation>0">
-                                            <div style="color: #bbb; font-weight: 700;">You</div>
-                                            <div><img class="shadowed" src="assets/graphics/images/flag{{game.myNation}}.gif"
-                                                    height="50">
-                                            </div>
                                         </div>
                                     </td>
                                     <td>
@@ -253,10 +249,38 @@
                                                 (click)="openGameButtonPressed(game, 'leaveGame')" type="button"
                                                 class="btn btn-warning roundButton"><i class="fa fa-sign-out"></i>
                                                 Leave</button>
-                                         </div>
+                                        </div>
 
-                                        <div *ngIf="game.status!='Open'">
-                                            <div class="gameCard">
+                                    </td>
+                                    <td>
+                                        <div *ngIf="game.status!='Open'" class="gameCard" style="min-width: 100px;">
+                                            <div class="darkBlueBg"><i class="fa fa-clock-o"></i> Timer</div>
+                                            <app-player-name (click)="userPopup.show(game.turnObj)"
+                                                [player]="game.turnObj"></app-player-name>
+                                            <app-sp-time-left [timeLeftStr]="game.timeLeft"></app-sp-time-left>
+                                            <div *ngIf="game.turnObj.onlineFlg" style="color: gray"><i
+                                                    class="fa fa-lightbulb-o" style="color: orange"></i> Online now!
+                                            </div>
+                                            <div *ngIf="!game.turnObj.onlineFlg" style="font-size: 10px; color: gray;">
+                                                Last Login:
+                                                <span
+                                                    style="font-size: 12px; color: green;"><b>{{game.turnObj.last_login_time}}</b></span>
+                                                hr ago</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="game.status!='Open'">
+                                    <td>
+                                        <div *ngIf="game.inGame && game.myNation>0">
+                                            <div style="color: #bbb; font-weight: 700; margin-top: -8px;">You</div>
+                                            <div><img class="shadowed"
+                                                    src="assets/graphics/images/flag{{game.myNation}}.gif" height="50">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <div class="gameCard" style="min-width: 80px;">
                                                 <div class="darkBlueBg">Round</div>
                                                 <div
                                                     style="font-size: 48px; font-weight: 700; height: 65px; margin-top: -15px;">
@@ -264,19 +288,11 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td *ngIf="game.status!='Open'">
-                                        <div class="gameCard" style="min-width: 100px;">
-                                            <div class="darkBlueBg"><i class="fa fa-clock-o"></i> Timer</div>
-                                            <app-player-name (click)="userPopup.show(game.turnObj)" [player]="game.turnObj"></app-player-name>
-                                            <app-sp-time-left [timeLeftStr]="game.timeLeft"></app-sp-time-left>
-                                             <div style="font-size: 10px; color: gray;">Last Login:
-                                                <span
-                                                    style="font-size: 12px; color: green;"><b>{{game.turnObj.last_login_time}}</b></span>
-                                                hr ago</div>
-                                        </div>
+                                    <td>
                                         <div *ngIf="game.turnObj.nation>0">
-                                            <div style="color: #bbb; font-weight: 700;">Turn</div>
-                                            <div><img class="shadowed" src="assets/graphics/images/flag{{game.turnObj.nation}}.gif"
+                                            <div style="color: #bbb; font-weight: 700; margin-top: -8px;">Turn</div>
+                                            <div><img class="shadowed"
+                                                    src="assets/graphics/images/flag{{game.turnObj.nation}}.gif"
                                                     height="50"></div>
                                         </div>
                                     </td>
@@ -331,9 +347,10 @@
                                                 </td>
                                                 <td style="color: green; font-weight: 700;">{{player.income}}</td>
                                                 <td style="font-size: 12px; color: gray;">{{player.clock}}hr
-                                                    <button *ngIf="game.host == user.userName && game.status == 'Open' && player.name != user.userName"
-                                                    (click)="removePlayerFromGame(game, player)" type="button"
-                                                    class="btn btn-danger roundButton"><i class="fa fa-trash"></i>
+                                                    <button
+                                                        *ngIf="game.host == user.userName && game.status == 'Open' && player.name != user.userName"
+                                                        (click)="removePlayerFromGame(game, player)" type="button"
+                                                        class="btn btn-danger roundButton"><i class="fa fa-trash"></i>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -413,5 +430,6 @@
 <app-game-standings #gameStandingsPopup [user]="user" (messageEvent)="showPlayer($event)"></app-game-standings>
 <app-mail-popup #mailPopup [user]="user"></app-mail-popup>
 <app-forum-popup #forumPopup [user]="user"></app-forum-popup>
-<app-matchmaking-standings #matchmakerStandingsPopup [user]="user" (messageEvent)="showPlayer($event)"></app-matchmaking-standings>
+<app-matchmaking-standings #matchmakerStandingsPopup [user]="user" (messageEvent)="showPlayer($event)">
+</app-matchmaking-standings>
 <app-chat-popup #chatPopup></app-chat-popup>

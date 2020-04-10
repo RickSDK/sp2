@@ -72,9 +72,6 @@ function saveGame(gameObj, user, currentPlayer, sendEmailFlg, endOfTurn, prevPla
 	}
 
 	if (gameObj.multiPlayerFlg) {
-		console.log('+++old gameUpdDt+++', localStorage.gameUpdDt);
-		console.log('+++currentPlayer+++', currentPlayer);
-		console.log('+++currentPlayer+++', currentPlayer.userId);
 		//		setInnerHTMLFromElement('statusOkButton', 'Wait');
 		//		setInnerHTMLFromElement('statusMsg', 'Note: Do not leave page until this completes. Computer make be taking a turn. If it hangs more than 30 seconds, refresh page and try again.');
 		gameObj.lastSaved = new Date();
@@ -115,7 +112,7 @@ function saveGame(gameObj, user, currentPlayer, sendEmailFlg, endOfTurn, prevPla
 				if (verifyServerResponse('success', data)) {
 					var items = data.split("|");
 					localStorage.setItem("gameUpdDt", items[7]);
-					console.log('+++new gameUpdDt+++', localStorage.gameUpdDt, sendEmailFlg);
+//					console.log('+++new gameUpdDt+++', localStorage.gameUpdDt, sendEmailFlg);
 					if (sendEmailFlg) {
 						emailNextPlayer(data, gameObj.name);
 					}
@@ -172,7 +169,7 @@ function registerIP(ipCode) {
 		});*/
 }
 function emailNextPlayer(line, gameName) {
-	console.log('emailNextPlayer', line, gameName);
+//	console.log('emailNextPlayer', line, gameName);
 	var parts = line.split('|');
 	if (parts.length > 1) {
 		var textMsg = parts[4];
@@ -184,32 +181,16 @@ function emailNextPlayer(line, gameName) {
 	}
 }
 function sendEmailToNextPlayer(email, code, gameName) {
-	console.log(email);
 	var url = 'http://www.appdigity.com/pages/emailSP.php';
 	const postData = this.getPostDataFromObj({ email: email, code: code, gameName: gameName });
 
 	fetch(url, postData).then((resp) => resp.text())
 		.then((data) => {
-			console.log(data);
+//			console.log(data);
 		})
 		.catch(error => {
 			this.showAlertPopup('Unable to reach server: ' + error, 1);
 		});
-
-	/*
-	
-	
-		var url = 'http://www.appdigity.com/pages/emailSP.php';
-		$.post(url,
-			{
-				email: email,
-				code: code,
-				gameName: gameName
-			},
-			function (data, status) {
-				//   	console.log(data);
-				//    	stopSpinner();
-			});*/
 }
 function compressUnits(units) {
 	var unitStr = JSON.stringify(units);
@@ -220,8 +201,8 @@ function compressUnits(units) {
 		if (unit.dead || unit.hp == 0)
 			console.log('!!dead unit removed', unit.piece, unit.terr);
 		else {
-			if (unit.piece == 12)
-				console.log('compressSBC', unit);
+//			if (unit.piece == 12)
+//				console.log('compressSBC', unit);
 			if (unit.piece == 12)
 				unitList.push(unit);
 			else

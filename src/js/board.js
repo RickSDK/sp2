@@ -580,6 +580,8 @@ function scrubGameObj(gameObj, gUnits) {
 		scrubUnitsOfPlayer(player, gameObj, gUnits);
 	});
 	gameObj.gamePoints = gamePointsForType(gameObj.type, gameObj.mmFlg);
+	gameObj.icon = ngClassGameTypeMain(gameObj.type);
+	gameObj.desc = gameDescForType(gameObj.type);
 	if (gameObj.gameOver)
 		gameObj.fogOfWar = 'N';
 	if (!gameObj.unitPurchases)
@@ -801,8 +803,8 @@ function resetPlayerUnits(player, gameObj) {
 				unit.cargoUnits = 0;
 			if (unit.cargoUnits > 0)
 				doubleCheckCargoUnits(unit, gameObj);
-//				if (unit.piece == 44)
-//					checkSealUnit(unit, player);
+			//				if (unit.piece == 44)
+			//					checkSealUnit(unit, player);
 		}
 	});
 	player.stratBombButton = stratBombButton;
@@ -814,24 +816,24 @@ function resetPlayerUnits(player, gameObj) {
 	setLastRoundsOfPeaceAndWar(player, gameObj);
 }
 function doubleCheckCargoUnits(unit, gameObj) {
-	var cargoUnits=0;
-	var cargo=[];
-	if(unit.cargo && unit.cargo.length>0) {
-		unit.cargo.forEach(function(cUnit) {
-			if(isUnitValid(cUnit, unit.terr, gameObj)) {
-				cargoUnits+=cUnit.cargoUnits;
+	var cargoUnits = 0;
+	var cargo = [];
+	if (unit.cargo && unit.cargo.length > 0) {
+		unit.cargo.forEach(function (cUnit) {
+			if (isUnitValid(cUnit, unit.terr, gameObj)) {
+				cargoUnits += cUnit.cargoUnits;
 				cargo.push(cUnit);
 			}
 		});
 	}
-	unit.cargo=cargo;
-	unit.cargoUnits=cargoUnits;
+	unit.cargo = cargo;
+	unit.cargoUnits = cargoUnits;
 }
 function isUnitValid(cUnit, terrId, gameObj) {
-	var isValid=false;
-	gameObj.units.forEach(function(unit) {
-		if(cUnit.id==unit.id && unit.terr==terrId && !unit.dead)
-			isValid=true;
+	var isValid = false;
+	gameObj.units.forEach(function (unit) {
+		if (cUnit.id == unit.id && unit.terr == terrId && !unit.dead)
+			isValid = true;
 	});
 	return isValid;
 }
@@ -1769,6 +1771,8 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 	var winningTeamList = playersOfTeam(winningTeam, gameObj, superpowersData);
 	if (gameObj.gameOver) {
 		var msg = 'Victory!  Game won by ' + winningTeamList.join(', ');
+		if (winningTeamList.length == 0)
+			msg = 'Game Lost';
 		gameObj.currentSituation = msg;
 		return;
 	}

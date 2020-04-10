@@ -27,7 +27,6 @@ export class MainPageComponent extends BaseComponent implements OnInit {
     //localStorage.rank=0; //<-- reset rank
     this.hostname = getHostname();
     this.user = userObjFromUser();
-    console.log('this.user', this.user.userId, this.user);
     this.flexSprite(100);
     this.singleGameId = localStorage.currentGameId;
     localStorage.loadGameId = 0; // clear out any multiplayer game
@@ -40,7 +39,6 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   getUserData() {
     const url = getHostname() + "/spApiText.php";
     const postData = this.getPostDataFromObj({ user_login: this.user.userName, code: this.user.code, action: 'getUserData' });
-console.log(postData);
     fetch(url, postData).then((resp) => resp.text())
       .then((data) => {
         if (this.verifyServerResponse(data))

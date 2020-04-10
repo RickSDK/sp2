@@ -113,6 +113,7 @@ declare var isUnitCruiseUnit: any;
 declare var landTheCruiseBattle: any;
 declare var strategicBombBattle: any;
 declare var loadMultiPlayerGame: any;
+declare var spVersion: any;
 
 @Component({
 	selector: 'app-board',
@@ -131,6 +132,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public gameObj: any;
 	public currentPlayer: any;
 	public yourPlayer: any;
+	public yourNation = 0;
 	public ableToTakeThisTurn = true;
 	public uploadMultiplayerFlg = false;
 	public progress = 0;
@@ -152,6 +154,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public haltActionFlg = false;
 	public nukeFrameNum = 1;
 	public forcedClickNation = 0;
+	public spVersion = spVersion();
 	public bonusInfantryFlg = false;
 	public bonusFactoryFlg = false;
 	public purchaseIndex = 0;
@@ -250,7 +253,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		var e = document.getElementById('terr1');
 		if (e) {
 			this.yourPlayer = getYourPlayer(this.gameObj, this.user.userName);
-			console.log('yourPlayer', this.yourPlayer, this.currentPlayer);
+			if (this.yourPlayer)
+				this.yourNation = this.yourPlayer.nation;
+			console.log('yourNation', this.yourNation);
 			refreshAllTerritories(this.gameObj, this.yourPlayer, this.superpowersData, this.yourPlayer)
 			refreshBoard(this.gameObj.territories);
 			this.gameObj.players.sort(function (a, b) { return a.turn - b.turn; });
@@ -311,7 +316,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.haltCombatActionFlg = false;
 
 		//--------------------end test
- 		this.currentPlayer = getCurrentPlayer(this.gameObj);
+		this.currentPlayer = getCurrentPlayer(this.gameObj);
 		this.gameObj.currentNation = this.currentPlayer.nation;
 		this.gameObj.actionButtonMessage = '';
 		this.currentPlayer.cpuFlg = this.currentPlayer.cpu;
@@ -525,6 +530,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		player.status = 'Purchase';
 		player.techsBoughtThisTurn = 0;
 		player.techPurchasedThisTurn = false;
+		localStorage.generalRetreatObj = '';
+		console.log('should be cleared');
 		this.gameObj.unitPurchases = [];
 		this.gameObj.superBCForm.cost = 0;
 
@@ -915,7 +922,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	allUnitsAttack(id: number) {
 		var obj = allUnitsAttack(id, this.currentPlayer, this.gameObj);
-		if(obj)
+		if (obj)
 			this.doThisBattle(obj);
 	}
 	attemptToAttack(id: number) {
@@ -1097,9 +1104,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	addUnitToTerr(terr: any, piece: number, allowMovesFlg: boolean, refreshFlg: boolean) {
 		if (piece == 52)
 			allowMovesFlg = true;
-		var nation = terr.owner;
-		if (nation == 0)
-			nation = this.currentPlayer.nation;
+		var nation = this.currentPlayer.nation;
+		if (terr.owner != this.currentPlayer.nation && terr.nation == 99)
+			terr.owner = this.currentPlayer.nation;
 		var newId = this.gameObj.unitId;
 		this.gameObj.unitId++;
 		if (piece == 12) {
@@ -1443,7 +1450,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 						unit.piece = 19;
 				}
 			}
-			if(unit.piece>0)
+			if (unit.piece > 0)
 				this.addUnitToTerr(terr, unit.piece, false, false);
 		}
 		this.gameObj.unitPurchases = [];
@@ -1501,6 +1508,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		addIncomeForPlayer(this.currentPlayer, this.gameObj);
 		this.currentPlayer.money += this.currentPlayer.income;
 		playSound('clink.wav');
+		localStorage.generalRetreatObj = '';
 		this.currentPlayer.news = [];
 		this.currentPlayer.botRequests = [];
 		this.currentPlayer.requestedHotSpot = 0;
@@ -1532,9 +1540,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 			var secondsLeft = 0;
 			saveGame(this.gameObj, this.user, this.currentPlayer, sendEmailFlg, true, prevPlayer, this.currentPlayer.cpu, secondsLeft);
-			console.log('-----------end turn');
 			setTimeout(() => {
-				console.log('-----------delete purchases');
 				this.gameObj.unitPurchases = [];
 				this.loadCurrentPlayer();
 			}, 2000);

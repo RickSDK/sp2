@@ -488,5 +488,5 @@ function getUserObjFromLine(line) { //userFromLine
 
 	if (last_login_time <= 0)
 		last_login_time = 0;
-	return { id: c[0], seconds: seconds, name: c[1], graphic: graphic, last_login: c[3], last_login_time: last_login_time, activity: c[4], minutes: c[5], rank: numberVal(c[6]), turnSpeed: turnSpeed, speedType: speedType, nation: c[7], textFlg: c[8] }
+	return { id: c[0], seconds: seconds, onlineFlg: (seconds<900), name: c[1], graphic: graphic, last_login: c[3], last_login_time: last_login_time, activity: c[4], minutes: c[5], rank: numberVal(c[6]), turnSpeed: turnSpeed, speedType: speedType, nation: c[7], textFlg: c[8] }
 }

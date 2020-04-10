@@ -248,7 +248,6 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
 
     } else {
       // enter game
-      console.log('xxx', game.chatFlg);
       localStorage.chatFlg = (game.chatFlg)?'Y':'N';
       localStorage.loadGameId = game.gameId;
       this.router.navigate(['/board']);

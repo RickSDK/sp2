@@ -11,33 +11,28 @@
 
 				<div style="text-align: center; padding-bottom: 5px;">
 					<div class="btn-group">
-						<button (click)="buttonIdx=0" type="button"
-							class="btn btn-default roundButton" [ngClass]="ngClassSegment(buttonIdx,0)"
-							style="min-width: 60px;">
+						<button (click)="buttonIdx=0" type="button" class="btn btn-default roundButton"
+							[ngClass]="ngClassSegment(buttonIdx,0)" style="min-width: 60px;">
 							<i class="fa fa-user" style="font-size: 26px;"></i>
 							<div style="font-size: 10px;">Players</div>
 						</button>
-						<button (click)="buttonIdx=1" type="button"
-							class="btn btn-default roundButton" [ngClass]="ngClassSegment(buttonIdx,1)"
-							style="min-width: 60px;">
+						<button (click)="buttonIdx=1" type="button" class="btn btn-default roundButton"
+							[ngClass]="ngClassSegment(buttonIdx,1)" style="min-width: 60px;">
 							<i class="fa fa-users" style="font-size: 26px;"></i>
 							<div style="font-size: 10px;">Allies</div>
 						</button>
-						<button (click)="showGraphs()" type="button"
-							class="btn btn-default roundButton" [ngClass]="ngClassSegment(buttonIdx,2)"
-							style="min-width: 60px;">
+						<button (click)="showGraphs()" type="button" class="btn btn-default roundButton"
+							[ngClass]="ngClassSegment(buttonIdx,2)" style="min-width: 60px;">
 							<i class="fa fa-line-chart" style="font-size: 26px;"></i>
 							<div style="font-size: 10px;">Stats</div>
 						</button>
-						<button (click)="buttonIdx=3" type="button"
-							class="btn btn-default roundButton" [ngClass]="ngClassSegment(buttonIdx,3)"
-							style="min-width: 60px;">
+						<button (click)="buttonIdx=3" type="button" class="btn btn-default roundButton"
+							[ngClass]="ngClassSegment(buttonIdx,3)" style="min-width: 60px;">
 							<i class="fa fa-globe" style="font-size: 26px;"></i>
 							<div style="font-size: 10px;">Territories</div>
 						</button>
-						<button (click)="buttonIdx=4" type="button"
-							class="btn btn-default roundButton" [ngClass]="ngClassSegment(buttonIdx,4)"
-							style="min-width: 60px;">
+						<button (click)="buttonIdx=4" type="button" class="btn btn-default roundButton"
+							[ngClass]="ngClassSegment(buttonIdx,4)" style="min-width: 60px;">
 							<i class="fa fa-info-circle" style="font-size: 26px;"></i>
 							<div style="font-size: 10px;">Game</div>
 						</button>
@@ -45,11 +40,25 @@
 				</div>
 
 				<app-player-view *ngIf="buttonIdx==0" [gameObj]="gameObj"></app-player-view>
-				<app-allies-view *ngIf="buttonIdx==1" [gameObj]="gameObj" [currentPlayer]="currentPlayer" [ableToTakeThisTurn]="ableToTakeThisTurn" [displayPlayers]="displayPlayers" [displayTeams]="displayTeams"></app-allies-view>
+				<app-allies-view *ngIf="buttonIdx==1" [gameObj]="gameObj" [currentPlayer]="currentPlayer"
+					[ableToTakeThisTurn]="ableToTakeThisTurn" [displayPlayers]="displayPlayers"
+					[displayTeams]="displayTeams"></app-allies-view>
 				<app-stats-view *ngIf="buttonIdx==2" [gameObj]="gameObj" [displayTeams]="displayTeams"></app-stats-view>
 				<app-territories-view *ngIf="buttonIdx==3" [gameObj]="gameObj"></app-territories-view>
-				<app-game-view *ngIf="buttonIdx==4" [gameObj]="gameObj" [ableToTakeThisTurn]="ableToTakeThisTurn"></app-game-view>
+				<app-game-view *ngIf="buttonIdx==4" [gameObj]="gameObj" [ableToTakeThisTurn]="ableToTakeThisTurn">
+				</app-game-view>
 				<div *ngIf="buttonIdx==4 && user.userName=='Rick'">gameUpdDt: {{gameUpdDt}}</div>
+
+				<div *ngIf="generalRetreatFlg" class="borderClass3">
+					<img src="assets/graphics/units/piece10u.png" height="30">
+					<div>General Withdraw Options</div>
+					<button [disabled]="generalRetreatObj.currentLoc == generalRetreatObj.terrId1" (click)="moveGeneralToTerr(generalRetreatObj.terrId1)" type="button" class="btn btn-primary roundButton">
+						{{gameObj.territories[generalRetreatObj.terrId1-1].name}}
+					</button>
+					<button [disabled]="generalRetreatObj.currentLoc == generalRetreatObj.terrId2" (click)="moveGeneralToTerr(generalRetreatObj.terrId2)" type="button" class="btn btn-primary roundButton">
+						{{gameObj.territories[generalRetreatObj.terrId2-1].name}}
+					</button>
+				</div>
 
 			</div>
 			<div class="modal-footer">
