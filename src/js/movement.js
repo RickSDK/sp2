@@ -53,6 +53,9 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
     if (optionType == 'movement' && unit.type == 2 && toTerr.nation == 99 && unit.cargoOf > 0) {
         return false; // fighters
     }
+    if (optionType == 'movement' && unit.piece == 7 && toTerr.nation == 99) {
+        return false; // bombers
+    }
     if (optionType == 'movement' && distObj.land == 0)
         return false;
     var movement = (optionType == 'attack' || optionType == 'bomb' || optionType == 'nuke') ? unit.moveAtt : unit.mv;
@@ -204,10 +207,11 @@ function moveSelectedUnits(moveTerr, selectedTerritory, gameObj) {
 }
 function moveTheseUnitsToThisTerritory(units, selectedTerritory, gameObj) {
     var terr1Id = 1;
-    var piece = 3;
+    var piece = 1;
     units.forEach(function (unit) {
         terr1Id = unit.terr;
-        piece = unit.piece;
+        if (unit.piece > piece)
+            piece = unit.piece;
         unit.terr = selectedTerritory.id;
         if (unit.piece == 4) {
             var oneSpaceFlg = false;
@@ -261,7 +265,6 @@ function findTransportForThisCargo(unit, terr, gameObj) {
         for (var u = 0; u < terr.units.length; u++) {
             var transport = terr.units[u];
             if (transport.subType == 'transport' && transport.owner == unit.owner && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits) {
-                console.log('here', transport.id, transport.cargoUnits, transport.cargoSpace)
                 loadThisUnitOntoThisTransport(unit, transport);
                 return;
             }
@@ -298,6 +301,8 @@ function loadThisUnitOntoThisTransport(unit, transport) {
     if (!transport.cargoLoadedThisTurn)
         transport.cargoLoadedThisTurn = 0;
     transport.cargoUnits += unit.cargoUnits;
+    if (transport.cargoUnits > transport.cargoSpace)
+        showAlertPopup('Cargo Overload Issue', 1);
     transport.cargoLoadedThisTurn += unit.cargoUnits;
     unit.cargoOf = transport.id;
     if (!transport.cargo)
@@ -334,7 +339,6 @@ function showUnitsForMovementBG2(optionType, gameObj, currentPlayer, totalMoveTe
     currentPlayer.allies.forEach(function (ally) {
         allyHash[ally] = true;
     });
-    console.log('allyHash', allyHash);
     for (var x = 0; x < totalMoveTerrs.length; x++) {
         var terr = totalMoveTerrs[x];
         terr.distObj = distanceBetweenTerrs(terr, selectedTerritory, maxDist, 0, 0, 0, allyHash, gameObj.territories);

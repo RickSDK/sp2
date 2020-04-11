@@ -51,6 +51,7 @@
                             <div *ngIf="serverUser" class="spTitle">
                                 <app-player-name [player]="serverUser"></app-player-name>
                             </div>
+                            <div *ngIf="serverUser" class="darkBlueBg">Ave Turn Speed: <i class="fa fa-bolt" *ngIf="serverUser.fastFlg"></i> <i class="fa fa-hourglass-end" *ngIf="serverUser.slowFlg"></i> {{serverUser.hourlyRate}} hrs </div>
                             <div *ngIf="!serverUser" class="spTitle">Profile Image <i *ngIf="selfProfileFlg"
                                     class="fa fa-pencil-square-o"
                                     style="float: right; padding-right: 5px; padding-top: 3px;"></i></div>

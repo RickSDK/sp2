@@ -413,13 +413,13 @@
     <div *ngIf="multiPlayerObj && multiPlayerObj.newGame">
         <img src="assets/graphics/misc/parade.jpg" width=100%>
         <div>New Game Started!</div>
-        <div class="glowBlue">{{multiPlayerObj.gameName}}</div>
+        <div class="glowBlue">{{multiPlayerObj.newGame}}</div>
     </div>
     <div *ngIf="multiPlayerObj && !multiPlayerObj.newGame">
         <img *ngIf="multiPlayerObj.gameResult!='Win'" src="assets/graphics/misc/cityNuked.jpg" width=100%>
         <img *ngIf="multiPlayerObj.gameResult=='Win'" src="assets/graphics/misc/victory.jpg" width=100%>
         <div style="font-size: 20px;">Multiplayer Game Ended!</div>
-        <div class="glowRed">{{multiPlayerObj.gameName}}</div>
+        <div class="glowRed">{{multiPlayerObj.oldGame}}</div>
         <div style="font-size: 30px;">{{multiPlayerObj.gameResult}}</div>
     </div>
 </div>

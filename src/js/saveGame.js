@@ -156,6 +156,47 @@ function updateStatusMessage(msg, successFlg) {
 			e.src = "assets/graphics/misc/red.png";
 	}
 }
+function uploadCompletedGameStats(gameObj, winningNationStr, superpowersData, yourPlayer, user) {
+	winningNationStr = winningNationStr.replace(superpowersData.superpowers[1], '1');
+	winningNationStr = winningNationStr.replace(superpowersData.superpowers[2], '2');
+	winningNationStr = winningNationStr.replace(superpowersData.superpowers[3], '3');
+	winningNationStr = winningNationStr.replace(superpowersData.superpowers[4], '4');
+	winningNationStr = winningNationStr.replace(superpowersData.superpowers[5], '5');
+	winningNationStr = winningNationStr.replace(superpowersData.superpowers[6], '6');
+	winningNationStr = winningNationStr.replace(superpowersData.superpowers[7], '7');
+	winningNationStr = winningNationStr.replace(superpowersData.superpowers[8], '8');
+	console.log('uploadCompletedGameStats', gameObj.id, winningNationStr);
+
+	const url = this.getHostname() + "/web_join_game2.php";
+    const postData = this.getPostDataFromObj({ user_login: user.userName, code: user.code, action: 'uploadStats', game_id: gameObj.id, gameData: winningNationStr });
+	console.log(postData);
+	
+    fetch(url, postData).then((resp) => resp.text())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch(error => {
+        this.showAlertPopup('Unable to reach server: ' + error, 1);
+      });
+	/*
+	var url = getHostname()+"/web_join_game2.php";
+	$.post(url,
+	{
+		user_login: $scope.user.userName,
+		game_id: gameObj.id,
+		pwd: $scope.user.password,
+		action: 'uploadStats',
+		gameData: winningNationStr
+	},
+	function(data, status){
+		stopSpinner();
+		console.log(data);
+	if(verifyServerResponse(status, data)) {
+		showAlertPopup('Game Over! Stats Uploaded.', 1);
+	}
+	});*/
+
+}
 function registerIP(ipCode) {
 	/*
 	var url = getHostname() + "/webSuperpowers.php";

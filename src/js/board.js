@@ -1732,7 +1732,7 @@ function flagOfOwner(own, terr, showDetailsFlg, unitCount, defeatedByNation, nuk
 	}
 	return flag;
 }
-function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPlayer) {
+function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPlayer, user) {
 	figureOutTeams(gameObj);
 	var victoryMet = false;
 
@@ -1798,6 +1798,7 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 				setInnerHTMLFromElement('winningTeam', msg);
 				playSound('tada.mp3');
 				gameObj.gameOver = true;
+				uploadCompletedGameStats(gameObj, winningTeamList.join('|'), superpowersData, yourPlayer, user);
 			}
 		}
 	} else {

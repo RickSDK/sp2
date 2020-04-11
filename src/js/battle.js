@@ -411,7 +411,7 @@ function landTheCruiseBattle(player, targetTerr, attackUnits, gameObj, superpowe
     battle.defHits = 0;
     var target = 'default';
     if (player.tech[9])
-        target = 'vehicles';
+        target = 'vehicles2';
     addhitsToList(battle.attTargets, target, battle.attHits);
     markCasualties(battle, gameObj);
     nukeBattleCompleted(battle, targetTerr, player, [], gameObj, superpowersData, true);
@@ -733,6 +733,11 @@ function markTanksAsDead(units, targetHash) {
             unit.dead = true;
             return;
         }
+        if (unit.subType == 'vehicle' && targetHash['vehicles2'] > 0) {
+            targetHash['vehicles2']--;
+            unit.dead = true;
+            return;
+        }
         if ((unit.piece == 1 || unit.piece == 3) && targetHash['vehicles'] > 0) {
             targetHash['vehicles']--;
             unit.dead = true;
@@ -780,6 +785,11 @@ function markRemainerAsDead(units, targetHash, gameObj) {
         }
         if (targetHash['planesTanks'] > 0) {
             targetHash['planesTanks']--;
+            unit.dead = true;
+            return;
+        }
+        if (targetHash['vehicles2'] > 0) {
+            targetHash['vehicles2']--;
             unit.dead = true;
             return;
         }
@@ -940,8 +950,12 @@ function battleCompleted(displayBattle, selectedTerritory, currentPlayer, moveTe
         selectedTerritory.defeatedByNation = currentPlayer.nation;
         selectedTerritory.defeatedByRound = gameObj.round;
         transferControlOfTerr(selectedTerritory, currentPlayer, gameObj, true);
-        if (!currentPlayer.cpu)
-            playVoiceSound(71 + Math.floor((Math.random() * 6)));
+        if (!currentPlayer.cpu) {
+            if(displayBattle.defHits==0)
+                playVoiceClip('won6.mp3');
+            else
+                playVoiceSound(71 + Math.floor((Math.random() * 5)));
+        }
         displayBattle.attackUnits.forEach(function (unit) {
             if (unit.type != 2 && !unit.returnFlg)
                 unit.terr = selectedTerritory.id;

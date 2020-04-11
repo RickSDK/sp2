@@ -114,14 +114,15 @@
 	</span>
 </div>
 <!---third bar--->
-<div *ngIf="gameObj.desc" (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 4)"
-	style="z-index: 202; text-align: center;  position: fixed; top: 95px; width: 100%; ">
-	<span title="{{gameObj.typeName}}: {{gameObj.desc}}"
-		style="cursor: pointer; text-align: center; font-size: 12px; padding-left: 5px; color: #ccc; line-height: 1.5em; overflow: hidden; background-color: #557; border: 1px solid gray; box-shadow: 5px 5px 5px #000;">
-		Round <b><span *ngIf="historyMode">{{historyRound}}/</span>{{gameObj.round}}</b> <span
+<div *ngIf="gameObj.desc"
+	style="text-align: center;  position: fixed; top: 95px; width: 100%; text-align: center; font-size: 12px; ">
+	<span title="{{gameObj.typeName}}: {{gameObj.desc}}" (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 4)"
+		style="cursor: pointer; padding-left: 5px; color: #ccc; background-color: #557; border: 1px solid gray; box-shadow: 5px 5px 5px #000;">
+		Round <b>{{gameObj.round}}</b> 
+		<span
 			style="background-color: #007; color: white; font-weight: 700; padding-left: 5px; padding-right: 5px;"><i
-				class="fa {{gameObj.icon}}"></i> {{gameObj.name}}</span>
-	</span>
+				class="fa {{gameObj.icon}}"></i> {{gameObj.name}}</span></span>
+	
 </div>
 <!---------- menu button-->
 <button *ngIf="showControls" id="menu1Button"

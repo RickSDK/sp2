@@ -71,6 +71,7 @@ declare var declareWarOnNation: any;
 declare var refreshAllTerritories: any;
 declare var getMaxAllies: any;
 declare var illuminateTerritories: any;
+declare var uploadCompletedGameStats: any;
 //---spLib.js
 declare var scrollToCapital: any;
 declare var popupBattleReport: any;
@@ -306,6 +307,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		//#####################################################################
 		//#####################################################################
 		//#####################################################################
+		///uploadCompletedGameStats(this.gameObj, 'Russian Republic|European Union|Communist China|Middle-East Federation', this.superpowersData, this.yourPlayer, this.user);
 		//-------------------- test
 		if (0) {
 			this.gameObj.turnId = 4; //<--- test
@@ -1504,7 +1506,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		startSpinner('Saving...', '150px', 'spinnerOKButton');
 		updateProgressBar(30);
 		this.currentPlayer.status = 'Waiting';
-		checkVictoryConditions(this.currentPlayer, this.gameObj, this.superpowersData, this.yourPlayer);
+		checkVictoryConditions(this.currentPlayer, this.gameObj, this.superpowersData, this.yourPlayer, this.user);
 		addIncomeForPlayer(this.currentPlayer, this.gameObj);
 		this.currentPlayer.money += this.currentPlayer.income;
 		playSound('clink.wav');

@@ -141,8 +141,8 @@ function userFromLine(line) {
 	obj.chat_color = c[x++];
 	obj.activity_level = c[x++];
 	obj.chat_color = c[x++];
-	obj.total_num_turns = c[x++];
-	obj.total_num_mins = c[x++];
+	obj.total_num_turns = numberVal(c[x++]);
+	obj.total_num_mins = numberVal(c[x++]);
 	obj.message = c[x++];
 	obj.year_born = c[x++];
 	obj.game_count = c[x++];
@@ -176,15 +176,13 @@ function userFromLine(line) {
 	obj.last10Games = c[x++];
 	obj.chat_font = c[x++];
 
+	if (obj.total_num_mins > 0 && obj.total_num_turns > 0) {
+		obj.hourlyRate = Math.round(obj.total_num_mins / 60 / obj.total_num_turns);
+		obj.fastFlg = (obj.hourlyRate<6);
+		obj.slowFlg = (obj.hourlyRate>=10);
+	}
+
 	obj.flag = flagOfCountry(obj.country);
-	obj.age = '';
-	if (obj.year_born > 1900)
-		obj.age = 2018 - obj.year_born;
-	var minutes = 0;
-	if (obj.total_num_turns > 0)
-		minutes = obj.total_num_mins / obj.total_num_turns;
-	obj.turnSpeed = parseInt(minutes / 60);
-	obj.speedType = speedTypeFromMin(minutes);
 	var seconds = getDateFromString(obj.lastLogin);
 	if (seconds < 0)
 		seconds = 11;
@@ -488,5 +486,5 @@ function getUserObjFromLine(line) { //userFromLine
 
 	if (last_login_time <= 0)
 		last_login_time = 0;
-	return { id: c[0], seconds: seconds, onlineFlg: (seconds<900), name: c[1], graphic: graphic, last_login: c[3], last_login_time: last_login_time, activity: c[4], minutes: c[5], rank: numberVal(c[6]), turnSpeed: turnSpeed, speedType: speedType, nation: c[7], textFlg: c[8] }
+	return { id: c[0], seconds: seconds, onlineFlg: (seconds < 900), name: c[1], graphic: graphic, last_login: c[3], last_login_time: last_login_time, activity: c[4], minutes: c[5], rank: numberVal(c[6]), turnSpeed: turnSpeed, speedType: speedType, nation: c[7], textFlg: c[8] }
 }
