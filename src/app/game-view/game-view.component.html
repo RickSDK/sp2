@@ -1,6 +1,6 @@
-<div class="spCard">
+<div class="spCard" style="max-width: 340px;">
 	<div>
-		<table width=100% class="spTable" *ngIf="gameObj">
+		<table *ngIf="gameObj" class="spTable">
 			<tr>
 				<th style="padding: 5px; text-align: center;">Field</th>
 				<th style="padding: 5px; text-align: center;">Value</th>
@@ -46,7 +46,7 @@
 			<tr *ngIf="gameObj.hardFog=='Y'">
 				<td><b>Visibility:</b></td>
 				<td>
-					<font color=#08f><i class="fa fa-question-circle"></i> Hardcore Fog</font>
+					<font color=#08f><i class="fa fa-cloud"></i> Hardcore Fog</font>
 				</td>
 			</tr>
 			<tr *ngIf="gameObj.autoSkip=='Y'">
@@ -81,13 +81,7 @@
 	</div>
 </div>
 
-<div *ngIf="gameObj && gameObj.allowAlliances && gameObj.multiPlayerFlg && gameObj.top1.length>0 && gameObj.type != 'barbarian'"
-	class="borderClass3">
-	<div>Team-balancing enforced. Top 2 players cannot be allies with each other in this game:</div>
-	<img src="assets/graphics/images/flag{{gameObj.top1Nation}}.gif" height=15>
-	<b>{{gameObj.top1}}</b> and <img src="assets/graphics/images/flag{{gameObj.top2Nation}}.gif" height=15>
-	<b>{{gameObj.top2}}</b>
-</div>
+<app-team-balancing [gameObj]="gameObj"></app-team-balancing>
 
 <div style="text-align: center;">
 	<button *ngIf="ableToTakeThisTurn" (click)="surrenderButtonPressed()" type="button"

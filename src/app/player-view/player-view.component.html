@@ -1,12 +1,15 @@
-<div *ngIf="gameObj" class="borderClass3" style="font-size: 12px;"><b>Game Situation:</b> {{gameObj.currentSituation}}</div>
+<div *ngIf="gameObj" class="borderClass3" style="font-size: 12px;"><b>Game Situation:</b> {{gameObj.currentSituation}}
+</div>
 
 <div>
     <div class="btn-group" style="white-space: nowrap; text-align: center;">
         <button id="" (click)="segmentIdx=0" type="button" [ngClass]="ngClassSegment(segmentIdx,0)"
-            class="btn btn-default roundButton tight"><i class="fa fa-user"></i> Units</button>
+            class="btn btn-default roundButton tight"><i class="fa fa-user"></i>&nbsp;<span class="hidden-xxs">Players</span></button>
         <button id="" (click)="segmentIdx=1" type="button" [ngClass]="ngClassSegment(segmentIdx,1)"
+            class="btn btn-default roundButton tight"><i class="fa fa-fighter-jet"></i> Units</button>
+        <button id="" (click)="segmentIdx=2" type="button" [ngClass]="ngClassSegment(segmentIdx,2)"
             class="btn btn-default roundButton tight"><i class="fa fa-usd"></i> Income</button>
-        <button (click)="segmentIdx=2" type="button" [ngClass]="ngClassSegment(segmentIdx,2)"
+        <button (click)="segmentIdx=3" type="button" [ngClass]="ngClassSegment(segmentIdx,3)"
             class="btn btn-default roundButton tight"><i class="fa fa-android"></i> Bots</button>
     </div>
 </div>
@@ -23,10 +26,6 @@
                 </th>
                 <th class="centerText"><img src="assets/graphics/units/piece11u.png" title="Leader Alive?" height=30>
                 </th>
-                <th class="centerText"><span title="Active Units">units</span></th>
-                <th class="centerText"><span title="Kills">K</span></th>
-                <th class="centerText"><span title="Deaths">D</span></th>
-                <th class="centerText"><span title="Kills/Death">K/D</span></th>
             </tr>
             <tr *ngFor="let player of gameObj.players" [ngStyle]="ngStyleLogs(player.nation, !player.alive)"
                 class="borderRow">
@@ -39,22 +38,8 @@
                         title="Play has taken over a territory"></i>
                 </td>
                 <td class="centerText">
-                    <i *ngIf="gameObj.turnId==player.turn && !gameObj.gameOver" class="fa fa-arrow-right"
-                        title="Current Turn" style="color: green;"></i>
-                    <img *ngIf="player.nukes" src="assets/graphics/units/piece14.gif" title="Nukes" height=20>
-                    <i *ngIf="player.sat" class="fa fa-shield" style="color: blue;" title="Anti-balistics"></i>
-
-                    &nbsp;<i *ngIf="player.cpu" class="fa fa-android" title="Computer Player"></i>
-                    <img *ngIf="!player.alive" src="assets/graphics/misc/skull.png" height=15 title="Eliminated">
-                    <span style="font-size: 10px;">&nbsp;{{player.userName}}</span>
-                    <img *ngIf="gameObj.mmFlg && player.empCount>0" src="assets/graphics/units/emp.png" height=20
-                        title="EMP">
-                    <img *ngIf="gameObj.mmFlg && player.empCount>1" src="assets/graphics/units/emp.png" height=20
-                        title="EMP">
-                    <i *ngIf="player.attackFlg && gameObj.round==6" class="fa fa-bolt"></i>
-                    <i *ngIf="player.defenseFlg && gameObj.round==6" class="fa fa-shield"></i>
-                    <div *ngIf="player.turn==gameObj.turnId && !gameObj.gameOver" style="color: gray; font-size: 12px;">
-                        ({{player.status}})</div>
+                    <app-player-user-name [player]="player" [gameObj]="gameObj" [detailsFlg]="true">
+                    </app-player-user-name>
                 </td>
                 <td class="centerText">{{player.income}}</td>
                 <td class="centerText">{{player.money}}</td>
@@ -66,6 +51,33 @@
                     <i *ngIf="player.leaderFlg" class="fa fa-check" style="color: green;" title="Leader Alive"></i>
                     <i *ngIf="!player.leaderFlg" class="fa fa-times" style="color: #900;" title="Leader Dead"></i>
                 </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div *ngIf="segmentIdx==1" class="spCard">
+    <div>
+        <table class="spTable">
+            <tr>
+                <th class="centerText">Nation</th>
+                <th class="centerText">Player</th>
+                <th class="centerText"><span title="Active Units">units <i class="fa fa-arrow-circle-down"></i></span>
+                </th>
+                <th class="centerText"><span title="Kills">K</span></th>
+                <th class="centerText"><span title="Deaths">D</span></th>
+                <th class="centerText"><span title="Kills/Death">K/D</span></th>
+            </tr>
+            <tr *ngFor="let player of unitPlayers" [ngStyle]="ngStyleLogs(player.nation, !player.alive)"
+                class="borderRow">
+                <td class="centerText">
+                    <img src="assets/graphics/images/flag{{player.nation}}.gif" height=40
+                        title="{{superpowersData.superpowers[player.nation]}}">
+                </td>
+                <td class="centerText">
+                    <app-player-user-name [player]="player" [gameObj]="gameObj" [detailsFlg]="false">
+                    </app-player-user-name>
+                </td>
                 <td class="centerText">{{player.unitCount}}</td>
                 <td class="centerText">{{player.kills}}</td>
                 <td class="centerText">{{player.losses}}</td>
@@ -75,12 +87,12 @@
     </div>
 </div>
 
-<div *ngIf="gameObj && segmentIdx==1" class="spCard">
+<div *ngIf="segmentIdx==2" class="spCard">
     <div>
         <table class="spTable">
             <tr>
                 <th valign=top class="centerText" style="font-size: 12px;">Nation</th>
-                <th class="centerText" valign=top class="centerText">Player</th>
+                <th class="centerText hidden-xxs" valign=top>Player</th>
                 <th class="centerText" valign=top class="centerText"><span title="Superpowers (10 coins each)">SP</span>
                     <div style="color: #def;">+10</div>
                 </th>
@@ -102,22 +114,19 @@
                         src="assets/graphics/units/piece103.gif" height=15>
                     <div style="color: #def;">-5</div>
                 </th>
-                <th valign=top class="centerText">Income<div><i class="fa fa-usd"></i></div>
+                <th valign=top class="centerText"><span class="hidden-xxs">Income</span>&nbsp;<i class="fa fa-arrow-circle-down"></i>
+                    <div><i class="fa fa-usd"></i></div>
                 </th>
             </tr>
-            <tr *ngFor="let player of gameObj.players" [ngStyle]="ngStyleLogs(player.nation, !player.alive)"
+            <tr *ngFor="let player of incomePlayers" [ngStyle]="ngStyleLogs(player.nation, !player.alive)"
                 class="borderRow">
                 <td>
                     <img src="assets/graphics/images/flag{{player.nation}}.gif" height="40"
                         title="{{superpowersData.superpowers[player.nation]}}">
                 </td>
-                <td>
-                    <font *ngIf="gameObj.turnId==player.turn && !gameObj.gameOver" color=green size=4><i
-                            class="fa fa-arrow-right"></i></font>
-                    <i *ngIf="player.cpu" class="fa fa-android"></i>
-                    <span style="font-size: 10px;">{{player.userName}}</span>
-                    <div *ngIf="player.turn==gameObj.turnId" style="color: gray; font-size: 12px;">
-                        ({{player.status}})</div>
+                <td class="hidden-xxs">
+                    <app-player-user-name [player]="player" [gameObj]="gameObj" [detailsFlg]="false">
+                    </app-player-user-name>
                 </td>
                 <td class="centerText">{{player.sp}}</td>
                 <td class="centerText">{{player.cap}}</td>
@@ -134,12 +143,12 @@
     </div>
 </div>
 
-<div *ngIf="segmentIdx==2" class="spCard">
+<div *ngIf="segmentIdx==3" class="spCard">
     <div>
-        <table class="spTable"  *ngIf="gameObj && gameObj.territories && gameObj.territories.length>0">
+        <table class="spTable" *ngIf="gameObj && gameObj.territories && gameObj.territories.length>0">
             <tr>
                 <th valign=top class="centerText">Nation</th>
-                <th valign=top class="centerText">Player</th>
+                <th valign=top class="centerText hidden-xxs">Player</th>
                 <th valign=top class="centerText">Base</th>
                 <th valign=top class="centerText">Fortify</th>
                 <th valign=top class="centerText">Primary</th>
@@ -151,13 +160,9 @@
                     <img src="assets/graphics/images/flag{{player.nation}}.gif" height="40"
                         title="{{superpowersData.superpowers[player.nation]}}">
                 </td>
-                <td>
-                    <font *ngIf="gameObj.turnId==player.turn && !gameObj.gameOver" color=green size=4><i
-                            class="fa fa-arrow-right"></i></font>
-                    <i *ngIf="player.cpu" class="fa fa-android"></i>
-                    <span>{{player.userName}}</span>
-                    <div *ngIf="player.turn==gameObj.turnId" style="color: gray; font-size: 12px;">
-                        ({{player.status}})</div>
+                <td class="hidden-xxs">
+                    <app-player-user-name [player]="player" [gameObj]="gameObj" [detailsFlg]="false">
+                    </app-player-user-name>
                 </td>
                 <td><span *ngIf="player.mainBaseID > 0"><img
                             src="assets/graphics/images/flag{{gameObj.territories[player.mainBaseID-1].owner}}.gif"
@@ -177,36 +182,32 @@
     </div>
 </div>
 
-<div *ngIf="segmentIdx==0" class="borderClass2">
-    <div><b>Inc</b>: Income, <b>K</b>: Kills, <b>D</b>: Deaths, <b>K/D</b>: Kill to Death ratio</div>
-</div>
-<div *ngIf="segmentIdx==1" class="borderClass2">
-    <b>Ways to increase income:</b><br>
-    <font color=green> +10 for each complete superpower</font><br>
-    <font color=green> +10 for each Capital</font><br>
-    <font color=green> <img src="assets/graphics/units/piece11u.png" height=20> +10 for your Leader
-        alive</font><br>
-    <font color=green> <img src="assets/graphics/units/piece19.gif" height=15> +5 per Economic Center
-    </font><br>
-    <font color=green> <i class="fa fa-flask"></i> +5 for economic techs</font><br>
-    <font color=red> <img src="assets/graphics/units/piece103.gif" height=15> -5 per bombed factory
-    </font><br>
-</div>
-<div *ngIf="segmentIdx==2" class="borderClass2">
-    <div><b>Base</b>: This is the main base for the bot, which is generally well foritified and
-        contains hero units.</div>
-    <div><b>Fortify</b>: This is an identified front line defensive position. Bots will try to
-        stack troops in this territory.</div>
-    <div><b>Primary Target</b>: If a player loses one of their superpower territories, it will be the
-        primary target for attacking.</div>
-    <div><b>Secondary Target</b>: In case there is no Primary Target, bots will advance toward a
-        secondary target.</div>
+<div>
+    <app-team-balancing *ngIf="segmentIdx==0 && gameObj" [gameObj]="gameObj"></app-team-balancing>
+    <div *ngIf="segmentIdx==1" class="borderClass3">
+        <div><b>K</b>: Kills, <b>D</b>: Deaths, <b>K/D</b>: Kill to Death ratio</div>
+    </div>
+    <div *ngIf="segmentIdx==2" class="borderClass3">
+        <b>Ways to increase income:</b><br>
+        <font color=green> +10 for each complete superpower</font><br>
+        <font color=green> +10 for each Capital</font><br>
+        <font color=green> <img src="assets/graphics/units/piece11u.png" height=20> +10 for your Leader
+            alive</font><br>
+        <font color=green> <img src="assets/graphics/units/piece19.gif" height=15> +5 per Economic Center
+        </font><br>
+        <font color=green> <i class="fa fa-flask"></i> +5 for economic techs</font><br>
+        <font color=red> <img src="assets/graphics/units/piece103.gif" height=15> -5 per bombed factory
+        </font><br>
+    </div>
+    <div *ngIf="segmentIdx==3" class="borderClass3" style="text-align: left; font-size: 12px; padding: 5px;">
+        <div><b>Base</b>: This is the main base for the bot, which is generally well foritified and
+            contains hero units.</div>
+        <div><b>Fortify</b>: This is an identified front line defensive position. Bots will try to
+            stack troops in this territory.</div>
+        <div><b>Primary Target</b>: If a player loses one of their superpower territories, it will be the
+            primary target for attacking.</div>
+        <div><b>Secondary Target</b>: In case there is no Primary Target, bots will advance toward a
+            secondary target.</div>
+    </div>
 </div>
 
-<div *ngIf="gameObj && gameObj.allowAlliances && gameObj.multiPlayerFlg && gameObj.top1.length>0 && gameObj.type != 'barbarian'"
-    class="borderClass3">
-    <div>Team-balancing enforced. Top 2 players cannot be allies with each other in this game:</div>
-    <img src="assets/graphics/images/flag{{gameObj.top1Nation}}.gif" height=15>
-    <b>{{gameObj.top1}}</b> and <img src="assets/graphics/images/flag{{gameObj.top2Nation}}.gif" height=15>
-    <b>{{gameObj.top2}}</b>
-</div>

@@ -10,6 +10,8 @@ declare var drawSPGraph: any;
 })
 export class PlayerViewComponent extends BaseComponent implements OnInit {
   @Input('gameObj') gameObj: any;
+  @Input('incomePlayers') incomePlayers: any;
+  @Input('unitPlayers') unitPlayers: any;
 
   constructor() { super(); }
 

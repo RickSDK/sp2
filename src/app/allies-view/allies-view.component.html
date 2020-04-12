@@ -7,8 +7,10 @@
                 <div>
                     <div class="spTitle" style="font-size: 12px;">{{gameObj.name}} ({{gameObj.typeName}})</div>
                     <div class="spCardBody">
-                        <div style="text-align: center"><b>Round:</b> {{gameObj.round}}, <b>Max-Allies:</b>
-                            {{gameObj.maxAllies}}</div>
+                        <div style="text-align: center"><b>Round:</b> {{gameObj.round}}, 
+                            <span *ngIf="gameObj.maxAllies>0"><b>Team Size:</b> {{gameObj.maxAllies+1}}</span>
+                            <span *ngIf="gameObj.maxAllies==0"><b>No Teams</b></span>
+                        </div>
                         <div style="padding: 3px; font-size: 12px;"><b>Status:</b> {{gameObj.currentSituation}}</div>
                     </div>
                 </div>
@@ -82,7 +84,7 @@
         <div class="spTitle">Treaties</div>
         <table class="spTable" border=1>
             <tr>
-                <th *ngIf="gameObj.allowAlliances" class="centerText">T<span class="hidden-xxs">eam</span></th>
+                <th *ngIf="gameObj.allowAlliances" class="centerText">T<span class="hidden-xxs">eam <i class="fa fa-arrow-circle-down"></i></span></th>
                 <th class="centerText">Player</th>
                 <th style="text-align: center; font-size: 10px;"><img src="assets/graphics/misc/news0.png" height=30
                         title="War"><br>
@@ -96,7 +98,7 @@
             <tr *ngFor="let player of displayPlayers" [ngStyle]="ngStyleLogs(player.team, !player.alive)">
                 <td *ngIf="gameObj.allowAlliances">{{player.team}}</td>
                 <td align=center>
-                    <i class="fa fa-check" style="font-size: 20px; color: green;"
+                    <i class="fa fa-trophy" style="font-size: 20px; color: blue;"
                         *ngIf="gameObj.gameOver && player.wonFlg" title="Victory!"></i>
                     <img src="assets/graphics/images/flag{{player.nation}}.gif" height=30>
                     <div style="font-size: 10px;"><i *ngIf="player.cpu" class="fa fa-android"></i>
@@ -156,16 +158,16 @@
 
 <div class="spCard">
     <div>
-        <div class="cpTitle">Teams/Capitals</div>
+        <div class="cpTitle"><span *ngIf="gameObj.maxAllies>0">Teams/</span>Capitals</div>
         <table class="spTable">
             <tr>
-                <th class="centerText">Team</th>
+                <th *ngIf="gameObj.maxAllies>0" class="centerText">Team</th>
                 <th class="centerText">Players</th>
                 <th class="centerText">Capitals</th>
                 <th class="centerText">Income</th>
             </tr>
             <tr *ngFor="let team of displayTeams" [ngStyle]="ngStyleLogs(team.name)">
-                <td align=center> {{team.name}}</td>
+                <td *ngIf="gameObj.maxAllies>0" align=center> {{team.name}}</td>
                 <td>
                     <span *ngFor="let player of gameObj.players">
                         <img *ngIf="player.team==team.name" src="assets/graphics/images/flag{{player.nation}}.gif"
@@ -180,10 +182,5 @@
     </div>
 </div>
 
-<div *ngIf="gameObj && gameObj.allowAlliances && gameObj.multiPlayerFlg && gameObj.top1.length>0 && gameObj.type != 'barbarian'"
-    class="borderClass3">
-    <div>Team-balancing enforced. Top 2 players cannot be allies with each other in this game:</div>
-    <img src="assets/graphics/images/flag{{gameObj.top1Nation}}.gif" height=15>
-    <b>{{gameObj.top1}}</b> and <img src="assets/graphics/images/flag{{gameObj.top2Nation}}.gif" height=15>
-    <b>{{gameObj.top2}}</b>
-</div>
+<app-team-balancing [gameObj]="gameObj"></app-team-balancing>
+

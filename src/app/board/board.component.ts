@@ -948,7 +948,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		removeCasualties(this.displayBattle, this.gameObj, this.currentPlayer, false, this.superpowersData);
 		this.displayBattle.round++;
 		addAAGunesToBattle(this.displayBattle, obj.terr);
-		rollAttackDice(this.displayBattle);
+		rollAttackDice(this.displayBattle, this.gameObj);
 		rollDefenderDice(this.displayBattle, obj.terr, this.currentPlayer, [obj.attTerr], this.gameObj, this.superpowersData);
 		if (this.displayBattle.militaryObj.battleInProgress)
 			this.computerBattleRound(obj);
@@ -1088,7 +1088,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	exitButtonPressed() {
 		this.gameMusic.pause();
 		this.playClick();
-		if (localStorage.loadGameId > 0)
+		if (this.gameObj.multiPlayerFlg)
 			this.router.navigate(['/multiplayer']);
 		else
 			this.router.navigate(['/']);

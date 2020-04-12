@@ -57,6 +57,9 @@ import { ForumPopupComponent } from './forum-popup/forum-popup.component';
 import { SpTableComponent } from './sp-table/sp-table.component';
 import { SpTimeLeftComponent } from './sp-time-left/sp-time-left.component';
 import { SpUserNameComponent } from './sp-user-name/sp-user-name.component';
+import { PlayerUserNameComponent } from './player-user-name/player-user-name.component';
+import { TeamBalancingComponent } from './team-balancing/team-balancing.component';
+import { EditProfilePopupComponent } from './edit-profile-popup/edit-profile-popup.component';
 
 @NgModule({
   declarations: [
@@ -114,7 +117,10 @@ import { SpUserNameComponent } from './sp-user-name/sp-user-name.component';
     ForumPopupComponent,
     SpTableComponent,
     SpTimeLeftComponent,
-    SpUserNameComponent
+    SpUserNameComponent,
+    PlayerUserNameComponent,
+    TeamBalancingComponent,
+    EditProfilePopupComponent
   ],
   imports: [
     BrowserModule,

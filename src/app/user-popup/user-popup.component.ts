@@ -13,6 +13,7 @@ declare var userFromLine: any;
 declare var imageSrcFromObj: any;
 declare var awardNameForNum: any;
 declare var nowYear: any;
+declare var getCheckedValueOfField: any;
 
 @Component({
   selector: 'app-user-popup',
@@ -87,8 +88,18 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
     console.log('user-popup', this.displayUser);
   }
   editProfileImageButtonClicked() {
-    if (this.selfProfileFlg)
-      this.editUserImageFlg = !this.editUserImageFlg;
+    if (this.selfProfileFlg) {
+      if (this.displayUser.userId > 0)
+        this.editServerProfileSettings();
+      else
+        this.editUserImageFlg = !this.editUserImageFlg;
+    }
+  }
+  editServerProfileSettings() {
+    this.showAlertPopup('not coded yet',1);
+ //   this.playClick();
+ //   this.closeModal('#userPopup');
+//    this.displayFixedPopup('profileEditPopup');
   }
   loadUserDataFromServer(displayUser: any) {
     const url = this.getHostname() + "/webUserInfo.php";
@@ -244,4 +255,5 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
     else
       this.playSound('error.mp3');
   }
+
 }

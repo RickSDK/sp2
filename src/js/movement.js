@@ -184,9 +184,10 @@ function packageSelectedUnits(moveTerr, selectedTerritory) {
 }
 function loadParatroopers(selectedTerritory, optinType) {
     var units = getSelectedUnits([selectedTerritory]);
-    units.forEach(function (unit) {
+    for (var x = 0; x < units.length; x++) {
+        var unit = units[x];
         findBomberForParatrooper(unit, selectedTerritory, optinType);
-    });
+    }
 }
 function findBomberForParatrooper(unit, selectedTerritory, optinType) {
     var selectedTransport;
@@ -208,7 +209,8 @@ function moveSelectedUnits(moveTerr, selectedTerritory, gameObj) {
 function moveTheseUnitsToThisTerritory(units, selectedTerritory, gameObj) {
     var terr1Id = 1;
     var piece = 1;
-    units.forEach(function (unit) {
+    for (var x = 0; x < units.length; x++) {
+        var unit = units[x];
         terr1Id = unit.terr;
         if (unit.piece > piece)
             piece = unit.piece;
@@ -234,7 +236,7 @@ function moveTheseUnitsToThisTerritory(units, selectedTerritory, gameObj) {
             findTransportForThisCargo(unit, selectedTerritory, gameObj);
         if (unit.cargo && unit.cargo.length > 0)
             moveCargoWithThisUnit(unit, selectedTerritory, terr1Id);
-    });
+    }
     squareUpAllCargo(units, gameObj);
     illuminateThisTerritory(selectedTerritory, gameObj);
     return { t1: terr1Id, t2: selectedTerritory.id, id: piece };
@@ -303,6 +305,7 @@ function loadThisUnitOntoThisTransport(unit, transport) {
     transport.cargoUnits += unit.cargoUnits;
     if (transport.cargoUnits > transport.cargoSpace)
         showAlertPopup('Cargo Overload Issue', 1);
+
     transport.cargoLoadedThisTurn += unit.cargoUnits;
     unit.cargoOf = transport.id;
     if (!transport.cargo)

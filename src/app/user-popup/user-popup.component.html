@@ -37,7 +37,6 @@
                         </button>
                     </div>
                 </div>
-
                 <div *ngIf="loadingFlg">
                     <i class="fa fa-spinner fa-spin"></i> Loading...
                 </div>
@@ -51,11 +50,13 @@
                             <div *ngIf="serverUser" class="spTitle">
                                 <app-player-name [player]="serverUser"></app-player-name>
                             </div>
-                            <div *ngIf="serverUser" class="darkBlueBg">Ave Turn Speed: <i class="fa fa-bolt" *ngIf="serverUser.fastFlg"></i> <i class="fa fa-hourglass-end" *ngIf="serverUser.slowFlg"></i> {{serverUser.hourlyRate}} hrs </div>
+                            <div *ngIf="serverUser" class="darkBlueBg" style="font-size: 12px;">Ave Turn Speed: <i
+                                    class="fa fa-bolt" *ngIf="serverUser.fastFlg"></i> <i class="fa fa-hourglass-end"
+                                    *ngIf="serverUser.slowFlg"></i> {{serverUser.hourlyRate}} hrs </div>
                             <div *ngIf="!serverUser" class="spTitle">Profile Image <i *ngIf="selfProfileFlg"
                                     class="fa fa-pencil-square-o"
                                     style="float: right; padding-right: 5px; padding-top: 3px;"></i></div>
-                            <img src="{{displayUser.imgSrc}}" style="max-width: 300px; max-height: 185px;">
+                            <img src="{{displayUser.imgSrc}}" style="width: 100%; max-height: 185px;">
                             <div class="spCardBody">
                                 <div *ngIf="serverUser && serverUser.message" style="color: #0a0;">
                                     <b>&nbsp;&nbsp;"{{serverUser.message}}"&nbsp;&nbsp;</b>
@@ -72,7 +73,7 @@
                                         class="fa fa-times"></i>
                                 </button>
                             </div>
-                            <div class="spCardBody">
+                            <div class="spCardBody && displayUser">
                                 <div *ngIf="displayUser.userGraphic.length>0">-Picture stored on server-</div>
                                 <div *ngIf="displayUser.userGraphic.length==0">
                                     <img *ngFor="let image of localAvatars" src="assets/graphics/avatars/{{image}}"
@@ -132,7 +133,8 @@
                     </div>
                     <app-sp-table *ngIf="personalInfoObj" [dataObj]="personalInfoObj"></app-sp-table>
                     <app-sp-table *ngIf="adminObj && user.userId==10" [dataObj]="adminObj"></app-sp-table>
-                    <app-sp-table *ngIf="selfProfileFlg && profileCustomizationObj" [dataObj]="profileCustomizationObj">
+                    <app-sp-table (click)="editServerProfileSettings()"
+                        *ngIf="selfProfileFlg && profileCustomizationObj" [dataObj]="profileCustomizationObj">
                     </app-sp-table>
 
 
@@ -200,4 +202,7 @@
     </div>
 </div>
 
+
+
+<app-edit-profile-popup [user]="user" [serverUser]="serverUser"></app-edit-profile-popup>
 <app-ranks-popup #ranksPopup></app-ranks-popup>

@@ -17,7 +17,9 @@ export class GamePlayersPopupComponent extends BaseComponent implements OnInit {
   public buttonIdx = 0;
   public showInfoFlg = false;
   public displayPlayers = [];
+  public incomePlayers = [];
   public displayTeams = [];
+  public unitPlayers = [];
   public gameUpdDt: string;
   public generalRetreatObj: any;
   public generalRetreatFlg = false;
@@ -60,7 +62,11 @@ export class GamePlayersPopupComponent extends BaseComponent implements OnInit {
 
     //------------------allies
     this.displayPlayers = gameObj.players.slice(0);
+    this.incomePlayers = gameObj.players.slice(0);
+    this.unitPlayers = gameObj.players.slice(0);
+    this.incomePlayers.sort(function (a, b) { return b.income - a.income; });
     this.displayPlayers.sort(function (a, b) { return a.team - b.team; });
+    this.unitPlayers.sort(function (a, b) { return b.unitCount - a.unitCount; });
 
     var displayTeams = [];
     gameObj.teams.forEach(team => {

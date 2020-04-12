@@ -480,7 +480,7 @@ function displayTerrPopup(name, terr, moveFlg) {
 function clearCurrentGameId() {
 	localStorage.removeItem('currentGameId');
 	localStorage.removeItem('startingNation');
-	localStorage.removeItem('loadGameId');
+	//localStorage.removeItem('loadGameId');
 	localStorage.currentGameId = 0;
 }
 function computerAnnouncement(user, msg) {

@@ -52,7 +52,7 @@
                                 <button (click)="fogIdx=1" type="button" class="btn btn-default roundButton"
                                     [ngClass]="ngClassSegment(fogIdx,1)"><i class="fa fa-moon-o"></i> Fog-of-War</button>
                                 <button (click)="fogIdx=2" type="button" class="btn btn-default roundButton"
-                                    [ngClass]="ngClassSegment(fogIdx,2)"><i class="fa fa-question-circle"></i> Hardcore Fog</button>
+                                    [ngClass]="ngClassSegment(fogIdx,2)"><i class="fa fa-cloud"></i> Hardcore Fog</button>
                             </div>
                         </div>
                         <div class="borderClass3">
@@ -60,7 +60,7 @@
                             <div *ngIf="fogIdx==1"><b><i class="fa fa-moon-o"></i> Fog:</b> You get approximate unit counts for enemy territories, but
                                 not specific units.
                             </div>
-                            <div *ngIf="fogIdx==2"><b><i class="fa fa-question-circle"></i> Hardcore:</b> Total fog blackout for all territories unless you
+                            <div *ngIf="fogIdx==2"><b><i class="fa fa-cloud"></i> Hardcore:</b> Total fog blackout for all territories unless you
                                 have a unit that borders it.</div>
                         </div>
                     </div>

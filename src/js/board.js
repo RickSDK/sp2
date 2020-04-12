@@ -602,6 +602,7 @@ function scrubUnitsOfPlayer(player, gameObj, gUnits) {
 			unit.dice = [];
 			if (unit.piece == 7)
 				stratBombButton = true;
+
 			unit.att = unit.att2;
 			unit.numAtt = unit.numAtt2;
 			unit.def = unit.def2;

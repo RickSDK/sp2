@@ -101,6 +101,11 @@ function getCheckedValueOfField(id) {
 	else
 		return false;
 }
+function setCheckedValueOfField(id, flag) {
+	var e = document.getElementById(id);
+	if (e)
+		e.checked = flag;
+}
 
 function dateAdd(date, minutes) {
 	var ret = new Date(date);

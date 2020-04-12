@@ -1,0 +1,106 @@
+<div *ngIf="serverUser && user" id="profileEditPopup" class="popupScreen2"
+    style="width: 100%; max-width: 500px; padding: 0;">
+
+    <div style="background-color: #007; color: white; height: 44px; line-height: 44px;">Edit {{user.userName}}'s Profile
+        <button onClick="closePopup('profileEditPopup')" style="float: right;" id="" type="button"
+            class="btn btn-primary roundButton"><i class="fa fa-times"></i></button>
+    </div>
+    <div style="padding: 20px;">
+
+        <div style="text-align: center; padding-bottom: 5px;">
+            <div class="btn-group">
+                <button (click)="segmentIdx=0" type="button" class="btn btn-default roundButton"
+                    [ngClass]="ngClassSegment(segmentIdx,0)" style="min-width: 60px;" [disabled]="changesMadeFlg">
+                    <i class="fa fa-picture-o" style="font-size: 26px;"></i>
+                    <div style="font-size: 10px;">Image</div>
+                </button>
+                <button (click)="segmentIdx=1" type="button" class="btn btn-default roundButton"
+                    [ngClass]="ngClassSegment(segmentIdx,1)" style="min-width: 60px;" [disabled]="changesMadeFlg">
+                    <i class="fa fa-quote-right" style="font-size: 26px;"></i>
+                    <div style="font-size: 10px;">Message</div>
+                </button>
+                <button (click)="segmentIdx=2" type="button" class="btn btn-default roundButton"
+                    [ngClass]="ngClassSegment(segmentIdx,2)" style="min-width: 60px;" [disabled]="changesMadeFlg">
+                    <i class="fa fa-commenting" style="font-size: 26px;"></i>
+                    <div style="font-size: 10px;">Chat</div>
+                </button>
+                <button (click)="segmentIdx=3" type="button" class="btn btn-default roundButton"
+                    [ngClass]="ngClassSegment(segmentIdx,3)" style="min-width: 60px;" [disabled]="changesMadeFlg">
+                    <i class="fa fa-hourglass-end" style="font-size: 26px;"></i>
+                    <div style="font-size: 10px;">Away</div>
+                </button>
+            </div>
+        </div>
+
+        <div *ngIf="segmentIdx==0" style="border: 1px solid black;">
+            <img id="myImg" src="{{user.imgSrc}}" style="max-width: 300px; max-height: 300px;">
+
+            <button *ngIf="loadImageNum==0" (click)="loadImageNum=1" type="button"
+                class="btn btn-primary roundButton"><i class="fa fa-image"></i> Change</button>
+
+            <div *ngIf="loadImageNum==1" class="form-group">
+                <label for="file">Choose File</label>
+                <input type="file" id="file" (change)="handleFileInput($event.target.files)">
+            </div>
+
+            <button *ngIf="loadImageNum==2" (click)="cancelButtonPressed()" type="button"
+                class="btn btn-secondary roundButton"><i class="fa fa-arrow-up"></i> Cancel</button>
+            <button *ngIf="loadImageNum==2" (click)="uploadImagePressed()" type="button"
+                class="btn btn-primary roundButton glowButton tall"><i class="fa fa-arrow-up"></i> Upload</button>
+        </div>
+
+        <div *ngIf="segmentIdx==1">
+            <div> Profile Message</div>
+            <input (click)="changesMadeFlg=true" type=text id="profileMessage" value="{{serverUser.message}}" placeholder="Profile Message"
+                style="width: 95%;">
+
+        </div>
+
+        <div *ngIf="segmentIdx==2">
+            <div style="background-color: black; color: white;">
+                <div>-Chat Color-</div>
+                <span *ngFor="let color of chatColors" style="padding: 2px; display: inline-block;">
+                    <div (click)="clearColors(color)" class="squaredOne"
+                        style="display: inline-block; padding: 0; margin: 1px;">
+                        <input type="checkbox" value="None" id="color{{color.id}}" name="check"
+                            [checked]="color.color == serverUser.chat_color" />
+                        <label for="color{{color.id}}"></label>
+                    </div>
+                    <font color="{{color.color}}">{{color.color}}</font>
+                </span>
+            </div>
+            <div style="background-color: #ffffc0; color: black;">
+                <div>-Chat Font-</div>
+                <span *ngFor="let face of chatFonts" style="padding: 2px; display: inline-block;">
+                    <div (click)="clearFaces(face)" class="squaredOne"
+                        style="display: inline-block; padding: 0; margin: 1px;">
+                        <input type="checkbox" value="None" id="face{{face.id}}" name="check"
+                            [checked]="face.face == serverUser.chat_font" />
+                        <label for="face{{face.id}}"></label>
+                    </div>
+                    <font face="{{face.face}}">{{face.face}}</font>
+                </span>
+            </div>
+        </div>
+        <div *ngIf="segmentIdx==3">
+            <div>Extended Absence</div>
+            <label class="switch" (click)="changeAwayFlag()">
+                <input type="checkbox" id="awayFlg" [checked]="serverUser.away_flg=='Y'">
+                <span class="slider round"></span>
+            </label>
+            <div *ngIf="serverUser.away_flg == 'Y'">
+                <div>Away Message</div>
+                <div><input (click)="changesMadeFlg=true" type=text id="awayMessage" value="{{serverUser.away_msg}}" placeholder="Away Message"
+                        style="width: 95%;"></div>
+            </div>
+        </div>
+
+        <div *ngIf="segmentIdx >=1">
+            <button (click)="cancelButtonPressed()" type="button" class="btn btn-secondary roundButton"><i
+                    class="fa fa-times"></i> Cancel</button>
+            <button (click)="saveProfilePressed();" [disabled]="!changesMadeFlg" type="button"
+                class="btn btn-primary roundButton medium"><i class="fa fa-floppy-o"></i> Save</button>
+
+        </div>
+    </div>
+</div>

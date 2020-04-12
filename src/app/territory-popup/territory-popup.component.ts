@@ -330,7 +330,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     }
   }
   aaGunsRoll() {
-    rollAAGuns(this.displayBattle, this.selectedTerritory);
+    rollAAGuns(this.displayBattle, this.selectedTerritory, this.gameObj);
     this.changeDiceUnitsToImg(this.displayBattle.attackUnits, 'spin.gif');
     this.changeDiceUnitsToImg(this.displayBattle.defendingUnits, 'dice.png');
     setTimeout(() => {
@@ -339,7 +339,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
 
   }
   attackerRolls() {
-    rollAttackDice(this.displayBattle);
+    rollAttackDice(this.displayBattle, this.gameObj);
     this.changeDiceUnitsToImg(this.displayBattle.defendingUnits, 'spin.gif');
     setTimeout(() => {
       this.rollDefenderDice();

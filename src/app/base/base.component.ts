@@ -43,7 +43,7 @@ export class BaseComponent implements OnInit {
     //console.log('superpowersData', this.superpowersData);
   }
 
-  ngOnInit(): void {  }
+  ngOnInit(): void { }
 
   //-----img---
   ngUnitSrc(piece: number, nation = 1) {
@@ -76,12 +76,12 @@ export class BaseComponent implements OnInit {
   ngStyleLogs(nation: number, deadFlg = false) {
     if (nation == 99)
       return { 'background-color': '#7df', 'color': 'black' };
-    if (deadFlg)
-      return { 'background-color': '#777', 'color': 'black' };
+
+    var textDecoration = (deadFlg) ? 'line-through' : 'none';
 
     var colors = ['#ffc', '#ccf', '#ccc', '#db6', '#fcc', '#cfc', '#ffc', '#fcf', '#cff', '#666'];
     var color = colors[nation];
-    return { 'background-color': color, 'color': 'black' };
+    return { 'background-color': color, 'color': 'black', 'text-decoration-line': textDecoration };
   }
   ngStyleActivity(num: number) {
     if (num == 3)

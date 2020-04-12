@@ -201,7 +201,7 @@ export class ChatPopupComponent extends BaseComponent implements OnInit {
         }
       })
       .catch(error => {
-        this.showAlertPopup('Unable to reach server: ' + error, 1);
+        this.showAlertPopup('Possible error: ' + error, 1);
       });
   }
 

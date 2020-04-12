@@ -252,7 +252,7 @@
                                         </div>
 
                                     </td>
-                                    <td>
+                                    <td *ngIf="game.status!='Complete'">
                                         <div *ngIf="game.status!='Open'" class="gameCard" style="min-width: 100px;">
                                             <div class="darkBlueBg"><i class="fa fa-clock-o"></i> Timer</div>
                                             <app-player-name (click)="userPopup.show(game.turnObj)"
@@ -288,7 +288,7 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td>
+                                    <td *ngIf="game.status!='Complete'">
                                         <div *ngIf="game.turnObj.nation>0">
                                             <div style="color: #bbb; font-weight: 700; margin-top: -8px;">Turn</div>
                                             <div><img class="shadowed"

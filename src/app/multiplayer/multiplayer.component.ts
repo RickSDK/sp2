@@ -192,12 +192,12 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
     this.gameList = gameList;
   }
   ngClassGameButton(game: any) {
-    if (game.turn == this.user.userName)
-      return 'btn btn-warning roundButton glowYellow';
     if (game.status == 'Open')
       return 'btn btn-success roundButton';
     if (game.status == 'Complete')
       return 'btn btn-secondary roundButton';
+    if (game.turn == this.user.userName)
+      return 'btn btn-warning roundButton glowYellow';
     if (game.status == 'Playing')
       return 'btn btn-primary roundButton';
     if (game.mmFlg)
@@ -248,7 +248,7 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
 
     } else {
       // enter game
-      localStorage.chatFlg = (game.chatFlg)?'Y':'N';
+      localStorage.chatFlg = (game.chatFlg) ? 'Y' : 'N';
       localStorage.loadGameId = game.gameId;
       this.router.navigate(['/board']);
     }

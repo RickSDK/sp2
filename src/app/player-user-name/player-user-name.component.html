@@ -1,0 +1,24 @@
+<div *ngIf="gameObj.gameOver || !player.alive">
+    <i *ngIf="player.wonFlg" class="fa fa-trophy" title="Victory" style="color: blue;"></i>
+    <img *ngIf="!player.alive" src="assets/graphics/misc/skull.png" height=15 title="Eliminated">
+    <span style="font-size: 12px;">&nbsp;{{player.userName}}</span>
+</div>
+<div *ngIf="player.alive && !gameObj.gameOver">
+    <div *ngIf="detailsFlg">
+        <i *ngIf="gameObj.turnId==player.turn && !gameObj.gameOver" class="fa fa-arrow-right" title="Current Turn"
+            style="color: green;"></i>
+        <img *ngIf="player.nukes" src="assets/graphics/units/piece14.gif" title="Nukes" height=20>
+        <i *ngIf="player.sat" class="fa fa-shield" style="color: blue;" title="Anti-balistics"></i>
+        &nbsp;<i *ngIf="player.cpu" class="fa fa-android" title="Computer Player"></i>
+        <span style="font-size: 10px;">&nbsp;{{player.userName}}</span>
+        <img *ngIf="gameObj.mmFlg && player.empCount>0" src="assets/graphics/units/emp.png" height=20 title="EMP">
+        <img *ngIf="gameObj.mmFlg && player.empCount>1" src="assets/graphics/units/emp.png" height=20 title="EMP">
+        <i *ngIf="player.attackFlg && gameObj.round==6" class="fa fa-bolt"></i>
+        <i *ngIf="player.defenseFlg && gameObj.round==6" class="fa fa-shield"></i>
+        <div *ngIf="player.turn==gameObj.turnId && !gameObj.gameOver" style="color: gray; font-size: 12px;">
+            ({{player.status}})</div>
+    </div>
+    <div *ngIf="!detailsFlg">
+        <span style="font-size: 12px;">&nbsp;{{player.userName}}</span>
+    </div>
+</div>

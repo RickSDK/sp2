@@ -1,0 +1,10 @@
+<div *ngIf="gameObj && gameObj.allowAlliances && gameObj.multiPlayerFlg && gameObj.top1.length>0 && gameObj.type != 'barbarian'">
+    <div class="borderClass3">
+        <div class="darkBlueBg"><i class="fa fa-balance-scale"></i> Team Balancing</div>
+        <img src="assets/graphics/images/flag{{gameObj.top1Nation}}.gif" height=15>
+        <b>{{gameObj.top1}}</b> & <img src="assets/graphics/images/flag{{gameObj.top2Nation}}.gif" height=15>
+        <b>{{gameObj.top2}}</b>
+        <div style="font-size: 12px;">These 2 players cannot be allies with each other.</div>
+    </div>
+</div>
+

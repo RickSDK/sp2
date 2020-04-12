@@ -7,7 +7,7 @@
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
-			<div class="modal-body" style="text-align: center;">
+			<div class="modal-body" style="text-align: center; padding: 0;">
 
 				<div style="text-align: center; padding-bottom: 5px;">
 					<div class="btn-group">
@@ -39,7 +39,7 @@
 					</div>
 				</div>
 
-				<app-player-view *ngIf="buttonIdx==0" [gameObj]="gameObj"></app-player-view>
+				<app-player-view *ngIf="buttonIdx==0" [gameObj]="gameObj" [unitPlayers]="unitPlayers" [incomePlayers]="incomePlayers"></app-player-view>
 				<app-allies-view *ngIf="buttonIdx==1" [gameObj]="gameObj" [currentPlayer]="currentPlayer"
 					[ableToTakeThisTurn]="ableToTakeThisTurn" [displayPlayers]="displayPlayers"
 					[displayTeams]="displayTeams"></app-allies-view>
