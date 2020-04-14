@@ -41,8 +41,9 @@ export class MainPageComponent extends BaseComponent implements OnInit {
     const postData = this.getPostDataFromObj({ user_login: this.user.userName, code: this.user.code, action: 'getUserData' });
     fetch(url, postData).then((resp) => resp.text())
       .then((data) => {
-        if (this.verifyServerResponse(data))
+        if (this.verifyServerResponse(data)) {
           this.paserUserData(data);
+        }
       })
       .catch(error => {
         this.showAlertPopup('Unable to reach server: ' + error, 1);
@@ -66,6 +67,10 @@ export class MainPageComponent extends BaseComponent implements OnInit {
     }
     var existingRank = this.numberVal(localStorage.rank);
     this.user.newRankFlg = (existingRank != this.user.rank);
+
+    if(this.user.awayFlg)
+      this.showAlertPopup('Your Away Message is turned on! Click your profile to turn it off.', 1);
+
     if (this.user.newRankFlg) {
       this.playSound('tada.mp3');
       localStorage.rank = this.user.rank;

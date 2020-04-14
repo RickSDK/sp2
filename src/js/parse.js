@@ -32,7 +32,7 @@ function imageSrcFromObj(graphic, avatar) {
 	var imgSrc = 'http://www.superpowersgame.com/graphics/avitars/soldier.JPG';
 	if (graphic && graphic.length > 0)
 		imgSrc = 'http://www.superpowersgame.com/graphics/avitars/' + graphic;
-	if (avatar && avatar.length > 0)
+	if (avatar && avatar.length > 1)
 		imgSrc = 'assets/graphics/avatars/' + avatar;
 	return imgSrc;
 }
@@ -72,7 +72,8 @@ function parseServerDataIntoUserObj(data) {
 	userObj.mmLosses = numberVal(f[x++]);
 	userObj.mmPoints = numberVal(f[x++]);
 	userObj.avatar = numberVal(f[x++]);
-	userObj.code = this.btoa(localStorage.password);
+	userObj.awayFlg = f[x++]=='Y';
+	userObj.code = btoa(localStorage.password);
 	userObj.imgSrc = imageSrcFromObj(userObj.userGraphic, userObj.avatar);
 
 	if (userObj.userName != localStorage.userName) {
@@ -175,6 +176,8 @@ function userFromLine(line) {
 	obj.gold_member_flg = c[x++];
 	obj.last10Games = c[x++];
 	obj.chat_font = c[x++];
+	obj.avatar = c[x++];
+	obj.imgSrc = imageSrcFromObj(obj.graphic,obj.avatar);
 
 	if (obj.total_num_mins > 0 && obj.total_num_turns > 0) {
 		obj.hourlyRate = Math.round(obj.total_num_mins / 60 / obj.total_num_turns);

@@ -1211,7 +1211,7 @@ function hostileActObj(type, terr, gameObj, player) {
             message = 'You can\'t attack other players, or be attacked until round ' + gameObj.attack + '.';
             allowFlg = false;
         }
-        if (terr.owner > 0 && gameObj.round == gameObj.attack) {
+        if (type == 'attack' && terr.owner > 0 && gameObj.round == gameObj.attack) {
             var p2 = playerOfNation(terr.owner, gameObj);
             if (player.attackFlg) {
                 message = 'Limited attack round: You are only allowed to take over 1 enemy territory on this round.';

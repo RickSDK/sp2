@@ -1169,8 +1169,6 @@ function getYourPlayer(gameObj, userName) {
 		var player = gameObj.players[x];
 		if (!gameObj.multiPlayerFlg && !player.cpu) {
 			humanPlayer = player;
-			//			if (gameObj.currentNation == player.nation)
-			//				return player;
 		}
 		if (gameObj.multiPlayerFlg && player.userName == userName)
 			return player;

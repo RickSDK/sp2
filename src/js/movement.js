@@ -302,12 +302,17 @@ function loadThisUnitOntoThisTransport(unit, transport) {
     }
     if (!transport.cargoLoadedThisTurn)
         transport.cargoLoadedThisTurn = 0;
+
+    if(unit.cargoUnits==0)
+        showAlertPopup('whoa. no cargo units!');
+
     transport.cargoUnits += unit.cargoUnits;
     if (transport.cargoUnits > transport.cargoSpace)
         showAlertPopup('Cargo Overload Issue', 1);
 
     transport.cargoLoadedThisTurn += unit.cargoUnits;
     unit.cargoOf = transport.id;
+    console.log('xxx', transport.id, unit.cargoUnits, transport.cargoUnits, unit.cargoOf);
     if (!transport.cargo)
         transport.cargo = [];
     transport.cargo.push({ id: unit.id, piece: unit.piece, cargoUnits: unit.cargoUnits });

@@ -1587,7 +1587,7 @@ h2 {
 		height: 50px;
 	}
 	.hidden-xxs {
-		display: none;
+		display: none !important;
 	}
 	.smallText {
 		font-size: 12px;

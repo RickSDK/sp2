@@ -162,14 +162,14 @@
                         <div style="font-size: 10px;">MatchMaking</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count4}})</div>
                     </button>
-                    <button *ngIf="adminFlg" (click)="filterGames(5)" type="button" class="btn btn-default roundButton"
-                        [ngClass]="ngClassSegment(buttonIdx,5)" style="min-width: 60px;">
+                    <button *ngIf="adminFlg" (click)="filterGames(5)" type="button"
+                        class="btn btn-warning roundButton hidden-xxs" style="min-width: 60px;">
                         <i class="fa fa-bug" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">Bugs</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count5}})</div>
                     </button>
-                    <button *ngIf="adminFlg" (click)="filterGames(6)" type="button" class="btn btn-default roundButton"
-                        [ngClass]="ngClassSegment(buttonIdx,6)" style="min-width: 60px;">
+                    <button *ngIf="adminFlg" (click)="filterGames(6)" type="button"
+                        class="btn btn-warning roundButton hidden-xxs" style="min-width: 60px;">
                         <i class="fa fa-clock-o" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">Stale</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count6}})</div>

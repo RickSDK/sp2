@@ -150,6 +150,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public displayBattle: any;
 	public warAudio = new Audio('assets/sounds/war1.mp3');
 	public gameMusic = new Audio('assets/music/menu.mp3');
+	public endGameMusic = new Audio('assets/music/introAudio.mp3');
 	public haltPurchaseFlg = false;
 	public haltCombatActionFlg = false;
 	public haltActionFlg = false;
@@ -253,10 +254,15 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		updateProgressBar(70);
 		var e = document.getElementById('terr1');
 		if (e) {
-			this.yourPlayer = getYourPlayer(this.gameObj, this.user.userName);
+			var cp = getCurrentPlayer(this.gameObj);
+			if (cp.userName == this.user.userName)
+				this.yourPlayer = cp;
+			else
+				this.yourPlayer = getYourPlayer(this.gameObj, this.user.userName);
 			if (this.yourPlayer)
 				this.yourNation = this.yourPlayer.nation;
-			console.log('yourNation', this.yourNation);
+
+			console.log('--yourPlayer', this.yourPlayer);
 			refreshAllTerritories(this.gameObj, this.yourPlayer, this.superpowersData, this.yourPlayer)
 			refreshBoard(this.gameObj.territories);
 			this.gameObj.players.sort(function (a, b) { return a.turn - b.turn; });
@@ -319,6 +325,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		//--------------------end test
 		this.currentPlayer = getCurrentPlayer(this.gameObj);
+		if (this.currentPlayer.userName == this.user.userName && this.yourPlayer.nation != this.currentPlayer.nation)
+			this.yourPlayer = this.currentPlayer;
+
 		this.gameObj.currentNation = this.currentPlayer.nation;
 		this.gameObj.actionButtonMessage = '';
 		this.currentPlayer.cpuFlg = this.currentPlayer.cpu;
@@ -1087,6 +1096,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	exitButtonPressed() {
 		this.gameMusic.pause();
+		this.endGameMusic.pause();
 		this.playClick();
 		if (this.gameObj.multiPlayerFlg)
 			this.router.navigate(['/multiplayer']);
@@ -1506,8 +1516,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		startSpinner('Saving...', '150px', 'spinnerOKButton');
 		updateProgressBar(30);
 		this.currentPlayer.status = 'Waiting';
-		checkVictoryConditions(this.currentPlayer, this.gameObj, this.superpowersData, this.yourPlayer, this.user);
-		addIncomeForPlayer(this.currentPlayer, this.gameObj);
 		this.currentPlayer.money += this.currentPlayer.income;
 		playSound('clink.wav');
 		localStorage.generalRetreatObj = '';
@@ -1515,13 +1523,21 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.currentPlayer.botRequests = [];
 		this.currentPlayer.requestedHotSpot = 0;
 		this.currentPlayer.requestedTarget = 0;
+		checkVictoryConditions(this.currentPlayer, this.gameObj, this.superpowersData, this.yourPlayer, this.user);
+		addIncomeForPlayer(this.currentPlayer, this.gameObj);
 		var damageReport = getDamageReport(this.currentPlayer, this.gameObj, this.superpowersData);
 		logItem(this.gameObj, this.currentPlayer, 'Turn Completed', this.currentPlayer.income + ' Coins Collected.', '', '', '', '', damageReport);
 		var prevPlayer = this.currentPlayer;
 		if (this.gameObj.gameOver) {
+			if (isMusicOn()) {
+				this.gameMusic.pause();
+				this.endGameMusic.play();
+			}
+				
 			this.gameObj.actionButtonMessage = '';
 			this.ableToTakeThisTurn = false;
 			this.hideActionButton = false;
+			this.showControls = true;
 
 			saveGame(this.gameObj, this.user, this.currentPlayer, false, true, prevPlayer, this.currentPlayer.cpu, 0);
 			if (!this.gameObj.multiPlayerFlg) {
@@ -1619,6 +1635,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 		this.gameObj.turnId = nextPlayer.turn;
 		this.currentPlayer = getCurrentPlayer(this.gameObj);
+		if (this.currentPlayer.userName == this.user.userName && this.yourPlayer.nation != this.currentPlayer.nation)
+			this.yourPlayer = this.currentPlayer;
 		this.gameObj.currentNation = this.currentPlayer.nation;
 		this.gameObj.actionButtonMessage = '';
 	}

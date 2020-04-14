@@ -63,6 +63,8 @@ export class LoginPopupComponent extends BaseComponent implements OnInit {
       .then((data) => {
         if (this.verifyServerResponse(data)) {
           this.successCallback(data);
+        } else {
+          $("#loginPopup").modal('hide');
         }
       })
       .catch(error => {

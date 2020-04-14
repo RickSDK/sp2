@@ -29,30 +29,59 @@
                     <i class="fa fa-hourglass-end" style="font-size: 26px;"></i>
                     <div style="font-size: 10px;">Away</div>
                 </button>
+                <button (click)="segmentIdx=4" type="button" class="btn btn-default roundButton"
+                    [ngClass]="ngClassSegment(segmentIdx,4)" style="min-width: 60px;" [disabled]="changesMadeFlg">
+                    <i class="fa fa-lock" style="font-size: 26px;"></i>
+                    <div style="font-size: 10px;">Password</div>
+                </button>
             </div>
         </div>
 
         <div *ngIf="segmentIdx==0" style="border: 1px solid black;">
-            <img id="myImg" src="{{user.imgSrc}}" style="max-width: 300px; max-height: 300px;">
+            <div style="text-align: center; padding-bottom: 5px;">
+                <div class="btn-group">
+                    <button (click)="graphicButtonIdx=0" type="button" class="btn btn-default roundButton"
+                        [ngClass]="ngClassSegment(graphicButtonIdx,0)" style="min-width: 60px;"
+                        [disabled]="changesMadeFlg">
+                        <i class="fa fa-picture-o" style="font-size: 26px;"></i>
+                        <div style="font-size: 10px;">Use a default Image</div>
+                    </button>
+                    <button (click)="graphicButtonIdx=1" type="button" class="btn btn-default roundButton"
+                        [ngClass]="ngClassSegment(graphicButtonIdx,1)" style="min-width: 60px;"
+                        [disabled]="changesMadeFlg">
+                        <i class="fa fa-arrow-up" style="font-size: 26px;"></i>
+                        <div style="font-size: 10px;">Upload my own</div>
+                    </button>
+                </div>
+            </div>
+            <img id="myImg" src="{{imgSrc}}" style="max-width: 300px; max-height: 300px;">
+            <div *ngIf="graphicButtonIdx==0">
+                <div class="spCardBody && displayUser">
+                    <img *ngFor="let image of localAvatars" src="assets/graphics/avatars/{{image}}" height="100"
+                        class="roundedPanel" (click)="changeImage(image)">
+                </div>
+            </div>
+            <div *ngIf="graphicButtonIdx==1">
+                <button *ngIf="loadImageNum==0" (click)="loadImageNum=1" type="button"
+                    class="btn btn-primary roundButton"><i class="fa fa-image"></i> Change</button>
 
-            <button *ngIf="loadImageNum==0" (click)="loadImageNum=1" type="button"
-                class="btn btn-primary roundButton"><i class="fa fa-image"></i> Change</button>
+                <div *ngIf="loadImageNum==1" class="form-group">
+                    <label for="file">Choose File</label>
+                    <input type="file" id="file" (change)="handleFileInput($event.target.files)">
+                </div>
 
-            <div *ngIf="loadImageNum==1" class="form-group">
-                <label for="file">Choose File</label>
-                <input type="file" id="file" (change)="handleFileInput($event.target.files)">
+                <button *ngIf="loadImageNum==2" (click)="cancelButtonPressed()" type="button"
+                    class="btn btn-secondary roundButton"><i class="fa fa-arrow-up"></i> Cancel</button>
+                <button *ngIf="loadImageNum==2" (click)="uploadImagePressed()" type="button"
+                    class="btn btn-primary roundButton glowButton tall"><i class="fa fa-arrow-up"></i> Upload</button>
             </div>
 
-            <button *ngIf="loadImageNum==2" (click)="cancelButtonPressed()" type="button"
-                class="btn btn-secondary roundButton"><i class="fa fa-arrow-up"></i> Cancel</button>
-            <button *ngIf="loadImageNum==2" (click)="uploadImagePressed()" type="button"
-                class="btn btn-primary roundButton glowButton tall"><i class="fa fa-arrow-up"></i> Upload</button>
         </div>
 
         <div *ngIf="segmentIdx==1">
             <div> Profile Message</div>
-            <input (click)="changesMadeFlg=true" type=text id="profileMessage" value="{{serverUser.message}}" placeholder="Profile Message"
-                style="width: 95%;">
+            <input (click)="changesMadeFlg=true" type=text id="profileMessage" value="{{serverUser.message}}"
+                placeholder="Profile Message" style="width: 95%;">
 
         </div>
 
@@ -66,7 +95,7 @@
                             [checked]="color.color == serverUser.chat_color" />
                         <label for="color{{color.id}}"></label>
                     </div>
-                    <font color="{{color.color}}">{{color.color}}</font>
+                    <font color="{{color.color}}">{{color.name}}</font>
                 </span>
             </div>
             <div style="background-color: #ffffc0; color: black;">
@@ -84,18 +113,27 @@
         </div>
         <div *ngIf="segmentIdx==3">
             <div>Extended Absence</div>
+            <div style="font-size: 12px">Click this is you are going to be gone for more than 24 hours.</div>
             <label class="switch" (click)="changeAwayFlag()">
-                <input type="checkbox" id="awayFlg" [checked]="serverUser.away_flg=='Y'">
+                <input type="checkbox" id="awayFlg" [checked]="away_flg">
                 <span class="slider round"></span>
             </label>
-            <div *ngIf="serverUser.away_flg == 'Y'">
+            <div *ngIf="away_flg">
                 <div>Away Message</div>
-                <div><input (click)="changesMadeFlg=true" type=text id="awayMessage" value="{{serverUser.away_msg}}" placeholder="Away Message"
-                        style="width: 95%;"></div>
+                <div><input (click)="changesMadeFlg=true" type=text id="awayMessage" value="{{serverUser.away_msg}}"
+                        placeholder="Away Message" style="width: 95%;"></div>
             </div>
         </div>
+        <div *ngIf="segmentIdx==4">
+            <div><input (click)="changesMadeFlg=true" type="password" id="password1" value="" placeholder="Old Password"
+                    style="width: 95%;"></div>
+            <div><input (click)="changesMadeFlg=true" type="password" id="password2" value="" placeholder="New Password"
+                    style="width: 95%;"></div>
+            <div><input (click)="changesMadeFlg=true" type="password" id="password3" value=""
+                    placeholder="Retype New Password" style="width: 95%;"></div>
+        </div>
 
-        <div *ngIf="segmentIdx >=1">
+        <div>
             <button (click)="cancelButtonPressed()" type="button" class="btn btn-secondary roundButton"><i
                     class="fa fa-times"></i> Cancel</button>
             <button (click)="saveProfilePressed();" [disabled]="!changesMadeFlg" type="button"

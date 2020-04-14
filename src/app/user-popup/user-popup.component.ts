@@ -1,4 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { EditProfilePopupComponent } from '../edit-profile-popup/edit-profile-popup.component';
 import { BaseComponent } from '../base/base.component';
 import { Router } from '@angular/router';
 
@@ -13,7 +14,7 @@ declare var userFromLine: any;
 declare var imageSrcFromObj: any;
 declare var awardNameForNum: any;
 declare var nowYear: any;
-declare var getCheckedValueOfField: any;
+declare var displayFixedPopup: any;
 
 @Component({
   selector: 'app-user-popup',
@@ -23,6 +24,8 @@ declare var getCheckedValueOfField: any;
 export class UserPopupComponent extends BaseComponent implements OnInit {
   @Input('user') user: any;
   @Output() messageEvent = new EventEmitter<string>();
+  @ViewChild(EditProfilePopupComponent) editProfilePopupComponent: EditProfilePopupComponent;
+  
   public editUserImageFlg = false;
   public editUseNameFlg = false;
   public nextRank = 1;
@@ -96,22 +99,23 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
     }
   }
   editServerProfileSettings() {
-    this.showAlertPopup('not coded yet',1);
- //   this.playClick();
- //   this.closeModal('#userPopup');
-//    this.displayFixedPopup('profileEditPopup');
+   this.playClick();
+   this.closeModal('#userPopup');
+   displayFixedPopup('profileEditPopup', true);
+   this.editProfilePopupComponent.initChild();
   }
   loadUserDataFromServer(displayUser: any) {
     const url = this.getHostname() + "/webUserInfo.php";
     const postData = this.getPostDataFromObj({
       user_login: this.user.userName,
+      loginId: this.user.userId,
       code: this.user.code,
       userId: displayUser.userId,
       action: '',
       completedGamesLimit: 100,
       gameId: 0
     });
-
+console.log('postData', postData);
     fetch(url, postData).then((resp) => resp.text())
       .then((data) => {
         if (this.verifyServerResponse(data)) {
