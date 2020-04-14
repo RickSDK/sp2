@@ -9,7 +9,6 @@ declare var isUnitGoodForForm: any;
 declare var playClick: any;
 declare var populateHostileMessage: any;
 declare var selectAllUnits: any;
-declare var checkMovement: any;
 declare var checkSendButtonStatus: any;
 declare var selectAllButtonChecked: any;
 declare var showUnitsForMovementBG2: any;
@@ -123,7 +122,6 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       console.log(terr.name, terr);
     var totalUnitsThatCanMove = 0;
 
-
     var moveTerr = [];
     this.gameObj.territories.forEach(function (terr) {
       totalUnitsThatCanMove += terr.movableTroopCount;
@@ -226,9 +224,6 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     this.checkSendButtonStatus(null);
     if (this.optionType == 'attack')
       this.moveTroopsButtonPressed();
-  }
-  checkMovement(distObj: any, unit: any, optionType: string, player: any, terr: any) {
-    return checkMovement(distObj, unit, optionType, player, this.selectedTerritory);
   }
   moveTroopsButtonPressed() {
     if (this.user.rank < 2 && this.gameObj.round == 1 && this.selectedTerritory.id == 62) { 

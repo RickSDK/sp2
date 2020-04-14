@@ -972,12 +972,22 @@ function battleCompleted(displayBattle, selectedTerritory, currentPlayer, moveTe
             playVoiceSound(81 + Math.floor((Math.random() * 2)));
     }
     wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, 'Battle', selectedTerritory, moveTerr);
+    if(!currentPlayer.cpu && currentPlayer.nation==6 && !displayBattle.militaryObj.wonFlg)
+        removeAnyConvertedUnits(displayBattle, selectedTerritory.id);
     if (!currentPlayer.cpuFlg && displayBattle.militaryObj.wonFlg && displayBattle.allowGeneralRetreat) {
         var generalRetreatObj = { gameId: gameObj.id, terrId1: numberVal(localStorage.generalTerr1), terrId2: selectedTerritory.id };
         localStorage.generalRetreatObj = JSON.stringify(generalRetreatObj);
         displayFixedPopup('generalWithdrawPopup');
         $('#territoryPopup').modal('hide');
     }
+}
+function removeAnyConvertedUnits(displayBattle, terrId) {
+    displayBattle.attackUnits.forEach(unit => {
+        if(unit.owner==6 && unit.terr == terrId) {
+            console.log('kill unit!');
+            unit.dead = true;
+        }
+    });
 }
 function wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, title, selectedTerritory, moveTerr, delay = 0, weaponType = '') {
     removeCasualties(displayBattle, gameObj, currentPlayer, true, superpowersData);
@@ -1057,9 +1067,20 @@ function fixSeaCargo(terr, gameObj) {
             findTransportForThisCargo(fighterUnit, terr, gameObj);
         });
     }
+    terr.units.forEach(function (cargoUnit) {
+        if(cargoUnit.cargoOf && cargoUnit.cargoOf>0) {
+            var gameUnit = findUnitOfId(cargoUnit.cargoOf, gameObj);
+            console.log('xxx', gameUnit);
+            if(!gameUnit || gameUnit.terr != terr.id) {
+                console.log('whoa!');
+                findTransportForThisCargo(cargoUnit, terr, gameObj);
+            }
+        }
+    }); 
+
 }
+
 function squareUpAllCargo(units, gameObj) {
-    console.log('squareUpAllCargo', gameObj);
     units.forEach(function (transport) {
         if (!transport.dead && transport.cargo && transport.cargo.length > 0) {
             var cargo = [];
@@ -1114,6 +1135,8 @@ function getKdForPlayer(player) {
         return 0;
 }
 function transferControlOfTerr(terr, player, gameObj, annihilationFlg) {
+    if(!player || !player.allies || !player.treaties)
+        return;
     var nation = player.nation;
     if (gameObj.allowAlliances && player.allies.length > 0 && player.treaties.length >= 8) {
         if (player.treaties[terr.nation - 1] == 3)

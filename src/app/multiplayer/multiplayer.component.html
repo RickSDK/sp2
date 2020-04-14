@@ -235,16 +235,16 @@
                                         <div *ngIf="game.status == 'Open'">
                                             <button *ngIf="game.host == user.userName"
                                                 (click)="openGameButtonPressed(game, 'start')" type="button"
-                                                class="btn btn-warning roundButton"><i class="fa fa-play"></i> Start
-                                                Game</button>
+                                                class="btn btn-warning roundButton">
+                                                <i class="fa fa-play"></i> Start Game</button>
                                             <button *ngIf="game.host == user.userName && game.no_stats_flg"
                                                 (click)="openGameButtonPressed(game, 'add_computer')" type="button"
-                                                class="btn btn-warning roundButton"><i class="fa fa-android"></i> Add
-                                                CPU</button>
-                                            <button *ngIf="game.host == user.userName"
+                                                class="btn btn-warning roundButton">
+                                                <i class="fa fa-android"></i> Add CPU</button>
+                                            <button *ngIf="game.host == user.userName || user.userName == 'Rick'"
                                                 (click)="openGameButtonPressed(game, 'cancelGame')" type="button"
-                                                class="btn btn-warning roundButton"><i class="fa fa-trash"></i>
-                                                Delete</button>
+                                                class="btn btn-danger roundButton">
+                                                <i class="fa fa-trash"></i> Delete</button>
                                             <button *ngIf="game.inGame && game.host != user.userName"
                                                 (click)="openGameButtonPressed(game, 'leaveGame')" type="button"
                                                 class="btn btn-warning roundButton"><i class="fa fa-sign-out"></i>

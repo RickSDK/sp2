@@ -310,7 +310,7 @@
 						<div *ngFor="let terr of moveTerr; let i = index" [ngStyle]="ngStyleLogs(terr.nation)"
 							class="terrClass" style="border: 1px solid black;">
 							<div style="padding-left: 5px; font-size: 18px; font-weight: 700; text-align: left;">
-								{{terr.name}}
+								{{terr.name}} <span style="font-size: 10px; color: gray;">air: {{terr.distObj.air}} sea: {{terr.distObj.sea}} land: {{terr.distObj.land}}</span>
 								<span style="float: right;">
 									<span *ngIf="terr.movableTroopCount >= 2" style="font-size: 10px;">Select All
 									</span>
@@ -325,7 +325,7 @@
 							</div>
 							<hr style="padding: 0; margin: 5px;">
 							<div *ngFor="let unit of terr.units" style="display: inline-block;">
-								<span *ngIf="checkMovement(terr.distObj, unit, optionType, currentPlayer, terr)">
+								<span *ngIf="unit.allowMovementFlg">
 									<div class="squaredOne"
 										style="display: inline-block; padding: 0; margin: 1px;">
 										<input (click)="checkSendButtonStatus(unit, terr)" type="checkbox" value="None" id="{{'unit'+unit.id}}" name="check" />

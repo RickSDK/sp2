@@ -1,5 +1,6 @@
 
 function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
+    //console.log('cm', distObj, optionType);
     if (unit.owner != currentPlayer.nation)
         return false;
     if (optionType == 'cruise') {
@@ -149,7 +150,6 @@ function selectAllUnits(terr, optionType, currentPlayer) {
     var checked = (t && t.checked);
     for (var x = 0; x < terr.units.length; x++) {
         var unit = terr.units[x];
-        var cm = checkMovement(terr.distObj, unit, optionType, currentPlayer, terr);
         var e = document.getElementById('unit' + unit.id);
         if (e && unit.piece != 13) // && cm
             e.checked = checked;
@@ -303,16 +303,18 @@ function loadThisUnitOntoThisTransport(unit, transport) {
     if (!transport.cargoLoadedThisTurn)
         transport.cargoLoadedThisTurn = 0;
 
-    if(unit.cargoUnits==0)
-        showAlertPopup('whoa. no cargo units!');
-
+    if(unit.cargoUnits==0) {
+        unit.cargoUnits = cargoUnitsForPiece(unit.piece)
+        console.log('!!no cargo units!', unit.cargoUnits);
+    }
+ 
     transport.cargoUnits += unit.cargoUnits;
     if (transport.cargoUnits > transport.cargoSpace)
         showAlertPopup('Cargo Overload Issue', 1);
 
     transport.cargoLoadedThisTurn += unit.cargoUnits;
     unit.cargoOf = transport.id;
-    console.log('xxx', transport.id, unit.cargoUnits, transport.cargoUnits, unit.cargoOf);
+//    console.log('xxx', transport.id, unit.cargoUnits, transport.cargoUnits, unit.cargoOf);
     if (!transport.cargo)
         transport.cargo = [];
     transport.cargo.push({ id: unit.id, piece: unit.piece, cargoUnits: unit.cargoUnits });
@@ -350,10 +352,14 @@ function showUnitsForMovementBG2(optionType, gameObj, currentPlayer, totalMoveTe
     for (var x = 0; x < totalMoveTerrs.length; x++) {
         var terr = totalMoveTerrs[x];
         terr.distObj = distanceBetweenTerrs(terr, selectedTerritory, maxDist, 0, 0, 0, allyHash, gameObj.territories);
+        //console.log(terr.name, terr.distObj);
         var moveUnits = 0;
         terr.units.forEach(function (unit) {
-            if (checkMovement(terr.distObj, unit, optionType, currentPlayer, selectedTerritory))
+            unit.allowMovementFlg = false;
+            if (checkMovement(terr.distObj, unit, optionType, currentPlayer, selectedTerritory)) {
                 moveUnits++;
+                unit.allowMovementFlg = true;
+            }
         });
         totalUnitsThatCanMove += moveUnits;
         if (moveUnits > 0)
@@ -436,8 +442,7 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
             var e = document.getElementById('unit' + unit.id);
             if (e) {
                 if (e && checkAGroundUnitID.length == 0 && !e.checked && unit.piece == 2 && unit.terr == artTerr) {
-                    var cm = checkMovement(ter.distObj, unit, optionType, player, ter);
-                    if (cm)
+                     if (unit.allowMovementFlg)
                         checkAGroundUnitID = 'unit' + unit.id;
                 }
                 if (e && e.checked) {
@@ -667,8 +672,7 @@ function autoButtonPressed(selectedTerritory, moveTerr, optionType, player) {
         for (var x = 0; x < terr.units.length; x++) {
             var unit = terr.units[x];
             var e = document.getElementById('unit' + unit.id);
-            var cm = checkMovement(terr.distObj, unit, optionType, player, terr);
-            if (e && cm && unit.piece != 13) {
+            if (e && unit.allowMovementFlg && unit.piece != 13) {
                 var infNeeded = false;
                 var groundUnitsNeeded = false;
                 if (infantryCount < 2 && unit.piece == 2)

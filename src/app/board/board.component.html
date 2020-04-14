@@ -38,7 +38,8 @@
 <!---top bar--->
 <section *ngIf="currentPlayer" class="gradient"
 	style="z-index: 201; text-align: center; position: fixed; width: 100%; top: 0px; height: 44px; background-color: #ccc; box-shadow: 2px 2px 3px #000; max-height: 44px; line-height: 1.5em; overflow: hidden;">
-	<span class="hidden-xxs" style="float: left; color: #48c; font-size: 12px; padding: 10px;">Version {{spVersion}}</span>
+	<span class="hidden-xxs" style="float: left; color: #48c; font-size: 12px; padding: 10px;">Version
+		{{spVersion}}</span>
 	<button (click)="exitButtonPressed()" type="button" class="btn btn-secondary roundButton"><i
 			class="fa fa-arrow-left"></i>
 		Exit</button>
@@ -116,13 +117,13 @@
 <!---third bar--->
 <div *ngIf="gameObj.desc"
 	style="text-align: center;  position: fixed; top: 95px; width: 100%; text-align: center; font-size: 12px; ">
-	<span title="{{gameObj.typeName}}: {{gameObj.desc}}" (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 4)"
+	<span title="{{gameObj.typeName}}: {{gameObj.desc}}"
+		(click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 4)"
 		style="cursor: pointer; padding-left: 5px; color: #ccc; background-color: #557; border: 1px solid gray; box-shadow: 5px 5px 5px #000;">
-		Round <b>{{gameObj.round}}</b> 
-		<span
-			style="background-color: #007; color: white; font-weight: 700; padding-left: 5px; padding-right: 5px;"><i
+		Round <b>{{gameObj.round}}</b>
+		<span style="background-color: #007; color: white; font-weight: 700; padding-left: 5px; padding-right: 5px;"><i
 				class="fa {{gameObj.icon}}"></i> {{gameObj.name}}</span></span>
-	
+
 </div>
 <!---------- menu button-->
 <button *ngIf="showControls" id="menu1Button"
@@ -135,11 +136,12 @@
 	style="cursor: pointer; position: fixed; min-width: 50px; max-width: 68px; top: 150px; left: 0; border: 1px solid black; text-align: center; box-shadow: 3px 3px 5px #000; transition: all 1s ease;">
 	<div id="playerPanel" class="roundedPanel" *ngIf="currentPlayer">
 		<div style="background-color: #444; color: white; font-size: 10px;">Players</div>
-		<div *ngFor="let player of gameObj.players" style="white-space: nowrap;" [style.background-color]="player.nation==yourNation?'white':'#ccc'" title="{{player.userName}}">
+		<div *ngFor="let player of gameObj.players" style="white-space: nowrap;"
+			[style.background-color]="player.nation==yourNation?'white':'#ccc'" title="{{player.userName}}">
 			<div *ngIf="player.alive">
 				<i *ngIf="player.nation==currentPlayer.nation" class="fa fa-check"
 					style="font-size: 10px; color: green;"></i>
-					<i *ngIf="player.nation==yourNation && player.nation!=currentPlayer.nation" class="fa fa-hand-o-right"
+				<i *ngIf="player.nation==yourNation && player.nation!=currentPlayer.nation" class="fa fa-hand-o-right"
 					style="font-size: 10px; color: green;"></i>
 				<img src="assets/graphics/images/flag{{player.nation}}.gif" height=30>
 				<img *ngIf="player.nukes" src="assets/graphics/units/piece14.gif" height=15
@@ -244,10 +246,12 @@
 
 
 <div id="popupSaving" class="popupScreen2" style="width: 300px;">
-	<div onClick="closePopup('popupSaving')" style="font-size: 24px; color: #007;"><i *ngIf="!uploadMultiplayerFlg" class="fa fa-spinner fa-spin"></i>
-		<span id="popupMessage">Game Save</span> 
+	<div onClick="closePopup('popupSaving')" style="font-size: 24px; color: #007;"><i *ngIf="!uploadMultiplayerFlg"
+			class="fa fa-spinner fa-spin"></i>
+		<span id="popupMessage">Game Save</span>
 	</div>
-	<div *ngIf="uploadMultiplayerFlg" id="statusMessage" style="font-size: 20px; color: #007;"><i class="fa fa-spinner fa-spin"></i> Computer Taking Turn</div>
+	<div *ngIf="uploadMultiplayerFlg" id="statusMessage" style="font-size: 20px; color: #007;"><i
+			class="fa fa-spinner fa-spin"></i> Computer Taking Turn</div>
 	<div class="progress">
 		<div id="progressBar" class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"
 			aria-valuemin="0" aria-valuemax="100" style="width: 0%">
@@ -337,7 +341,8 @@
 			</td>
 		</tr>
 	</table>
-	<div *ngIf="user.rank<18" class="borderClass2"> Next Rank: <img src="assets/graphics/ranks/rank{{user.rank+1}}.png" height="22">
+	<div *ngIf="user.rank<18" class="borderClass2"> Next Rank: <img src="assets/graphics/ranks/rank{{user.rank+1}}.png"
+			height="22">
 		{{superpowersData.ranks[user.rank+1].name}}
 		<div style="font-size: 12px;">{{superpowersData.ranks[user.rank+1].desc}}</div>
 
@@ -355,6 +360,15 @@
 		class="btn btn-primary roundButton medium">Cancel</button>
 	<button (click)="surrenderConfirmButtonPressed()" type="button"
 		class="btn btn-danger roundButton medium">Surrender!</button>
+</div>
+
+<div id="skipPlayerPopup" class="popupScreen2">
+	<div>
+		<i class="fa fa-exclamation-triangle"></i> Player has run out of time! Skip player?
+	</div>
+	<button onClick="closePopup('skipPlayerPopup')" id="" type="button" class="btn btn-primary roundButton tall2">Cancel</button>
+	<button (click)="skipPlayerPressed()" id="" type="button" class="btn btn-danger roundButton tall2">Skip!</button>
+	<p>
 </div>
 
 <div onClick="closePopup('technologyPopup')" id="technologyPopup" class="popupScreenNoPad" style="max-width: 400px;">

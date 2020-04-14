@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
-import { analyzeAndValidateNgModules } from '@angular/compiler';
+import { analyzeAndValidateNgModules, ThrowStmt } from '@angular/compiler';
 import { DiplomacyPopupComponent } from '../diplomacy-popup/diplomacy-popup.component';
 import { Router } from '@angular/router';
 
@@ -126,6 +126,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public svgs = [];
 	public hostname: string;
 	public user: any;
+	public adminFixFlg = false;
 	public loadingFlg = false;
 	public showControls = false;
 	public historyMode = false;
@@ -306,6 +307,16 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	newGameStarting() {
 		playVoiceClip('welcome.mp3');
 	}
+	adminFixBoard() {
+		this.showAlertPopup('Fix on!', 1);
+		var sudan = this.gameObj.territories[45];
+		sudan.units.forEach(unit => {
+			if (unit.nation == 6) {
+				unit.owner = 7;
+				unit.nation = 7;	
+			}
+		});
+	}
 	loadCurrentPlayer() {
 		//#####################################################################
 		//#####################################################################
@@ -318,6 +329,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (0) {
 			this.gameObj.turnId = 4; //<--- test
 			this.haltActionFlg = true;
+		}
+		if (this.adminFixFlg) {
+			//this.adminFixBoard();
 		}
 
 		this.haltPurchaseFlg = false;
@@ -524,10 +538,23 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				//				showUpArrowAtElement('chatButton');
 			}, 1000);
 		}
+
+		if (this.gameObj.secondsSinceUpdate > 86400) {
+			if (this.user.userName == 'Rick' ||
+				this.user.userName == this.gameObj.host ||
+				(this.gameObj.autoSkip == 'Y' && this.yourPlayer && this.yourPlayer.alive))
+				this.displayFixedPopup('skipPlayerPopup');
+		}
 		if (this.currentPlayer.status == 'Waiting' || this.currentPlayer.status == 'Purchase')
 			this.initializePlayerForPurchase();
 		if (this.currentPlayer.status == 'Attack')
 			this.initializePlayerForAttack();
+	}
+	skipPlayerPressed() {
+		this.playClick();
+		this.closePopup('skipPlayerPopup');
+		logItem(this.gameObj, this.currentPlayer, 'Turn Skipped', 'Turn skipped by ' + this.user.userName);
+		this.computerGo();
 	}
 	initializePlayerForPurchase() {
 		//human & cpu
@@ -542,7 +569,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		player.techsBoughtThisTurn = 0;
 		player.techPurchasedThisTurn = false;
 		localStorage.generalRetreatObj = '';
-		console.log('should be cleared');
 		this.gameObj.unitPurchases = [];
 		this.gameObj.superBCForm.cost = 0;
 
@@ -1078,8 +1104,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (currentPlayer.status == 'Purchase')
 			changeClass('completeTurnButton', 'glowButton');
 
-		if (terr.carrierCargo > 0 || terr.carrierSpace > 0)
+		if (terr.cargoTypeUnits > 0 || terr.carrierCargo > 0 || terr.carrierSpace > 0) {
 			fixSeaCargo(terr, gameObj);
+		}
 		refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 		displayLeaderAndAdvisorInfo(terr, currentPlayer, this.yourPlayer, user, gameObj, this.superpowersData.superpowers, 'home');
 		//		terr.units = unitsForTerr(terr, gameObj.units);
@@ -1533,7 +1560,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				this.gameMusic.pause();
 				this.endGameMusic.play();
 			}
-				
+
 			this.gameObj.actionButtonMessage = '';
 			this.ableToTakeThisTurn = false;
 			this.hideActionButton = false;

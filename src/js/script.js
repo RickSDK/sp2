@@ -413,13 +413,13 @@ function includeThisTerritoryForDisplay(type, unitTerr, selectedTerr, distObj, p
 	}
 	return true;
 }
-function numberOfUnitsThatCanReach(distObj, tUnits, optionType) {
+/*function numberOfUnitsThatCanReach(distObj, tUnits, optionType) {
 	var num = 0;
 	tUnits.forEach(function (unit) {
 		if (checkMovement(distObj, unit, optionType))
 			num++;
 	});
 	return num;
-}
+}*/
 
 
