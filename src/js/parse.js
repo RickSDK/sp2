@@ -77,7 +77,8 @@ function parseServerDataIntoUserObj(data) {
 	userObj.imgSrc = imageSrcFromObj(userObj.userGraphic, userObj.avatar);
 
 	if (userObj.userName != localStorage.userName) {
-		showAlertPopup('whoa usernames out of sync! Log out!', 1);
+		localStorage.userName = userObj.userName;
+		showAlertPopup('Conflicting Usernames: '+userObj.userName+', '+localStorage.userName, 1);
 	}
 
 	saveUserObj(userObj);
@@ -108,10 +109,10 @@ function getMultObjFromLine(line) {
 	obj.mmPoints = c[21];
 	obj.newsMsg = c[22];
 	obj.league_id = numberVal(c[23]);
-	obj.confirmEmailFlg = c[24];
-	obj.confirmTextFlg = c[25];
-	obj.email_flg = c[26];
-	obj.textFlg = c[27];
+	obj.confirmEmailFlg = (c[24] == 'Y');
+	obj.confirmTextFlg = (c[25] == 'Y');
+	obj.email_flg = (c[26]== 'Y');
+	obj.textFlg = (c[27]== 'Y');
 	return obj;
 }
 function userFromLine(line) {
@@ -165,8 +166,8 @@ function userFromLine(line) {
 	obj.winsThisYear = c[x++];
 	obj.updateNeededCount = c[x++];
 	obj.country = c[x++];
-	obj.confirmEmailFlg = c[x++];
-	obj.confirmTextFlg = c[x++];
+	obj.confirmEmailFlg = (c[x++] =='Y');
+	obj.confirmTextFlg = (c[x++] =='Y');
 	obj.phone = c[x++];
 	obj.text_msg = c[x++];
 	obj.providerNum = c[x++];
@@ -292,26 +293,26 @@ function gameFromLine(line, userName) {
 	var c = line.split("|");
 	var obj = new Object;
 	var x = 0;
-	obj.gameId = c[x++];
+	obj.gameId = numberVal(c[x++]);
 	obj.name = c[x++];
 	obj.turn = c[x++];
-	obj.round = c[x++];
-	obj.attack = c[x++];
+	obj.round = numberVal(c[x++]);
+	obj.attack = numberVal(c[x++]);
 	obj.timeLeft = c[x++];
 	obj.height = c[x++];
 	obj.playerList = c[x++];
-	obj.myNation = c[x++];
+	obj.myNation = numberVal(c[x++]);
 	obj.highlight = c[x++];
 	obj.status = c[x++];
 	obj.gameType = c[x++];
-	obj.size = c[x++];
+	obj.size = numberVal(c[x++]);
 	obj.autoStart = (c[x++] == 'Y');
 	obj.autoSkip = (c[x++] == 'Y');
 	obj.fogofwar = (c[x++] == 'Y');
 	obj.version = c[x++];
 	obj.lastLogin = c[x++];
 	obj.playerList2 = c[x++];
-	obj.hostId = c[x++];
+	obj.hostId = numberVal(c[x++]);
 	obj.host = c[x++];
 	obj.inGame = (c[x++] == 'Y');
 	obj.auto_assign_flg = (c[x++] == 'Y');
@@ -323,16 +324,16 @@ function gameFromLine(line, userName) {
 	obj.needToChooseNation = (c[x++] == 'Y');
 	obj.top1 = c[x++];
 	obj.top2 = c[x++];
-	obj.secondsElapsed = c[x++];
+	obj.secondsElapsed = numberVal(c[x++]);
 	obj.newEngineFlg = (c[x++] == 'Y');
 	var userInfo = c[x++];
 	obj.lastUpdDate = new Date(c[x++]);
 	obj.prevLoginDate = new Date(c[x++]);
 	obj.chatFlg = (c[x++] == 'Y');
 	obj.bugFlg = (c[x++] == 'Y');
-	obj.minRank = c[x++] || 0;
-	obj.maxRank = c[x++] || 0;
-	obj.ladder_id = c[x++] || 0;
+	obj.minRank = numberVal(c[x++]);
+	obj.maxRank = numberVal(c[x++]);
+	obj.ladder_id = numberVal(c[x++]);
 	obj.password = c[x++] || '';
 	obj.hardFog = (c[x++] == 'Y');
 	obj.turboFlg = (c[x++] == 'Y');
@@ -365,7 +366,7 @@ function gameFromLine(line, userName) {
 		var minutesReduced = numberVal(c[7]);
 		var clock = (24 - Math.round(minutesReduced / 60));
 		var turnFlg = c[0] == obj.turnObj.name;
-		obj.players.push({ id: c[1], name: c[0], nation: nation, turnFlg: turnFlg, income: c[3], top: top, team: c[5], futureTeam: c[6], minutesReduced: c[7], rank: c[8], clock: clock, userId: numberVal(c[9]) });
+		obj.players.push({ playerId: numberVal(c[1]), userName: c[0], nation: nation, turnFlg: turnFlg, income: c[3], top: top, team: c[5], futureTeam: c[6], minutesReduced: c[7], rank: numberVal(c[8]), clock: clock, userId: numberVal(c[9]), userGraphic: '', imgSrc: '' });
 	}
 	obj.joinGameFlg = (obj.status == 'Open' && !obj.inGame);
 	obj.numPlayers = obj.players.length;
@@ -415,6 +416,8 @@ function leaderFromLine(line) {
 	obj.mygames_last_login = c[x++];
 	obj.days_old = numberVal(c[x++]);
 	obj.league_id = numberVal(c[x++]);
+	obj.userName = obj.name;
+	obj.userId = numberVal(obj.id);
 
 	if (obj.league_id == 0)
 		obj.league_id = 1;

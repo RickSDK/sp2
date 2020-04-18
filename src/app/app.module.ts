@@ -60,6 +60,7 @@ import { SpUserNameComponent } from './sp-user-name/sp-user-name.component';
 import { PlayerUserNameComponent } from './player-user-name/player-user-name.component';
 import { TeamBalancingComponent } from './team-balancing/team-balancing.component';
 import { EditProfilePopupComponent } from './edit-profile-popup/edit-profile-popup.component';
+import { UserNotificationsPopupComponent } from './user-notifications-popup/user-notifications-popup.component';
 
 @NgModule({
   declarations: [
@@ -120,7 +121,8 @@ import { EditProfilePopupComponent } from './edit-profile-popup/edit-profile-pop
     SpUserNameComponent,
     PlayerUserNameComponent,
     TeamBalancingComponent,
-    EditProfilePopupComponent
+    EditProfilePopupComponent,
+    UserNotificationsPopupComponent
   ],
   imports: [
     BrowserModule,

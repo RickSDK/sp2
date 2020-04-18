@@ -1,0 +1,116 @@
+<div id="notificationsPopup" class="popupScreen2" style="padding: 0;">
+    <table width=100%>
+        <tr>
+            <td>
+                <font size=3 color=#03a><i class="fa fa-mobile"></i> Notification Options</font>
+            </td>
+            <td align=right>
+                <button onClick="closePopup('notificationsPopup')" id="" type="button"
+                    class="btn btn-primary roundButton"><i class="fa fa-times"></i></button></td>
+        </tr>
+    </table>
+
+    <div style="padding: 20px;" *ngIf="serverUser">
+        <div class="borderClass3">
+            Get an email or text message when it's your turn!
+        </div>
+        <table width="100%">
+            <tr>
+                <td style="font-size: 12px;">Email: </td>
+                <td><input type=text id="email" value="{{serverUser.email}}" maxlength=50></td>
+            </tr>
+            <tr>
+                <td style="font-size: 12px;">Phone: </td>
+                <td><input type=text id="phone" value="{{serverUser.phone}}" maxlength=10></td>
+            </tr>
+        </table>
+
+
+        <div style="text-align: center; padding-bottom: 5px;">
+            <div class="btn-group">
+                <button (click)="segmentIdx=0" type="button" class="btn btn-default roundButton"
+                    [ngClass]="ngClassSegment(segmentIdx,0)" style="min-width: 60px;">
+                    AT&T
+                </button>
+                <button (click)="segmentIdx=1" type="button" class="btn btn-default roundButton"
+                    [ngClass]="ngClassSegment(segmentIdx,1)" style="min-width: 60px;">
+                    Verizon
+                </button>
+                <button (click)="segmentIdx=2" type="button" class="btn btn-default roundButton"
+                    [ngClass]="ngClassSegment(segmentIdx,2)" style="min-width: 60px;">
+                    T-Mobile
+                </button>
+                <button (click)="segmentIdx=3" type="button" class="btn btn-default roundButton"
+                    [ngClass]="ngClassSegment(segmentIdx,3)" style="min-width: 60px;">
+                    Sprint
+                </button>
+            </div>
+        </div>
+
+
+        <div *ngIf="serverUser.confirmEmailFlg || serverUser.confirmTextFlg">
+            <table align="center">
+                <tr *ngIf="serverUser.confirmEmailFlg">
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" id="emailFlg">
+                            <span class="slider round"></span>
+                        </label></td>
+                    <td valign=middle>
+                        <div style="padding: 5px; margin-bottom: 9px;"> - Email notifications</div>
+                    </td>
+                </tr>
+                <tr *ngIf="serverUser.confirmTextFlg">
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" id="textFlg">
+                            <span class="slider round"></span>
+                        </label></td>
+                    <td valign=middle>
+                        <div style="padding: 5px; margin-bottom: 9px;"> - Text notifications</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <button onClick="closePopup('notificationsPopup')" id="" type="button"
+            class="btn btn-secondary roundButton">Cancel</button>
+        <button (click)="submitUpdates()" id="" type="button" class="btn btn-success medium roundButton"><i
+                class="fa fa-floppy-o"></i> Save</button>
+
+        <hr>
+        <div *ngIf="serverUser.email"> Email Confirmed <button *ngIf="!serverUser.confirmEmailFlg"
+                ng-click="confirmEmailPressed()" type="button"
+                class="btn btn-primary roundButton">Confirm</button></div>
+        <div *ngIf="serverUser.text_msg">
+            Text Confirmed <button *ngIf="!serverUser.confirmTextFlg" ng-click="confirmTextPressed()" id="" type="button"
+                class="btn btn-primary roundButton">Confirm</button></div>
+    </div>
+</div>
+
+<div id="confirmEmailPopup" class="popupScreen2">
+    <div>
+        <font color=gray>Email address: </font>
+    </div>
+    <div><b>Step 1:</b> <button ng-click="sendEmailCode()" id="" type="button" class="btn ptp-blue">Send Code</button>
+    </div>
+    <hr>
+    <div><b>Step 2:</b> Confirm</div>
+    <input type=text id="emailCode" value="" maxlength=4 placeholder="Code">
+    <div>
+        <button onClick="closePopup('confirmEmailPopup')" id="" type="button" class="btn ptp-red">Cancel</button>
+        <button ng-click="authorizeEmailCodePressed()" id="" type="button" class="btn ptp-green">Authorize</button>
+    </div>
+</div>
+
+<div id="confirmTextPopup" class="popupScreen2">
+    <div>Text phone: </div>
+    <div><b>Step 1:</b> <button ng-click="sendTextCode()" id="" type="button" class="btn ptp-blue">Send Code</button>
+    </div>
+    <hr>
+    <div><b>Step 2:</b> Confirm Code</div>
+    <input type=text id="textCode" value="" maxlength=4 placeholder="Code">
+    <div>
+        <button onClick="closePopup('confirmTextPopup')" id="" type="button" class="btn ptp-red">Cancel</button>
+        <button ng-click="authorizeTextCodePressed()" id="" type="button" class="btn ptp-green">Authorize</button>
+    </div>
+</div>

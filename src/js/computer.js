@@ -56,11 +56,9 @@ function purchaseCPUUnits(player, gameObj, superpowersData) {
         player.placedInf = 3;
     }
     if (terr1.adCount <= 2) {
-        console.log('+++aaGun', terr1.name, terr1.adCount);
         addUniToQueue(13, 1, superpowersData, player, gameObj, terr1);
     }
     if (terr2.adCount <= 2) {
-        console.log('+++aaGun', terr2.name, terr2.adCount);
         addUniToQueue(13, 1, superpowersData, player, gameObj, terr2);
     }
     if (num <= 6) {

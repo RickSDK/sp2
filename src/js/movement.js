@@ -230,8 +230,9 @@ function moveTheseUnitsToThisTerritory(units, selectedTerritory, gameObj) {
         } else
             unit.movesLeft = 0;
 
-        if (unit.cargoOf > 0 && unit.type == 1 && selectedTerritory.nation < 99)
-            unit.cargoOf = 0;
+        if (unit.cargoOf > 0 && unit.type == 1 && selectedTerritory.nation < 99) {
+            removeThisUnitFromTransport(unit, gameObj);
+        }
         if ((unit.type == 1 || unit.type == 2) && selectedTerritory.nation == 99)
             findTransportForThisCargo(unit, selectedTerritory, gameObj);
         if (unit.cargo && unit.cargo.length > 0)
@@ -240,6 +241,19 @@ function moveTheseUnitsToThisTerritory(units, selectedTerritory, gameObj) {
     squareUpAllCargo(units, gameObj);
     illuminateThisTerritory(selectedTerritory, gameObj);
     return { t1: terr1Id, t2: selectedTerritory.id, id: piece };
+}
+function removeThisUnitFromTransport(unit, gameObj) {
+    var transport = findUnitOfId(unit.cargoOf, gameObj);
+    if (transport && transport.cargo) {
+        transport.movesLeft = 0;
+        var cargo = [];
+        transport.cargo.forEach(cUnit => {
+            if (cUnit.id != unit.id)
+                cargo.push(cUnit);
+        });
+        transport.cargo = cargo;
+    }
+    unit.cargoOf = 0;
 }
 function moveCargoWithThisUnit(unit, terr, terr1Id) {
     for (var u = 0; u < terr.units.length; u++) {
@@ -303,18 +317,18 @@ function loadThisUnitOntoThisTransport(unit, transport) {
     if (!transport.cargoLoadedThisTurn)
         transport.cargoLoadedThisTurn = 0;
 
-    if(unit.cargoUnits==0) {
+    if (unit.cargoUnits == 0) {
         unit.cargoUnits = cargoUnitsForPiece(unit.piece)
         console.log('!!no cargo units!', unit.cargoUnits);
     }
- 
+
     transport.cargoUnits += unit.cargoUnits;
     if (transport.cargoUnits > transport.cargoSpace)
         showAlertPopup('Cargo Overload Issue', 1);
 
     transport.cargoLoadedThisTurn += unit.cargoUnits;
     unit.cargoOf = transport.id;
-//    console.log('xxx', transport.id, unit.cargoUnits, transport.cargoUnits, unit.cargoOf);
+    //    console.log('xxx', transport.id, unit.cargoUnits, transport.cargoUnits, unit.cargoOf);
     if (!transport.cargo)
         transport.cargo = [];
     transport.cargo.push({ id: unit.id, piece: unit.piece, cargoUnits: unit.cargoUnits });
@@ -442,7 +456,7 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
             var e = document.getElementById('unit' + unit.id);
             if (e) {
                 if (e && checkAGroundUnitID.length == 0 && !e.checked && unit.piece == 2 && unit.terr == artTerr) {
-                     if (unit.allowMovementFlg)
+                    if (unit.allowMovementFlg)
                         checkAGroundUnitID = 'unit' + unit.id;
                 }
                 if (e && e.checked) {

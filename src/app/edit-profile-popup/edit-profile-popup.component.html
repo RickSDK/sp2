@@ -80,7 +80,7 @@
 
         <div *ngIf="segmentIdx==1">
             <div> Profile Message</div>
-            <input (click)="changesMadeFlg=true" type=text id="profileMessage" value="{{serverUser.message}}"
+            <input (change)="changesMadeFlg=true" type=text id="profileMessage" value="{{serverUser.message}}"
                 placeholder="Profile Message" style="width: 95%;">
 
         </div>
@@ -120,16 +120,16 @@
             </label>
             <div *ngIf="away_flg">
                 <div>Away Message</div>
-                <div><input (click)="changesMadeFlg=true" type=text id="awayMessage" value="{{serverUser.away_msg}}"
+                <div><input (change)="changesMadeFlg=true" type=text id="awayMessage" value="{{serverUser.away_msg}}"
                         placeholder="Away Message" style="width: 95%;"></div>
             </div>
         </div>
         <div *ngIf="segmentIdx==4">
-            <div><input (click)="changesMadeFlg=true" type="password" id="password1" value="" placeholder="Old Password"
+            <div><input (change)="changesMadeFlg=true" type="password" id="password1" value="" placeholder="Old Password"
                     style="width: 95%;"></div>
-            <div><input (click)="changesMadeFlg=true" type="password" id="password2" value="" placeholder="New Password"
+            <div><input (change)="changesMadeFlg=true" type="password" id="password2" value="" placeholder="New Password"
                     style="width: 95%;"></div>
-            <div><input (click)="changesMadeFlg=true" type="password" id="password3" value=""
+            <div><input (change)="changesMadeFlg=true" type="password" id="password3" value=""
                     placeholder="Retype New Password" style="width: 95%;"></div>
         </div>
 

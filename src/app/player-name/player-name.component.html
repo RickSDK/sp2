@@ -1,4 +1,5 @@
 <span title="{{title}}"><img src="assets/graphics/ranks/rank{{player.rank}}.png"
 style="max-height: 20px; max-width: 40px;">
 <i class="fa fa-map-marker" [ngStyle]="ngStyleMarker(player)"></i>
+<i class="fa fa-mobile" *ngIf="player.textFlg"></i>
 {{player.name}}</span>

@@ -336,7 +336,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		this.haltPurchaseFlg = false;
 		this.haltCombatActionFlg = false;
-
+		this.haltActionFlg = false;
+	
 		//--------------------end test
 		this.currentPlayer = getCurrentPlayer(this.gameObj);
 		if (this.currentPlayer.userName == this.user.userName && this.yourPlayer.nation != this.currentPlayer.nation)
@@ -736,7 +737,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				nukeTargets.push({ t1: terr, t2: target });
 			}
 		});
-		console.log('nukeTargets', nukeTargets);
 		var hitListHash = {};
 		nukeTargets.forEach(nukeTarget => {
 			if (hitListHash[nukeTarget.t2.id])
@@ -843,7 +843,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		strategicBombBattle(player, targetTerr, attackUnits, gameObj, superpowersData);
 	}
 	landTheCruise(fromTerrId: number, attackUnits: any, targetTerr: any, launchTerritories: any, player: any, gameObj: any, superpowersData: any) {
-		console.log('!!cruise attack!!', targetTerr.name);
 		var obj = { t1: fromTerrId, t2: targetTerr.id, id: 144, cruiseFlg: true };
 		this.moveSpriteBetweenTerrs(obj);
 		landTheCruiseBattle(player, targetTerr, attackUnits, gameObj, superpowersData);
@@ -860,7 +859,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		for (var x = 0; x < terr.land.length; x++) {
 			var id = terr.land[x];
 			var terr2 = this.gameObj.territories[id - 1];
-			if (terr2.factoryCount > 0 && terr2.owner != attacker.nation && !terr2.facBombed && okToAttack(attacker, terr2, gameObj)) {
+			if (terr2.factoryCount > 0 && terr2.owner != attacker.nation && numberVal(terr2.defendingFighterId)==0 && !terr2.facBombed && okToAttack(attacker, terr2, gameObj)) {
 				bestTerr = terr2;
 			} else
 				bestTerr = this.findStratBombOfTerr(terr2, attacker, range, bestTerr, gameObj);

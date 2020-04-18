@@ -131,13 +131,21 @@
                             <div *ngIf="infoFlg">Click on the 'Ranks' button below for details.</div>
                         </div>
                     </div>
-                    <app-sp-table *ngIf="displayUser.userId>0 && personalInfoObj" [dataObj]="personalInfoObj"></app-sp-table>
-                    <app-sp-table *ngIf="displayUser.userId>0 && adminObj && user.userId==10" [dataObj]="adminObj"></app-sp-table>
-                    <app-sp-table (click)="editServerProfileSettings()"
-                        *ngIf="displayUser.userId>0 && selfProfileFlg && profileCustomizationObj" [dataObj]="profileCustomizationObj">
+                    <app-sp-table *ngIf="displayUser.userId>0 && personalInfoObj" [dataObj]="personalInfoObj">
                     </app-sp-table>
-                    <span *ngIf="serverUser && serverUser.away_flg == 'Y'" style="display: inline-block; border: 1px solid black; background-color: yellow; padding: 5px;">
-                        <i class="fa fa-exclamation-triangle"></i> Away Message is on! Click Profile Options to turn it off.
+                    <app-sp-table *ngIf="displayUser.userId>0 && adminObj && user.userId==10" [dataObj]="adminObj">
+                    </app-sp-table>
+                    <app-sp-table (click)="editServerProfileSettings()"
+                        *ngIf="displayUser.userId>0 && selfProfileFlg && profileCustomizationObj"
+                        [dataObj]="profileCustomizationObj">
+                    </app-sp-table>
+                    <app-sp-table (click)="editUserEmailSettings()"
+                        *ngIf="displayUser.userId>0 && selfProfileFlg && profileEmailObj" [dataObj]="profileEmailObj">
+                    </app-sp-table>
+                    <span *ngIf="serverUser && serverUser.away_flg == 'Y'"
+                        style="display: inline-block; border: 1px solid black; background-color: yellow; padding: 5px;">
+                        <i class="fa fa-exclamation-triangle"></i> Away Message is on! Click Profile Options to turn it
+                        off.
                     </span>
 
 
@@ -207,5 +215,10 @@
 
 
 
+
 <app-edit-profile-popup [user]="user" [serverUser]="serverUser"></app-edit-profile-popup>
 <app-ranks-popup #ranksPopup></app-ranks-popup>
+
+<app-user-notifications-popup [serverUser]="serverUser"></app-user-notifications-popup>
+
+

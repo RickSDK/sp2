@@ -43,6 +43,7 @@ export class GameStandingsComponent extends BaseComponent implements OnInit {
         for (var x = 0; x < leaders.length; x++) {
           var line = leaders[x];
           var player = leaderFromLine(line);
+          console.log(player);
           if (player.name.length > 0) {
             if (player.days_old <= 3) {
               this.fullPlayerList.push(player);

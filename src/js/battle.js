@@ -1086,7 +1086,7 @@ function squareUpAllCargo(units, gameObj) {
             var cargo = [];
             var cargoUnits = 0;
             transport.cargo.forEach(function (cargoUnit) {
-                var gameUnit = findUnitOfId(cargoUnit, gameObj);
+                var gameUnit = findUnitOfId(cargoUnit.cargoOf, gameObj);
                 if (gameUnit && gameUnit.cargoOf == transport.id) {
                     cargoUnits += cargoUnit.cargoUnits;
                     cargo.push(cargoUnit);
@@ -1099,14 +1099,14 @@ function squareUpAllCargo(units, gameObj) {
         }
     });
 }
-function findUnitOfId(cargoUnit, gameObj) {
+function findUnitOfId(unitId, gameObj) {
     if (!gameObj) {
         showAlertPopup('no gameObj to findUnitOfId', 1);
         return;
     }
     var gameUnit;
     gameObj.units.forEach(function (unit) {
-        if (unit.id == cargoUnit.id) {
+        if (unit.id == unitId) {
             gameUnit = unit;
         }
     });
@@ -1206,9 +1206,11 @@ function hostileActObj(type, terr, gameObj, player) {
         allowFlg = false;
     }
     if (hostileType) {
-        if (terr.owner == 0 && terr.capital && terr.nation < 99 && player.capitals.length > 1 && gameObj.round < gameObj.attack) {
-            message = 'You can only take over one capital before round 6.';
-            allowFlg = false;
+         if (terr.owner == 0 && terr.capital && terr.nation < 99 && gameObj.round < gameObj.attack) {
+            if(player.cap && player.cap > 1) {
+                message = 'You can only take over one capital before round 6.';
+                allowFlg = false;    
+            }
         }
         var cost = costToAttack(terr, player);
         if (cost > 0) {

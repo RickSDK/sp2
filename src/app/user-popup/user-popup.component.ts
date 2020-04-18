@@ -25,7 +25,7 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
   @Input('user') user: any;
   @Output() messageEvent = new EventEmitter<string>();
   @ViewChild(EditProfilePopupComponent) editProfilePopupComponent: EditProfilePopupComponent;
-  
+
   public editUserImageFlg = false;
   public editUseNameFlg = false;
   public nextRank = 1;
@@ -33,6 +33,7 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
   public serverUser: any;
   public personalInfoObj: any;
   public profileCustomizationObj: any;
+  public profileEmailObj: any;
   public adminObj: any;
   public regularGamesObj: any;
   public matchmakingObj: any;
@@ -65,11 +66,13 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
   }
   show(displayUser: any) {
     console.log('user', this.user);
+    console.log('displayUser1', displayUser);
     this.testString = '2';
-    if (displayUser.id > 0 && !displayUser.userName && displayUser.name) {
-      displayUser.userId = displayUser.id;
-      displayUser.userName = displayUser.name;
-    }
+    //    if (displayUser.id > 0 && !displayUser.userName && displayUser.name) {
+    //      displayUser.userId = displayUser.id;
+    //      displayUser.userName = displayUser.name;
+    //    }
+    //    console.log('displayUser2', displayUser);
     this.displayUser = displayUser;
     this.selfProfileFlg = (displayUser.userName == this.user.userName);
     if (!this.selfProfileFlg && !displayUser.rank) {
@@ -88,7 +91,6 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
       this.loadUserDataFromServer(this.displayUser);
     }
     $("#userPopup").modal();
-    console.log('user-popup', this.displayUser);
   }
   editProfileImageButtonClicked() {
     if (this.selfProfileFlg) {
@@ -98,11 +100,20 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
         this.editUserImageFlg = !this.editUserImageFlg;
     }
   }
+  editUserEmailSettings() {
+    this.playClick();
+    this.showAlertPopup('not coded yet');
+//    this.closeModal('#userPopup');
+  //  displayFixedPopup('notificationsPopup', true);
+  }
   editServerProfileSettings() {
-   this.playClick();
-   this.closeModal('#userPopup');
-   displayFixedPopup('profileEditPopup', true);
-   this.editProfilePopupComponent.initChild();
+    this.playClick();
+    this.closeModal('#userPopup');
+    displayFixedPopup('profileEditPopup', true);
+    this.editProfilePopupComponent.initChild();
+  }
+  saveNotificationsPressed() {
+
   }
   loadUserDataFromServer(displayUser: any) {
     const url = this.getHostname() + "/webUserInfo.php";
@@ -115,7 +126,7 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
       completedGamesLimit: 100,
       gameId: 0
     });
-console.log('postData', postData);
+    console.log('postData', postData);
     fetch(url, postData).then((resp) => resp.text())
       .then((data) => {
         if (this.verifyServerResponse(data)) {
@@ -141,6 +152,12 @@ console.log('postData', postData);
           this.profileCustomizationObj.rows.push({ name: 'Graphic', value: this.serverUser.graphic })
           this.profileCustomizationObj.rows.push({ name: 'Avatar', value: this.serverUser.avatar })
           this.profileCustomizationObj.rows.push({ name: 'Message', value: this.serverUser.message })
+
+          this.profileEmailObj = { title: 'Email & Text Options', rows: [], editFlg: true, icon: 'fa-mobile' };
+          this.profileEmailObj.rows.push({ name: 'Confirm Email?', value: this.serverUser.confirmEmailFlg })
+          this.profileEmailObj.rows.push({ name: 'Email Notifications?', value: this.serverUser.email_flg })
+          this.profileEmailObj.rows.push({ name: 'Confirm Text?', value: this.serverUser.confirmTextFlg })
+          this.profileEmailObj.rows.push({ name: 'Text Notifications?', value: this.serverUser.textFlg })
 
           this.adminObj = { title: 'Admin View', rows: [], editFlg: false, icon: 'fa-lock' };
           this.adminObj.rows.push({ name: 'user_id', value: this.serverUser.user_id })
