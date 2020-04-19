@@ -1070,9 +1070,7 @@ function fixSeaCargo(terr, gameObj) {
     terr.units.forEach(function (cargoUnit) {
         if(cargoUnit.cargoOf && cargoUnit.cargoOf>0) {
             var gameUnit = findUnitOfId(cargoUnit.cargoOf, gameObj);
-            console.log('xxx', gameUnit);
             if(!gameUnit || gameUnit.terr != terr.id) {
-                console.log('whoa!');
                 findTransportForThisCargo(cargoUnit, terr, gameObj);
             }
         }

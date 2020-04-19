@@ -64,11 +64,6 @@
 			<span *ngIf="currentPlayer.status != 'Purchase'"> {{currentPlayer.status}}</span>
 		</span>
 	</span>
-	<span *ngIf="yourPlayer && currentPlayer.nation != yourPlayer.nation">
-		<img (click)="scrollToNation(yourPlayer.nation)" src="assets/graphics/images/flag{{yourPlayer.nation || 1}}.gif"
-			height=42 title="{{superpowersData.superpowers[yourPlayer.nation]}}" style="cursor: pointer;">
-		<span style="background-color: #777; color: white; border: 1px solid black;">{{yourPlayer.userName}}</span>
-	</span>
 </section>
 <!---gray bar--->
 <div [style.background-color]="adminModeFlg?'red':'gray'"
@@ -386,6 +381,14 @@
 	<button onClick="closePopup('technologyPopup')" type="button"
 		class="btn btn-primary roundButton medium">OK!</button>
 </div>
+
+<div id="accountSitPopup" class="popupScreen2" style="z-index: 999">
+	<div><font size=3 color=#03a><i class="fa fa-exclamation-triangle"></i> Account Sit?</font> </div>
+	<div>You are an ally of this player, who has gone more than 12 hours without taking a turn. You can take the turn if you want.</div>
+   	<button onClick="closePopup('accountSitPopup')" id="" type="button" class="btn btn-danger roundButton">No Thanks</button>
+   	<button (click)="accountSitButtonClicked()" id="" type="button" class="btn btn-primary roundButton tall">Yes!</button><p>
+	</div>
+
 
 <div id="diplomacyWarningPopup" class="popupScreen2">
 	<div class="title">-End Turn-</div>

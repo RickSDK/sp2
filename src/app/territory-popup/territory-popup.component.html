@@ -244,10 +244,9 @@
 					<div *ngIf="!loadingFlg" style="background-color: #ccc; color: black;">
 						<div
 							*ngIf="(optionType=='movement' || optionType=='loadUnits') && selectedTerritory.nation==99 && selectedTerritory.unitCount>0">
-							<button *ngIf="optionType=='movement'" (click)="optionType='loadUnits'" type="button"
-								class="btn btn-success roundButton"><i class="fa fa-ship"></i> Custom Load
-								Options</button>
-							<button *ngIf="optionType=='loadUnits'" (click)="optionType='movement'" type="button"
+							<button *ngIf="optionType=='movement'" (click)="buttonClicked('loadUnits')" type="button"
+								class="btn btn-success roundButton"><i class="fa fa-ship"></i> Custom Load Options</button>
+							<button *ngIf="optionType=='loadUnits'" (click)="buttonClicked('movement')" type="button"
 								class="btn btn-success roundButton"><i class="fa fa-ship"></i> Auto Load</button>
 
 							<button (click)="infoFlg = !infoFlg" type="button" class="btn btn-secondary roundButton"><i

@@ -313,7 +313,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		sudan.units.forEach(unit => {
 			if (unit.nation == 6) {
 				unit.owner = 7;
-				unit.nation = 7;	
+				unit.nation = 7;
 			}
 		});
 	}
@@ -337,7 +337,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.haltPurchaseFlg = false;
 		this.haltCombatActionFlg = false;
 		this.haltActionFlg = false;
-	
+
 		//--------------------end test
 		this.currentPlayer = getCurrentPlayer(this.gameObj);
 		if (this.currentPlayer.userName == this.user.userName && this.yourPlayer.nation != this.currentPlayer.nation)
@@ -385,10 +385,27 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.yourPlayer = this.currentPlayer;
 		}
 		if (this.gameObj.multiPlayerFlg && !this.currentPlayer.cpu) {
-			if (this.user.userName == this.currentPlayer.userName && this.gameObj.mmFlg)
-				this.currentPlayer.empCount = 0;
-			//		if(userCanSkip(player.nation))
-			//			checkEMPAndTimer(player, this.ableToTakeThisTurn);
+			if (this.user.userName == 'Rick' || this.user.userName == this.gameObj.host || (this.yourPlayer && this.yourPlayer.alive)) {
+
+				if (this.yourPlayer && this.yourPlayer.cpu && this.yourPlayer.alive) {
+					this.showAlertPopup('Looks like you went awol so the computer took over your turn. Restoring you back into the game.', 1);
+					this.yourPlayer.cpu = false;
+					setTimeout(() => {
+						saveGame(this.gameObj, this.user, this.currentPlayer);
+					}, 1000);
+				} else if (this.gameObj.secondsSinceUpdate > 43200 && this.yourPlayer && this.yourPlayer.treaties[this.currentPlayer.nation-1] == 3) {
+					this.displaySPPopup('accountSitPopup');
+				} else if (this.gameObj.secondsSinceUpdate > 86400) {
+					if (this.user.userName == 'Rick' ||
+						this.user.userName == this.gameObj.host ||
+						(this.gameObj.autoSkip == 'Y' && this.yourPlayer && this.yourPlayer.alive))
+						this.displayFixedPopup('skipPlayerPopup');
+				}
+				if (this.user.userName == this.currentPlayer.userName && this.gameObj.mmFlg)
+					this.currentPlayer.empCount = 0;
+				//		if(userCanSkip(player.nation))
+				//			checkEMPAndTimer(player, this.ableToTakeThisTurn);
+			}
 		}
 		//	if (this.gameObj.multiPlayerFlg && this.gameObj.turboFlg && !this.ableToTakeThisTurn)
 		//		startUpBackgroundViewer();
@@ -412,6 +429,14 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.initializePlayer();
 		}
 
+	}
+	accountSitButtonClicked() {
+		this.playClick();
+		this.closePopup('accountSitPopup');
+		this.ableToTakeThisTurn = true;
+		logItem(this.gameObj, this.currentPlayer, 'Account Sitting', 'Turn played by ' + this.user.userName);
+		this.yourPlayer = this.currentPlayer;
+		this.scrollToNation(this.currentPlayer.nation);
 	}
 	findTargets() {
 		var territories = [];
@@ -540,12 +565,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			}, 1000);
 		}
 
-		if (this.gameObj.secondsSinceUpdate > 86400) {
-			if (this.user.userName == 'Rick' ||
-				this.user.userName == this.gameObj.host ||
-				(this.gameObj.autoSkip == 'Y' && this.yourPlayer && this.yourPlayer.alive))
-				this.displayFixedPopup('skipPlayerPopup');
-		}
 		if (this.currentPlayer.status == 'Waiting' || this.currentPlayer.status == 'Purchase')
 			this.initializePlayerForPurchase();
 		if (this.currentPlayer.status == 'Attack')
@@ -859,7 +878,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		for (var x = 0; x < terr.land.length; x++) {
 			var id = terr.land[x];
 			var terr2 = this.gameObj.territories[id - 1];
-			if (terr2.factoryCount > 0 && terr2.owner != attacker.nation && numberVal(terr2.defendingFighterId)==0 && !terr2.facBombed && okToAttack(attacker, terr2, gameObj)) {
+			if (terr2.factoryCount > 0 && terr2.owner != attacker.nation && numberVal(terr2.defendingFighterId) == 0 && !terr2.facBombed && okToAttack(attacker, terr2, gameObj)) {
 				bestTerr = terr2;
 			} else
 				bestTerr = this.findStratBombOfTerr(terr2, attacker, range, bestTerr, gameObj);
@@ -1106,7 +1125,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (terr.cargoTypeUnits > 0 || terr.carrierCargo > 0 || terr.carrierSpace > 0) {
 			fixSeaCargo(terr, gameObj);
 		}
-		refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
+		console.log('able', this.ableToTakeThisTurn);
+		refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, (this.ableToTakeThisTurn)?this.currentPlayer:this.yourPlayer);
 		displayLeaderAndAdvisorInfo(terr, currentPlayer, this.yourPlayer, user, gameObj, this.superpowersData.superpowers, 'home');
 		//		terr.units = unitsForTerr(terr, gameObj.units);
 		terr.displayQueue = getDisplayQueueFromQueue(terr, this.gameObj);

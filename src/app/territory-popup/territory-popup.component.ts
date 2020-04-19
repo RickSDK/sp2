@@ -135,7 +135,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     this.totalUnitsThatCanMove = totalUnitsThatCanMove;
     this.optionType = 'home';
 
-    terr.facFlg = (terr.treatyStatus == 4 && terr.nation < 99);
+    terr.facFlg = (terr.owner == this.currentPlayer.nation);
     if (terr.nation == 99)
       terr.facFlg = checkWaterForFactory(terr, currentPlayer.nation, gameObj);
 
@@ -148,7 +148,6 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       else
         this.changeProdType(0);
       this.optionType = 'production';
-
     }
     this.checkSendButtonStatus(null);
     checkCargoForTerr(terr, gameObj);
@@ -238,8 +237,9 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     if (this.optionType == 'loadPlanes' || this.optionType == 'loadChoppers') {
       loadParatroopers(this.selectedTerritory, this.optionType);
     }
-    if (this.optionType == 'movement') {
-      var obj = moveSelectedUnits(this.moveTerr, this.selectedTerritory, this.gameObj);
+    if (this.optionType == 'movement' || this.optionType == 'loadUnits') {
+      var obj = moveSelectedUnits(this.moveTerr, this.selectedTerritory, this.gameObj, this.optionType);
+
       setTimeout(() => {
         refreshBoardFromMove(this.moveTerr, this.selectedTerritory, this.gameObj, this.superpowersData, this.currentPlayer, this.currentPlayer);
       }, 1000);

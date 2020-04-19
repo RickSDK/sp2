@@ -41,6 +41,8 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	var cargoTypeUnits = 0; // groundUnits & fighters
 	var unloadedCargo = [];
 	var strandedCargo = [];
+	var unitsPlacedInCargo = 0;
+	var unitsHeldInCargo = 0;
 	var superBSStats = '';
 	var defendingFighterId = 0;
 	var battleshipAACount = 0;
@@ -70,6 +72,13 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 			unitUniqueHash[unit.id] = true;
 
 			units.push(unit);
+
+			if (unit.cargoOf > 0)
+				unitsPlacedInCargo++;
+			if (!unit.cargo)
+				unit.cargo = [];
+			if (unit.cargo.length > 0)
+				unitsHeldInCargo++;
 			if (currentPlayer && currentPlayer.nation && currentPlayer.nation > 0) {
 				if (currentPlayer && unit.owner != terr.owner && !enemyPiecesExist) {
 					if (currentPlayer.treaties[unit.owner - 1] == 0)
@@ -264,6 +273,8 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	terr.carrierSpace = carrierSpace;
 	terr.destroyerCount = destroyerCount;
 	terr.superBC = superBC;
+	terr.unitsHeldInCargo = unitsHeldInCargo;
+	terr.unitsPlacedInCargo = unitsPlacedInCargo;
 
 	terr.nukeCount = nukeCount;
 	terr.shipAttack = shipAttack;
@@ -284,6 +295,8 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 		status = treatyStatus(yourPlayer, terr.owner);
 
 	var showDetailsFlg = (gameObj.fogOfWar != 'Y' || status > 2);
+	if (terr.unitsPlacedInCargo != terr.unitsHeldInCargo)
+		checkCargoForTerr(terr, gameObj)
 
 	if (strandedCargo.length == 0)
 		terr.strandedCargo = [];
@@ -293,6 +306,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 		else if (terr.cargoUnits > terr.cargoSpace)
 			terr.strandedCargo = strandedCargo;
 	}
+
 	var flag = flagOfOwner(terr.owner, terr, showDetailsFlg, totalUnitCount, terr.defeatedByNation, terr.nuked, terr.attackedByNation);
 	terr.flag = flag;
 	//	if (gameObj.historyMode) {
@@ -1238,7 +1252,34 @@ function getTerrOfUnitId(id, gameObj) {
 	});
 	return terrId;
 }
+function doubleCheckCargoIsOnTransport(unit, transport) {
+	//loadThisUnitOntoThisTransport
+	var loadedFlg = false;
+	var cargoUnits = 0;
+	transport.cargo.forEach(function (cUnit) {
+		cargoUnits += cUnit.cargoUnits;
+		if (cUnit.id == unit.id)
+			loadedFlg = true;
+	});
+	if (!loadedFlg) {
+		console.log('unit loaded!');
+		transport.cargo.push({ id: unit.id, piece: unit.piece, cargoUnits: unit.cargoUnits });
+		cargoUnits += unit.cargoUnits;
+		transport.cargoUnits = cargoUnits;
+	}
+}
 function checkCargoForTerr(terr, gameObj) {
+	if (terr.unitsPlacedInCargo != terr.unitsHeldInCargo) {
+		terr.units.forEach(function (unit) {
+			if (unit.cargoOf > 0) {
+				var transport = findUnitOfId(unit.cargoOf, gameObj);
+				if (transport && transport.terr == unit.terr) {
+					doubleCheckCargoIsOnTransport(unit, transport);
+				}
+			}
+		});
+
+	}
 	for (var x = 0; x < terr.units.length; x++) {
 		var unit = terr.units[x];
 		if (unit.cargo && unit.cargo.length > 0) {

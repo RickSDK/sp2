@@ -54,6 +54,8 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
       return;
     }
     if (this.selectedTerritory.nation == 99 && isUnitFighterUnit(piece)) {
+      var space = this.numCarriersInQueue();
+      console.log('x', space);
       var carrierSpace = this.selectedTerritory.carrierSpace + this.numCarriersInQueue() * 2;
       var carrierCargo = this.selectedTerritory.carrierCargo + this.numFightersInQueue();
       if (carrierSpace < carrierCargo + count) {

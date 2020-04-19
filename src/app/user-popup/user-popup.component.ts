@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angu
 import { EditProfilePopupComponent } from '../edit-profile-popup/edit-profile-popup.component';
 import { BaseComponent } from '../base/base.component';
 import { Router } from '@angular/router';
+import { UserNotificationsPopupComponent } from '../user-notifications-popup/user-notifications-popup.component';
 
 declare var $: any;
 declare var userObjFromUser: any;
@@ -25,6 +26,7 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
   @Input('user') user: any;
   @Output() messageEvent = new EventEmitter<string>();
   @ViewChild(EditProfilePopupComponent) editProfilePopupComponent: EditProfilePopupComponent;
+  @ViewChild(UserNotificationsPopupComponent) userNotificationsPopupComponent: UserNotificationsPopupComponent;
 
   public editUserImageFlg = false;
   public editUseNameFlg = false;
@@ -102,9 +104,9 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
   }
   editUserEmailSettings() {
     this.playClick();
-    this.showAlertPopup('not coded yet');
-//    this.closeModal('#userPopup');
-  //  displayFixedPopup('notificationsPopup', true);
+    this.closeModal('#userPopup');
+    displayFixedPopup('notificationsPopup', true);
+    this.userNotificationsPopupComponent.initChild();
   }
   editServerProfileSettings() {
     this.playClick();

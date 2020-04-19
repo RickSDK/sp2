@@ -1,9 +1,9 @@
 <!------------------leader----------------------------->
 <div class="spCard">
     <div>
-        <div style="color: white;"><img src="assets/graphics/images/flag{{selectedTerritory.nation}}.gif"
+        <div style="color: white;"><img src="assets/graphics/images/flag{{selectedTerritory.owner}}.gif"
                 height=20>&nbsp;
-            <span *ngIf="selectedTerritory.nation>0">{{superpowersData.superpowers[selectedTerritory.nation]}}
+            <span *ngIf="selectedTerritory.nation>0">{{superpowersData.superpowers[selectedTerritory.owner]}}
                 Leader</span>
             <span *ngIf="selectedTerritory.nation==0">{{selectedTerritory.leaderName}} </span>
         </div>

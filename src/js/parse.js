@@ -73,6 +73,10 @@ function parseServerDataIntoUserObj(data) {
 	userObj.mmPoints = numberVal(f[x++]);
 	userObj.avatar = numberVal(f[x++]);
 	userObj.awayFlg = f[x++]=='Y';
+	userObj.confirmEmailFlg = f[x++]=='Y';
+	userObj.textFlg = f[x++]=='Y';
+
+
 	userObj.code = btoa(localStorage.password);
 	userObj.imgSrc = imageSrcFromObj(userObj.userGraphic, userObj.avatar);
 

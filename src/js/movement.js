@@ -39,6 +39,13 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
             return false;
     }
     if (optionType == 'loadUnits') {
+        if (unit.terr == toTerr.id && unit.type == 3)
+            return true;
+        if (distObj.air == 1 && unit.type == 1)
+            return true;
+        return false;
+    }
+    if (optionType == 'loadUnits') {
         if (distObj.air == 0)
             return true;
     }
@@ -202,9 +209,33 @@ function findBomberForParatrooper(unit, selectedTerritory, optinType) {
     else
         console.log('no transport found!')
 }
-function moveSelectedUnits(moveTerr, selectedTerritory, gameObj) {
+function moveSelectedUnits(moveTerr, selectedTerritory, gameObj, optionType) {
     var units = getSelectedUnits(moveTerr, gameObj);
-    return moveTheseUnitsToThisTerritory(units, selectedTerritory, gameObj);
+    if (optionType == 'loadUnits')
+        return loadTheseUnitsOntoSelectedTransport(units, selectedTerritory, gameObj);
+    else
+        return moveTheseUnitsToThisTerritory(units, selectedTerritory, gameObj);
+}
+function loadTheseUnitsOntoSelectedTransport(units, selectedTerritory, gameObj) {
+    var piece = 2;
+    var terr1Id = 1;
+    var transport;
+    units.forEach(function (unit) {
+        if (unit.type == 3)
+            transport = unit;
+    });
+    units.forEach(function (unit) {
+        if (unit.type == 1) {
+            loadThisUnitOntoThisTransport(unit, transport);
+            piece = unit.piece;
+            terr1Id = unit.terr;
+            unit.terr = transport.terr;
+        }
+    });
+
+    squareUpAllCargo(units, gameObj);
+    illuminateThisTerritory(selectedTerritory, gameObj);
+    return { t1: terr1Id, t2: selectedTerritory.id, id: piece };
 }
 function moveTheseUnitsToThisTerritory(units, selectedTerritory, gameObj) {
     var terr1Id = 1;
@@ -236,7 +267,7 @@ function moveTheseUnitsToThisTerritory(units, selectedTerritory, gameObj) {
         if ((unit.type == 1 || unit.type == 2) && selectedTerritory.nation == 99)
             findTransportForThisCargo(unit, selectedTerritory, gameObj);
         if (unit.cargo && unit.cargo.length > 0)
-            moveCargoWithThisUnit(unit, selectedTerritory, terr1Id);
+            moveCargoWithThisUnit(unit, gameObj, terr1Id);
     }
     squareUpAllCargo(units, gameObj);
     illuminateThisTerritory(selectedTerritory, gameObj);
@@ -255,9 +286,9 @@ function removeThisUnitFromTransport(unit, gameObj) {
     }
     unit.cargoOf = 0;
 }
-function moveCargoWithThisUnit(unit, terr, terr1Id) {
-    for (var u = 0; u < terr.units.length; u++) {
-        var cargo = terr.units[u];
+function moveCargoWithThisUnit(unit, gameObj, terr1Id) {
+    for (var u = 0; u < gameObj.units.length; u++) {
+        var cargo = gameObj.units[u];
         if (cargo.cargoOf && cargo.cargoOf == unit.id && cargo.owner == unit.owner && cargo.terr == terr1Id) {
             cargo.terr = unit.terr;
         }
@@ -306,11 +337,11 @@ function findTransportForThisCargo(unit, terr, gameObj) {
         }
     }
     console.log('no transport found!!!', unit, terr.units.length);
+    unit.terr = unit.prevTerr;
     showAlertPopup('no transport found!', 1);
 }
 function loadThisUnitOntoThisTransport(unit, transport) {
     if (!unit || !transport || unit.owner != transport.owner) {
-        console.log('whoa invalid cargo!!', transport.owner, transport);
         showAlertPopup('invalid cargo', 1);
         return;
     }
@@ -323,8 +354,13 @@ function loadThisUnitOntoThisTransport(unit, transport) {
     }
 
     transport.cargoUnits += unit.cargoUnits;
-    if (transport.cargoUnits > transport.cargoSpace)
+    if (transport.cargoUnits > transport.cargoSpace) {
         showAlertPopup('Cargo Overload Issue', 1);
+        console.log('Cargo Overload Issue', transport.piece, transport.cargoUnits, transport.cargoSpace);
+        unit.terr = unit.prevTerr;
+        return;
+    }
+
 
     transport.cargoLoadedThisTurn += unit.cargoUnits;
     unit.cargoOf = transport.id;
@@ -415,6 +451,7 @@ function checkThisNumberBoxesForUnit(piece, num, terr) {
 function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, player, gameObj, superpowersData) {
     var transportCargo = selectedTerritory.transportCargo;
     var carrierCargo = selectedTerritory.carrierCargo;
+    var moveOrLoadFlg = (optionType == 'movement' || optionType == 'loadUnits');
     var numUnits = 0;
     var expectedHits = 0;
     var numNukes = 0;
@@ -435,10 +472,14 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
     var spotterCount = 0;
     var fightersSelected = 0;
     var carriersSelected = 0;
+    var cargoUnitsSelected = 0;
+    var cargoSpaceSelected = 0;
+    var selectedShips = 0;
     var fighterUnitClicked;
     var bomberUnit;
     var specOpsUnit = false;
     var includesGeneral = false;
+    var lastSelectedUnit;
     var infParatrooperCount = selectedTerritory.infParatrooperCount;
     var specialUnitHash = {};
     var selectedUnitCounts = {}
@@ -460,6 +501,9 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
                         checkAGroundUnitID = 'unit' + unit.id;
                 }
                 if (e && e.checked) {
+                    lastSelectedUnit = e;
+                    cargoUnitsSelected += unit.cargoUnits;
+                    cargoSpaceSelected += unit.cargoSpace;
                     if (unit.subType == 'fighter') {
                         fighterUnitClicked = e;
                         fightersSelected++;
@@ -477,6 +521,20 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
                     if (!specialUnitHash[unit.piece])
                         specialUnitHash[unit.piece] = 0;
                     specialUnitHash[unit.piece]++;
+                    if (unit.type == 3)
+                        selectedShips++;
+                    if (optionType == 'loadUnits' && selectedShips > 1) {
+                        showAlertPopup('Only select one ship.', 1);
+                        e.checked = false;
+                        selectedShips--;
+                    }
+                    if (optionType == 'loadUnits') {
+                        if (cargoUnitsSelected > selectedTerritory.cargoSpaceSelected) {
+                            cargoUnitsSelected -= unit.cargoUnits;
+                            e.checked = false;
+                            showAlertPopup('Not enough room.', 1);
+                        }
+                    }
                     if (unit.piece >= 20 && optionType == 'attack' && specialUnitHash[unit.piece] > 6) {
                         showAlertPopup('Maximum of 6 ' + superpowersData.units[unit.piece].name + ' units per battle.', 1);
                         e.checked = false;
@@ -541,7 +599,7 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
                         showAlertPopup('Not enough room on your bombers. Removing items.', 1);
                         e.checked = false;
                     }
-                    if (selectedTerritory.id >= 79 && optionType == 'movement') {
+                    if (selectedTerritory.id >= 79 && moveOrLoadFlg) {
                         if (transportCargo > selectedTerritory.transportSpace) {
                             if (selectedTerritory.transportSpace > 0)
                                 showAlertPopup('Not enough room on your transports. Removing items.', 1);
@@ -549,7 +607,7 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
                                 showAlertPopup('No transports there!', 1);
                             e.checked = false;
                         }
-                        if (0 && carrierCargo > selectedTerritory.carrierSpace) {
+                        if (moveOrLoadFlg && carrierCargo > selectedTerritory.carrierSpace) {
                             if (selectedTerritory.carrierSpace > 0)
                                 showAlertPopup('Not enough room on your carriers. Removing fighters.', 1);
                             else
@@ -584,11 +642,18 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
         }
 
     }
+    if (optionType == 'loadUnits') {
+        selectedTerritory.cargoSpaceSelected = cargoSpaceSelected;
+        if (cargoUnitsSelected > cargoSpaceSelected && lastSelectedUnit && lastSelectedUnit.checked) {
+            lastSelectedUnit.checked = false;
+            showAlertPopup('Not enough room.', 1);
+        }
+    }
     if (bomberUnit && spotterCount == 0) {
         showAlertPopup('You need ground troops to include paratroopers!', 1);
         bomberUnit.checked = false;
     }
-    if (optionType == 'movement' && fighterUnitClicked && selectedTerritory.nation == 99 && selectedTerritory.carrierSpace == 0 && carriersSelected == 0) {
+    if (moveOrLoadFlg && fighterUnitClicked && selectedTerritory.nation == 99 && selectedTerritory.carrierSpace == 0 && carriersSelected == 0) {
         fighterUnitClicked.checked = false;
         showAlertPopup('No room for your fighter!', 1);
     }
@@ -615,12 +680,15 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
         if (e && !e.checked)
             e.checked = true;
     }
+
     //-----------------recheck
     var units = [];
     for (var x = 0; x < moveTerr.length; x++) {
         var ter = moveTerr[x];
         for (var i = 0; i < ter.units.length; i++) {
             var unit = ter.units[i];
+            if (optionType == 'loadUnits' && unit.type == 1)
+                unit.allowMovementFlg = (selectedShips > 0 && unit.movesLeft > 0 && unit.mv > 0);
             var e = document.getElementById('unit' + unit.id);
             if (e && e.checked) {
                 units.push(unit);

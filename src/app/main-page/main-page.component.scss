@@ -1,0 +1,22 @@
+.main-page-item {
+    width: 100%; 
+    max-width: 220px; 
+    cursor: pointer;
+}
+.outer {
+    display: table;
+    height: 100%;
+    width: 100%;
+    min-height: 220px;
+}
+  
+.middle {
+    display: table-cell;
+    vertical-align: middle;
+}
+  
+@media screen and (max-width: 576px) {
+    .outer {
+         min-height: 20px;
+    }
+}

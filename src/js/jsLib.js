@@ -101,6 +101,13 @@ function getCheckedValueOfField(id) {
 	else
 		return false;
 }
+function getCheckedTextValueOfField(id) {
+	var e = document.getElementById(id);
+	if (e)
+		return (e.checked)?'Y':'N';
+	else
+		return '';
+}
 function setCheckedValueOfField(id, flag) {
 	var e = document.getElementById(id);
 	if (e)

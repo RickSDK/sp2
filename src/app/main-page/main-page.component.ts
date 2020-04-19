@@ -53,12 +53,6 @@ export class MainPageComponent extends BaseComponent implements OnInit {
     this.user = parseServerDataIntoUserObj(data);
  
     localStorage.lastForumLogin = this.user.forum_last_login;
-    //  if(this.user.gold_member_flg=='Y' && localStorage.gold_member_flg != 'Y') {
-    //     playSound('tada.mp3', 0, $scope.muteSound);
-    //    localStorage.gold_member_flg = 'Y';
-    //    $scope.gold_member_flg = 'Y';
-    //displayFixedPopup('upgradePopup');
-    //  }
 
     var existingEMPCount = this.numberVal(localStorage.existingEMPCount);
     this.user.newEmpFlg = (existingEMPCount != this.user.empCount);

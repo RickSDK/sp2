@@ -379,7 +379,7 @@ function cargoSpaceForPiece(piece) {
 	if (piece.id == 49)
 		return 15;
 	if (piece.subType == "ship")
-		return 2;
+		return 5;
 	if (piece.subType == "bomber" || piece.id == 50)
 		return 22;
 	return 0;

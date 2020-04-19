@@ -28,7 +28,16 @@
                 <i class="fa fa-refresh"></i>
             </button>
         </div>
-
+        <div *ngIf="multiPlayerObj && multiPlayerObj.textFlg != 'Y'" class="darkBlueBg">
+            <button *ngIf="!multiPlayerObj.confirmEmailFlg" (click)="userPopup.show(user)" type="button"
+                class="btn btn-primary roundButton">
+                <i class="fa fa-envelope"></i> Confirm Email
+            </button>
+            <button *ngIf="!multiPlayerObj.textFlg" (click)="userPopup.show(user)" type="button"
+                class="btn btn-primary roundButton">
+                <i class="fa fa-mobile"></i> Add Text Notifications
+            </button>
+        </div>
         <div *ngIf="loadingFlg" style="font-size: 24px;"><i class="fa fa-spinner fa-spin"></i>&nbsp; Working...</div>
 
         <div *ngIf="!loadingFlg">
@@ -194,7 +203,11 @@
                             <i class="fa fa-trophy"></i> Matching League
                         </button>
                     </div>
-
+                </div>
+                <div *ngIf="buttonIdx==1 && gameList.length==0" class="borderClass3">
+                    <img src="assets/graphics/advisors/leader.png" height=170>
+                    <div style="font-size: 20px; font-weight: 700;">No games waiting to start. Press the <b>'Create
+                            Game'</b> button above.</div>
                 </div>
                 <div *ngFor="let game of gameList" class="spCard" style="width: 100%; max-width: 360px;">
                     <div style="width: 100%;">
