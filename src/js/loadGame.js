@@ -178,7 +178,7 @@ function loadPlayers2(playersObj, type) {
 		}
 		if(player.cpu)
 			cpuFlg=true;
-		players.push({id: player.id, turn: x+1, team: player.team, nation: nation, generalFlg: true, leaderFlg: true, kills: 0, losses: 0, kd: 0, preferedTeam: x%2+1, userName: player.name, userId: player.id, alive: true, income: 30, money: 20, unitCount: 10, sp: 1, cap: 1, status: 'Purchase', treaties: treatieslist, offers: [], tech: [], battleship: [], cpu: cpuFlg, placedInf: 0});
+		players.push({id: player.id, playerId: player.id, turn: x+1, team: player.team, nation: nation, generalFlg: true, leaderFlg: true, kills: 0, losses: 0, kd: 0, preferedTeam: x%2+1, userName: player.name, userId: player.id, alive: true, income: 30, money: 20, unitCount: 10, sp: 1, cap: 1, status: 'Purchase', treaties: treatieslist, offers: [], tech: [], battleship: [], cpu: cpuFlg, placedInf: 0});
 	}
 	return players;
 }

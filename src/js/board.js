@@ -1795,6 +1795,7 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 
 	var maxCapitalsHeld;
 	var winningTeam = 0;
+	var leadingTeam = 0;
 	gameObj.teams.forEach(function (team) {
 		if (team.capitals.length >= maxCapitals) {
 			maxCapitalsHeld = team.capitals.length;
@@ -1805,6 +1806,7 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 		if (team.income > maxIncome && team.numPlayers > 1) {
 			maxIncome = team.income;
 			winnningPlayer = 'Team ' + team.name;
+			leadingTeam =  team.name;
 		}
 	});
 	gameObj.winningTeamFlg = (yourPlayer && yourPlayer.team == winningTeam);
@@ -1816,7 +1818,11 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 		gameObj.currentSituation = msg;
 		return;
 	}
-	gameObj.currentSituation = winnningPlayer + ' is winning!';
+	var leadingTeamList = playersOfTeam(leadingTeam, gameObj, superpowersData);
+	if(leadingTeam==0 || leadingTeamList.length<2)
+		gameObj.currentSituation = winnningPlayer +' is winning!';
+	else
+		gameObj.currentSituation = 'Team #' + leadingTeam + ' of ' + leadingTeamList.join(' & ') +' is winning!';
 	var victoryRound = numberVal(gameObj.victoryRound);
 	if (victoryMet) {
 		var msg = 'Victory Conditions met! ' + winnningPlayer + ' controls ' + maxCapitalsHeld + ' capitals. Game will end in round ' + victoryRound + ' if they are held.';

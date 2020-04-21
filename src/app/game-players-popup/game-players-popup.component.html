@@ -47,7 +47,6 @@
 				<app-territories-view *ngIf="buttonIdx==3" [gameObj]="gameObj"></app-territories-view>
 				<app-game-view *ngIf="buttonIdx==4" [gameObj]="gameObj" [ableToTakeThisTurn]="ableToTakeThisTurn">
 				</app-game-view>
-				<div *ngIf="buttonIdx==4 && user.userName=='Rick'">gameUpdDt: {{gameUpdDt}}</div>
 
 				<div *ngIf="generalRetreatFlg" class="borderClass3">
 					<img src="assets/graphics/units/piece10u.png" height="30">

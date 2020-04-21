@@ -29,7 +29,7 @@
 								once you achieve rank of <b>{{rankTypes[segmentIdx]}}</b></div>
 							<span *ngFor="let unit of unitList" (click)="selectUnit(unit)" class="shadowed"
 								[ngClass]="ngClassUnit(selectedUnit.id,unit.id)"
-								style="padding: 5px; display: inline-block;">
+								style="padding: 5px; display: inline-block; cursor: pointer;">
 								<img *ngIf="unit.flag>0" src="assets/graphics/images/flag{{unit.flag}}.gif" height=30>
 								<img src="{{ngUnitSrc(unit.id)}}" style="max-height:40px; max-width:80px">
 								<div style="font-size: 10px;">{{unit.name}}</div>

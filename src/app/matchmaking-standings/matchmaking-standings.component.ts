@@ -14,10 +14,13 @@ export class MatchmakingStandingsComponent extends BaseComponent implements OnIn
   @Input('user') user: any;
   @Output() messageEvent = new EventEmitter<string>();
   public maxGames = 0;
+  public maxPoints = 0;
   public loadingFlg = true;
   public ipCheck: string;
   public ipViolator: string;
-  public userWaiting: string;
+  public ipViolateFlg = false;
+  public ipShowPlayersFlg = false;
+  public userWaiting: any;
   public availablePlayers = 0;
   public fullLeaderList = [];
   public hotStreakList = [];
@@ -89,7 +92,6 @@ export class MatchmakingStandingsComponent extends BaseComponent implements OnIn
         var c = items[1].split('|');
         this.maxGames = numberVal(c[0]);
         var leagueId = numberVal(c[1]);
-        console.log('maxGames', this.maxGames);
 
         var leaders = items[2].split('<li>');
         var ipHash = {};
@@ -98,14 +100,18 @@ export class MatchmakingStandingsComponent extends BaseComponent implements OnIn
         this.fullLeaderList = [];
         var hotStreakList = [];
         var coldStreakList = [];
+        this.ipViolateFlg = false;
 
         for (var x = 0; x < leaders.length; x++) {
           var line = leaders[x];
           var player = leaderFromLine(line);
-          //        console.log(player);
+          //console.log(player);
+          if (player.points > this.maxPoints)
+            this.maxPoints = player.points;
           if (player.name.length > 0) {
             if (ipHash[player.ip]) {
               this.ipCheck = 'ipViolation!!!';
+              this.ipViolateFlg = true;
               this.ipViolator = player.name;
               ipHash[player.ip]++;
             } else
@@ -127,13 +133,87 @@ export class MatchmakingStandingsComponent extends BaseComponent implements OnIn
             }
           }
         }
-        this.hotStreakList = hotStreakList.sort(function (a, b) { return a.stk - b.stk; }).slice(0, 5);
+        this.hotStreakList = hotStreakList.sort(function (a, b) { return b.stk - a.stk; }).slice(0, 5);
         this.coldStreakList = coldStreakList.sort(function (a, b) { return a.stk - b.stk; }).slice(0, 5);
 
         this.loadingFlg = false;
       })
       .catch(error => {
         this.loadingFlg = false;
+        this.showAlertPopup('Unable to reach server: ' + error, 1);
+      });
+  }
+  startMMGames(points = 0) {
+    this.playClick();
+    this.availablePlayers = 1;
+    console.log(points);
+    var fifthPlace = 1520;
+    if (points > this.maxPoints - 6)
+      points = this.maxPoints - 6;
+
+    if (points > fifthPlace)
+      points = fifthPlace;
+    var tollarance = 60;
+    var readyList = [];
+    var ipHash = {};
+    this.fullLeaderList.forEach(function (player) {
+      player.ptDiff = Math.abs(player.points - points);
+      if(player.games_max > player.games_playing && player.days_old <= 1) {
+        console.log('player ready: ', player.userName, player.ptDiff);
+        if (player.ptDiff <= tollarance) {
+
+          var num = numberVal(ipHash[player.ip]);
+          if (num == 0)
+            ipHash[player.ip] = 0;
+          ipHash[player.ip]++;
+  
+          if (ipHash[player.ip] == 1)
+            readyList.push(player);
+          else
+            console.log('ip dupe!!', player.name, player.ip);
+        }  
+      }
+    });
+    console.log(readyList.length + ' players within ' + tollarance + ' points of ' + points);
+    readyList.sort(function (a, b) { return a.ptDiff - b.ptDiff; });
+    var numPlayers = 8;
+    var gameTypes = ["battlebots", "diplomacy", "autobalance", "freeforall", "firefight", "hungerGames", "barbarian", "co-op", "ffa-5", "ffa-6", "ffa-7"];
+    var gameType = gameTypes[Math.floor((Math.random() * gameTypes.length))];
+    if (gameType == 'co-op')
+      numPlayers = 3;
+    if (gameType == 'battlebots')
+      numPlayers = 4;
+    if (gameType == 'ffa-5')
+      numPlayers = 5;
+    if (gameType == 'ffa-6')
+      numPlayers = 6;
+    if (gameType == 'ffa-7')
+      numPlayers = 7;
+
+    if (readyList.length < numPlayers) {
+      this.showAlertPopup('Not enough players found! tollarance: ' + tollarance + ', players found: ' + readyList.length, 1);
+      return;
+    }
+    var finalList = [];
+    for (var x = 0; x < numPlayers; x++) {
+      finalList.push(readyList[x].id);
+    }
+    var fList = finalList.join('|');
+    console.log(gameType, numPlayers, fList);
+    this.startthisMMGame(fList, gameType); //start_games
+  }
+  startthisMMGame(pList:string, type:string) {
+    const url = this.getHostname() + "/webLadder.php";
+    const postData = this.getPostDataFromObj({ userId: this.user.userId, code: this.user.code, action: 'start_games2', pList: pList, type: type });
+
+    fetch(url, postData).then((resp) => resp.text())
+      .then((data) => {
+        console.log(data);
+        if (this.verifyServerResponse(data)) {
+          this.showAlertPopup('Success!');
+        }
+      })
+      .catch(error => {
         this.showAlertPopup('Unable to reach server: ' + error, 1);
       });
   }

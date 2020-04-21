@@ -32,7 +32,7 @@
 		<div style="background-color: #cde; text-align: center; padding: 5px;">
 			<div class="btn-group">
 				<button *ngFor="let button of buttonList; let i = index;" (click)="buttonIdx=i" type="button"
-					class="btn btn-default roundButton" [ngClass]="ngClassSegment(buttonIdx,i)"
+					class="btn btn-default segmentButton roundButton" [ngClass]="ngClassSegment(buttonIdx,i)"
 					style="min-width: 60px;">
 					<i class="fa {{button.icon}}" style="font-size: 26px;"></i>
 					<div style="font-size: 10px;">{{button.name}}</div>

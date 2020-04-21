@@ -96,9 +96,9 @@ export class BaseComponent implements OnInit {
   //-----ngClasses---
   ngClassSegment(num: number, buttonIdx: number) {
     if (num == buttonIdx)
-      return 'btn btn-primary roundButton';
+      return 'btn btn-primary segmentButton roundButton';
     else
-      return 'btn btn-light roundButton';
+      return 'btn btn-light segmentButton roundButton';
   }
   ngClassGameType(gameType: string) {
     return ngClassGameTypeMain(gameType);

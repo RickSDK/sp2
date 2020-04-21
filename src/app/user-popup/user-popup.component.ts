@@ -67,17 +67,9 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
     // this.user = userObjFromUser();
   }
   show(displayUser: any) {
-    console.log('user', this.user);
-    console.log('displayUser1', displayUser);
     this.testString = '2';
-    //    if (displayUser.id > 0 && !displayUser.userName && displayUser.name) {
-    //      displayUser.userId = displayUser.id;
-    //      displayUser.userName = displayUser.name;
-    //    }
-    //    console.log('displayUser2', displayUser);
     this.displayUser = displayUser;
-    this.selfProfileFlg = (displayUser.userName == this.user.userName);
-    if (!this.selfProfileFlg && !displayUser.rank) {
+    if (!displayUser.rank) {
       this.displayUser.rank = 2;
       this.displayUser.imgSrc = imageSrcFromObj();
     }
@@ -91,6 +83,8 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
     if (this.displayUser.userId > 0) {
       this.loadingFlg = true;
       this.loadUserDataFromServer(this.displayUser);
+    } else {
+      this.selfProfileFlg = (displayUser.userName == this.user.userName);
     }
     $("#userPopup").modal();
   }
@@ -128,13 +122,13 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
       completedGamesLimit: 100,
       gameId: 0
     });
-    console.log('postData', postData);
     fetch(url, postData).then((resp) => resp.text())
       .then((data) => {
         if (this.verifyServerResponse(data)) {
           this.loadingFlg = false;
           this.serverUser = userFromLine(data);
           this.displayUser.userName = this.serverUser.name;
+          this.selfProfileFlg = (this.displayUser.userName == this.user.userName);
           this.displayUser.imgSrc = imageSrcFromObj(this.serverUser.graphic, this.serverUser.avatar);
           this.displayUser.rank = this.serverUser.rank;
 
@@ -142,9 +136,12 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
           this.personalInfoObj.rows.push({ name: 'Username', value: this.serverUser.name })
           this.personalInfoObj.rows.push({ name: 'Created', value: this.serverUser.created })
           this.personalInfoObj.rows.push({ name: 'City', value: this.serverUser.city })
-          this.personalInfoObj.rows.push({ name: 'State', value: this.serverUser.state })
+          if(this.serverUser.country == 'United States')
+            this.personalInfoObj.rows.push({ name: 'State', value: this.serverUser.state })
           this.personalInfoObj.rows.push({ name: 'Country', value: this.serverUser.country })
           this.personalInfoObj.rows.push({ name: 'Last Login', value: this.serverUser.last_login_time + ' hr ago' })
+          this.personalInfoObj.flag = this.serverUser.flag;
+          this.personalInfoObj.nation = this.serverUser.country;
 
           this.profileCustomizationObj = { title: 'Profile Customization', rows: [], editFlg: true, icon: 'fa-user' };
           this.profileCustomizationObj.rows.push({ name: 'Chat Color', value: this.serverUser.chat_color })
@@ -168,6 +165,7 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
           this.adminObj.rows.push({ name: 'confirmEmailFlg', value: this.serverUser.confirmEmailFlg })
           this.adminObj.rows.push({ name: 'confirmTextFlg', value: this.serverUser.confirmTextFlg })
           this.adminObj.rows.push({ name: 'textFlg', value: this.serverUser.textFlg })
+          this.adminObj.rows.push({ name: 'ip', value: this.serverUser.ip })
 
           this.regularGamesObj = { title: 'Regular Games Stats', rows: [], editFlg: false, icon: 'fa-list' };
           this.regularGamesObj.rows.push({ name: 'Games', value: this.serverUser.games })
@@ -225,8 +223,8 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
             else
               this.savedRegularGamesObj.rows.push(game)
           });
-
-          console.log('serverUser!', this.serverUser);
+          if(this.user.userId==10)
+            console.log('serverUser!', this.serverUser);
         }
       })
       .catch(error => {

@@ -12,6 +12,7 @@
             </div>
         </a>
         <div class="darkBlueBg" style="white-space: nowrap; overflow: hidden;">
+            <span class="hidden-xxs" style="color: #aaa; font-size: 12px;">Version {{spVersion}}</span>
             <button (click)="userPopup.show(user)" type="button" class="btn btn-secondary roundButton">
                 <i class="fa fa-user"></i> {{user.userName}}
             </button>
@@ -59,13 +60,13 @@
             <div style="background-color: #ccc;">
                 <span style="display: inline-block;">
                     <button (click)="gameStandingsPopup.show()" type="button" class="btn btn-secondary roundButton">
-                        <i class="fa fa-list"></i>
+                        <i class="fa fa-check-circle-o"></i>
                     </button><br>
                     <div style="font-size: 10px; color: gray;">Standings</div>
                 </span>
                 <div class="spCard" style="cursor: pointer; font-size: 12px;" (click)="gameStandingsPopup.show()">
                     <div>
-                        <div class="spTitle"><i class="fa fa-list"></i> Regular Games</div>
+                        <div class="spTitle"><i class="fa fa-check-circle-o"></i> Regular Games</div>
                         <table class="spTable">
                             <tr>
                                 <td>Wins</td>
@@ -141,44 +142,44 @@
 
             <div class="mediumBlueBg" style="text-align: center; padding-bottom: 5px;">
                 <div class="btn-group">
-                    <button (click)="filterGames(0)" type="button" class="btn btn-default roundButton"
+                    <button (click)="filterGames(0)" type="button" class="btn btn-default roundButton segmentButton"
                         [ngClass]="ngClassSegment(buttonIdx,0)" style="min-width: 60px;">
                         <i class="fa fa-star" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">My Games</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count0}})</div>
                     </button>
-                    <button (click)="filterGames(1)" type="button" class="btn btn-default roundButton"
+                    <button (click)="filterGames(1)" type="button" class="btn btn-default roundButton segmentButton"
                         [ngClass]="ngClassSegment(buttonIdx,1)" style="min-width: 60px;">
                         <i class="fa fa-plus" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">Open</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count1}})</div>
                     </button>
-                    <button (click)="filterGames(2)" type="button" class="btn btn-default roundButton"
+                    <button (click)="filterGames(2)" type="button" class="btn btn-default roundButton segmentButton"
                         [ngClass]="ngClassSegment(buttonIdx,2)" style="min-width: 60px;">
                         <i class="fa fa-play" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">Playing</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count2}})</div>
                     </button>
-                    <button (click)="filterGames(3)" type="button" class="btn btn-default roundButton"
+                    <button (click)="filterGames(3)" type="button" class="btn btn-default roundButton segmentButton"
                         [ngClass]="ngClassSegment(buttonIdx,3)" style="min-width: 60px;">
                         <i class="fa fa-stop" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">Completed</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count3}})</div>
                     </button>
-                    <button (click)="filterGames(4)" type="button" class="btn btn-default roundButton"
+                    <button (click)="filterGames(4)" type="button" class="btn btn-default roundButton segmentButton"
                         [ngClass]="ngClassSegment(buttonIdx,4)" style="min-width: 60px;">
                         <i class="fa fa-trophy" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">MatchMaking</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count4}})</div>
                     </button>
                     <button *ngIf="adminFlg" (click)="filterGames(5)" type="button"
-                        class="btn btn-warning roundButton hidden-xxs" style="min-width: 60px;">
+                        class="btn btn-warning roundButton  segmentButton hidden-xxs" style="min-width: 60px;">
                         <i class="fa fa-bug" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">Bugs</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count5}})</div>
                     </button>
                     <button *ngIf="adminFlg" (click)="filterGames(6)" type="button"
-                        class="btn btn-warning roundButton hidden-xxs" style="min-width: 60px;">
+                        class="btn btn-warning roundButton  segmentButton hidden-xxs" style="min-width: 60px;">
                         <i class="fa fa-clock-o" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">Stale</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count6}})</div>
@@ -212,7 +213,7 @@
                 <div *ngFor="let game of gameList" class="spCard" style="width: 100%; max-width: 360px;">
                     <div style="width: 100%;">
                         <div class="spTitle" [style.background-color]="game.mmFlg?'purple':'#033a77'">
-                            <div *ngIf="!game.mmFlg"><i class="fa fa-list"></i> Regular Game</div>
+                            <div *ngIf="!game.mmFlg"><i class="fa fa-check-circle-o"></i> Regular Game</div>
                             <div *ngIf="game.mmFlg"><i class="fa fa-trophy"></i> Matchmaking Game</div>
                         </div>
                         <div class="spCardBody">
@@ -245,6 +246,7 @@
                                             <span *ngIf="game.joinGameFlg">Join</span>
                                             <span *ngIf="!game.joinGameFlg">Enter</span>
                                         </button>
+                                        <div *ngIf="game.status=='Complete'">Game Over!</div>
                                         <div *ngIf="game.status == 'Open'">
                                             <button *ngIf="game.host == user.userName"
                                                 (click)="openGameButtonPressed(game, 'start')" type="button"
@@ -263,14 +265,18 @@
                                                 class="btn btn-warning roundButton"><i class="fa fa-sign-out"></i>
                                                 Leave</button>
                                         </div>
+                                        <button *ngIf="game.status == 'Playing' && user.userName == 'Rick' && game.round==1"
+                                                (click)="openGameButtonPressed(game, 'cancelGame')" type="button"
+                                                class="btn btn-danger roundButton">
+                                                <i class="fa fa-trash"></i> Delete</button>
 
                                     </td>
                                     <td *ngIf="game.status!='Complete'">
                                         <div *ngIf="game.status!='Open'" class="gameCard" style="min-width: 100px;">
                                             <div class="darkBlueBg"><i class="fa fa-clock-o"></i> Timer</div>
+                                            <app-sp-time-left [timeLeftStr]="game.timeLeft"></app-sp-time-left>
                                             <app-player-name (click)="userPopup.show(game.turnObj)"
                                                 [player]="game.turnObj"></app-player-name>
-                                            <app-sp-time-left [timeLeftStr]="game.timeLeft"></app-sp-time-left>
                                             <div *ngIf="game.turnObj.onlineFlg" style="color: gray"><i
                                                     class="fa fa-lightbulb-o" style="color: orange"></i> Online now!
                                             </div>
@@ -348,6 +354,7 @@
                                                 <th>N</th>
                                                 <th>Player</th>
                                                 <th>$</th>
+                                                <th *ngIf="game.type=='Locked'">T</th>
                                                 <th><i class="fa fa-clock-o"></i></th>
                                             </tr>
                                             <tr *ngFor="let player of game.players">
@@ -359,16 +366,17 @@
                                                     {{player.userName}}
                                                 </td>
                                                 <td style="color: green; font-weight: 700;">{{player.income}}</td>
+                                                <td *ngIf="game.type=='Locked'">{{player.team}}</td>
                                                 <td style="font-size: 12px; color: gray;">{{player.clock}}hr
                                                     <button
-                                                        *ngIf="game.host == user.userName && game.status == 'Open' && player.name != user.userName"
+                                                        *ngIf="game.host == user.userName && game.status == 'Open' && player.userName != user.userName"
                                                         (click)="removePlayerFromGame(game, player)" type="button"
                                                         class="btn btn-danger roundButton"><i class="fa fa-trash"></i>
                                                     </button>
                                                 </td>
                                             </tr>
                                         </table>
-                                        <div class="spTitle"><i class="fa fa-star"></i>: Top-2 Player, <i
+                                        <div class="spTitle" *ngIf="game.status=='Playing'"><i class="fa fa-star"></i>: Top-2 Player, <i
                                                 class="fa fa-check"></i>: Turn</div>
                                     </div>
                                 </div>
@@ -394,8 +402,8 @@
         <div class="mediumBlueBg">{{selectedGame.name}}</div>
         <div *ngIf="0"><input type=text id="passField" name="passField" placeholder="Password" value="" maxlength=20>
         </div>
-        <div *ngIf="selectedGame.gameType=='locked'">Team: <button ng-click="teamButtonClicked()" id="" type="button"
-                class="btn ptp-yellow">{{teamName}}</button></div>
+        <div *ngIf="selectedGame.gameType=='locked'">Team: <button (click)="changeTeam()" id="" type="button"
+                class="btn btn-primary roundButton">{{selectedTeam}}</button></div>
         <div *ngIf="!selectedGame.auto_assign_flg">
             <div style="border: 1px solid black;">
                 <div>Nations Available: </div>

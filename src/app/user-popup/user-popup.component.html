@@ -10,27 +10,27 @@
             <div class="modal-body" *ngIf="displayUser" style="text-align: center;">
 
 
-                <div style="text-align: center; padding-bottom: 5px;">
+                <div style="text-align: center;">
                     <div class="btn-group">
-                        <button (click)="segmentIdx=0" type="button" class="btn btn-default roundButton"
+                        <button (click)="segmentIdx=0" type="button" class="btn btn-default roundButton segmentButton"
                             [ngClass]="ngClassSegment(segmentIdx,0)" style="min-width: 60px;">
                             <i class="fa fa-picture-o" style="font-size: 26px;"></i>
                             <div style="font-size: 10px;">Profile</div>
                         </button>
                         <button *ngIf="selfProfileFlg" (click)="segmentIdx=1" type="button"
-                            class="btn btn-default roundButton" [ngClass]="ngClassSegment(segmentIdx,1)"
+                            class="btn btn-default roundButton segmentButton" [ngClass]="ngClassSegment(segmentIdx,1)"
                             style="min-width: 60px;">
                             <i class="fa fa-user" style="font-size: 26px;"></i>
                             <div style="font-size: 10px;">Single Player</div>
                         </button>
                         <button *ngIf="displayUser.userId>0" (click)="segmentIdx=2" type="button"
-                            class="btn btn-default roundButton" [ngClass]="ngClassSegment(segmentIdx,2)"
+                            class="btn btn-default roundButton segmentButton" [ngClass]="ngClassSegment(segmentIdx,2)"
                             style="min-width: 60px;">
                             <i class="fa fa-users" style="font-size: 26px;"></i>
                             <div style="font-size: 10px;">Multi-Player</div>
                         </button>
                         <button *ngIf="displayUser.userId>0" (click)="segmentIdx=3" type="button"
-                            class="btn btn-default roundButton" [ngClass]="ngClassSegment(segmentIdx,3)"
+                            class="btn btn-default roundButton segmentButton" [ngClass]="ngClassSegment(segmentIdx,3)"
                             style="min-width: 60px;">
                             <i class="fa fa-trophy" style="font-size: 26px;"></i>
                             <div style="font-size: 10px;">Match-Making</div>
@@ -49,6 +49,7 @@
                         <div>
                             <div *ngIf="serverUser" class="spTitle">
                                 <app-player-name [player]="serverUser"></app-player-name>
+                                <i class="fa fa-pencil-square-o" style="font-size: 10px; float: right; padding: 3px;"></i>
                             </div>
                             <div *ngIf="serverUser" class="darkBlueBg" style="font-size: 12px;">Ave Turn Speed: <i
                                     class="fa fa-bolt" *ngIf="serverUser.fastFlg"></i> <i class="fa fa-hourglass-end"
@@ -142,15 +143,15 @@
                     <app-sp-table (click)="editUserEmailSettings()"
                         *ngIf="displayUser.userId>0 && selfProfileFlg && profileEmailObj" [dataObj]="profileEmailObj">
                     </app-sp-table>
-                    <button *ngIf="serverUser && !serverUser.confirmEmailFlg" (click)="editUserEmailSettings()"
+                    <button *ngIf="serverUser && selfProfileFlg && !serverUser.confirmEmailFlg" (click)="editUserEmailSettings()"
                         type="button" class="btn btn-warning roundButton">
                         <i class="fa fa-envelope"></i> Confirm Email
                     </button>
-                    <button *ngIf="serverUser && serverUser.textFlg != 'Y'" (click)="editUserEmailSettings()"
+                    <button *ngIf="serverUser && selfProfileFlg && serverUser.textFlg != 'Y'" (click)="editUserEmailSettings()"
                         type="button" class="btn btn-warning roundButton">
                         <i class="fa fa-mobile"></i> Add Text Notifications
                     </button>
-                    <span *ngIf="serverUser && serverUser.away_flg == 'Y'"
+                    <span *ngIf="serverUser && selfProfileFlg && serverUser.away_flg == 'Y'"
                         style="display: inline-block; border: 1px solid black; background-color: yellow; padding: 5px;">
                         <i class="fa fa-exclamation-triangle"></i> Away Message is on! Click Profile Options to turn it
                         off.

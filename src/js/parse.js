@@ -182,6 +182,7 @@ function userFromLine(line) {
 	obj.last10Games = c[x++];
 	obj.chat_font = c[x++];
 	obj.avatar = c[x++];
+	obj.ip = c[x++];
 	obj.imgSrc = imageSrcFromObj(obj.graphic,obj.avatar);
 
 	if (obj.total_num_mins > 0 && obj.total_num_turns > 0) {
@@ -370,7 +371,7 @@ function gameFromLine(line, userName) {
 		var minutesReduced = numberVal(c[7]);
 		var clock = (24 - Math.round(minutesReduced / 60));
 		var turnFlg = c[0] == obj.turnObj.name;
-		obj.players.push({ playerId: numberVal(c[1]), userName: c[0], nation: nation, turnFlg: turnFlg, income: c[3], top: top, team: c[5], futureTeam: c[6], minutesReduced: c[7], rank: numberVal(c[8]), clock: clock, userId: numberVal(c[9]), userGraphic: '', imgSrc: '' });
+		obj.players.push({ playerId: numberVal(c[1]), userName: c[0], name: c[0], nation: nation, turnFlg: turnFlg, income: c[3], top: top, team: c[5], futureTeam: c[6], minutesReduced: c[7], rank: numberVal(c[8]), clock: clock, userId: numberVal(c[9]), id: numberVal(c[9]), userGraphic: '', imgSrc: '' });
 	}
 	obj.joinGameFlg = (obj.status == 'Open' && !obj.inGame);
 	obj.numPlayers = obj.players.length;

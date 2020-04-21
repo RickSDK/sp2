@@ -956,7 +956,7 @@ function battleCompleted(displayBattle, selectedTerritory, currentPlayer, moveTe
     if (displayBattle.militaryObj.wonFlg) {
         selectedTerritory.defeatedByNation = currentPlayer.nation;
         selectedTerritory.defeatedByRound = gameObj.round;
-        transferControlOfTerr(selectedTerritory, currentPlayer, gameObj, true);
+        transferControlOfTerr(selectedTerritory, currentPlayer.nation, gameObj, true, currentPlayer);
         if (!currentPlayer.cpu) {
             if (displayBattle.defHits == 0)
                 playVoiceClip('won6.mp3');
@@ -1132,11 +1132,8 @@ function getKdForPlayer(player) {
     else
         return 0;
 }
-function transferControlOfTerr(terr, player, gameObj, annihilationFlg) {
-    if(!player || !player.allies || !player.treaties)
-        return;
-    var nation = player.nation;
-    if (gameObj.allowAlliances && player.allies.length > 0 && player.treaties.length >= 8) {
+function transferControlOfTerr(terr, nation, gameObj, annihilationFlg, player) {
+    if (player && gameObj.allowAlliances && player.allies.length > 0 && player.treaties.length >= 8) {
         if (player.treaties[terr.nation - 1] == 3)
             nation = terr.nation; //liberateNationIfNeccessary
     }

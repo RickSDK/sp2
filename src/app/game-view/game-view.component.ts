@@ -16,11 +16,13 @@ export class GameViewComponent extends BaseComponent implements OnInit {
   @Input('gameObj') gameObj: any;
   @Input('ableToTakeThisTurn') ableToTakeThisTurn: any;
   public user: any;
+  public createdDay = '';
 
   constructor() { super(); }
 
   ngOnInit(): void {
     this.user = userObjFromUser();
+    this.createdDay = this.gameObj.created.split(' ')[0];
   }
   surrenderButtonPressed() {
     displayFixedPopup('surrenderPopup');

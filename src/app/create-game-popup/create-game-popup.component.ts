@@ -27,6 +27,9 @@ export class CreateGamePopupComponent extends BaseComponent implements OnInit {
   public fogIdx = 0;
   public game = { name: 'test' };
   public sendingFlg = false;
+  public teams = ['1', '2', 'R'];
+  public teamIdx = 0;
+  public selectedTeam = this.teams[0];
 
   constructor() { super(); }
 
@@ -42,6 +45,12 @@ export class CreateGamePopupComponent extends BaseComponent implements OnInit {
   changeAutoAssign() {
     this.playClick();
     this.autoAssignFlg = !this.autoAssignFlg;
+  }
+  changeTeam() {
+    this.teamIdx++;
+    if (this.teamIdx > 2)
+      this.teamIdx = 0;
+    this.selectedTeam = this.teams[this.teamIdx];
   }
   changeNation() {
     this.playClick();
@@ -132,7 +141,7 @@ export class CreateGamePopupComponent extends BaseComponent implements OnInit {
   createGame(dataLine: string, nation: number) {
 
     const url = getHostname() + "/web_join_game2.php";
-    const postData = getPostDataFromObj({ user_login: localStorage.userName, code: this.user.code, data: dataLine, action: 'createGame', nation: nation });
+    const postData = getPostDataFromObj({ user_login: localStorage.userName, code: this.user.code, data: dataLine, action: 'createGame', nation: nation, team: this.selectedTeam });
 
     fetch(url, postData).then((resp) => resp.text())
       .then((data) => {

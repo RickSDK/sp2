@@ -43,7 +43,7 @@ export class GameStandingsComponent extends BaseComponent implements OnInit {
         for (var x = 0; x < leaders.length; x++) {
           var line = leaders[x];
           var player = leaderFromLine(line);
-          console.log(player);
+          //console.log(player);
           if (player.name.length > 0) {
             if (player.days_old <= 3) {
               this.fullPlayerList.push(player);
@@ -54,7 +54,7 @@ export class GameStandingsComponent extends BaseComponent implements OnInit {
             }
           }
         }
-        this.hotStreakList = hotStreakList.sort(function (a, b) { return a.stk - b.stk; }).slice(0, 5);
+        this.hotStreakList = hotStreakList.sort(function (a, b) { return b.stk - a.stk; }).slice(0, 5);
         this.coldStreakList = coldStreakList.sort(function (a, b) { return a.stk - b.stk; }).slice(0, 5);
 
         this.loadingFlg = false;

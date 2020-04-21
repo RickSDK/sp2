@@ -622,7 +622,7 @@ function respositionMainBase(player, gameObj) {
     var terr1 = gameObj.territories[player.mainBaseID - 1];
     var max = terr1.unitCount;
     var newTerr;
-    if (terr1) {
+    if (terr1 && terr1.land) {
         terr1.land.forEach(function (t) {
             var ter = gameObj.territories[t - 1];
             if (ter.owner == player.nation && ter.unitCount > max) {

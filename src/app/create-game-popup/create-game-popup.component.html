@@ -141,6 +141,11 @@
                         <img (click)="changeNation()" class="shadowed"
                             src="assets/graphics/images/flag{{selectedNation}}.gif" height=60 style="cursor: pointer;">
                     </div>
+                    <div *ngIf="gameType.name == 'Locked'">
+                        Choose your Team (1, 2 or Random):
+                        <button id="createButton" (click)="changeTeam()"
+                            type="button" class="btn btn-primary roundButton">{{selectedTeam}}</button>
+                    </div>
                     <div style="margin-top: 8px;"><button id="createButton" (click)="createGameButtonPressed()"
                             type="button" class="btn btn-primary roundButton tall">Create!</button></div>
                 </div>

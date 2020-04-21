@@ -47,6 +47,43 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="spCard" *ngIf="availablePlayers">
+                        <div>
+                            <div class="spTitle">Players Ready</div>
+                            <div class="spCardBody" style="padding: 5px;">
+                                <div>Players queued and ready: <span class="bgHighlight">{{availablePlayers}}</span>
+                                </div>
+                                <div *ngIf="userWaiting">On Deck: <span
+                                        class="bgHighlight">{{userWaiting.userName}}</span></div>
+
+                                <div *ngIf="user.userName=='Rick'">
+                                    <button [disabled]="availablePlayers < 8" (click)="startMMGames(userWaiting.points)"
+                                        type="button" class="btn btn-primary roundButton">
+                                        <i class="fa fa-play"></i> Start Games
+                                    </button>
+                                    <button *ngIf="0" [disabled]="availablePlayers < 8" (click)="startMMGames(1500)"
+                                        type="button" class="btn btn-primary roundButton">
+                                        <i class="fa fa-play"></i> Start 1500
+                                    </button>
+                                    <button *ngIf="ipViolateFlg" (click)="ipShowPlayersFlg = !ipShowPlayersFlg"
+                                        type="button" class="btn btn-danger roundButton">
+                                        <i class="fa fa-exclamation-triangle"></i> IP
+                                    </button>
+                                    <div *ngIf="ipShowPlayersFlg">
+                                        <div>{{ipViolator}}</div>
+                                        <div class="spTable">
+                                            <tr *ngFor="let player of fullLeaderList">
+                                                <td>{{player.userName}} {{player.ip}}</td>
+                                            </tr>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!---Rick (admin)-->
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
 
@@ -133,4 +170,3 @@
         </div>
     </div>
 </div>
-

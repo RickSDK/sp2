@@ -2,24 +2,19 @@
 	<div>
 		<table *ngIf="gameObj" class="spTable">
 			<tr>
-				<th style="padding: 5px; text-align: center;">Field</th>
-				<th style="padding: 5px; text-align: center;">Value</th>
+				<td colspan="2"> <i class="{{gameObj.icon}}"></i> {{gameObj.typeName}}</td>
 			</tr>
 			<tr>
-				<td><b>Type:</b></td>
-				<td> <i class="{{gameObj.icon}}"></i> {{gameObj.typeName}}</td>
+				<td colspan="2" style="font-size: 12px;">{{gameObj.desc}}</td>
 			</tr>
-			<tr>
-				<td><b>Description:</b></td>
-				<td style="font-size: 12px;">{{gameObj.desc}}</td>
+			<tr *ngIf="gameObj.mmFlg">
+				<td colspan="2">
+					<font color=red><i class="fa fa-trophy"></i> Official Matchmaking</font>
+				</td>
 			</tr>
 			<tr>
 				<td><b>Created:</b></td>
-				<td>{{gameObj.created}}</td>
-			</tr>
-			<tr>
-				<td><b>Max Allies:</b></td>
-				<td>{{gameObj.maxAllies}}</td>
+				<td>{{createdDay}}</td>
 			</tr>
 			<tr *ngIf="gameObj.multiPlayerFlg">
 				<td><b>Host:</b></td>
@@ -50,9 +45,9 @@
 				</td>
 			</tr>
 			<tr *ngIf="gameObj.autoSkip=='Y'">
-				<td><b>Auto Skip:</b></td>
+				<td><b>Skip?</b></td>
 				<td>
-					<font color=#c00>{{gameObj.autoSkip}}</font>
+					<font color=#c00><i class="fa fa-check"></i> Allows-Skip</font>
 				</td>
 			</tr>
 			<tr *ngIf="gameObj.restrict_units_flg=='Y'">
@@ -67,15 +62,12 @@
 					<font color=#c00>{{gameObj.no_stats_flg}}</font>
 				</td>
 			</tr>
-			<tr *ngIf="gameObj.mmFlg">
-				<td><b>League:</b></td>
-				<td>
-					<font color=red>Official Matchmaking</font>
-				</td>
+			<tr *ngIf="gameObj.maxAllies>0">
+				<td><b>Team Size:</b></td>
+				<td>{{gameObj.maxAllies+1}}</td>
 			</tr>
 			<tr>
-				<td><b>Current Situation</b></td>
-				<td>{{gameObj.currentSituation}}</td>
+				<td colspan="2"><div><b>Current Situation</b></div>{{gameObj.currentSituation}}</td>
 			</tr>
 		</table>
 	</div>
@@ -97,7 +89,7 @@
 		<i class="fa fa-floppy-o" style="font-size: 26px;"></i>
 		<div style="font-size: 10px;">Save Game</div>
 	</button>
-	<button *ngIf="user.userName=='Rick'" (click)="turnAllPlayersHuman()" type="button" class="btn btn-secondary roundButton">
+	<button *ngIf="0" (click)="turnAllPlayersHuman()" type="button" class="btn btn-secondary roundButton">
 		<i class="fa fa-user" style="font-size: 26px;"></i>
 		<div style="font-size: 10px;">Turn all Human</div>
 	</button>

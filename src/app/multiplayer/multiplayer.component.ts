@@ -8,7 +8,7 @@ declare var getMultObjFromLine: any;
 declare var gameFromLine: any;
 declare var createNewGameFromInitObj: any;
 declare var objPiecesFrom: any;
-declare var $: any;
+declare var spVersion: any;
 
 @Component({
   selector: 'app-multiplayer',
@@ -44,11 +44,14 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
   public count6 = 0;
   public availableNations = [];
   public selectedNation = 1;
-  public teamName: string;
   public multiPlayerObj: any;
   public buttonAction: string;
   public buttonActionMessage: string;
   public playerId: number;
+  public spVersion = spVersion();
+  public teams = ['1', '2', 'R'];
+  public teamIdx = 0;
+  public selectedTeam = this.teams[0];
 
   constructor(private router: Router) { super(); }
 
@@ -60,14 +63,20 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
   showPlayer(player: any) {
     this.userPopupComp.show(player);
   }
+  changeTeam() {
+    this.teamIdx++;
+    if (this.teamIdx > 2)
+      this.teamIdx = 0;
+    this.selectedTeam = this.teams[this.teamIdx];
+  }
   selectGame(game) {
+    if (this.user.userName == 'Rick')
+      console.log(game);
     if (game.status == 'Open') {
       this.playSound('error.mp3');
       return;
     }
     this.playClick();
-    if (this.user.userName == 'Rick')
-      console.log(game);
     this.selectedGameNum = (this.selectedGameNum == game) ? 0 : game;
     this.closePopup('joinConfirmationPopup');
   }
@@ -138,9 +147,14 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
     var gameObj = createNewGameFromInitObj(game, this.superpowersData.units);
     console.log('started this game:', gameObj);
     var turn = gameObj.players[0].id;
+    if (!turn || turn == 0) {
+      this.showAlertPopup('no turn!', 1);
+      return;
+    }
     var gameData = objPiecesFrom(gameObj);
     console.log('Starting up the game!!!', gameData);
-    this.createWebServiceCall('gameAFoot', gameData, turn)
+    this.selectedGame = game;
+    this.createWebServiceCall('gameAFoot', gameData, turn);
   }
   filterGames(num: number) {
     this.buttonIdx = num;
@@ -236,7 +250,7 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
           //        return;
         }
         this.selectedGame = game;
-        this.teamName = 'R';
+        this.selectedTeam = 'R';
         this.availableNations = populateAvailableNations(game);
         this.nationPointer = 0;
         if (game.auto_assign_flg == 'Y')
@@ -261,6 +275,11 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
   createWebServiceCall(action: string, gameData: any, turn: number) {
     var url = this.getHostname() + "/web_join_game2.php";
     var nation = this.selectedNation;
+    if(!this.selectedGame) {
+      this.showAlertPopup('no game!',1);
+      console.log('no game!!!');
+      return;
+    }
     console.log('game', this.selectedGame);
     if (this.selectedGame.auto_assign_flg)
       nation = 0;
@@ -284,7 +303,7 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
       action: action,
       game_id: this.selectedGame.gameId,
       nation: nation,
-      team: this.teamName,
+      team: this.selectedTeam,
       playerId: this.playerId,
       turn: turn,
       objMain: objMain,
@@ -353,12 +372,12 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
   }
   teamButtonClicked = function () {
     this.playClick();
-    if (this.teamName == '2')
-      this.teamName = 'R';
-    else if (this.teamName == '1')
-      this.teamName = '2';
-    else if (this.teamName == 'R')
-      this.teamName = '1';
+    if (this.selectedTeam == '2')
+      this.selectedTeam = 'R';
+    else if (this.selectedTeam == '1')
+      this.selectedTeam = '2';
+    else if (this.selectedTeam == 'R')
+      this.selectedTeam = '1';
   }
 }
 

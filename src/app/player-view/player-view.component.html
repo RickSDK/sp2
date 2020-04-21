@@ -28,7 +28,7 @@
                 </th>
             </tr>
             <tr *ngFor="let player of gameObj.players" [ngStyle]="ngStyleLogs(player.nation, !player.alive)"
-                class="borderRow">
+                title="{{player.userName}} ({{player.id}})" class="borderRow">
                 <td class="centerText">
                     <img src="assets/graphics/images/flag{{player.nation}}.gif" height=40
                         title="{{superpowersData.superpowers[player.nation]}}">

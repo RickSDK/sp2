@@ -393,7 +393,14 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					setTimeout(() => {
 						saveGame(this.gameObj, this.user, this.currentPlayer);
 					}, 1000);
-				} else if (this.gameObj.secondsSinceUpdate > 43200 && this.yourPlayer && this.yourPlayer.treaties[this.currentPlayer.nation-1] == 3) {
+				} else if (this.yourNation == this.currentPlayer.nation) {
+					if (this.gameObj.secondsSinceUpdate > 43200) {
+						if (this.gameObj.secondsSinceUpdate > 86400)
+							this.showAlertPopup('Slow Response Notice: Timer has run out! Try to take your turns more quickly to avoid being skipped.');
+						else
+							this.showAlertPopup('Slow Response Notice: Timer is running low. Try to log in at least twice each day to take turns.');
+					}
+				} else if (this.gameObj.secondsSinceUpdate > 43200 && this.yourPlayer && this.yourPlayer.treaties[this.currentPlayer.nation - 1] == 3) {
 					this.displaySPPopup('accountSitPopup');
 				} else if (this.gameObj.secondsSinceUpdate > 86400) {
 					if (this.user.userName == 'Rick' ||
@@ -574,6 +581,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.playClick();
 		this.closePopup('skipPlayerPopup');
 		logItem(this.gameObj, this.currentPlayer, 'Turn Skipped', 'Turn skipped by ' + this.user.userName);
+		this.gameObj.secondsSinceUpdate = 0;
 		this.computerGo();
 	}
 	initializePlayerForPurchase() {
@@ -1126,7 +1134,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			fixSeaCargo(terr, gameObj);
 		}
 		console.log('able', this.ableToTakeThisTurn);
-		refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, (this.ableToTakeThisTurn)?this.currentPlayer:this.yourPlayer);
+		refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, (this.ableToTakeThisTurn) ? this.currentPlayer : this.yourPlayer);
 		displayLeaderAndAdvisorInfo(terr, currentPlayer, this.yourPlayer, user, gameObj, this.superpowersData.superpowers, 'home');
 		//		terr.units = unitsForTerr(terr, gameObj.units);
 		terr.displayQueue = getDisplayQueueFromQueue(terr, this.gameObj);
