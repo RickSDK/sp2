@@ -619,6 +619,8 @@ function findGoodTargetForTerr(terr1, currentPlayer, gameObj, logging) {
     return null;
 }
 function respositionMainBase(player, gameObj) {
+    if(!player.mainBaseID)
+        return;
     var terr1 = gameObj.territories[player.mainBaseID - 1];
     var max = terr1.unitCount;
     var newTerr;
@@ -641,7 +643,11 @@ function respositionMainBase(player, gameObj) {
     }
 }
 function fortifyThisTerritory(player, gameObj) {
+    if(!player.hotSpotId)
+        return;
     var terr1 = gameObj.territories[player.hotSpotId - 1];
+    if(!terr1 || !terr1.land)
+        return;
     terr1.land.forEach(function (t) {
         var ter = gameObj.territories[t - 1];
         if (ter.owner == player.nation) {
@@ -657,6 +663,8 @@ function fortifyThisTerritory(player, gameObj) {
     });
 }
 function findMainBaseTarget(gameObj, player) {
+    if(!player.mainBaseID)
+        return;
     var terr1 = gameObj.territories[player.mainBaseID - 1];
     var terr2 = findGoodTargetForTerr(terr1, player, gameObj);
     return stageAttackBetweenTerritories(terr1, terr2, player, 99);

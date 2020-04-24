@@ -1640,7 +1640,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.currentPlayer.alive = false;
 		removeAlliancesForNation(this.currentPlayer.nation, this.gameObj);
 		if (this.gameObj.multiPlayerFlg) {
-			showAlertPopup('You have surrendered! The computer will play out your turns from here.');
+			var sp = this.superpowersData.superpowers[this.currentPlayer.nation];
+			showAlertPopup(sp+' has surrendered! The computer will play out the turns from here.');
 			this.placeUnitsAndEndTurn();
 		} else {
 			this.gameObj.winningTeamFlg = false;

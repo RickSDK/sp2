@@ -8,9 +8,17 @@
                 </button>
             </div>
             <div class="modal-body">
-
-
 Not coded yet
+
+<table class="spTable" *ngIf="0">
+    <tr *ngFor="let message of displayMessages">
+        <td>{{message.title}}</td>
+        <td>{{message.body}}</td>
+        <td>{{message.senderName}}</td>
+        <td>{{message.formattedDate}}</td>
+    </tr>
+</table>
+
 
             </div>
             <div class="modal-footer">

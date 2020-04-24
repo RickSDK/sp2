@@ -1,0 +1,21 @@
+.splash-screen {
+    position: fixed; 
+    left:0;
+    top: 0; 
+    width: 100%; 
+    min-height: 100%; 
+    opacity: 100;
+    transition: all 1s ease;
+}
+.splash-fade {
+    position: fixed; 
+    left:0;
+    top: 0; 
+    width: 100%; 
+    min-height: 100%; 
+    opacity: 0;
+    transition: all 1s ease;
+}
+.splash-off {
+    display: none;
+}

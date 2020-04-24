@@ -70,7 +70,7 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
     this.selectedTeam = this.teams[this.teamIdx];
   }
   selectGame(game) {
-    if (this.user.userName == 'Rick')
+    if (1 || this.user.userName == 'Rick')
       console.log(game);
     if (game.status == 'Open') {
       this.playSound('error.mp3');
@@ -114,10 +114,13 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
           }
           var games = items[1].split("<a>");
           this.multiPlayerObj.usersOnline = items[2];
+          var accountSitTotal = 0;
           for (var x = 0; x < games.length; x++) {
             var game = games[x];
             if (game.length > 10) {
               var gameOb = gameFromLine(game, this.user.userName);
+              if (gameOb.accountSitFlg)
+                accountSitTotal++;
               if (gameOb.status == 'Picking Nations') {
                 console.log('start this!', gameOb);
                 gameToStart = gameOb;
@@ -126,6 +129,8 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
               //console.log(gameOb);
             }
           } // <-- for
+          if(accountSitTotal>0)
+            this.showAlertPopup('You are able to account sit in a game.');
           this.fullGameList = fullGameList;
           if (gameToStart && gameToStart.gameId > 0) {
             setTimeout(() => {
@@ -212,6 +217,10 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
       return 'btn btn-secondary roundButton';
     if (game.turn == this.user.userName)
       return 'btn btn-warning roundButton glowYellow';
+
+    if (game.accountSitFlg)
+      return 'btn btn-primary roundButton glowBlue';
+
     if (game.status == 'Playing')
       return 'btn btn-primary roundButton';
     if (game.mmFlg)
@@ -275,8 +284,8 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
   createWebServiceCall(action: string, gameData: any, turn: number) {
     var url = this.getHostname() + "/web_join_game2.php";
     var nation = this.selectedNation;
-    if(!this.selectedGame) {
-      this.showAlertPopup('no game!',1);
+    if (!this.selectedGame) {
+      this.showAlertPopup('no game!', 1);
       console.log('no game!!!');
       return;
     }
@@ -326,7 +335,6 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
       });
   }
   removePlayerFromGame(game: any, player: any) {
-    console.log(player);
     this.buttonAction = 'removePlayer';
     this.selectedGame = game;
     this.playerId = player.id;

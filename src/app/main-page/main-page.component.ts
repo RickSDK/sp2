@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 declare var getHostname: any;
 declare var userObjFromUser: any;
 declare var parseServerDataIntoUserObj: any;
-declare var spVersion: any;
+declare var changeClass: any;
 
 @Component({
   selector: 'app-main-page',
@@ -30,11 +30,25 @@ export class MainPageComponent extends BaseComponent implements OnInit {
     this.flexSprite(100);
     this.singleGameId = localStorage.currentGameId;
     localStorage.loadGameId = 0; // clear out any multiplayer game
+    /*
+    changeClass('splash1', 'splash-screen');
+    changeClass('splash2', 'splash-screen');
+    setTimeout(() => {
+      this.disolveSplash('splash-fade');
+    }, 2000);
+    setTimeout(() => {
+      this.disolveSplash('splash-off');
+    }, 3000);
+    */
     if (this.user.userId > 0)
       this.getUserData();
     else {
       this.displaySPPopup('initPopup');
     }
+  }
+  disolveSplash(className:string) {
+    changeClass('splash1', className);
+    changeClass('splash2', className);
   }
   getUserData() {
     const url = getHostname() + "/spApiText.php";

@@ -246,7 +246,9 @@
                                             <span *ngIf="game.joinGameFlg">Join</span>
                                             <span *ngIf="!game.joinGameFlg">Enter</span>
                                         </button>
+                                        
                                         <div *ngIf="game.status=='Complete'">Game Over!</div>
+                                        <div *ngIf="game.accountSitFlg">Account Sit!</div>
                                         <div *ngIf="game.status == 'Open'">
                                             <button *ngIf="game.host == user.userName"
                                                 (click)="openGameButtonPressed(game, 'start')" type="button"

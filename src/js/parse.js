@@ -343,6 +343,8 @@ function gameFromLine(line, userName) {
 	obj.hardFog = (c[x++] == 'Y');
 	obj.turboFlg = (c[x++] == 'Y');
 	obj.userId = (c[x++] == 'Y');
+	obj.myTeam = numberVal(c[x++]);
+	obj.turnTeam = numberVal(c[x++]);
 
 
 	obj.mmFlg = (obj.ladder_id && obj.ladder_id > 0);
@@ -352,6 +354,7 @@ function gameFromLine(line, userName) {
 	obj.newActionFlg = (obj.seconds < 0);
 
 	obj.turnObj = getUserObjFromLine(userInfo);
+	obj.accountSitFlg = (obj.myTeam>0 && obj.myTeam == obj.turnTeam && obj.secondsElapsed > 43200 && userName != obj.turn)
 	obj.turnObj.userId = numberVal(obj.turnObj.id);
 	obj.turnObj.timeLeft = obj.timeLeft;
 	//	console.log(obj.turnObj);
@@ -389,6 +392,29 @@ function entrantFromLine(line) {
 	obj.city = c[x++];
 	return obj;
 }
+function mailFromLine(line) {
+	var obj = new Object();
+	var c = line.split("|");
+	var x = 0;
+	if (c.length > 5) {
+	  obj.row_id = c[x++];
+	  obj.title = c[x++];
+	  obj.body = c[x++];
+	  obj.sender = c[x++];
+	  obj.senderName = c[x++];
+	  obj.read_flg = (c[x++] == 'Y');
+	  obj.urgent_flg = (c[x++] == 'Y');
+	  obj.num_replies = c[x++];
+	  obj.msgDate = c[x++];
+	  obj.parent_mail_id = c[x++];
+	  obj.recipient = c[x++];
+	  obj.recipientName = c[x++];
+  
+	  var d = new Date(obj.msgDate);
+	  obj.formattedDate = convertDateToString(d);
+	}
+	return obj;
+  }
 function leaderFromLine(line) {
 	var c = line.split("|");
 	var obj = new Object;
