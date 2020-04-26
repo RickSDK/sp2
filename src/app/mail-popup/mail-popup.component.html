@@ -52,6 +52,7 @@
                                 <button *ngIf="drilldownFlg" (click)="deletePost(message)" type="button" 
                                     class="btn btn-danger roundButton"><i class="fa fa-trash"></i>
                                 </button>
+                                <img *ngIf="!message.read_flg" src="assets/graphics/images/new_icon.gif">
                                 <b><i *ngIf="message.urgent_flg" class="fa fa-exclamation-triangle"></i>
                                     {{message.title}} <span
                                         *ngIf="message.num_replies>0">({{message.num_replies}})</span></b></div>

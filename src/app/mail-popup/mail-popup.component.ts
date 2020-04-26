@@ -130,7 +130,7 @@ export class MailPopupComponent extends BaseComponent implements OnInit {
         var displayMessages = [];
         items.forEach(function (line) {
           var message = mailFromLine(line);
-
+          console.log(message);
           if (message && message.row_id > 0)
             displayMessages.push(message);
         });

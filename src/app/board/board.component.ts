@@ -1698,17 +1698,19 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			playVoiceClip('surrendered' + cp + '.mp3');
 		}, 3000);
 
-		this.currentPlayer.alive = false;
 		removeAlliancesForNation(this.currentPlayer.nation, this.gameObj);
 		if (this.gameObj.multiPlayerFlg) {
+			this.currentPlayer.cpu = true;
 			var sp = this.superpowersData.superpowers[this.currentPlayer.nation];
 			showAlertPopup(sp + ' has surrendered! The computer will play out the turns from here.');
 			this.placeUnitsAndEndTurn();
 		} else {
-			this.gameObj.winningTeamFlg = false;
-			addTestScore(this.gameObj);
-			clearCurrentGameId();
 			this.gameObj.gameOver = true;
+			this.currentPlayer.alive = false;
+			this.gameObj.winningTeamFlg = false;
+			addTestScore(this.gameObj, this.currentPlayer);
+			this.currentPlayer.cpu = true;
+			clearCurrentGameId();
 			if (this.gameObj.fogOfWar == 'Y') {
 				this.gameObj.fogOfWar = 'N';
 				refreshAllTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);

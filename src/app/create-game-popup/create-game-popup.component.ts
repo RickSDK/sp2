@@ -22,7 +22,7 @@ export class CreateGamePopupComponent extends BaseComponent implements OnInit {
   public gameType: any;
   public selectedNation = 1;
   public gameTypeIdx = 0;
-  public numberPlayers = 4;
+  public numberPlayers = 8;
   public autoAssignFlg = true;
   public fogIdx = 0;
   public game = { name: 'test' };

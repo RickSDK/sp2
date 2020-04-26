@@ -3,12 +3,9 @@ import { Router } from '@angular/router';
 import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
-//declare var getHostname: any;
 declare var userObjFromUser: any;
-declare var valueOfInput: any;
 declare var showAlertPopup: any;
-declare var verifyServerResponse: any;
-declare var executeTextApi: any;
+declare var getIPInfo: any;
 declare var parseServerDataIntoUserObj: any;
 
 @Component({
@@ -74,6 +71,8 @@ export class LoginPopupComponent extends BaseComponent implements OnInit {
   successCallback(data: any) {
     if (this.verifyServerResponse(data)) {
       var userObj = parseServerDataIntoUserObj(data);
+      localStorage.userName = userObj.userName;
+      getIPInfo(localStorage.userName, localStorage.password);
       localStorage.rank = userObj.rank;
       showAlertPopup('Success');
       this.messageEvent.emit('done');
@@ -122,6 +121,7 @@ export class LoginPopupComponent extends BaseComponent implements OnInit {
       .then((data) => {
         if (this.verifyServerResponse(data)) {
           this.accountCreatedResponse();
+          getIPInfo(localStorage.userName, localStorage.password);
         }
       })
       .catch(error => {
@@ -132,9 +132,9 @@ export class LoginPopupComponent extends BaseComponent implements OnInit {
   accountCreatedResponse() {
     var ip = 'ip';
     var data = 'success|'+localStorage.userName+'|2|N|0|0|0||0|12|0|0|0|0|'+ip+'|soldier.JPG|0|0|0|0|0|0|'+this.user.avatar+'|';
-    console.log(data)
     var userObj = parseServerDataIntoUserObj(data);
     console.log(userObj)
+    getIPInfo(userObj.userName, localStorage.password);
     showAlertPopup('Success');
     this.messageEvent.emit('done');
     $("#loginPopup").modal('hide');

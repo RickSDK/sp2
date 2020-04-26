@@ -778,8 +778,9 @@ function getAmphibiousAttackObj(player, homeBase, enemyWaterTerr, enemyLandTerr,
     }
     return obj;
 }
-function addTestScore(gameObj) {
-    var humanPlayer = getHumanPlayer(gameObj);
+function addTestScore(gameObj, humanPlayer) {
+    if(!humanPlayer)
+        humanPlayer = getHumanPlayer(gameObj);
     var winLoss = (gameObj.winningTeamFlg) ? 'Win' : 'Loss';
     var gameScores = getGameScores();
     gameScores.push({ id: gameScores.length + 1, created: gameObj.created, type: gameObj.type, winLoss: winLoss, round: gameObj.round, nation: humanPlayer.nation });

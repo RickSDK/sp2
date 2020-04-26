@@ -17,10 +17,12 @@
                 <i class="fa fa-user"></i> {{user.userName}}
             </button>
             <button (click)="mailPopup.show()" type="button" class="btn btn-secondary roundButton">
-                <i class="fa fa-envelope"></i> Mail
+                <i class="fa fa-envelope"></i> Mail <span
+                    *ngIf="multiPlayerObj && multiPlayerObj.mailCount>0">({{multiPlayerObj.mailCount}})</span>
             </button>
             <button (click)="forumPopup.show()" type="button" class="btn btn-secondary roundButton">
-                <i class="fa fa-commenting"></i> Forum  <span *ngIf="multiPlayerObj && multiPlayerObj.forumPosts>0">({{multiPlayerObj.forumPosts}})</span>
+                <i class="fa fa-commenting"></i> Forum <span
+                    *ngIf="multiPlayerObj && multiPlayerObj.forumPosts>0">({{multiPlayerObj.forumPosts}})</span>
             </button>
             <a routerLink="/info"><button type="button" class="btn btn-secondary roundButton">
                     <i class="fa fa-info-circle"></i> Info
@@ -246,7 +248,7 @@
                                             <span *ngIf="game.joinGameFlg">Join</span>
                                             <span *ngIf="!game.joinGameFlg">Enter</span>
                                         </button>
-                                        
+
                                         <div *ngIf="game.status=='Complete'">Game Over!</div>
                                         <div *ngIf="game.accountSitFlg">Account Sit!</div>
                                         <div *ngIf="game.status == 'Open'">
@@ -267,10 +269,11 @@
                                                 class="btn btn-warning roundButton"><i class="fa fa-sign-out"></i>
                                                 Leave</button>
                                         </div>
-                                        <button *ngIf="game.status == 'Playing' && user.userName == 'Rick' && game.round==1"
-                                                (click)="openGameButtonPressed(game, 'cancelGame')" type="button"
-                                                class="btn btn-danger roundButton">
-                                                <i class="fa fa-trash"></i> Delete</button>
+                                        <button
+                                            *ngIf="game.status == 'Playing' && user.userName == 'Rick' && game.round==1"
+                                            (click)="openGameButtonPressed(game, 'cancelGame')" type="button"
+                                            class="btn btn-danger roundButton">
+                                            <i class="fa fa-trash"></i> Delete</button>
 
                                     </td>
                                     <td *ngIf="game.status!='Complete'">
@@ -378,8 +381,8 @@
                                                 </td>
                                             </tr>
                                         </table>
-                                        <div class="spTitle" *ngIf="game.status=='Playing'"><i class="fa fa-star"></i>: Top-2 Player, <i
-                                                class="fa fa-check"></i>: Turn</div>
+                                        <div class="spTitle" *ngIf="game.status=='Playing'"><i class="fa fa-star"></i>:
+                                            Top-2 Player, <i class="fa fa-check"></i>: Turn</div>
                                     </div>
                                 </div>
                             </div>
@@ -394,6 +397,18 @@
                 Newest User: <span style="color: yellow;">{{multiPlayerObj.lastestUser}}</span>&nbsp;&nbsp;&nbsp;
                 Users Online: <span style="color: white;">{{multiPlayerObj.usersOnline}}</span>
             </div>
+
+            <div style="background-color: gray;">
+                <!-- Google AdSense -->
+                <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2626924352662007"
+                    data-ad-slot="3410873039" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+
+
         </div>
     </div>
 </div>

@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { Router } from '@angular/router';
 import { UserPopupComponent } from '../user-popup/user-popup.component';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 declare var userObjFromUser: any;
 declare var getMultObjFromLine: any;
@@ -9,6 +10,7 @@ declare var gameFromLine: any;
 declare var createNewGameFromInitObj: any;
 declare var objPiecesFrom: any;
 declare var spVersion: any;
+declare var googleAds: any;
 
 @Component({
   selector: 'app-multiplayer',
@@ -56,6 +58,7 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
   constructor(private router: Router) { super(); }
 
   ngOnInit(): void {
+    googleAds();
     this.user = userObjFromUser();
     this.adminFlg = (this.user.userId == 10);
     this.loadGames();
@@ -102,6 +105,8 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
           this.multiPlayerObj = getMultObjFromLine(basics);
           var accountSitGameName;
           //console.log(this.multiPlayerObj);
+          if (this.multiPlayerObj.urgentCount > 0)
+            this.showAlertPopup('You have an urgent piece of mail!', 1);
 
           if (this.multiPlayerObj.oldGame.length > 0) {
             if (this.multiPlayerObj.gameResult == 'Win')
@@ -116,6 +121,7 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
           var games = items[1].split("<a>");
           this.multiPlayerObj.usersOnline = items[2];
           var accountSitTotal = 0;
+          var slowResponseFlg = false
           for (var x = 0; x < games.length; x++) {
             var game = games[x];
             if (game.length > 10) {
@@ -125,7 +131,7 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
                 accountSitGameName = gameOb.name;
               }
               if (gameOb.slowResponseFlg)
-                this.showAlertPopup('You have run ut of time in one of your games. Please take it asap.');
+                slowResponseFlg = true;
               if (gameOb.status == 'Picking Nations') {
                 console.log('start this!', gameOb);
                 gameToStart = gameOb;
@@ -134,8 +140,12 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
               //console.log(gameOb);
             }
           } // <-- for
+
           if (accountSitTotal > 0)
             this.showAlertPopup('You are able to account sit in game: ' + accountSitGameName);
+          else if (slowResponseFlg)
+            this.showAlertPopup('You have run out of time in one of your games. Please take it asap.');
+
           this.fullGameList = fullGameList;
           if (gameToStart && gameToStart.gameId > 0) {
             setTimeout(() => {
