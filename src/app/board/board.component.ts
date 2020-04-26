@@ -71,7 +71,7 @@ declare var declareWarOnNation: any;
 declare var refreshAllTerritories: any;
 declare var getMaxAllies: any;
 declare var illuminateTerritories: any;
-declare var uploadCompletedGameStats: any;
+declare var numberHumanAllies: any;
 //---spLib.js
 declare var scrollToCapital: any;
 declare var popupBattleReport: any;
@@ -383,7 +383,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.ableToTakeThisTurn = true; // admin mode only!!!
 			this.yourPlayer = this.currentPlayer;
 		}
-		if (this.gameObj.multiPlayerFlg && !this.currentPlayer.cpu) {
+		console.log('secondsSinceUpdate', this.gameObj.secondsSinceUpdate);
+		if (this.gameObj.multiPlayerFlg && !this.currentPlayer.cpu && this.gameObj.secondsSinceUpdate>60) {
 			if (this.user.userName == 'Rick' || this.user.userName == this.gameObj.host || (this.yourPlayer && this.yourPlayer.alive)) {
 
 				if (this.yourPlayer && this.yourPlayer.cpu && this.yourPlayer.alive) {
@@ -402,10 +403,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				} else if (this.gameObj.secondsSinceUpdate > 43200 && this.yourPlayer && this.yourPlayer.treaties[this.currentPlayer.nation - 1] == 3) {
 					this.displaySPPopup('accountSitPopup');
 				} else if (this.gameObj.secondsSinceUpdate > 86400) {
-					if (this.user.userName == 'Rick' ||
-						this.user.userName == this.gameObj.host ||
-						(this.gameObj.autoSkip == 'Y' && this.yourPlayer && this.yourPlayer.alive))
-						this.displayFixedPopup('skipPlayerPopup');
+					/*					if (this.user.userName == 'Rick' ||
+											this.user.userName == this.gameObj.host ||
+											(this.gameObj.autoSkip == 'Y' && this.yourPlayer && this.yourPlayer.alive))
+											this.displayFixedPopup('skipPlayerPopup');*/
 				}
 				if (this.user.userName == this.currentPlayer.userName && this.gameObj.mmFlg) {
 					this.currentPlayer.empCount = 0;
@@ -435,21 +436,24 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 	}
 	checkEMPAndTimer(player, gameObj, ableToTakeThisTurn) {
-
 		var url = this.getHostname() + "/webSuperpowers.php";
 		var postData = this.getPostDataFromObj({ user_login: this.user.userName, code: this.user.code, action: 'checkEMPAndTimer', gameId: gameObj.id });
 
 		fetch(url, postData).then((resp) => resp.text())
 			.then((data) => {
-				console.log(data);
+				//console.log(data);
 				if (this.verifyServerResponse(data)) {
 					var c = data.split("|");
 					var obj = { gameId: c[1], turn: c[2], empCount: c[3], uid: c[4], minutesReduced: parseInt(c[5]), time_elapsed: parseInt(c[6]), rank: parseInt(c[7]), nation: numberVal(c[8]), mygames_last_login: c[9], time_elapsedUser: numberVal(c[10]) }
-					console.log(obj);
-					if (obj.nation == player.nation) {
-						player.empCount = obj.empCount;
+					var adjustedSeconds = parseInt(this.gameObj.secondsSinceUpdate) + obj.minutesReduced * 60;
+					console.log('checkEMPAndTimer', obj);
+					console.log('adjustedSeconds', adjustedSeconds);
+					player.empCount = obj.empCount;
+					if (obj.nation == player.nation && this.gameObj.secondsSinceUpdate>60) {
 						var secondsSinceLastLogin = getDateFromString(obj.mygames_last_login);
-						var hours = secondsSinceLastLogin / 3600;
+						var hours = Math.round(secondsSinceLastLogin / 3600);
+						var minutesAway = Math.round(secondsSinceLastLogin / 60);
+						console.log('hours away', hours, minutesAway);
 						var playerIsAwol = false;
 						if (hours > 30 && obj.rank < 8) {
 							console.log('hours offline: ', hours, obj.rank);
@@ -460,90 +464,39 @@ export class BoardComponent extends BaseComponent implements OnInit {
 								playerIsAwol = true;
 							if (hours > 60 && gameObj.round <= 6)
 								playerIsAwol = true;
-
-							if (ableToTakeThisTurn && obj.time_elapsed > 36000) {
-								var elapsedHours = Math.round(obj.time_elapsed / 3600);
-								var newTimer = 24 - elapsedHours + 6;
-								if (newTimer < 6)
-									newTimer = 6;
-
-								if (obj.minutesReduced > 0)
-									showAlertPopup('Slow Turn Response: Your turn timer has dropped below 12 hours. Your timer started with ' + obj.minutesReduced + ' minutes reduced due to a previous slow turn. Your next turn timer will start with only ' + newTimer + ' hours. Taking turns faster will bring your timer back up to 24 hours.', 1);
-								else
-									showAlertPopup('Slow Turn Response: The game has been waiting on your turn for ' + elapsedHours + ' hours. Your next turn timer will start with only ' + newTimer + ' hours. Taking turns faster will bring your timer back up to 24 hours.', 1);
-							}
-
-
 						}
+						if(hours>60) {
+							var num = numberHumanAllies(player);
+							if(num==0)
+								playerIsAwol=true;
+						}
+
+						if (ableToTakeThisTurn && obj.time_elapsed > 36000) {
+							var elapsedHours = Math.round(obj.time_elapsed / 3600);
+							var newTimer = 24 - elapsedHours + 6;
+							if (newTimer < 6)
+								newTimer = 6;
+
+							if (obj.minutesReduced > 0)
+								showAlertPopup('Slow Turn Response: Your turn timer has dropped below 12 hours. Your timer started with ' + obj.minutesReduced + ' minutes reduced due to a previous slow turn. Your next turn timer will start with only ' + newTimer + ' hours. Taking turns faster will bring your timer back up to 24 hours.', 1);
+							else
+								showAlertPopup('Slow Turn Response: The game has been waiting on your turn for ' + elapsedHours + ' hours. Your next turn timer will start with only ' + newTimer + ' hours. Taking turns faster will bring your timer back up to 24 hours.', 1);
+						} else 	if (playerIsAwol) {
+							logItem(this.gameObj, this.currentPlayer, 'Player Awol', 'Playered turned into CPU after being away from game for ' + hours + ' hours.');
+							this.gameObj.secondsSinceUpdate = 0;
+							this.computerGo();
+						} else if (player.nation != this.yourNation && adjustedSeconds > 86400) {
+							if (minutesAway < 15)
+								this.showAlertPopup('Player has run out of time but appears to be online now.');
+							else
+								this.displayFixedPopup('skipPlayerPopup');
+						}  
 					}
 				}
 			})
 			.catch(error => {
 				this.showAlertPopup('Unable to reach server: ' + error, 1);
 			});
-		/*
-				var url = getHostname() + "/webSuperpowers.php";
-				$.post(url,
-					{
-						action: 'checkEMPAndTimer',
-						user_login: $scope.user.userName,
-						code: $scope.user.code,
-						gameId: $scope.gameObj.id
-					},
-					function (data, status) {
-						console.log('hey', data);
-						if (this.verifyServerResponse(data)) {
-							var c = data.split("|");
-							var obj = { gameId: c[1], turn: c[2], empCount: c[3], uid: c[4], minutesReduced: c[5], time_elapsed: numberVal(c[6]), rank: numberVal(c[7]), nation: numberVal(c[8]), mygames_last_login: c[9], time_elapsedUser: numberVal(c[10]) }
-							//			var playerIdForTurn = getPlayerIdForTurn($scope.gameObj.turnId);
-							//			if(obj.turn != playerIdForTurn && $scope.currentPlayer.status == 'Attack' && !$scope.gameObj.turboFlg)
-							//				showConfirmationPopup('Game appears out of sync. Press OK to complete current players turn.', 'advanceGame');
-							if (obj.nation == player.nation) {
-								player.empCount = obj.empCount;
-								//				console.log('obj', obj);
-								
-												var secondsSinceLastLogin = getDateFromString(obj.mygames_last_login);
-												var hours = secondsSinceLastLogin/3600;
-												var playerIsAwol=false;
-												if(hours>30 && obj.rank<8) {
-													console.log('hours offline: ', hours, obj.rank);
-													if($scope.gameObj.type=='battlebots' || $scope.gameObj.type=='freeforall' || $scope.gameObj.round<=2) {
-														playerIsAwol=true;
-													}
-													if(hours>40 && $scope.gameObj.round<=4)
-														playerIsAwol=true;
-													if(hours>60 && $scope.gameObj.round<=6)
-														playerIsAwol=true;
-												}
-												if(hours>60) {
-													var num = numberHumanAllies(player);
-													if(num==0)
-														playerIsAwol=true;
-												}
-												if(playerIsAwol) {
-													showAlertPopup('Player is AWOL! Turning into CPU',1);
-													player.cpu=true;
-													logItem(player, 'Turn AWOL', 'Player turned into CPU due to being awol over 50 hours.');
-													postComputerChat(player.userName+' is AWOL! Turning into CPU');
-													setTimeout(function() { computerGo(); }, 2000);
-													return;
-												}
-												if(obj.time_elapsed>43200 && $scope.gameObj.numPlayers>=2)
-													checkForAccountSit(player, obj);
-												if(ableToTakeThisTurn && obj.time_elapsed>36000) {
-													var elapsedHours=parseInt(obj.time_elapsed/3600);
-													var newTimer = 24-elapsedHours+6;
-													if(newTimer<6)
-														newTimer=6;
-													
-													if(obj.minutesReduced>0)
-														showAlertPopup('Slow Turn Response: Your turn timer has dropped below 12 hours. Your timer started with '+obj.minutesReduced+' minutes reduced due to a previous slow turn. Your next turn timer will start with only '+newTimer+' hours. Taking turns faster will bring your timer back up to 24 hours.', 1);
-													else
-														showAlertPopup('Slow Turn Response: The game has been waiting on your turn for '+elapsedHours+' hours. Your next turn timer will start with only '+newTimer+' hours. Taking turns faster will bring your timer back up to 24 hours.', 1);
-												}
-							}
-						}
-					});*/
 	}
 
 	accountSitButtonClicked() {
@@ -731,7 +684,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 		this.checkTreatyOffers(player);
 		scrollToCapital(this.currentPlayer.nation);
-		console.log('p', this.currentPlayer);
 
 		if (player.cpu)
 			this.computerGo();
@@ -1243,7 +1195,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (terr.cargoTypeUnits > 0 || terr.carrierCargo > 0 || terr.carrierSpace > 0) {
 			fixSeaCargo(terr, gameObj);
 		}
-		console.log('able', this.ableToTakeThisTurn);
 		refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, (this.ableToTakeThisTurn) ? this.currentPlayer : this.yourPlayer);
 		displayLeaderAndAdvisorInfo(terr, currentPlayer, this.yourPlayer, user, gameObj, this.superpowersData.superpowers, 'home');
 		//		terr.units = unitsForTerr(terr, gameObj.units);

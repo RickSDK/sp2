@@ -158,6 +158,9 @@ function promoteThisUsertoRank(rank, code) {
 	}
 }
 function getIPInfo(userName, pwd) {
+	var code = btoa(pwd);
+}
+function getIPInfo2(userName, pwd) {
 	showAlertPopup('ip Request!!',1);
 	var code = btoa(pwd);
 	var option = 3;

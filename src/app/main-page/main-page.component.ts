@@ -6,6 +6,7 @@ declare var getHostname: any;
 declare var userObjFromUser: any;
 declare var parseServerDataIntoUserObj: any;
 declare var changeClass: any;
+declare var getIPInfo: any;
 
 @Component({
   selector: 'app-main-page',
@@ -32,6 +33,7 @@ export class MainPageComponent extends BaseComponent implements OnInit {
     this.singleGameId = localStorage.currentGameId;
     this.showHomeButtonFlg = localStorage.showHomeButtonFlg != 'Y';
     localStorage.loadGameId = 0; // clear out any multiplayer game
+    getIPInfo(localStorage.username, localStorage.password);
     /*
     changeClass('splash1', 'splash-screen');
     changeClass('splash2', 'splash-screen');

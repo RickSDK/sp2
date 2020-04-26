@@ -1919,6 +1919,19 @@ function getMilitaryReportObj(gameObj, currentPlayer, line) {
 	else
 		customMilitaryReport2(obj, line, gameObj.round);
 }
+function numberHumanAllies(player) {
+	var num=0;
+	var nation=0;
+	player.treaties.forEach(function(t) {
+		nation++;
+		if(t==3 && nation!=player.nation) {
+			var p = playerOfNation(nation);
+			if(!p.cpu)
+				num++;
+		}
+	});
+	return num;
+}
 function customMilitaryReport1(obj, gameObj, line1) {
 	var voiceOverId = obj.place;
 	if (obj.place == 1)
