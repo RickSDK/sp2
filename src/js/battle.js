@@ -80,6 +80,7 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
     var attSBSHps = 0;
     var attActiveMedics = 0;
     var nukeFlg = false;
+    var empFlg = false;
     var numAttDrones = 0;
     attackUnits.forEach(unit => {
         if (unit.piece == 14 || unit.piece == 52)
@@ -90,6 +91,8 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
             attActiveMedics++;
         if (unit.piece == 43)
             numAttDrones++;
+        if (unit.piece == 52)
+            empFlg = true;
         if (unit.piece == 12)
             attSBSHps += unit.bcHp - unit.damage - 1;
         if (unit.cargoOf > 0)
@@ -103,6 +106,7 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
     });
     displayBattle.numAttDrones = numAttDrones;
     displayBattle.nukeFlg = nukeFlg;
+    displayBattle.empFlg = empFlg;
     if (nukeFlg && displayBattle.defActiveMedics > 0)
         displayBattle.defActiveMedics = 0;
     displayBattle.attActiveMedics = attActiveMedics;
@@ -392,8 +396,11 @@ function battleMessageForNation(nation) {
     return messages[nation];
 }
 function landTheNukeBattle(player, targetTerr, attackUnits, gameObj, superpowersData, launchTerritories) {
-    playSound('tornado.mp3');
     var battle = initializeBattle(player, targetTerr, attackUnits, gameObj);
+    if (battle.empFlg)
+        playSound('shock.mp3');
+    else
+        playSound('tornado.mp3');
     startBattle(targetTerr, player, gameObj, superpowersData, battle);
     targetTerr.nuked = true;
     battle.attHits = battle.militaryObj.expectedHits;
@@ -948,6 +955,8 @@ function removeAllSeals(gameObj) {
 }
 function nukeBattleCompleted(displayBattle, selectedTerritory, currentPlayer, moveTerr, gameObj, superpowersData, cruiseFlg) {
     var title = (cruiseFlg) ? 'Cruise Attack!' : 'Nuke Attack!';
+    if (displayBattle.empFlg)
+        title = 'EMP Blast!';
     var weaponType = (cruiseFlg) ? ' missiled! ' : ' nuked! ';
     displayBattle.round = 1;
     wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, title, selectedTerritory, moveTerr, 1500, weaponType);
@@ -972,7 +981,7 @@ function battleCompleted(displayBattle, selectedTerritory, currentPlayer, moveTe
             playVoiceSound(81 + Math.floor((Math.random() * 2)));
     }
     wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, 'Battle', selectedTerritory, moveTerr);
-    if(!currentPlayer.cpu && currentPlayer.nation==6 && !displayBattle.militaryObj.wonFlg)
+    if (!currentPlayer.cpu && currentPlayer.nation == 6 && !displayBattle.militaryObj.wonFlg)
         removeAnyConvertedUnits(displayBattle, selectedTerritory.id);
     if (!currentPlayer.cpuFlg && displayBattle.militaryObj.wonFlg && displayBattle.allowGeneralRetreat) {
         var generalRetreatObj = { gameId: gameObj.id, terrId1: numberVal(localStorage.generalTerr1), terrId2: selectedTerritory.id };
@@ -983,7 +992,7 @@ function battleCompleted(displayBattle, selectedTerritory, currentPlayer, moveTe
 }
 function removeAnyConvertedUnits(displayBattle, terrId) {
     displayBattle.attackUnits.forEach(unit => {
-        if(unit.owner==6 && unit.terr == terrId) {
+        if (unit.owner == 6 && unit.terr == terrId) {
             console.log('kill unit!');
             unit.dead = true;
         }
@@ -1068,13 +1077,13 @@ function fixSeaCargo(terr, gameObj) {
         });
     }
     terr.units.forEach(function (cargoUnit) {
-        if(cargoUnit.cargoOf && cargoUnit.cargoOf>0) {
+        if (cargoUnit.cargoOf && cargoUnit.cargoOf > 0) {
             var gameUnit = findUnitOfId(cargoUnit.cargoOf, gameObj);
-            if(!gameUnit || gameUnit.terr != terr.id) {
+            if (!gameUnit || gameUnit.terr != terr.id) {
                 findTransportForThisCargo(cargoUnit, terr, gameObj);
             }
         }
-    }); 
+    });
 
 }
 
@@ -1201,10 +1210,10 @@ function hostileActObj(type, terr, gameObj, player) {
         allowFlg = false;
     }
     if (hostileType) {
-         if (terr.owner == 0 && terr.capital && terr.nation < 99 && gameObj.round < gameObj.attack) {
-            if(player.cap && player.cap > 1) {
+        if (terr.owner == 0 && terr.capital && terr.nation < 99 && gameObj.round < gameObj.attack) {
+            if (player.cap && player.cap > 1) {
                 message = 'You can only take over one capital before round 6.';
-                allowFlg = false;    
+                allowFlg = false;
             }
         }
         var cost = costToAttack(terr, player);

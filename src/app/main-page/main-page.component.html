@@ -52,6 +52,9 @@
 								class="btn btn-primary roundButton main-page-item"><i class="fa fa-info-circle"></i>
 								Info & Rules </button></a>
 					</div>
+					<button *ngIf="showHomeButtonFlg" (click)="homeScreenPopup.show()" type="button" class="btn btn-primary roundButton main-page-item"><i
+							class="fa fa-home"></i> Add to Home Screen
+					</button>
 				</div>
 
 
@@ -122,6 +125,7 @@
 <app-user-popup #userPopup [user]="user" (messageEvent)="userUpdated($event)"></app-user-popup>
 <app-scoreboard-popup #scoreboardPopup></app-scoreboard-popup>
 <app-start-game-popup #startGamePopup></app-start-game-popup>
+<app-home-screen-popup #homeScreenPopup></app-home-screen-popup>
 
 
 

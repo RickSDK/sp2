@@ -7,10 +7,92 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="padding: 0;">
 
-                Not coded yet
+                <table class="spTable">
+                    <tr>
+                        <th class="centerText">Category</th>
+                        <th class="centerText">Topics</th>
+                        <th class="centerText">Posts</th>
+                        <th class="centerText">Last Post</th>
+                    </tr>
+                    <tr *ngFor="let topic of forumTopics" (click)="selectTopic(topic)"
+                        [ngStyle]="ngStyleForumCategory(topic)" style="cursor: pointer;">
+                        <td class="forumName">
+                            <img *ngIf="topic.newFlg == 'Y'" src="assets/graphics/images/new_icon.gif">
+                            &nbsp; <i class="fa {{topic.icon}}"></i> {{topic.name}}
+                        </td>
+                        <td>{{topic.topic_count}}</td>
+                        <td>{{topic.post_count}}</td>
+                        <td>{{topic.user}}</td>
+                    </tr>
+                </table>
 
+                <div *ngIf="selectedTopic" class="darkBlueBg" style="text-align: center; height: 60px; padding: 5px; line-height: 50px; vertical-align: middle; background-color: #555;">
+                    
+                    <button *ngIf="forumMessages && forumMessages.length>0" (click)="selectTopic(selectedTopic)" type="button" style="float: left;"
+                        class="btn btn-primary roundButton main-page-item"><i class="fa fa-arrow-left"></i>
+                    </button>
+                    <i class="fa {{selectedTopic.icon}}"></i> &nbsp;{{selectedTopic.name}}
+                    <button *ngIf="!forumMessages || forumMessages.length==0" (click)="startNewPost()" type="button" style="float: right;"
+                        class="btn btn-primary roundButton main-page-item"><i class="fa fa-plus"></i>
+                    </button>
+               </div>
+
+                <table *ngIf="forumPosts && forumPosts.length>0" class="spTable">
+                    <tr>
+                        <th class="centerText">Post</th>
+                        <th class="centerText">Replies</th>
+                    </tr>
+                    <tr *ngFor="let post of forumPosts" (click)="selectPost(post)" style="cursor: pointer;">
+                        <td style="text-align: left; padding: 3px;">
+                            <div style="font-size: 14px; font-weight: 500;">
+                                <img *ngIf="post.newFlg == 'Y'" src="assets/graphics/images/new_icon.gif">
+                                {{post.name}} 
+                            </div>
+                            <div style="font-size: 12px; color: gray;"> {{post.body}}</div>
+                            <div style="font-size: 12px; font-weight: 500;">
+                                <span style="color: blue; float: left;">by: {{post.user}}</span>
+                                <span style="color: green; float: right;">{{post.dateStamp}}</span>
+                            </div>
+                       </td>
+                        <td>{{post.post_count}}</td>
+                    </tr>
+                </table>
+
+                <table *ngIf="forumMessages && forumMessages.length>0" class="spTable">
+                    <tr>
+                        <th class="centerText">Post</th>
+                    </tr>
+                    <tr *ngFor="let post of forumMessages">
+                        <td style="text-align: left; padding: 3px;">
+                            <div style="font-size: 14px; font-weight: 500;">
+                                <img *ngIf="post.newFlg == 'Y'" src="assets/graphics/images/new_icon.gif">
+                                {{post.name}}
+                            </div>
+                            <div style="font-size: 12px; color: gray;"> {{post.body}}</div>
+                            <div style="font-size: 12px; font-weight: 500;">
+                                <span style="color: blue; float: left;">by: {{post.user}}</span>
+                                <span style="color: green; float: right;">{{post.dateStamp}}</span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <table *ngIf="showFormFlg" style="width: 100%; background-color: #ccc;">
+                    <tr *ngIf="newPostFlg">
+                        <td colspan="2"><input type="text" id="messageTitle" placeholder="Title" style="width: 100%;"></td>
+                    </tr>
+                    <tr>
+                        <td><textarea id="messageBody" style="width: 100%;"></textarea></td>
+                        <td width="120">
+                            <button (click)="postMessage()" type="button" style="width: 120px; height: 60px;"
+                                class="btn btn-primary roundButton main-page-item">
+                                <span *ngIf="newPostFlg"><i class="fa fa-arrow-up"></i> Post</span>
+                                <span *ngIf="!newPostFlg"><i class="fa fa-reply"></i> Reply</span>
+                            </button>
+                        </td>
+                    </tr>
+                </table>
 
             </div>
             <div class="modal-footer">

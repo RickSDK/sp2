@@ -8,16 +8,90 @@
                 </button>
             </div>
             <div class="modal-body">
-Not coded yet
 
-<table class="spTable" *ngIf="0">
-    <tr *ngFor="let message of displayMessages">
-        <td>{{message.title}}</td>
-        <td>{{message.body}}</td>
-        <td>{{message.senderName}}</td>
-        <td>{{message.formattedDate}}</td>
-    </tr>
-</table>
+                <div style="text-align: center; padding: 5px;">
+                    <div class="btn-group">
+                        <button (click)="changeMailbox(0)" type="button"
+                            class="btn btn-default segmentButton roundButton" [ngClass]="ngClassSegment(buttonIdx,0)"
+                            style="min-width: 60px;">
+                            <i class="fa fa-envelope" style="font-size: 26px;"></i>
+                            <div style="font-size: 10px;">Inbox</div>
+                        </button>
+                        <button (click)="changeMailbox(1)" type="button"
+                            class="btn btn-default segmentButton roundButton" [ngClass]="ngClassSegment(buttonIdx,1)"
+                            style="min-width: 60px;">
+                            <i class="fa fa-arrow-right" style="font-size: 26px;"></i>
+                            <div style="font-size: 10px;">Sent Items</div>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="darkBlueBg"
+                    style="text-align: center; height: 60px; padding: 5px; line-height: 50px; vertical-align: middle; background-color: #555;">
+
+                    <button *ngIf="drilldownFlg" (click)="backToTop()" type="button" style="float: left;"
+                        class="btn btn-primary roundButton main-page-item"><i class="fa fa-arrow-left"></i>
+                    </button>
+                    <i class="fa {{mailBoxNameIcon}}"></i> &nbsp;{{mailBoxName}}
+                    <button (click)="startNewPost()" type="button" style="float: right;"
+                        class="btn btn-primary roundButton"><i class="fa fa-plus"></i>
+                    </button>
+                </div>
+
+
+                <table class="spTable" *ngIf="!newPostFlg">
+                    <tr>
+                        <th>Message</th>
+                        <th>Sender</th>
+                        <th>Recipient</th>
+                        <th>Date</th>
+                    </tr>
+                    <tr *ngFor="let message of displayMessages" (click)="readMailItem(message)">
+                        <td style="text-align: left;">
+                            <div>
+                                <button *ngIf="drilldownFlg" (click)="deletePost(message)" type="button" 
+                                    class="btn btn-danger roundButton"><i class="fa fa-trash"></i>
+                                </button>
+                                <b><i *ngIf="message.urgent_flg" class="fa fa-exclamation-triangle"></i>
+                                    {{message.title}} <span
+                                        *ngIf="message.num_replies>0">({{message.num_replies}})</span></b></div>
+                            {{message.body}}
+                        </td>
+                        <td>{{message.senderName}}</td>
+                        <td>{{message.recipientName}}</td>
+                        <td>{{message.formattedDate}}</td>
+                    </tr>
+                </table>
+
+                <table *ngIf="showFormFlg" style="width: 100%; background-color: #ccc;">
+
+                    <tr *ngIf="newPostFlg">
+                        <td>
+                            <select id="toUserName" style="padding: 10px;">
+                                <option *ngFor="let name of userNames">{{name}}</option>
+                            </select>
+
+                        </td>
+                        <td>
+                            <b><i (click)="toggleUrgent()" class="fa {{urgentFa}}" style="font-size: 28px;"></i> :
+                                Urgent</b>
+                        </td>
+                    </tr>
+                    <tr *ngIf="newPostFlg">
+                        <td colspan="2"><input type="text" id="messageTitle" placeholder="Title" style="width: 100%;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><textarea id="messageBody" style="width: 100%;"></textarea></td>
+                        <td width="120">
+                            <button (click)="postMessage()" type="button" style="width: 120px; height: 60px;"
+                                class="btn btn-primary roundButton main-page-item">
+                                <span *ngIf="newPostFlg"><i class="fa fa-arrow-up"></i> Post</span>
+                                <span *ngIf="!newPostFlg"><i class="fa fa-reply"></i> Reply</span>
+                            </button>
+                        </td>
+                    </tr>
+                </table>
 
 
             </div>

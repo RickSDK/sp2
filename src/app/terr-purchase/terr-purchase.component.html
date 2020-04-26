@@ -115,7 +115,7 @@
                         id="{{'buy'+unit.id}}" (click)="addUniToQueue(unit.id, 1)" type="button"
                         class="btn btn-secondary roundButton"><i class="fa fa-lock" *ngIf="unit.locked"></i><span
                             ng-hide="unit.locked">buy</span></button>
-                    <button *ngIf="unit.id != 12 && unit.id != 19" [disabled]="currentPlayer.money<unit.cost*2"
+                    <button *ngIf="unit.id != 12 && unit.id != 19 && unit.id != 52" [disabled]="currentPlayer.money<unit.cost*2"
                         id="{{'buy5'+unit.id}}" (click)="addUniToQueue(unit.id, 5)" type="button"
                         class="btn btn-secondary roundButton">x5</button>
                 </td>
@@ -143,7 +143,7 @@
                 </td>
             </tr>
             <!------emp-->
-            <tr *ngIf="segmentIdx==2 && selectedTerritory.id<79 && gameObj.mmFlg" class="tableRowClickable2">
+            <tr *ngIf="segmentIdx==1 && currentPlayer.empCount>0 && currentPlayer.techCount>=18 && gameObj.mmFlg && !currentPlayer.empBoughtFlg" class="tableRowClickable2">
                 <td style="font-size: 8px;" align=center><img ng-click="unitPopup(52)"
                         src="assets/graphics/units/piece52u.png" style="max-width: 40px; max-height: 40px;"
                         title="EMP Blast"><br>EMP</td>
@@ -160,7 +160,7 @@
                     <font color=blue>-</font>
                 </td>
                 <td>
-                    <button id="buyEMP" ng-click="buyEmp()" type="button"
+                    <button (click)="addUniToQueue(52, 1)" type="button"
                         class="btn btn-secondary roundButton">buy</button>
                 </td>
             </tr>

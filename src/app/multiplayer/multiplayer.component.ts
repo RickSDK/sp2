@@ -100,7 +100,8 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
           var basics = items[0];
           var gameToStart;
           this.multiPlayerObj = getMultObjFromLine(basics);
-          console.log(this.multiPlayerObj);
+          var accountSitGameName;
+          //console.log(this.multiPlayerObj);
 
           if (this.multiPlayerObj.oldGame.length > 0) {
             if (this.multiPlayerObj.gameResult == 'Win')
@@ -119,8 +120,12 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
             var game = games[x];
             if (game.length > 10) {
               var gameOb = gameFromLine(game, this.user.userName);
-              if (gameOb.accountSitFlg)
+              if (gameOb.accountSitFlg) {
                 accountSitTotal++;
+                accountSitGameName = gameOb.name;
+              }
+              if (gameOb.slowResponseFlg)
+                this.showAlertPopup('You have run ut of time in one of your games. Please take it asap.');
               if (gameOb.status == 'Picking Nations') {
                 console.log('start this!', gameOb);
                 gameToStart = gameOb;
@@ -129,8 +134,8 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
               //console.log(gameOb);
             }
           } // <-- for
-          if(accountSitTotal>0)
-            this.showAlertPopup('You are able to account sit in a game.');
+          if (accountSitTotal > 0)
+            this.showAlertPopup('You are able to account sit in game: ' + accountSitGameName);
           this.fullGameList = fullGameList;
           if (gameToStart && gameToStart.gameId > 0) {
             setTimeout(() => {

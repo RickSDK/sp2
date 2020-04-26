@@ -117,6 +117,7 @@ function getMultObjFromLine(line) {
 	obj.confirmTextFlg = (c[25] == 'Y');
 	obj.email_flg = (c[26]== 'Y');
 	obj.textFlg = (c[27]== 'Y');
+	obj.forumPosts = numberVal(c[28]);
 	return obj;
 }
 function userFromLine(line) {
@@ -354,7 +355,8 @@ function gameFromLine(line, userName) {
 	obj.newActionFlg = (obj.seconds < 0);
 
 	obj.turnObj = getUserObjFromLine(userInfo);
-	obj.accountSitFlg = (obj.myTeam>0 && obj.myTeam == obj.turnTeam && obj.secondsElapsed > 43200 && userName != obj.turn)
+	obj.accountSitFlg = (obj.status == 'Playing' && obj.myTeam>0 && obj.myTeam == obj.turnTeam && obj.secondsElapsed > 43200 && userName != obj.turn);
+	obj.slowResponseFlg = (obj.status == 'Playing' && obj.secondsElapsed > 86400 && userName == obj.turn);
 	obj.turnObj.userId = numberVal(obj.turnObj.id);
 	obj.turnObj.timeLeft = obj.timeLeft;
 	//	console.log(obj.turnObj);

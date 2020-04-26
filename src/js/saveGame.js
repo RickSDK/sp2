@@ -276,7 +276,7 @@ function uncompressUnits(units) {
 			unit.att = baseUnit.att;
 			unit.att2 = baseUnit.att;
 			unit.cargoSpace = cargoSpaceForPiece(baseUnit);
-			unit.cargoUnits = cargoUnitsForPiece(baseUnit);
+			unit.cargoUnits = cargoUnitsForUnit(baseUnit);
 			unit.cas = baseUnit.cas;
 			unit.def = baseUnit.def;
 			unit.def2 = baseUnit.def;

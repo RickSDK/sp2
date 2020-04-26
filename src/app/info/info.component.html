@@ -17,14 +17,14 @@
 				<i class="fa fa-star"></i>&nbsp;<span class="smallText">Ranks</span>
 			</button>
 			<button (click)="unitsPopup.show()" type="button" class="btn btn-primary roundButton" style="height: 44px;">
-				<i class="fa fa-fighter-jet"></i>&nbsp;<span class="smallText">Units</span> 
+				<i class="fa fa-fighter-jet"></i>&nbsp;<span class="smallText">Units</span>
 			</button>
 			<button (click)="typesPopup.show()" type="button" class="btn btn-primary roundButton" style="height: 44px;">
-				<i class="fa fa-list-alt"></i>&nbsp;<span class="smallText">Types</span> 
+				<i class="fa fa-list-alt"></i>&nbsp;<span class="smallText">Types</span>
 			</button>
 			<button (click)="techPopup.show(null, null, null, null)" type="button" class="btn btn-primary roundButton"
 				style="height: 44px;">
-				<i class="fa fa-cogs"></i>&nbsp;<span class="smallText">Tech</span> 
+				<i class="fa fa-cogs"></i>&nbsp;<span class="smallText">Tech</span>
 			</button>
 		</div>
 
@@ -315,6 +315,9 @@
 					<i class="fa fa-youtube-play" style="font-size: 24px;"></i><br>Videos
 				</button>
 				<div>
+					<button (click)="homeScreenPopup.show()" type="button"
+						class="btn btn-primary roundButton main-page-item"><i class="fa fa-home"></i> Add to Home Screen
+					</button>
 					<button (click)="purchasePopup.show()" type="button" class="btn btn-primary roundButton">
 						<i class="fa fa-usd"></i> Boardgame Purchase
 					</button>
@@ -333,3 +336,4 @@
 <app-purchase-popup #purchasePopup></app-purchase-popup>
 <app-video-popup #videoPopup></app-video-popup>
 <app-scoreboard-popup #scoreboardPopup></app-scoreboard-popup>
+<app-home-screen-popup #homeScreenPopup></app-home-screen-popup>

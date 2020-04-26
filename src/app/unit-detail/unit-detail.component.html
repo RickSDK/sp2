@@ -32,7 +32,8 @@
 						<td align=right>Attack:</td>
 						<td><i class="fa fa-bolt" title="Attack"></i></td>
 						<td *ngIf="selectedUnit.id==14">12 hits!</td>
-						<td *ngIf="selectedUnit.id!=14">
+						<td *ngIf="selectedUnit.id==52">36 hits!</td>
+						<td *ngIf="selectedUnit.id!=14 && selectedUnit.id!=52">
 							<img *ngIf="selectedUnit.att>0" title="{{selectedUnit.att}}"
 								src="assets/graphics/dice/diceh{{selectedUnit.att}}.png" height="30">
 							<img *ngIf="selectedUnit.numAtt>1" title="{{selectedUnit.att}}"

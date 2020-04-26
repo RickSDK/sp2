@@ -64,7 +64,7 @@ function populateUnits() {
 	units.push({ id: 49, name: 'Patrol Boat', type: 3, subType: 'transport', cost: 6, move: 3, att: 1, numAtt: 1, def: 1, cas: 6, flag: 6, desc: ['Patrol Boats are fast, cheap disposable navy ships. One of only 2 ships in the game that can move 3 spaces.', 'Patrol boats can also carry one soldier unit as cargo for amphibious assaults, although these boats can only be moved once per turn. Meaning you cannot move one space to pick up cargo and then move again.', '+1 attack and defense values with Torpedos Tech.'] });
 	units.push({ id: 50, name: 'Cobra', type: 4, subType: 'chopper', cost: 12, move: 2, att: 4, numAtt: 1, def: 2, cas: 12, flag: 7, desc: ['Strong attack helicopter that can carry up to 2 infantry as paratroopers.', '+1 attack when joined by a general. Also extra dice with Nuclear Warheads technology.', 'Cobras do NOT get extra range with technology.'] });
 	units.push({ id: 51, name: 'Pickup Truck', type: 1, subType: 'vehicle', target: 'soldierOnly', cost: 3, move: 2, att: 2, numAtt: 1, def: 2, cas: 3, flag: 8, desc: ['Pickup Trucks are cheap disposable units that can only target soldiers.', '+1 attack when joined by a general.'] });
-	units.push({ id: 52, name: 'EMP Blast', type: 1, subType: 'missile', cost: 0, move: 5, att: 36, numAtt: 1, def: 0, cas: 99, returnFlg: false, desc: ['EMP Blast is a unique weapon that is ONLY available in Matchmaking games. The cost is 0, and each player has limited number to use, which is indicatd on the "Players" Panel. Each EMP can be used once, across any of your MM games, meaning if you use it in one game, you cannot use it in any other games.', 'You must have all 18 techs researched before you can use an EMP in a game.', '1 EMP does the exact same damage as 3 nukes. See nukes description for details on damage. Additionally EMPs, unlike any other units, are available for use the same round they are bought.', 'Anti-Balistics and AD guns provide similar defense against EMPs.', 'The only way to generate additional EMPs is through playing Matchmaking games. You automatically generate 1 new EMP for each 5 games you play in. With a max of 2 EMPs. Once you have 2 EMPs, you must use one before you will get any more.'] });
+	units.push({ id: 52, name: 'EMP Blast', type: 1, subType: 'missile', cost: 0, move: 5, att: 36, numAtt: 1, def: 0, cas: 99, returnFlg: false, desc: ['EMP Blast is a unique weapon that is ONLY available in Matchmaking games. The cost is 0, and each player has limited number to use, which is indicatd on the "Players" Panel. Each EMP can be used once, across any of your MM games, meaning if you use it in one game, you cannot use it in any other games.', 'You must have all 18 techs researched before you can use an EMP in a game.', '1 EMP does the exact same damage as 3 nukes. See nukes description for details on damage. Additionally EMPs, unlike any other units, are available for use the same round they are bought.', 'Anti-Balistics and AD guns provide similar defense against EMPs.', 'The only way to generate additional EMPs is through playing Matchmaking games. You automatically generate 1 new EMP for each 5 games you play in. With a max of 3 EMPs. Once you have 3 EMPs, you must use one before you will get any more.'] });
 	return units;
 }
 function getTechs() {
@@ -384,16 +384,16 @@ function cargoSpaceForPiece(piece) {
 		return 22;
 	return 0;
 }
-function cargoUnitsForPiece(piece) {
-	if (piece.subType == "hero" || piece.subType == "aa")
+function cargoUnitsForUnit(unit) {
+	if (unit.subType == "hero" || unit.subType == "aa")
 		return 1;
-	if (piece.subType == "soldier")
+	if (unit.subType == "soldier")
 		return 10;
-	if (piece.subType == "vehicle")
+	if (unit.subType == "vehicle")
 		return 20;
-	if (piece.subType == "fighter")
+	if (unit.subType == "fighter")
 		return 20;
-	if (piece.subType == "missile")
+	if (unit.subType == "missile")
 		return 20;
 	return 0;
 }

@@ -55,7 +55,6 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
     }
     if (this.selectedTerritory.nation == 99 && isUnitFighterUnit(piece)) {
       var space = this.numCarriersInQueue();
-      console.log('x', space);
       var carrierSpace = this.selectedTerritory.carrierSpace + this.numCarriersInQueue() * 2;
       var carrierCargo = this.selectedTerritory.carrierCargo + this.numFightersInQueue();
       if (carrierSpace < carrierCargo + count) {
@@ -63,6 +62,11 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
         return;
       }
     }
+    if(piece==52) {
+      this.currentPlayer.empBoughtFlg = true;
+      this.showAlertPopup('Warning: If you buy an EMP, you will not have the option to redo your purchases.');
+    }
+
     if (piece == 12) {
       playClick();
       displayFixedPopup('battleshipPopup');
@@ -113,8 +117,10 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
           this.currentPlayer.railFlg = false;
         if (purchUnit.piece == 18)
           this.currentPlayer.techCount--;
-        if (purchUnit.piece == 52)
+        if (purchUnit.piece == 52) {
           this.currentPlayer.empCount++;
+          this.currentPlayer.empBoughtFlg = false;
+        }
         if (purchUnit.piece == 12) {
           money += this.gameObj.superBCForm.cost - 15;
           this.currentPlayer.battleshipCost = 0;

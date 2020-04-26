@@ -20,7 +20,7 @@
                 <i class="fa fa-envelope"></i> Mail
             </button>
             <button (click)="forumPopup.show()" type="button" class="btn btn-secondary roundButton">
-                <i class="fa fa-commenting"></i> Forum
+                <i class="fa fa-commenting"></i> Forum  <span *ngIf="multiPlayerObj && multiPlayerObj.forumPosts>0">({{multiPlayerObj.forumPosts}})</span>
             </button>
             <a routerLink="/info"><button type="button" class="btn btn-secondary roundButton">
                     <i class="fa fa-info-circle"></i> Info

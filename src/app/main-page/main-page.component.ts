@@ -20,6 +20,7 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   public user: any;
   public expandFlg = false;
   public singleGameId: number;
+  public showHomeButtonFlg = true;
   
   constructor(private router: Router) { super(); }
 
@@ -29,6 +30,7 @@ export class MainPageComponent extends BaseComponent implements OnInit {
     this.user = userObjFromUser();
     this.flexSprite(100);
     this.singleGameId = localStorage.currentGameId;
+    this.showHomeButtonFlg = localStorage.showHomeButtonFlg != 'Y';
     localStorage.loadGameId = 0; // clear out any multiplayer game
     /*
     changeClass('splash1', 'splash-screen');
@@ -65,22 +67,24 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   }
   paserUserData(data) {
     this.user = parseServerDataIntoUserObj(data);
+    //console.log(this.user);
  
     localStorage.lastForumLogin = this.user.forum_last_login;
 
     var existingEMPCount = this.numberVal(localStorage.existingEMPCount);
-    this.user.newEmpFlg = (existingEMPCount != this.user.empCount);
-    if (this.user.newEmpFlg) {
+    this.user.newEmpFlg = (existingEMPCount < this.user.empCount);
+    if (existingEMPCount != this.user.empCount) {
       localStorage.existingEMPCount = this.user.empCount;
     }
     var existingRank = this.numberVal(localStorage.rank);
-    this.user.newRankFlg = (existingRank != this.user.rank);
+    this.user.newRankFlg = (existingRank < this.user.rank);
 
     if(this.user.awayFlg)
       this.showAlertPopup('Your Away Message is turned on! Click your profile to turn it off.', 1);
 
-    if (this.user.newRankFlg) {
-      this.playSound('tada.mp3');
+    if (existingRank != this.user.newRankFlg) {
+      if(this.user.newRankFlg)
+        this.playSound('tada.mp3');
       localStorage.rank = this.user.rank;
     }
     if (this.user.gamesTurn > 0 || this.user.newGameCount > 0 || this.user.endGameCount > 0 || this.user.newEmpFlg || this.user.newRankFl) {

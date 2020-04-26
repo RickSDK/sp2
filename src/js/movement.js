@@ -311,9 +311,11 @@ function findTransportForThisCargo(unit, terr, gameObj) {
         // load ground units onto transports
         for (var u = 0; u < terr.units.length; u++) {
             var transport = terr.units[u];
-            if (transport.subType == 'transport' && transport.owner == unit.owner && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits) {
-                loadThisUnitOntoThisTransport(unit, transport);
-                return;
+            if (transport.subType == 'transport' && transport.owner == unit.owner) {
+                if (transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits) {
+                    loadThisUnitOntoThisTransport(unit, transport);
+                    return;
+                }
             }
         }
 
@@ -330,9 +332,11 @@ function findTransportForThisCargo(unit, terr, gameObj) {
         // load fighter (search all units)
         for (var u = 0; u < gameObj.units.length; u++) {
             var transport = gameObj.units[u];
-            if (transport.piece == 8 && unit.terr == terr.id && transport.owner == unit.owner && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits) {
-                loadThisUnitOntoThisTransport(unit, transport);
-                return;
+            if (transport.piece == 8 && unit.terr == terr.id && transport.owner == unit.owner) {
+                if (transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits) {
+                    loadThisUnitOntoThisTransport(unit, transport);
+                    return;
+                }
             }
         }
     }
@@ -349,7 +353,7 @@ function loadThisUnitOntoThisTransport(unit, transport) {
         transport.cargoLoadedThisTurn = 0;
 
     if (unit.cargoUnits == 0) {
-        unit.cargoUnits = cargoUnitsForPiece(unit.piece)
+        unit.cargoUnits = cargoUnitsForUnit(unit);
         console.log('!!no cargo units!', unit.cargoUnits);
     }
 

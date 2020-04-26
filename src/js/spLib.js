@@ -1,5 +1,5 @@
 function spVersion() {
-	return 'v4.8.6';
+	return 'v4.9';
 }
 function getScriptV() {
 	return 'v3.5';
@@ -54,7 +54,7 @@ function unitOfId(id, nation, pieceId, terrId, pieces, allowMovesFlg) {
 		type: unit.type,
 		subType: unit.subType,
 		cargoSpace: cargoSpaceForPiece(unit),
-		cargoUnits: cargoUnitsForPiece(unit),
+		cargoUnits: cargoUnitsForUnit(unit),
 		hp: 100
 	};
 	if (pieceId == 10) {
