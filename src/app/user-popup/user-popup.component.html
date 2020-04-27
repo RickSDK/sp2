@@ -49,7 +49,8 @@
                         <div>
                             <div *ngIf="serverUser" class="spTitle">
                                 <app-player-name [player]="serverUser"></app-player-name>
-                                <i class="fa fa-pencil-square-o" style="font-size: 10px; float: right; padding: 3px;"></i>
+                                <i class="fa fa-pencil-square-o"
+                                    style="font-size: 10px; float: right; padding: 3px;"></i>
                             </div>
                             <div *ngIf="serverUser" class="darkBlueBg" style="font-size: 12px;">Ave Turn Speed: <i
                                     class="fa fa-bolt" *ngIf="serverUser.fastFlg"></i> <i class="fa fa-hourglass-end"
@@ -143,12 +144,12 @@
                     <app-sp-table (click)="editUserEmailSettings()"
                         *ngIf="displayUser.userId>0 && selfProfileFlg && profileEmailObj" [dataObj]="profileEmailObj">
                     </app-sp-table>
-                    <button *ngIf="serverUser && selfProfileFlg && !serverUser.confirmEmailFlg" (click)="editUserEmailSettings()"
-                        type="button" class="btn btn-warning roundButton">
+                    <button *ngIf="serverUser && selfProfileFlg && !serverUser.confirmEmailFlg"
+                        (click)="editUserEmailSettings()" type="button" class="btn btn-warning roundButton">
                         <i class="fa fa-envelope"></i> Confirm Email
                     </button>
-                    <button *ngIf="serverUser && selfProfileFlg && serverUser.textFlg != 'Y'" (click)="editUserEmailSettings()"
-                        type="button" class="btn btn-warning roundButton">
+                    <button *ngIf="serverUser && selfProfileFlg && serverUser.textFlg != 'Y'"
+                        (click)="editUserEmailSettings()" type="button" class="btn btn-warning roundButton">
                         <i class="fa fa-mobile"></i> Add Text Notifications
                     </button>
                     <span *ngIf="serverUser && selfProfileFlg && serverUser.away_flg == 'Y'"
@@ -172,6 +173,7 @@
                                     <th>type</th>
                                     <th>round</th>
                                     <th>winLoss</th>
+                                    <th>Del</th>
                                 </tr>
                                 <tr *ngFor="let game of gameScores">
                                     <td><img src="assets/graphics/images/flag{{game.nation}}.gif" height="50"></td>
@@ -179,8 +181,18 @@
                                     <td>{{game.type}}</td>
                                     <td>{{game.round}}</td>
                                     <td>{{game.winLoss}}</td>
+                                    <td>
+                                        <button (click)="deleteThisGame(game)"
+                                            type="button" class="btn btn-danger roundButton">
+                                            <i class="fa fa-trash"></i>
+                                        </button>            
+                                    </td>
                                 </tr>
                             </table>
+                            <button *ngIf="gameScores.length>0" (click)="deleteAllGames()"
+                                type="button" class="btn btn-danger roundButton">
+                                <i class="fa fa-trash"></i> Delete All Games
+                            </button>
                         </div>
                     </div>
                 </div>

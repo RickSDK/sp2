@@ -252,11 +252,17 @@ function getBattleAnalysis(battle, selectedTerritory, player, gameObj) {
             airunits++;
         if (unit.subType == 'soldier' || unit.id == 46 || unit.id == 51)
             unit.att = unit.att2;
+        if (unit.piece == 3 || unit.piece == 46)
+            unit.att = unit.att2;
+        if (unit.piece == 50)
+            unit.numAtt = 1;
         if (includesGeneral) {
             if (unit.subType == 'soldier' || unit.id == 46 || unit.id == 51)
                 unit.att = unit.att2 + 1;
-            if (unit.id == 50) //cobra
+            if (unit.piece == 50) //cobra
                 unit.numAtt = 2;
+            if (player.nation == 3 && (unit.piece == 3 || unit.piece == 46))
+                unit.att = unit.att2 + 1;
         }
 
 

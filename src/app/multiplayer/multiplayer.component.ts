@@ -11,6 +11,7 @@ declare var createNewGameFromInitObj: any;
 declare var objPiecesFrom: any;
 declare var spVersion: any;
 declare var googleAds: any;
+declare var $: any;
 
 @Component({
   selector: 'app-multiplayer',
@@ -288,13 +289,39 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
       // enter game
       localStorage.chatFlg = (game.chatFlg) ? 'Y' : 'N';
       localStorage.loadGameId = game.gameId;
-      this.router.navigate(['/board']);
+      this.router.navigate(['/board'], { queryParams: { 'id': game.gameId } });
+      // this.router.navigate(['/board']);
     }
   }
   joinAcceptButtonPressed() {
     this.playClick();
     this.closePopup('joinConfirmationPopup');
     this.createWebServiceCall('join', null, 0);
+  }
+  changeTeamOfPlayer(game: any, player: any) {
+    var newTeam = player.team;
+    if (player.team == '1')
+      newTeam = '2';
+    if (player.team == '2')
+      newTeam = 'R';
+    if (player.team == 'R')
+      newTeam = '1';
+    player.team = newTeam;
+
+    const url = this.getHostname() + "/webSuperpowers.php";
+    $.post(url,
+      {
+        userId: this.user.userId,
+        code: this.user.code,
+        action: 'changePlayerTeam',
+        gameId: game.gameId,
+        playerId: player.playerId,
+        team: newTeam
+      },
+      function (data, status) {
+        console.log('data', data);
+      });
+
   }
   createWebServiceCall(action: string, gameData: any, turn: number) {
     var url = this.getHostname() + "/web_join_game2.php";

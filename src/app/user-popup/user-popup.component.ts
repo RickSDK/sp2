@@ -136,7 +136,7 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
           this.personalInfoObj.rows.push({ name: 'Username', value: this.serverUser.name })
           this.personalInfoObj.rows.push({ name: 'Created', value: this.serverUser.created })
           this.personalInfoObj.rows.push({ name: 'City', value: this.serverUser.city })
-          if(this.serverUser.country == 'United States')
+          if (this.serverUser.country == 'United States')
             this.personalInfoObj.rows.push({ name: 'State', value: this.serverUser.state })
           this.personalInfoObj.rows.push({ name: 'Country', value: this.serverUser.country })
           this.personalInfoObj.rows.push({ name: 'Last Login', value: this.serverUser.last_login_time + ' hr ago' })
@@ -223,7 +223,7 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
             else
               this.savedRegularGamesObj.rows.push(game)
           });
-          if(this.user.userId==10)
+          if (this.user.userId == 10)
             console.log('serverUser!', this.serverUser);
         }
       })
@@ -231,7 +231,19 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
         this.showAlertPopup('Unable to reach server: ' + error, 1);
       });
   }
-
+  deleteAllGames() {
+    this.gameScores = [];
+    localStorage.setItem("gameScores", JSON.stringify(this.gameScores));
+  }
+  deleteThisGame(delGame: any) {
+    var gameScores = [];
+    this.gameScores.forEach(game => {
+      if (game.id != delGame.id)
+        gameScores.push(game);
+    });
+    this.gameScores = gameScores;
+    localStorage.setItem("gameScores", JSON.stringify(gameScores));
+  }
   openRanksModal() {
     this.closeModal('#userPopup');
     $('#ranksPopup').modal();

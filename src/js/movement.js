@@ -198,6 +198,8 @@ function loadParatroopers(selectedTerritory, optinType) {
 }
 function findBomberForParatrooper(unit, selectedTerritory, optinType) {
     var selectedTransport;
+    if (unit.cargoUnits == 0)
+        unit.cargoUnits = cargoUnitsForUnit(unit);
     selectedTerritory.units.forEach(function (transport) {
         if (optinType == 'loadPlanes' && transport.piece == 7 && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits)
             selectedTransport = transport;
@@ -296,19 +298,30 @@ function moveCargoWithThisUnit(unit, gameObj, terr1Id) {
 }
 function findTransportForThisCargo(unit, terr, gameObj) {
     unit.movesLeft = 2;
+    if (unit.cargoUnits == 0)
+        unit.cargoUnits = cargoUnitsForUnit(unit);
     if (unit.piece == 10 || unit.piece == 11 || unit.piece == 13) {
-        // heros & AA guns
+        // heros & AA guns onto ships
+        var bestSub;
         var bestShip;
         for (var u = 0; u < terr.units.length; u++) {
             var ship = terr.units[u];
             if (ship.type == 3 && ship.owner == unit.owner && ship.piece != 5 && (!bestShip || ship.cas > bestShip.cas))
                 bestShip = ship;
+            if (ship.type == 3 && ship.owner == unit.owner && ship.piece == 5 && !bestSub)
+                bestSub = ship;
         }
-        loadThisUnitOntoThisTransport(unit, bestShip);
-        return;
+        if (bestShip) {
+            loadThisUnitOntoThisTransport(unit, bestShip);
+            return;
+        }
+        if (bestSub) {
+            loadThisUnitOntoThisTransport(unit, bestSub);
+            return;
+        }
     }
     if (unit.type == 1) {
-        // load ground units onto transports
+        // load ground units onto transport ships
         for (var u = 0; u < terr.units.length; u++) {
             var transport = terr.units[u];
             if (transport.subType == 'transport' && transport.owner == unit.owner) {
@@ -346,6 +359,8 @@ function findTransportForThisCargo(unit, terr, gameObj) {
 }
 function loadThisUnitOntoThisTransport(unit, transport) {
     if (!unit || !transport || unit.owner != transport.owner) {
+        console.log('!!unit', unit);
+        console.log('!!transport', transport);
         showAlertPopup('invalid cargo', 1);
         return;
     }

@@ -371,7 +371,14 @@
                                                     {{player.userName}}
                                                 </td>
                                                 <td style="color: green; font-weight: 700;">{{player.income}}</td>
-                                                <td *ngIf="game.type=='Locked'">{{player.team}}</td>
+                                                <td *ngIf="game.type=='Locked'">
+                                                    <span *ngIf="game.host != user.userName || game.status != 'Open'">{{player.team}}</span>
+                                                    <button
+                                                        *ngIf="game.host == user.userName && game.status == 'Open'"
+                                                        (click)="changeTeamOfPlayer(game, player)" type="button"
+                                                        class="btn btn-primary roundButton">{{player.team}}
+                                                    </button>
+                                                </td>
                                                 <td style="font-size: 12px; color: gray;">{{player.clock}}hr
                                                     <button
                                                         *ngIf="game.host == user.userName && game.status == 'Open' && player.userName != user.userName"

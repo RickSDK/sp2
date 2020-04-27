@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { analyzeAndValidateNgModules, ThrowStmt } from '@angular/compiler';
 import { DiplomacyPopupComponent } from '../diplomacy-popup/diplomacy-popup.component';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 declare var $: any;
 
@@ -132,6 +132,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public historyMode = false;
 	public historyRound = 1;
 	public gameObj: any;
+	public gameId: number;
 	public currentPlayer: any;
 	public yourPlayer: any;
 	public yourNation = 0;
@@ -172,7 +173,14 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		'Round 6. Players can now attack other players! This is the limited attack round, meaning you can take at most one other player\'s territory and lose at most one territory.',
 	];
 
-	constructor(private router: Router) { super(); }
+	constructor(private router: Router, private route: ActivatedRoute) {
+		super();
+		this.route.queryParams
+			.subscribe(params => {
+				this.gameId = params.id;
+			});
+
+	}
 
 	ngOnInit(): void {
 		this.hostname = getHostname();
@@ -186,12 +194,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	initBoard() {
 		this.gameMusic.loop = true;
 		this.gameMusic.volume = 0.5;
-		var loadGameId = numberVal(localStorage.loadGameId);
+		//var loadGameId = numberVal(localStorage.loadGameId);
 		var currentGameId = numberVal(localStorage.currentGameId);
 		this.loadingFlg = true;
 		startSpinner('Loading Game', '100px');
 		updateProgressBar(20);
-		if (loadGameId > 0) {
+		if (this.gameId > 0) {
 			this.getMultiplayerGameObjFromServer();
 		} else {
 			if ((currentGameId > 0)) {
@@ -226,9 +234,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 	}
 	getMultiplayerGameObjFromServer() {
-		console.log('+++ multiplayer....', localStorage.loadGameId);
+		console.log('+++ multiplayer....', this.gameId);
 		const url = this.getHostname() + "/web_join_game2.php";
-		const postData = this.getPostDataFromObj({ user_login: this.user.userName, code: this.user.code, game_id: localStorage.loadGameId, action: 'loadGame' });
+		const postData = this.getPostDataFromObj({ user_login: this.user.userName, code: this.user.code, game_id: this.gameId, action: 'loadGame' });
 
 		fetch(url, postData).then((resp) => resp.text())
 			.then((data) => {
@@ -383,9 +391,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.ableToTakeThisTurn = true; // admin mode only!!!
 			this.yourPlayer = this.currentPlayer;
 		}
-		console.log('secondsSinceUpdate', this.gameObj.secondsSinceUpdate);
-		if (this.gameObj.multiPlayerFlg && !this.currentPlayer.cpu && this.gameObj.secondsSinceUpdate>60) {
+		if (this.gameObj.multiPlayerFlg && !this.currentPlayer.cpu && this.gameObj.secondsSinceUpdate > 60) {
 			if (this.user.userName == 'Rick' || this.user.userName == this.gameObj.host || (this.yourPlayer && this.yourPlayer.alive)) {
+				console.log('secondsSinceUpdate', this.gameObj.secondsSinceUpdate);
 
 				if (this.yourPlayer && this.yourPlayer.cpu && this.yourPlayer.alive) {
 					this.showAlertPopup('Looks like you went awol so the computer took over your turn. Restoring you back into the game.', 1);
@@ -449,7 +457,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					console.log('checkEMPAndTimer', obj);
 					console.log('adjustedSeconds', adjustedSeconds);
 					player.empCount = obj.empCount;
-					if (obj.nation == player.nation && this.gameObj.secondsSinceUpdate>60) {
+					if (obj.nation == player.nation && this.gameObj.secondsSinceUpdate > 60) {
 						var secondsSinceLastLogin = getDateFromString(obj.mygames_last_login);
 						var hours = Math.round(secondsSinceLastLogin / 3600);
 						var minutesAway = Math.round(secondsSinceLastLogin / 60);
@@ -465,10 +473,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 							if (hours > 60 && gameObj.round <= 6)
 								playerIsAwol = true;
 						}
-						if(hours>60) {
+						if (hours > 60) {
 							var num = numberHumanAllies(player);
-							if(num==0)
-								playerIsAwol=true;
+							if (num == 0)
+								playerIsAwol = true;
 						}
 
 						if (ableToTakeThisTurn && obj.time_elapsed > 36000) {
@@ -481,7 +489,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 								showAlertPopup('Slow Turn Response: Your turn timer has dropped below 12 hours. Your timer started with ' + obj.minutesReduced + ' minutes reduced due to a previous slow turn. Your next turn timer will start with only ' + newTimer + ' hours. Taking turns faster will bring your timer back up to 24 hours.', 1);
 							else
 								showAlertPopup('Slow Turn Response: The game has been waiting on your turn for ' + elapsedHours + ' hours. Your next turn timer will start with only ' + newTimer + ' hours. Taking turns faster will bring your timer back up to 24 hours.', 1);
-						} else 	if (playerIsAwol) {
+						} else if (playerIsAwol) {
 							logItem(this.gameObj, this.currentPlayer, 'Player Awol', 'Playered turned into CPU after being away from game for ' + hours + ' hours.');
 							this.gameObj.secondsSinceUpdate = 0;
 							this.computerGo();
@@ -490,7 +498,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 								this.showAlertPopup('Player has run out of time but appears to be online now.');
 							else
 								this.displayFixedPopup('skipPlayerPopup');
-						}  
+						}
 					}
 				}
 			})
@@ -1314,7 +1322,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	battleHappened(msg: string) {
 		//emitted from terr-popup
-		console.log('battleHappened', msg);
 		if (msg == 'done!') {
 			this.completeTurnButtonPressed();
 			return;
