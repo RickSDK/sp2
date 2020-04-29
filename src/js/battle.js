@@ -1227,7 +1227,7 @@ function hostileActObj(type, terr, gameObj, player) {
         }
         var cost = costToAttack(terr, player);
         if (cost > 0) {
-            var treatyName = 'non-agression pact';
+            var treatyName = 'non-aggression pact';
             if (cost == 10)
                 treatyName = 'peace treaty';
             if (cost == 15)
