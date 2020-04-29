@@ -3,6 +3,7 @@ import { BaseComponent } from '../base/base.component';
 
 declare var convertStringToDate: any;
 declare var $: any;
+declare var dateComponentFromDateStamp: any;
 
 @Component({
   selector: 'app-forum-popup',
@@ -61,8 +62,8 @@ export class ForumPopupComponent extends BaseComponent implements OnInit {
             var c = item.split("|");
             if (c.length > 5) {
               x++;
-              dateStamp = convertStringToDate(c[6]);
-              dateStampText = c[6];
+              dateStamp = convertStringToDate(c[6])
+              //dateStampText = convertStringToDate(c[6]);
               var dif = lastForumLogin.getTime() - dateStamp.getTime();
               var newFlg = (dif >= 0) ? 'N' : 'Y';
               if ((c[0] == '4' || c[0] == '5') && !adminFlg)
@@ -99,19 +100,9 @@ export class ForumPopupComponent extends BaseComponent implements OnInit {
           var items = data.split("<a>");
           var forumPosts = [];
           items.forEach(function (item) {
-            var c = item.split("|");
-            var body = '';
-            if (c.length > 7) {
-              var regex = /(<([^>]+)>)/ig
-              body = c[8].replace(regex, "");
-            }
-            if (c.length > 5) {
-              var dateStamp = new Date(c[6]);
-              var dif = lastForumLogin.getTime() - dateStamp.getTime();
-              var newFlg = (dif >= 0) ? 'N' : 'Y';
-              console.log('forumPosts newFlg', newFlg);
-              forumPosts.push({ id: c[0], name: c[1], topic_count: c[2], post_count: c[3], user: c[4], userId: c[5], dateStamp: c[6], newFlg: newFlg, body: body, category: c[9] });
-            }
+            var obj = forumObjFromLine(item, lastForumLogin);
+            if (obj)
+              forumPosts.push(obj);
           });
           this.forumPosts = forumPosts;
           //console.log(forumPosts);
@@ -129,7 +120,6 @@ export class ForumPopupComponent extends BaseComponent implements OnInit {
     this.forumPosts = [];
     this.forumMessages = [];
     var lastForumLogin = new Date(localStorage.lastForumLogin);
-    console.log(post);
     var url = this.getHostname() + "/webForum.php";
     var postData = this.getPostDataFromObj({ userId: this.user.userId, code: this.user.code, category: post.category, forumPost: post.id });
     fetch(url, postData).then((resp) => resp.text())
@@ -139,18 +129,9 @@ export class ForumPopupComponent extends BaseComponent implements OnInit {
           var items = data.split("<a>");
           var forumMessages = [];
           items.forEach(function (item) {
-            var c = item.split("|");
-            var body = '';
-            if (c.length > 7) {
-              var regex = /(<([^>]+)>)/ig
-              body = c[8].replace(regex, "");
-            }
-            if (c.length > 5) {
-              var dateStamp = new Date(c[6]);
-              var dif = lastForumLogin.getTime() - dateStamp.getTime();
-              var newFlg = (dif >= 0) ? 'N' : 'Y';
-              forumMessages.push({ id: c[0], name: c[1], topic_count: c[2], post_count: c[3], user: c[4], userId: c[5], dateStamp: c[6], newFlg: newFlg, body: body, category: c[9], lastUser: c[10] });
-            }
+            var obj = forumObjFromLine(item, lastForumLogin);
+            if (obj)
+              forumMessages.push(obj);
           });
           this.forumMessages = forumMessages;
           //console.log(forumMessages);
@@ -208,4 +189,22 @@ export class ForumPopupComponent extends BaseComponent implements OnInit {
     this.forumMessages = [];
     this.forumPosts = [];
   }
+}
+
+function forumObjFromLine(line, lastForumLogin) {
+  var obj;
+  var c = line.split("|");
+  var body = '';
+  if (c.length > 7) {
+    var regex = /(<([^>]+)>)/ig
+    body = c[8].replace(regex, "");
+  }
+  if (c.length > 5) {
+    var dateStamp = convertStringToDate(c[6]);
+    var dateStampText = dateComponentFromDateStamp(c[6], true, true);
+    var dif = lastForumLogin.getTime() - dateStamp.getTime();
+    var newFlg = (dif >= 0) ? 'N' : 'Y';
+    obj = { id: c[0], name: c[1], topic_count: c[2], post_count: c[3], user: c[4], userId: c[5], dateStamp: dateStampText, newFlg: newFlg, body: body, category: c[9], lastUser: c[10] };
+  }
+  return obj;
 }

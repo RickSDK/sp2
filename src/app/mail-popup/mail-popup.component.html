@@ -40,27 +40,23 @@
 
 
                 <table class="spTable" *ngIf="!newPostFlg">
-                    <tr>
-                        <th>Message</th>
-                        <th>Sender</th>
-                        <th>Recipient</th>
-                        <th>Date</th>
-                    </tr>
                     <tr *ngFor="let message of displayMessages" (click)="readMailItem(message)">
                         <td style="text-align: left;">
                             <div>
-                                <button *ngIf="drilldownFlg" (click)="deletePost(message)" type="button" 
+                                <button *ngIf="drilldownFlg" (click)="deletePost(message)" type="button"
                                     class="btn btn-danger roundButton"><i class="fa fa-trash"></i>
                                 </button>
                                 <img *ngIf="!message.read_flg" src="assets/graphics/images/new_icon.gif">
                                 <b><i *ngIf="message.urgent_flg" class="fa fa-exclamation-triangle"></i>
                                     {{message.title}} <span
                                         *ngIf="message.num_replies>0">({{message.num_replies}})</span></b></div>
-                            {{message.body}}
+                            <div style="color: gray;">{{message.body}}</div>
+                            <div style="font-size: 12px; color: blue;">
+                                From: <b>{{message.senderName}}</b>, To: <b>{{message.recipientName}}</b>
+                                <span style="color: green; float: right;">{{message.formattedDate}}</span>
+                            </div>
+                            
                         </td>
-                        <td>{{message.senderName}}</td>
-                        <td>{{message.recipientName}}</td>
-                        <td>{{message.formattedDate}}</td>
                     </tr>
                 </table>
 

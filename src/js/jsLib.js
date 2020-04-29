@@ -134,6 +134,34 @@ function convertDateToString(d) {
 	}
 	return monthIndex + '/' + day + '/' + year + ' ' + h + ':' + m + ' ' + amPm;
 }
+function dateComponentFromDateStamp(dateStamp, timeFlg = false, localFormatFlg = false) {
+    //"2019-05-08T15:00:49-07:00"
+    var dateSt = new Date(dateStamp);
+    if (dateSt) {
+        if (localFormatFlg) {
+            if (timeFlg)
+                return dateSt.toLocaleDateString() +' '+dateSt.toLocaleTimeString();
+            else
+                return dateSt.toLocaleDateString();
+        }
+
+        var year = dateSt.getUTCFullYear();
+        var month = pad(dateSt.getUTCMonth() + 1);
+        var day = pad(dateSt.getUTCDate());
+
+        var hour = pad(dateSt.getHours());
+        var min = pad(dateSt.getMinutes());
+
+        if (timeFlg)
+            return hour + ':' + min; //'00:00'
+        else
+            return year + '-' + month + '-' + day; //'2019-06-15'
+
+    } else {
+        console.log('invalid date!!!', dateStamp);
+    }
+    return '!!invalid date: '+dateStamp;
+}
 function nowYear() {
 	var now = new Date();
 	var year = now.getFullYear();

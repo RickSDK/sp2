@@ -364,7 +364,7 @@ function getBattleAnalysis(battle, selectedTerritory, player, gameObj) {
             endPhrase = '';
         }
 
-        if (numAttUnits > 0 && airunits == numAttUnits && numDefSubs == numDefUnits) {
+        if (numAttUnits > 0 && airunits == numAttUnits && numDefSubs == numDefUnits && numDefSubs > 0) {
             endPhrase = ' Remaining subs dove to avoid attacks.'
             battleInProgress = false;
         }
@@ -1061,7 +1061,7 @@ function wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, ti
 
     var unit1 = (losses == 1) ? 'unit' : 'units';
     var unit2 = (hits == 1) ? 'unit' : 'units';
-    var word = displayBattle.militaryObj.wonFlg ? 'defeating ' : 'losing to ';
+    var word = displayBattle.militaryObj.wonFlg ? 'defeating ' : 'in failed attack on ';
     var msg = losses + ' ' + unit1 + ' lost ' + word + ' ' + superpowersData.superpowers[displayBattle.defender] + ' at ' + selectedTerritory.name + '. Enemy lost ' + hits + ' ' + unit2 + '.' + displayBattle.militaryObj.endPhrase;
     if (weaponType.length > 0)
         msg = selectedTerritory.name + weaponType + hits + ' casualties.';
@@ -1071,6 +1071,9 @@ function wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, ti
         displayBattle.round = 1
     var medicHealedCount = displayBattle.attSoldiersHealed + displayBattle.defSoldiersHealed;
     logItem(gameObj, currentPlayer, title, msg, displayBattle.battleDetails + '|' + displayBattle.attCasualties.join('+') + '|' + displayBattle.defCasualties.join('+') + '|' + medicHealedCount + '|' + displayBattle.round, selectedTerritory.id, displayBattle.defender, '', '', displayBattle.defender);
+
+    if (!displayBattle.militaryObj.wonFlg)
+        saveGame(gameObj, null, currentPlayer);
     //console.log('displayBattle', displayBattle);
     setTimeout(() => {
         refreshTerritory(selectedTerritory, gameObj, currentPlayer, superpowersData, null);
@@ -1246,7 +1249,7 @@ function hostileActObj(type, terr, gameObj, player) {
             message = 'You can\'t attack other players, or be attacked until round ' + gameObj.attack + '.';
             allowFlg = false;
         }
-        if (type == 'attack' && terr.owner > 0 && gameObj.round == gameObj.attack) {
+        if (type == 'attack' && terr.owner > 0 && gameObj.round == gameObj.attack && terr.nation<99) {
             var p2 = playerOfNation(terr.owner, gameObj);
             if (player.attackFlg) {
                 message = 'Limited attack round: You are only allowed to take over 1 enemy territory on this round.';

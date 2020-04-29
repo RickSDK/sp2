@@ -288,9 +288,7 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
     } else {
       // enter game
       localStorage.chatFlg = (game.chatFlg) ? 'Y' : 'N';
-      localStorage.loadGameId = game.gameId;
       this.router.navigate(['/board'], { queryParams: { 'id': game.gameId } });
-      // this.router.navigate(['/board']);
     }
   }
   joinAcceptButtonPressed() {

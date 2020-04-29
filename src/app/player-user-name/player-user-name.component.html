@@ -1,5 +1,5 @@
 <div *ngIf="gameObj.gameOver || !player.alive">
-    <i *ngIf="player.wonFlg" class="fa fa-trophy" title="Victory" style="color: blue;"></i>
+    <i *ngIf="player.wonFlg" class="fa fa-trophy" title="Victory" style="color: blue; font-size: 24px;"></i>
     <img *ngIf="!player.alive" src="assets/graphics/misc/skull.png" height=15 title="Eliminated">
     <span style="font-size: 12px;">&nbsp;{{player.userName}}</span>
 </div>

@@ -115,8 +115,6 @@ export class MailPopupComponent extends BaseComponent implements OnInit {
     this.getData('delete', message.row_id);
   }
   getData(action: string, row_id: number) {
-    this.showFormFlg = false;
-    this.newPostFlg = false;
     this.row_id = row_id;
     var url = this.getHostname() + "/spSendMail.php";
     this.mailBoxName = (this.buttonIdx == 0) ? 'inbox' : 'sentBox';

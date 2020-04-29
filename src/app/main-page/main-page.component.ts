@@ -32,7 +32,6 @@ export class MainPageComponent extends BaseComponent implements OnInit {
     this.flexSprite(100);
     this.singleGameId = localStorage.currentGameId;
     this.showHomeButtonFlg = localStorage.showHomeButtonFlg != 'Y';
-    localStorage.loadGameId = 0; // clear out any multiplayer game
     //getIPInfo(localStorage.userName, localStorage.password);
     /*
     changeClass('splash1', 'splash-screen');

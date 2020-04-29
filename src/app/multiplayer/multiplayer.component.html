@@ -252,7 +252,7 @@
                                         <div *ngIf="game.status=='Complete'">Game Over!</div>
                                         <div *ngIf="game.accountSitFlg">Account Sit!</div>
                                         <div *ngIf="game.status == 'Open'">
-                                            <button *ngIf="game.host == user.userName"
+                                            <button *ngIf="game.host == user.userName" [disabled]="game.players.length<2"
                                                 (click)="openGameButtonPressed(game, 'start')" type="button"
                                                 class="btn btn-warning roundButton">
                                                 <i class="fa fa-play"></i> Start Game</button>
@@ -263,7 +263,7 @@
                                             <button *ngIf="game.host == user.userName || user.userName == 'Rick'"
                                                 (click)="openGameButtonPressed(game, 'cancelGame')" type="button"
                                                 class="btn btn-danger roundButton">
-                                                <i class="fa fa-trash"></i> Delete</button>
+                                                <i class="fa fa-trash"></i> Delete Game</button>
                                             <button *ngIf="game.inGame && game.host != user.userName"
                                                 (click)="openGameButtonPressed(game, 'leaveGame')" type="button"
                                                 class="btn btn-warning roundButton"><i class="fa fa-sign-out"></i>
@@ -273,7 +273,7 @@
                                             *ngIf="game.status == 'Playing' && user.userName == 'Rick' && game.round==1"
                                             (click)="openGameButtonPressed(game, 'cancelGame')" type="button"
                                             class="btn btn-danger roundButton">
-                                            <i class="fa fa-trash"></i> Delete</button>
+                                            <i class="fa fa-trash"></i> Delete Game</button>
 
                                     </td>
                                     <td *ngIf="game.status!='Complete'">

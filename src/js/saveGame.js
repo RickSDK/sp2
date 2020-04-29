@@ -43,14 +43,15 @@ function zipUpHistoryData(gameObj, user, nation) {
 */
 }
 function saveGame(gameObj, user, currentPlayer, sendEmailFlg, endOfTurn, prevPlayer, nextPlayerCPU, secondsLeft) {
-	console.log('+++saveGame+++', gameObj.name);
 	if (!gameObj) {
 		showAlertPopup('Error on save game. no gameObj', 1);
 		return;
 	}
-	if (!user) {
-		showAlertPopup('Error on save game. no user', 1);
-		return;
+	var userCode = btoa(localStorage.password);
+	var user_login = localStorage.userName;
+	if (user) {
+		userCode = user.code;
+		user_login = user.userName;
 	}
 	if (!currentPlayer) {
 		showAlertPopup('Error on save game. no currentPlayer', 1);
@@ -70,6 +71,7 @@ function saveGame(gameObj, user, currentPlayer, sendEmailFlg, endOfTurn, prevPla
 		updateNation = prevPlayer.nation;
 		nextUpdateNation = currentPlayer.nation;
 	}
+	console.log('++++++++saveGame++++++++++');
 
 	if (gameObj.multiPlayerFlg) {
 		//		setInnerHTMLFromElement('statusOkButton', 'Wait');
@@ -83,8 +85,8 @@ function saveGame(gameObj, user, currentPlayer, sendEmailFlg, endOfTurn, prevPla
 
 		var url = this.getHostname() + "/webSaveGame.php";
 		var postData = this.getPostDataFromObj({
-			user_login: user.userName,
-			code: user.code,
+			user_login: user_login,
+			code: userCode,
 			userName: userName,
 			game_id: gameObj.id,
 			pwd: 'none',
@@ -470,9 +472,5 @@ function objPiecesFrom(gameObj) {
 	obj.logs = scrubbedLogs;
 	return obj;
 }
-function setLoadGameId(gameId) {
-	localStorage.loadGameId = gameId;
-	if (gameId == 0)
-		localStorage.removeItem('loadGameId');
-}
+
 

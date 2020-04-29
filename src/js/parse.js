@@ -412,8 +412,7 @@ function mailFromLine(line) {
 	  obj.recipient = c[x++];
 	  obj.recipientName = c[x++];
   
-	  var d = new Date(obj.msgDate);
-	  obj.formattedDate = convertDateToString(d);
+	  obj.formattedDate = dateComponentFromDateStamp(obj.msgDate, true, true);
 	}
 	return obj;
   }

@@ -194,7 +194,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	initBoard() {
 		this.gameMusic.loop = true;
 		this.gameMusic.volume = 0.5;
-		//var loadGameId = numberVal(localStorage.loadGameId);
 		var currentGameId = numberVal(localStorage.currentGameId);
 		this.loadingFlg = true;
 		startSpinner('Loading Game', '100px');
@@ -317,11 +316,11 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	adminFixBoard() {
 		this.showAlertPopup('Fix on!', 1);
-		var sudan = this.gameObj.territories[45];
-		sudan.units.forEach(unit => {
-			if (unit.nation == 6) {
-				unit.owner = 7;
-				unit.nation = 7;
+		var terrId = 24;
+		var terr = this.gameObj.territories[terrId-1];
+		terr.units.forEach(unit => {
+			if (unit.att > 0) {
+				unit.terr = 30;
 			}
 		});
 	}
@@ -338,8 +337,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.gameObj.turnId = 4; //<--- test
 			this.haltActionFlg = true;
 		}
-		if (this.adminFixFlg) {
-			//this.adminFixBoard();
+		if (0) {
+			this.adminFixBoard();
 		}
 
 		this.haltPurchaseFlg = false; //cpu only!
@@ -354,7 +353,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.gameObj.actionButtonMessage = '';
 		this.currentPlayer.cpuFlg = this.currentPlayer.cpu;
 
-		console.log('===cp: ' + this.superpowersData.superpowers[this.currentPlayer.nation] + '===');
+		console.log('===[' + this.superpowersData.superpowers[this.currentPlayer.nation] + ']===');
 		if (!this.currentPlayer.news)
 			this.currentPlayer.news = [];
 		if (!this.currentPlayer.botRequests)
@@ -790,7 +789,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.currentPlayer.status = 'Move';
 			setTimeout(() => {
 				this.computerMove();
-			}, 2000);
+			}, 3000);
 		}
 	}
 	attemptToAttackACapital(player: any, gameObj: any) {
@@ -1644,6 +1643,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.currentPlayer.news = [];
 		this.currentPlayer.botRequests = [];
 		this.currentPlayer.requestedHotSpot = 0;
+		this.gameObj.secondsSinceUpdate = 0;
 		this.currentPlayer.requestedTarget = 0;
 		checkVictoryConditions(this.currentPlayer, this.gameObj, this.superpowersData, this.yourPlayer, this.user);
 		addIncomeForPlayer(this.currentPlayer, this.gameObj);

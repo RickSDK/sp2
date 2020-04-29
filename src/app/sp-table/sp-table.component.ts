@@ -27,8 +27,8 @@ export class SpTableComponent implements OnInit {
   selectGame(game) {
     console.log(game);
     $('#userPopup').modal('hide');
-    localStorage.loadGameId = game.id;
-    this.router.navigate(['/board']);
+    this.router.navigate(['board'], { queryParams: { 'id': game.id } });
+
   }
   pageDown(num: number) {
     this.dataObj.index -= 10;
