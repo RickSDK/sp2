@@ -46,7 +46,6 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
   public savedRegularGamesObj: any;
   public savedMMGamesObj: any;
   public selfProfileFlg = false;
-  public testString = '1';
   public recentGamesPagingObj = { index: 1, lastIndex: 1, total: 0 }
   public recentMMPagingObj = { index: 1, lastIndex: 1, total: 0 }
   public localAvatars = [
@@ -67,9 +66,8 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
     // this.user = userObjFromUser();
   }
   show(displayUser: any) {
-    this.testString = '2';
     this.displayUser = displayUser;
-    if (!displayUser.rank) {
+    if (!displayUser.rank && displayUser.userId>0) {
       this.displayUser.rank = 2;
       this.displayUser.imgSrc = imageSrcFromObj();
     }

@@ -267,7 +267,7 @@ function checkDiplomacy(player, gameObj) {
 function spreadOutUnits(player, gameObj, superpowersData) {
     var obj = { t1: 0, t2: 0, id: 0 };
     player.territories.forEach(function (terr) {
-        if (terr.id < 79 && terr.owner == player.nation && terr.groundForce >= 4 && !terr.generalFlg && !terr.leaderFlg && numberVal(terr.defeatedByNation) == 0 && terr.land.length > 0) {
+        if (terr.id < 79 && terr.owner == player.nation && terr.groundForce >= 4 && !terr.generalFlg && !terr.leaderFlg && numberVal(terr.defeatedByNation) == 0 && terr.land) {
             for (var x = 0; x < terr.land.length; x++) {
                 var toId = terr.land[x];
                 var toTerr = gameObj.territories[toId - 1];
@@ -550,7 +550,7 @@ function attemptToAttack(targetId, currentPlayer, gameObj) {
         }
     });
     var defendingTerr;
-    if (closestTerr && closestTerr.land.length > 0) {
+    if (closestTerr && closestTerr.land && closestTerr.land.length > 0) {
         closestTerr.land.forEach(function (t) {
             var dist = landDistFromTerr(t, targetId, 0, gameObj);
             if (dist < min) {

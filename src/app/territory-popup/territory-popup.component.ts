@@ -33,6 +33,7 @@ declare var rollAAGuns: any;
 declare var startToRollAAGuns: any;
 declare var strategicBombBattle: any;
 declare var playVoiceClip: any;
+declare var closePopup: any;
 //board.js
 declare var checkCargoForTerr: any;
 declare var isFactoryAllowedOnTerr: any;
@@ -99,6 +100,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
           var ter = gameObj.territories[61];
           if (ter.owner == 2 && gameObj.round == 1) {
             showAlertPopup('Good job! Click "Complete Turn" at the top to finish your turn.');
+            closePopup('generalWithdrawPopup');
             highlightCompleteTurnButton();
           }
         }

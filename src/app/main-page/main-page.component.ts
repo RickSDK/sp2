@@ -6,7 +6,7 @@ declare var getHostname: any;
 declare var userObjFromUser: any;
 declare var parseServerDataIntoUserObj: any;
 declare var changeClass: any;
-declare var getIPInfo: any;
+declare var saveUserObj: any;
 
 @Component({
   selector: 'app-main-page',
@@ -26,9 +26,17 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   constructor(private router: Router) { super(); }
 
   ngOnInit(): void {
-    //localStorage.rank=0; //<-- reset rank
     this.hostname = getHostname();
     this.user = userObjFromUser();
+    if(0) {
+      //reset user to new recruit
+      localStorage.rank=0;
+      this.user.rank = 0;
+      saveUserObj(this.user);
+      this.user = userObjFromUser();
+      
+    }
+    console.log(this.user);
     this.flexSprite(100);
     this.singleGameId = localStorage.currentGameId;
     this.showHomeButtonFlg = localStorage.showHomeButtonFlg != 'Y';

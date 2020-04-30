@@ -50,6 +50,7 @@ declare var moveTheseUnitsToThisTerritory: any;
 declare var isMusicOn: any;
 declare var getDateFromString: any;
 declare var fixSeaCargo: any;
+declare var saveUserObj: any;
 //---board.js
 declare var displayLeaderAndAdvisorInfo: any;
 declare var getDisplayQueueFromQueue: any;
@@ -317,7 +318,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	adminFixBoard() {
 		this.showAlertPopup('Fix on!', 1);
 		var terrId = 24;
-		var terr = this.gameObj.territories[terrId-1];
+		var terr = this.gameObj.territories[terrId - 1];
 		terr.units.forEach(unit => {
 			if (unit.att > 0) {
 				unit.terr = 30;
@@ -491,6 +492,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 						} else if (playerIsAwol) {
 							logItem(this.gameObj, this.currentPlayer, 'Player Awol', 'Playered turned into CPU after being away from game for ' + hours + ' hours.');
 							this.gameObj.secondsSinceUpdate = 0;
+							this.currentPlayer.cpu = true;
 							this.computerGo();
 						} else if (player.nation != this.yourNation && adjustedSeconds > 86400) {
 							if (minutesAway < 15)
@@ -624,7 +626,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		setTimeout(() => {
 			playVoiceClip('bt07Germany.mp3');
 			highlightCapital(2);
-		}, 5000);
+		}, 2500);
 	}
 	playGameButtonPressed() {
 		closePopup('advisorPopup');
@@ -950,7 +952,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	findStratBombOfTerr(terr: any, attacker: any, range: number, bestTerr: any, gameObj: any) {
 		range--;
-		if (range == 0)
+		if (range == 0 || !terr.land)
 			return bestTerr;
 		for (var x = 0; x < terr.land.length; x++) {
 			var id = terr.land[x];
@@ -964,7 +966,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	findClosestEnemy(terr: any, attacker: any, max: number, range: number, bestTerr: any, gameObj: any, targetHash: any) {
 		range--;
-		if (range == 0 || !terr.land)
+		if (range == 0 || !terr.land || !terr.land)
 			return bestTerr;
 		for (var x = 0; x < terr.land.length; x++) {
 			var id = terr.land[x];
@@ -986,7 +988,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	findLargestEnemyOfTerr(terr: any, attacker: any, max: number, range: number, bestTerr: any, gameObj: any) {
 		range--;
-		if (range == 0)
+		if (range == 0 || !terr.land)
 			return bestTerr;
 		for (var x = 0; x < terr.land.length; x++) {
 			var id = terr.land[x];
@@ -1532,6 +1534,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			return;
 		}
 		playClick();
+		hideArrow();
 		changeClass('completeTurnButton', 'btn btn-success roundButton');
 		if (this.currentPlayer.status == 'Purchase') {
 			this.completingPurchases();
@@ -1629,9 +1632,14 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			return;
 		}
 		if (!this.currentPlayer.cpu && this.user.rank == 0 && this.gameObj.round >= 6) {
-			localStorage.rank = 1;
-			this.user = userObjFromUser();
-			promoteSuperpowersUser(this.user);
+			let rank = numberVal(localStorage.rank);
+			if (rank == 0) {
+				localStorage.rank = 1;
+				this.user.rank = 1;
+				saveUserObj(this.user);
+				this.user = userObjFromUser();
+				promoteSuperpowersUser(this.user);
+			}
 		}
 		this.uploadMultiplayerFlg = this.gameObj.multiPlayerFlg;
 		startSpinner('Saving...', '150px', 'spinnerOKButton');
@@ -1666,6 +1674,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				addTestScore(this.gameObj);
 				if (this.gameObj.winningTeamFlg && this.user.rank < 2) {
 					localStorage.rank = 2;
+					this.user.rank = 2;
+					saveUserObj(this.user);
 					this.user = userObjFromUser();
 					promoteSuperpowersUser(this.user);
 					computerAnnouncement(this.user, 'New player ' + this.user.userName + ' just completed Single Player');
