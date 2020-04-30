@@ -411,6 +411,8 @@ function mailFromLine(line) {
 	  obj.parent_mail_id = c[x++];
 	  obj.recipient = c[x++];
 	  obj.recipientName = c[x++];
+	  obj.orig_sender = c[x++];
+	  obj.orig_recipient = c[x++];
   
 	  obj.formattedDate = dateComponentFromDateStamp(obj.msgDate, true, true);
 	}

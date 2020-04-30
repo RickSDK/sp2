@@ -137,7 +137,11 @@ function convertDateToString(d) {
 function dateComponentFromDateStamp(dateStamp, timeFlg = false, localFormatFlg = false) {
     //"2019-05-08T15:00:49-07:00"
     var dateSt = new Date(dateStamp);
-    if (dateSt) {
+    if (typeof dateSt.getMonth === 'function') {
+		var testStr = dateSt.toLocaleDateString();
+		if(testStr == 'Invalid Date')
+			return dateStamp +'.';
+
         if (localFormatFlg) {
             if (timeFlg)
                 return dateSt.toLocaleDateString() +' '+dateSt.toLocaleTimeString();
@@ -160,7 +164,7 @@ function dateComponentFromDateStamp(dateStamp, timeFlg = false, localFormatFlg =
     } else {
         console.log('invalid date!!!', dateStamp);
     }
-    return '!!invalid date: '+dateStamp;
+    return dateStamp +'..';
 }
 function nowYear() {
 	var now = new Date();

@@ -3,6 +3,8 @@ import { BaseComponent } from '../base/base.component';
 
 declare var mailFromLine: any;
 declare var $: any;
+declare var verifyServerResponse: any;
+declare var showAlertPopup: any;
 
 @Component({
   selector: 'app-mail-popup',
@@ -75,11 +77,11 @@ export class MailPopupComponent extends BaseComponent implements OnInit {
     }
     var row_id = 0;
     var messageTitle = '';
-    var to = '';
+    var toPerson = '';
     var urgent = '';
 
     if (this.newPostFlg) {
-      to = this.databaseSafeValueOfInput('toUserName');
+      toPerson = this.databaseSafeValueOfInput('toUserName');
       urgent = (this.urgentFlg) ? 'Y' : '';
       messageTitle = this.databaseSafeValueOfInput('messageTitle');
       if (messageTitle.length == 0) {
@@ -90,24 +92,47 @@ export class MailPopupComponent extends BaseComponent implements OnInit {
     } else {
       messageTitle = this.selectedItem.title;
       row_id = this.selectedItem.row_id;
+      toPerson = this.selectedItem.senderName;
     }
 
     $('#messageBody').val('');
     this.showFormFlg = false;
-    var url = this.getHostname() + "/spSendMail.php";
-    var postData = this.getPostDataFromObj({ userId: this.user.userId, code: this.user.code, title: messageTitle, message: messageBody, action: 'send', row_id: row_id, to: to, urgent: urgent });
-    console.log('postData', postData);
 
-    fetch(url, postData).then((resp) => resp.text())
-      .then((data) => {
+    var url = this.getHostname() + "/spSendMail.php";
+    $.post(url,
+      {
+        userId: this.user.userId,
+        code: this.user.code,
+        title: messageTitle,
+        message: messageBody,
+        action: 'send',
+        row_id: row_id,
+        toPerson: toPerson,
+        urgent: urgent
+      },
+      function (data, status) {
         console.log(data);
-        if (this.verifyServerResponse(data)) {
-          this.showAlertPopup('message sent');
+        if (verifyServerResponse(status, data)) {
+          showAlertPopup('message sent');
         }
-      })
-      .catch(error => {
-        this.showAlertPopup('Unable to reach server: ' + error, 1);
       });
+
+    this.closeModal('#mailPopup');
+    /*
+        var url = this.getHostname() + "/spSendMail.php";
+        var postData = this.getPostDataFromObj({ userId: this.user.userId, code: this.user.code, title: messageTitle, message: messageBody, action: 'send', row_id: row_id, to: to, urgent: urgent });
+        console.log('postData', postData);
+    
+        fetch(url, postData).then((resp) => resp.text())
+          .then((data) => {
+            console.log(data);
+            if (this.verifyServerResponse(data)) {
+              this.showAlertPopup('message sent');
+            }
+          })
+          .catch(error => {
+            this.showAlertPopup('Unable to reach server: ' + error, 1);
+          });*/
 
   }
   deletePost(message: any) {
@@ -133,7 +158,7 @@ export class MailPopupComponent extends BaseComponent implements OnInit {
             displayMessages.push(message);
         });
         this.displayMessages = displayMessages;
-        if(action == 'delete')
+        if (action == 'delete')
           this.backToTop();
       })
       .catch(error => {

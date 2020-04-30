@@ -46,13 +46,14 @@
                                 <button *ngIf="drilldownFlg" (click)="deletePost(message)" type="button"
                                     class="btn btn-danger roundButton"><i class="fa fa-trash"></i>
                                 </button>
-                                <img *ngIf="!message.read_flg" src="assets/graphics/images/new_icon.gif">
+                                <img *ngIf="buttonIdx==0 && message.recipient==user.userId && !message.read_flg" src="assets/graphics/images/new_icon.gif">
                                 <b><i *ngIf="message.urgent_flg" class="fa fa-exclamation-triangle"></i>
                                     {{message.title}} <span
                                         *ngIf="message.num_replies>0">({{message.num_replies}})</span></b></div>
                             <div style="color: gray;">{{message.body}}</div>
                             <div style="font-size: 12px; color: blue;">
-                                From: <b>{{message.senderName}}</b>, To: <b>{{message.recipientName}}</b>
+                                <span *ngIf="buttonIdx==0"> From: <b>{{message.senderName}}</b></span>
+                                <span *ngIf="buttonIdx==1">To: <b>{{message.recipientName}}</b></span>
                                 <span style="color: green; float: right;">{{message.formattedDate}}</span>
                             </div>
                             

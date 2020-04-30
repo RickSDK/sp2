@@ -263,6 +263,8 @@ function getBattleAnalysis(battle, selectedTerritory, player, gameObj) {
                 unit.numAtt = 2;
             if (player.nation == 3 && (unit.piece == 3 || unit.piece == 46))
                 unit.att = unit.att2 + 1;
+            if (player.nation == 1 && unit.piece == 2)
+                unit.att = 3;
         }
 
 
@@ -1249,7 +1251,7 @@ function hostileActObj(type, terr, gameObj, player) {
             message = 'You can\'t attack other players, or be attacked until round ' + gameObj.attack + '.';
             allowFlg = false;
         }
-        if (type == 'attack' && terr.owner > 0 && gameObj.round == gameObj.attack && terr.nation<99) {
+        if (type == 'attack' && terr.owner > 0 && gameObj.round == gameObj.attack && terr.nation < 99) {
             var p2 = playerOfNation(terr.owner, gameObj);
             if (player.attackFlg) {
                 message = 'Limited attack round: You are only allowed to take over 1 enemy territory on this round.';
