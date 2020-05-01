@@ -452,8 +452,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				//console.log(data);
 				if (this.verifyServerResponse(data)) {
 					var c = data.split("|");
-					var obj = { gameId: c[1], turn: c[2], empCount: c[3], uid: c[4], minutesReduced: parseInt(c[5]), time_elapsed: parseInt(c[6]), rank: parseInt(c[7]), nation: numberVal(c[8]), mygames_last_login: c[9], time_elapsedUser: numberVal(c[10]) }
-					var adjustedSeconds = parseInt(this.gameObj.secondsSinceUpdate) + obj.minutesReduced * 60;
+					var obj = { gameId: c[1], turn: c[2], empCount: c[3], uid: c[4], minutesReduced: numberVal(c[5]), time_elapsed: numberVal(c[6]), rank: numberVal(c[7]), nation: numberVal(c[8]), mygames_last_login: c[9], time_elapsedUser: numberVal(c[10]) }
+					var adjustedSeconds = numberVal(this.gameObj.secondsSinceUpdate) + obj.minutesReduced * 60;
 					console.log('checkEMPAndTimer', obj);
 					console.log('adjustedSeconds', adjustedSeconds);
 					player.empCount = obj.empCount;
@@ -661,6 +661,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		var player = this.currentPlayer;
 		this.hideActionButton = false;
 		player.carrierAddedFlg = false;
+		player.battleFlg = false;
 		player.diplomacyFlg = false;
 		player.diplomacyWarningFlg = false;
 		player.generalIsCargo = false;
@@ -700,6 +701,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	initializePlayerForAttack() {
 		this.gameObj.actionButtonMessage = 'Complete Turn';
+		this.hideActionButton = !this.currentPlayer.battleFlg;
 		if (this.currentPlayer.cpuFlg)
 			this.computerGo();
 	}
@@ -1181,8 +1183,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				}
 			}
 			if (this.gameObj.round == 1 && this.currentPlayer.placedInf < 3) {
-				if (terr.treatyStatus < 4 || terr.nation == 99)
-					showAlertPopup('Click on one of your ' + this.superpowersData.superpowers[this.yourPlayer.nation] + ' territories to place an infantry.', 1);
+				if (terr.owner != currentPlayer.nation || terr.nation == 99)
+					showAlertPopup('Click on one of your ' + this.superpowersData.superpowers[this.currentPlayer.nation] + ' territories to place an infantry.', 1);
 				else {
 					this.addUnitToTerr(terr, 2, true, true);
 					this.currentPlayer.placedInf++;
@@ -1334,18 +1336,19 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 	}
 	withdrawGeneralButtonClicked() {
+		var terr2;
 		this.gameObj.units.forEach(unit => {
 			if (unit.piece == 10 && unit.owner == this.currentPlayer.nation && unit.prevTerr > 0) {
-				console.log(unit.prevTerr, unit.terr, this.selectedTerritory);
-				var terr2 = this.gameObj.territories[unit.prevTerr - 1];
+				terr2 = this.gameObj.territories[unit.prevTerr - 1];
 				localStorage.generalTerr1 = unit.prevTerr;
 				localStorage.generalTerr2 = unit.terr;
 				unit.terr = unit.prevTerr;
-				this.moveSpriteFromTerrToTerr(this.selectedTerritory, terr2, 10);
-				closePopup('generalWithdrawPopup');
-				this.closeModal('#territoryPopup');
 			}
 		});
+		if (terr2)
+			this.moveSpriteFromTerrToTerr(this.selectedTerritory, terr2, 10);
+		closePopup('generalWithdrawPopup');
+		this.closeModal('#territoryPopup');
 	}
 	moveSpriteFromTerrToTerr(terr1: any, terr2: any, piece: number) {
 		this.moveSpriteBetweenTerrs({ t1: terr1.id, t2: terr2.id, id: piece });
@@ -1554,6 +1557,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		playClick();
 		closePopup('actionPopup');
 		closePopup('diplomacyWarningPopup');
+		this.hideActionButton = false;
 		this.gameObj.actionButtonMessage = '';
 		this.currentPlayer.status = 'Place Units';
 		this.carrierAddedFlg = false;

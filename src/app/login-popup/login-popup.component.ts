@@ -72,7 +72,7 @@ export class LoginPopupComponent extends BaseComponent implements OnInit {
     if (this.verifyServerResponse(data)) {
       var userObj = parseServerDataIntoUserObj(data);
       localStorage.userName = userObj.userName;
-      getIPInfo(localStorage.userName, localStorage.password);
+      //getIPInfo(localStorage.userName, localStorage.password);
       localStorage.rank = userObj.rank;
       showAlertPopup('Success');
       this.messageEvent.emit('done');

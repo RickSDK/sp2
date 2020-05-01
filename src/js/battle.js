@@ -432,6 +432,9 @@ function landTheCruiseBattle(player, targetTerr, attackUnits, gameObj, superpowe
         target = 'vehicles2';
     addhitsToList(battle.attTargets, target, battle.attHits);
     markCasualties(battle, gameObj);
+    battle.attackUnits.forEach(unit => {
+        unit.movesLeft = 0;
+    });
     nukeBattleCompleted(battle, targetTerr, player, [], gameObj, superpowersData, true);
     return battle;
 }
@@ -989,6 +992,7 @@ function battleCompleted(displayBattle, selectedTerritory, currentPlayer, moveTe
             playVoiceSound(81 + Math.floor((Math.random() * 2)));
     }
     wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, 'Battle', selectedTerritory, moveTerr);
+    currentPlayer.battleFlg = true;
     if (!currentPlayer.cpu && currentPlayer.nation == 6 && !displayBattle.militaryObj.wonFlg)
         removeAnyConvertedUnits(displayBattle, selectedTerritory.id);
     if (!currentPlayer.cpuFlg && displayBattle.militaryObj.wonFlg && displayBattle.allowGeneralRetreat) {
