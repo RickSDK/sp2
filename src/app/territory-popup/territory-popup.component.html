@@ -5,8 +5,8 @@
 				style="line-height: 40px; vertical-align: middle; background-color: #337ab7;  border: 0">
 				<img *ngIf="selectedTerritory" src="assets/graphics/images/{{selectedTerritory.flag || 'flag1.gif'}}"
 					title="{{superpowersData.superpowers[selectedTerritory.owner]}}" height=40>
-				&nbsp;<span *ngIf="adminModeFlg" style="color: yellow; font-size: 12px;">[{{selectedTerritory.id}}]</span>
-				&nbsp;<span style="font-size: 24px; font-weight: 700;">{{selectedTerritory.name}}</span>
+				&nbsp;<span *ngIf="adminModeFlg" style="color: yellow; font-size: 10px;">[{{selectedTerritory.id}}]</span>
+				&nbsp;<span style="font-size: 24px; font-weight: 700;" title="[{{selectedTerritory.id}}] {{selectedTerritory.name}}">{{selectedTerritory.name}}</span>
 				&nbsp;<span style="color: #ccc;">{{selectedTerritory.userName}}</span>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>

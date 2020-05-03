@@ -91,8 +91,8 @@ function databaseSafeValueOfInput(id) {
 	var e = document.getElementById(id);
 	if (e)
 		return databaseSafe(e.value);
-//	else
-//		alert('error, no field: ' + id);
+	//	else
+	//		alert('error, no field: ' + id);
 }
 function getCheckedValueOfField(id) {
 	var e = document.getElementById(id);
@@ -104,7 +104,7 @@ function getCheckedValueOfField(id) {
 function getCheckedTextValueOfField(id) {
 	var e = document.getElementById(id);
 	if (e)
-		return (e.checked)?'Y':'N';
+		return (e.checked) ? 'Y' : 'N';
 	else
 		return '';
 }
@@ -135,41 +135,62 @@ function convertDateToString(d) {
 	return monthIndex + '/' + day + '/' + year + ' ' + h + ':' + m + ' ' + amPm;
 }
 function dateComponentFromDateStamp(dateStamp, timeFlg = false, localFormatFlg = false) {
-    //"2019-05-08T15:00:49-07:00"
-    var dateSt = new Date(dateStamp);
-    if (typeof dateSt.getMonth === 'function') {
+	//"2019-05-08T15:00:49-07:00"
+	var dateSt = new Date(dateStamp);
+	if (typeof dateSt.getMonth === 'function') {
 		var testStr = dateSt.toLocaleDateString();
-		if(testStr == 'Invalid Date')
-			return dateStamp +'.';
+		if (testStr == 'Invalid Date')
+			return dateStamp + '.';
 
-        if (localFormatFlg) {
-            if (timeFlg)
-                return dateSt.toLocaleDateString() +' '+dateSt.toLocaleTimeString();
-            else
-                return dateSt.toLocaleDateString();
-        }
+		if (localFormatFlg) {
+			if (timeFlg)
+				return dateSt.toLocaleDateString() + ' ' + dateSt.toLocaleTimeString();
+			else
+				return dateSt.toLocaleDateString();
+		}
 
-        var year = dateSt.getUTCFullYear();
-        var month = pad(dateSt.getUTCMonth() + 1);
-        var day = pad(dateSt.getUTCDate());
+		var year = dateSt.getUTCFullYear();
+		var month = pad(dateSt.getUTCMonth() + 1);
+		var day = pad(dateSt.getUTCDate());
 
-        var hour = pad(dateSt.getHours());
-        var min = pad(dateSt.getMinutes());
+		var hour = pad(dateSt.getHours());
+		var min = pad(dateSt.getMinutes());
 
-        if (timeFlg)
-            return hour + ':' + min; //'00:00'
-        else
-            return year + '-' + month + '-' + day; //'2019-06-15'
+		if (timeFlg)
+			return hour + ':' + min; //'00:00'
+		else
+			return year + '-' + month + '-' + day; //'2019-06-15'
 
-    } else {
-        console.log('invalid date!!!', dateStamp);
-    }
-    return dateStamp +'..';
+	} else {
+		console.log('invalid date!!!', dateStamp);
+	}
+	return dateStamp + '..';
 }
 function nowYear() {
 	var now = new Date();
 	var year = now.getFullYear();
 	return year;
+}
+function timerFromSeconds(seconds) {
+	if (seconds < 0)
+		seconds = 0;
+	var hours = Math.floor(seconds / 3600);
+	seconds = seconds - (hours * 3600);
+	var min = Math.floor(seconds / 60);
+	if (hours > 1)
+		return hours + ' hrs';
+	else if(hours == 1)
+		return '1 hr ';
+	else
+		return min + ' min';
+}
+function lastLoginFromSeconds(seconds) {
+	if (seconds < 900)
+		return 'Online Now!';
+	if (seconds < 3600)
+		return Math.floor(seconds / 60) + ' min ago';
+
+	return Math.floor(seconds / 3600) + ' hr ago';
 }
 function convertDateToDateStamp(d) {
 	var day = pad(d.getDate());

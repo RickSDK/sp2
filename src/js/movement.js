@@ -43,6 +43,9 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
             return true;
         if (distObj.air == 1 && unit.type == 1)
             return true;
+        if (unit.subType == 'fighter')
+            return true;
+
         return false;
     }
     if (optionType == 'loadUnits') {
@@ -494,6 +497,7 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
     var cargoUnitsSelected = 0;
     var cargoSpaceSelected = 0;
     var selectedShips = 0;
+    var selectedShipPiece = 0;
     var fighterUnitClicked;
     var bomberUnit;
     var specOpsUnit = false;
@@ -540,8 +544,10 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
                     if (!specialUnitHash[unit.piece])
                         specialUnitHash[unit.piece] = 0;
                     specialUnitHash[unit.piece]++;
-                    if (unit.type == 3)
+                    if (unit.type == 3) {
                         selectedShips++;
+                        selectedShipPiece = unit.piece;
+                    }
                     if (optionType == 'loadUnits' && selectedShips > 1) {
                         showAlertPopup('Only select one ship.', 1);
                         e.checked = false;
@@ -706,8 +712,15 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
         var ter = moveTerr[x];
         for (var i = 0; i < ter.units.length; i++) {
             var unit = ter.units[i];
+
+            var isTransport = (selectedShipPiece==4 || selectedShipPiece==45 || selectedShipPiece==49);
             if (optionType == 'loadUnits' && unit.type == 1)
+                unit.allowMovementFlg = (isTransport && selectedShips > 0 && unit.movesLeft > 0 && unit.mv > 0);
+            if (optionType == 'loadUnits' && unit.type == 2)
+                unit.allowMovementFlg = (selectedShipPiece == 8 && selectedShips > 0 && unit.movesLeft > 0 && unit.mv > 0);
+            if (optionType == 'loadUnits' && (unit.piece == 10 || unit.piece == 11 || unit.piece == 13))
                 unit.allowMovementFlg = (selectedShips > 0 && unit.movesLeft > 0 && unit.mv > 0);
+
             var e = document.getElementById('unit' + unit.id);
             if (e && e.checked) {
                 units.push(unit);

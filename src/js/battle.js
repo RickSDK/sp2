@@ -565,6 +565,9 @@ function rollAttackDice(battle, gameObj, stratFlg = false) {
             else
                 unit.dice.push('dice' + diceRoll + '.png');
         }
+        if(unit.piece == 25 || unit.piece == 42)
+            unit.dead=true;
+
         battle.attHits += unitHits;
         if (unit.piece == 43 && battle.numDefDroneKillers > 0) {
             battle.numDefDroneKillers--;

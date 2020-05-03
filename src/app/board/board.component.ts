@@ -40,7 +40,7 @@ declare var clearCurrentGameId: any;
 declare var playVoiceClip: any;
 declare var playIntroSequence: any;
 declare var highlightTerritoryWithArrow: any;
-declare var showUpArrowAtElement: any;
+declare var timerFromSeconds: any;
 declare var okToAttack: any;
 declare var promoteSuperpowersUser: any;
 declare var isUnitFighterUnit: any;
@@ -76,7 +76,7 @@ declare var numberHumanAllies: any;
 //---spLib.js
 declare var scrollToCapital: any;
 declare var popupBattleReport: any;
-declare var getCheckedValueOfField: any;
+declare var lastLoginFromSeconds: any;
 //---computer.js
 declare var purchaseCPUUnits: any;
 declare var moveCPUUnits: any;
@@ -168,6 +168,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public spVersion = spVersion();
 	public bonusInfantryFlg = false;
 	public bonusFactoryFlg = false;
+	public showSkipPlayerButtonFlg = false;
+	public showAccountSitButtonFlg = false;
 	public purchaseIndex = 0;
 	public selectedTerritory: any;
 	public battleReport = { flag: 'flag2.gif', type: 'Battle', icon: 'fa-crosshairs', attNation: 2, defNation: 3, attCasualties: 1, defCasualties: 4, wonFlg: false, result: 'Lost!', terrX: 0, terrY: 0, cruiseFlg: false };
@@ -340,18 +342,28 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	adminFixBoard() {
 		this.showAlertPopup('Fix on!', 1);
 
-		var terrId = 17;
+		var terrId = 112;
 		var terr = this.gameObj.territories[terrId - 1];
+
+		terr.units.forEach(unit => {
+			if (unit.piece == 4) {
+				unit.terr = 107;
+			}
+		});
+		return;
+
+		var player2 = this.gameObj.players[1];
+		player2.money = 35;
+		var player3 = this.gameObj.players[2];
+		player3.money = 40;
+		var player7 = this.gameObj.players[6];
+		player7.money = 40;
+
 		setTimeout(() => {
 			this.addUnitToTerr(terr, 2, true, true);
 		}, 1000);
 
-		return;
-		terr.units.forEach(unit => {
-			if (unit.att > 0) {
-				unit.terr = 38;
-			}
-		});
+
 	}
 	loadCurrentPlayer() {
 		//#####################################################################
@@ -377,10 +389,13 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 		//--------------------end test
 		this.currentPlayer = getCurrentPlayer(this.gameObj);
-		if(0) {
+		if (this.currentPlayer.money < this.currentPlayer.income && this.gameObj.round <= 6)
+			this.currentPlayer.money = this.currentPlayer.income; // temp fix!!
+
+		if (0) {
 			// if chaning turn
-			this.currentPlayer.status='Attack';
-			this.currentPlayer.money=0;
+			this.currentPlayer.status = 'Attack';
+			this.currentPlayer.money = 0;
 			//select * from SP_PLAYER where game = '11297'
 			//update SP_GAME set turn = '49204' where row_id = '11297'
 		}
@@ -429,9 +444,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.ableToTakeThisTurn = true; // admin mode only!!!
 			this.yourPlayer = this.currentPlayer;
 		}
-		if (this.gameObj.multiPlayerFlg && !this.currentPlayer.cpu && this.gameObj.secondsSinceUpdate > 60) {
+		if (this.gameObj.multiPlayerFlg && !this.currentPlayer.cpu && this.gameObj.secondsSinceUpdate > 30) {
 			if (this.user.userName == 'Rick' || this.user.userName == this.gameObj.host || (this.yourPlayer && this.yourPlayer.alive)) {
 				console.log('secondsSinceUpdate', this.gameObj.secondsSinceUpdate);
+				console.log('secondsLeftToTakeTurn:', 86400 - this.gameObj.secondsSinceUpdate);
 
 				if (this.yourPlayer && this.yourPlayer.cpu && this.yourPlayer.alive) {
 					this.showAlertPopup('Looks like you went awol so the computer took over your turn. Restoring you back into the game.', 1);
@@ -439,29 +455,14 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					setTimeout(() => {
 						saveGame(this.gameObj, this.user, this.currentPlayer);
 					}, 1000);
-				} else if (this.yourNation == this.currentPlayer.nation) {
-					if (this.gameObj.secondsSinceUpdate > 43200) {
-						if (this.gameObj.secondsSinceUpdate > 86400)
-							this.showAlertPopup('Slow Response Notice: Timer has run out! Try to take your turns more quickly to avoid being skipped.');
-						else
-							this.showAlertPopup('Slow Response Notice: Timer is running low. Try to log in at least twice each day to take turns.');
+				} else {
+					if (this.user.userName == this.currentPlayer.userName && this.gameObj.mmFlg) {
+						this.currentPlayer.empCount = 0;
 					}
-				} else if (this.gameObj.secondsSinceUpdate > 43200 && this.yourPlayer && this.yourPlayer.treaties[this.currentPlayer.nation - 1] == 3) {
-					this.displaySPPopup('accountSitPopup');
-				} else if (this.gameObj.secondsSinceUpdate > 86400) {
-					/*					if (this.user.userName == 'Rick' ||
-											this.user.userName == this.gameObj.host ||
-											(this.gameObj.autoSkip == 'Y' && this.yourPlayer && this.yourPlayer.alive))
-											this.displayFixedPopup('skipPlayerPopup');*/
+					this.checkEMPAndTimer(this.currentPlayer, this.gameObj, this.ableToTakeThisTurn);
 				}
-				if (this.user.userName == this.currentPlayer.userName && this.gameObj.mmFlg) {
-					this.currentPlayer.empCount = 0;
-				}
-				this.checkEMPAndTimer(this.currentPlayer, this.gameObj, this.ableToTakeThisTurn);
 			}
 		}
-		//	if (this.gameObj.multiPlayerFlg && this.gameObj.turboFlg && !this.ableToTakeThisTurn)
-		//		startUpBackgroundViewer();
 
 		var treatyOfferedNation = 0;
 		var nation = this.currentPlayer.nation;
@@ -484,6 +485,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	checkEMPAndTimer(player, gameObj, ableToTakeThisTurn) {
 		var url = this.getHostname() + "/webSuperpowers.php";
 		var postData = this.getPostDataFromObj({ user_login: this.user.userName, code: this.user.code, action: 'checkEMPAndTimer', gameId: gameObj.id });
+		this.showSkipPlayerButtonFlg = false;
+		this.showAccountSitButtonFlg = false;
 
 		fetch(url, postData).then((resp) => resp.text())
 			.then((data) => {
@@ -491,18 +494,17 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				if (this.verifyServerResponse(data)) {
 					var c = data.split("|");
 					var obj = { gameId: c[1], turn: c[2], empCount: c[3], uid: c[4], minutesReduced: numberVal(c[5]), time_elapsed: numberVal(c[6]), rank: numberVal(c[7]), nation: numberVal(c[8]), mygames_last_login: c[9], time_elapsedUser: numberVal(c[10]) }
-					var adjustedSeconds = numberVal(this.gameObj.secondsSinceUpdate) + obj.minutesReduced * 60;
-					console.log('checkEMPAndTimer', obj);
-					console.log('adjustedSeconds', adjustedSeconds);
+					var adjustedSeconds = obj.time_elapsed + obj.minutesReduced * 60;
+					this.gameObj.timer = timerFromSeconds(86400 - adjustedSeconds);
+					var secondsSinceLastLogin = getDateFromString(obj.mygames_last_login);
+					var hours = Math.round(secondsSinceLastLogin / 3600);
+					var minutesAway = Math.round(secondsSinceLastLogin / 60);
+					this.gameObj.lastLogin = lastLoginFromSeconds(secondsSinceLastLogin);
 					player.empCount = obj.empCount;
-					if (obj.nation == player.nation && this.gameObj.secondsSinceUpdate > 60) {
-						var secondsSinceLastLogin = getDateFromString(obj.mygames_last_login);
-						var hours = Math.round(secondsSinceLastLogin / 3600);
-						var minutesAway = Math.round(secondsSinceLastLogin / 60);
-						console.log('hours away', hours, minutesAway);
+					displayFixedPopup('currentTurnPopup');
+					if (obj.nation == player.nation && this.gameObj.secondsSinceUpdate > 30) {
 						var playerIsAwol = false;
 						if (hours > 30 && obj.rank < 8) {
-							console.log('hours offline: ', hours, obj.rank);
 							if (gameObj.type == 'battlebots' || gameObj.type == 'freeforall' || gameObj.round <= 2) {
 								playerIsAwol = true;
 							}
@@ -532,13 +534,16 @@ export class BoardComponent extends BaseComponent implements OnInit {
 							this.gameObj.secondsSinceUpdate = 0;
 							this.currentPlayer.cpu = true;
 							this.computerGo();
+						} else if (this.gameObj.secondsSinceUpdate > 43200 && this.yourPlayer && this.yourPlayer.treaties[this.currentPlayer.nation - 1] == 3) {
+							this.showAccountSitButtonFlg = true;
 						} else if (player.nation != this.yourNation && adjustedSeconds > 86400) {
 							if (minutesAway < 15)
 								this.showAlertPopup('Player has run out of time but appears to be online now.');
 							else
-								this.displayFixedPopup('skipPlayerPopup');
+								this.showSkipPlayerButtonFlg = true;
 						}
 					}
+					this.cdr.detectChanges();
 				}
 			})
 			.catch(error => {
@@ -680,7 +685,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		playVoiceClip('nation' + this.currentPlayer.nation + '.mp3');
 		this.showControls = !this.currentPlayer.cpu;
 		this.cdr.detectChanges();
-		if(!this.currentPlayer.cpu)
+		if (!this.currentPlayer.cpu)
 			this.cdr.reattach();
 		if (localStorage.chatFlg == 'Y') {
 			setTimeout(() => {

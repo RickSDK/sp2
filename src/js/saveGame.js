@@ -125,6 +125,8 @@ function saveGame(gameObj, user, currentPlayer, sendEmailFlg, endOfTurn, prevPla
 					//					if (endOfTurn)
 					//						zipUpHistoryData(gameObj, user, prevPlayer.nation);
 				} else {
+					console.log('---: expected success');
+					console.log('currentPlayer', currentPlayer);
 					updateStatusMessage('Error! Unable to sync game with server: ' + data, false);
 					showAlertPopup('Warning. Possible sync error. Keep playing but if you continue getting this error, try hitting refresh on your browser.');
 				}

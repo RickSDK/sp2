@@ -15,8 +15,8 @@
 <!---flags--->
 <div *ngFor="let terr of gameObj.territories" id="{{'terr'+terr.id}}" style="position: absolute; z-index: -4;">
 	<img (click)="terrClicked(territoryPopup, terr, gameObj, ableToTakeThisTurn, currentPlayer, user)"
-		src="assets/graphics/images/{{terr.flag || 'flag1.gif'}}" [class]="ngClassFlag(terr, isDesktopFlg)" id="{{'flag'+terr.id}}"
-		title='{{terr.title}}' alt='{{terr.title}}' style="cursor: pointer; z-index: 10;"
+		src="assets/graphics/images/{{terr.flag || 'flag1.gif'}}" [class]="ngClassFlag(terr, isDesktopFlg)"
+		id="{{'flag'+terr.id}}" title='{{terr.title}}' alt='{{terr.title}}' style="cursor: pointer; z-index: 10;"
 		(mouseenter)="changeSVGColor(true, terr.id, terr.owner)"
 		(mouseleave)="changeSVGColor(false, terr.id, terr.owner)">
 	<div style="padding-top: 0px; margin-top: -6px; max-width: 60px; white-space: nowrap;" *ngIf="terr.nation<99"><span
@@ -41,7 +41,8 @@
 <section *ngIf="currentPlayer" class="gradient"
 	style="z-index: 201; text-align: center; position: fixed; width: 100%; top: 0px; height: 44px; background-color: #ccc; box-shadow: 2px 2px 3px #000; max-height: 44px; line-height: 1.5em; overflow: hidden;">
 	<span class="hidden-xxs" style="float: left; color: #48c; font-size: 12px; padding: 10px;">Version
-		{{spVersion}}  &nbsp;<i class="fa fa-mobile" *ngIf="!isDesktopFlg"></i> <i class="fa fa-desktop" *ngIf="isDesktopFlg"></i></span>
+		{{spVersion}} &nbsp;<i class="fa fa-mobile" *ngIf="!isDesktopFlg"></i> <i class="fa fa-desktop"
+			*ngIf="isDesktopFlg"></i></span>
 	<button (click)="exitButtonPressed()" type="button" class="btn btn-secondary roundButton"><i
 			class="fa fa-arrow-left"></i>
 		Exit</button>
@@ -75,13 +76,14 @@
 		<span *ngIf="loadingFlg"><i class="fa fa-spinner fa-spin"></i> Loading...</span>
 		<span *ngIf="currentPlayer && currentPlayer.cpuFlg">
 			<i class="fa fa-android"></i>
-			<img src="assets/graphics/images/flag{{currentPlayer.nation || 1}}.gif" height="50"> 
+			<img src="assets/graphics/images/flag{{currentPlayer.nation || 1}}.gif" height="50">
 			<i class="fa fa-spinner fa-spin"></i> {{currentPlayer.status}}
-			
-			<span (click)="cpuSpeedFlgChanged()" class="checkBoxLink"><i *ngIf="!hiSpeedFlg" class="fa fa-square-o"></i><i *ngIf="hiSpeedFlg" class="fa fa-check-square-o"></i> High Speed</span>
 
-				
-			</span>
+			<span (click)="cpuSpeedFlgChanged()" class="checkBoxLink"><i *ngIf="!hiSpeedFlg"
+					class="fa fa-square-o"></i><i *ngIf="hiSpeedFlg" class="fa fa-check-square-o"></i> High Speed</span>
+
+
+		</span>
 	</span></div>
 <!---second bar--->
 <div *ngIf="showControls"
@@ -246,6 +248,44 @@
 			style="height: 60px;">Start the Game!</button></div>
 	<div><a routerLink="/"><button id="intro5" class="off" type="button">Exit Game</button></a></div>
 </div>
+
+<div id="currentTurnPopup" class="popupScreenNoPad" style="text-align:center;"
+	onClick="closePopup('currentTurnPopup')">
+	<div *ngIf="gameObj && currentPlayer">
+		<div class="title">Current Turn</div>
+		<div><img src="assets/graphics/images/flag{{currentPlayer.nation}}.gif" height=60></div>
+		<div>
+			<img *ngIf="currentPlayer.generalFlg" src="assets/graphics/units/piece10u.png" height="50">
+			<img *ngIf="currentPlayer.leaderFlg" src="assets/graphics/units/leader{{currentPlayer.nation}}.png"
+				height="50">
+		</div>
+		<div>Income: <span class="bgHighlight">{{currentPlayer.income}}</span></div>
+		<div>Money: <span class="bgHighlight">{{currentPlayer.money}}</span></div>
+		<div *ngIf="currentPlayer.status != 'Purchase'">Status: <span class="bgHighlight">{{currentPlayer.status}}</span>
+		</div>
+
+		<div class="borderClass3">
+			<div><i class="fa fa-user"></i> <span class="bgHighlight">{{currentPlayer.userName}}</span></div>
+			<div><i class="fa fa-clock-o"></i> Timer: <span class="bgHighlight">{{gameObj.timer}}</span></div>
+			<div><i class="fa fa-arrow-down"></i> Last Login: <span class="bgHighlight">{{gameObj.lastLogin}}</span></div>
+		</div>
+		<hr>
+
+		<div *ngIf="showSkipPlayerButtonFlg" class="borderClass3" style="padding: 10px; width: 140px;">
+			<div style="font-size: 12px;">Player has run out of time and can be skipped</div>
+			<button (click)="skipPlayerPressed()" id="" type="button" class="btn btn-danger roundButton tall2">Skip Player!</button>
+		</div>
+		<div *ngIf="showAccountSitButtonFlg" class="borderClass3" style="padding: 10px; width: 160px;">
+			<div style="font-size: 12px;">You are able to account sit for this player</div>
+			<button (click)="accountSitButtonClicked()" id="" type="button"
+			class="btn btn-warning roundButton tall">Account Sit!</button>
+		</div>
+
+	</div>
+
+	<button type="button" class="btn btn-primary roundButton medium">Close</button>
+</div>
+
 
 
 <div id="popupSaving" class="popupScreen2" style="width: 300px;">
