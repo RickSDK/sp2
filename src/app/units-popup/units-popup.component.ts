@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
@@ -13,6 +13,7 @@ declare var userGraphicFromLine: any;
 	styleUrls: ['./units-popup.component.scss']
 })
 export class UnitsPopupComponent extends BaseComponent implements OnInit {
+	@Output() messageEvent = new EventEmitter<string>();
 	@Input('adminModeFlg') adminModeFlg: string;
 	public units = [];
 	public user: any;
@@ -135,6 +136,7 @@ export class UnitsPopupComponent extends BaseComponent implements OnInit {
 					}
 				});
 				this.userStrategies = userStrategies;
+				this.messageEvent.emit('refresh');
 			})
 			.catch(error => {
 				this.loadingFlg = false;

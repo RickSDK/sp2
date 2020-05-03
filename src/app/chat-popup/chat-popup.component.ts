@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { splitAtColon } from '@angular/compiler/src/util';
 
@@ -13,6 +13,7 @@ declare var changeClass: any;
   styleUrls: ['./chat-popup.component.scss']
 })
 export class ChatPopupComponent extends BaseComponent implements OnInit {
+  @Output() messageEvent = new EventEmitter<string>();
   public recipients = ['All', 'Allies', 'Player'];
   public recipient = this.recipients[0];
   public recipientId = 0;
@@ -78,6 +79,7 @@ export class ChatPopupComponent extends BaseComponent implements OnInit {
             chatMessages.push(messageFromLine(msg));
         });
         this.chatMessages = chatMessages;
+        this.messageEvent.emit('refresh');
       })
       .catch(error => {
         this.showAlertPopup('Unable to reach server: ' + error, 1);

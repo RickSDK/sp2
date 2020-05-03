@@ -22,22 +22,23 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   public expandFlg = false;
   public singleGameId: number;
   public showHomeButtonFlg = true;
-  
+
   constructor(private router: Router) { super(); }
 
   ngOnInit(): void {
     this.hostname = getHostname();
     this.user = userObjFromUser();
-    if(0) {
+    if (0) {
       //reset user to new recruit
-      localStorage.rank=0;
+      localStorage.rank = 0;
       this.user.rank = 0;
       saveUserObj(this.user);
       this.user = userObjFromUser();
-      
+
     }
     console.log(this.user);
-    this.flexSprite(100);
+    //this.flexSprite(100);
+    flexSprite();
     this.singleGameId = localStorage.currentGameId;
     this.showHomeButtonFlg = localStorage.showHomeButtonFlg != 'Y';
     //getIPInfo(localStorage.userName, localStorage.password);
@@ -57,7 +58,7 @@ export class MainPageComponent extends BaseComponent implements OnInit {
       this.displaySPPopup('initPopup');
     }
   }
-  disolveSplash(className:string) {
+  disolveSplash(className: string) {
     changeClass('splash1', className);
     changeClass('splash2', className);
   }
@@ -77,7 +78,7 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   paserUserData(data) {
     this.user = parseServerDataIntoUserObj(data);
     //console.log(this.user);
- 
+
     localStorage.lastForumLogin = this.user.forum_last_login;
 
     var existingEMPCount = this.numberVal(localStorage.existingEMPCount);
@@ -88,11 +89,11 @@ export class MainPageComponent extends BaseComponent implements OnInit {
     var existingRank = this.numberVal(localStorage.rank);
     this.user.newRankFlg = (existingRank < this.user.rank);
 
-    if(this.user.awayFlg)
+    if (this.user.awayFlg)
       this.showAlertPopup('Your Away Message is turned on! Click your profile to turn it off.', 1);
 
     if (existingRank != this.user.newRankFlg) {
-      if(this.user.newRankFlg)
+      if (this.user.newRankFlg)
         this.playSound('tada.mp3');
       localStorage.rank = this.user.rank;
     }
@@ -104,7 +105,7 @@ export class MainPageComponent extends BaseComponent implements OnInit {
     }
     if (this.user.urgentCount > 0)
       this.showAlertPopup('Urgent Message Waiting!');
- 
+
   }
   multiplayGameClicked(login: any) {
     if (this.user.userId > 0)
@@ -133,10 +134,29 @@ export class MainPageComponent extends BaseComponent implements OnInit {
       if (width < 75 || width > 99) {
         this.expandFlg = !this.expandFlg;
       }
-      //window.requestAnimationFrame(flexSprite);
-      setTimeout(() => {
-        this.flexSprite(width);
-      }, 80);
+      requestAnimationFrame(flexSprite);
+      //     setTimeout(() => {
+      //      this.flexSprite(width);
+      //     }, 80);
     }
+  }
+}
+
+var width = 100;
+var expandFlg = false;
+function flexSprite() {
+  if (expandFlg)
+    width+=.1;
+  else
+    width-=.1;
+  var e = document.getElementById('spLogo');
+  if (e) {
+    e.style.width = width + '%';
+    if (width < 75) {
+      expandFlg = true;
+    }
+    if(width > 99)
+      expandFlg = false;
+    requestAnimationFrame(flexSprite);
   }
 }

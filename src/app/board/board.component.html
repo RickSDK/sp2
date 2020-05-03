@@ -2,18 +2,20 @@
 	<img id="map" src="assets/graphics/images/map.png">
 </div>
 
-<svg *ngFor="let svg of svgs" [attr.x]="svg.left" [attr.y]="svg.top" [attr.width]="svg.width" [attr.height]="svg.height"
-	[attr.viewBox]="svg.viewBox"
-	style="z-index: -8; position: absolute; width: {{svg.width}}; left: {{svg.left}}; top: {{svg.top}};">
-	<g id="svg{{svg.id}}" fill="transparent" stroke="none" stroke-width="60">
-		<path [attr.d]="svg.path" />
-	</g>
-</svg>
-
+<div *ngIf="isDesktopFlg">
+	<svg *ngFor="let svg of svgs" [attr.x]="svg.left" [attr.y]="svg.top" [attr.width]="svg.width"
+		[attr.height]="svg.height" [attr.top]="svg.top" [attr.left]="svg.left" [attr.viewBox]="svg.viewBox"
+		[ngStyle]="ngStylePositionSvg(svg)" style="z-index: -8; position: absolute;">
+		<!--width: {{svg.width}}; left: {{svg.left}}; top: {{svg.top}};-->
+		<g id="svg{{svg.id}}" fill="transparent" stroke="none" stroke-width="60">
+			<path [attr.d]="svg.path" />
+		</g>
+	</svg>
+</div>
 <!---flags--->
 <div *ngFor="let terr of gameObj.territories" id="{{'terr'+terr.id}}" style="position: absolute; z-index: -4;">
 	<img (click)="terrClicked(territoryPopup, terr, gameObj, ableToTakeThisTurn, currentPlayer, user)"
-		src="assets/graphics/images/{{terr.flag || 'flag1.gif'}}" [class]="ngClassFlag(terr)" id="{{'flag'+terr.id}}"
+		src="assets/graphics/images/{{terr.flag || 'flag1.gif'}}" [class]="ngClassFlag(terr, isDesktopFlg)" id="{{'flag'+terr.id}}"
 		title='{{terr.title}}' alt='{{terr.title}}' style="cursor: pointer; z-index: 10;"
 		(mouseenter)="changeSVGColor(true, terr.id, terr.owner)"
 		(mouseleave)="changeSVGColor(false, terr.id, terr.owner)">
@@ -39,7 +41,7 @@
 <section *ngIf="currentPlayer" class="gradient"
 	style="z-index: 201; text-align: center; position: fixed; width: 100%; top: 0px; height: 44px; background-color: #ccc; box-shadow: 2px 2px 3px #000; max-height: 44px; line-height: 1.5em; overflow: hidden;">
 	<span class="hidden-xxs" style="float: left; color: #48c; font-size: 12px; padding: 10px;">Version
-		{{spVersion}}</span>
+		{{spVersion}}  &nbsp;<i class="fa fa-mobile" *ngIf="!isDesktopFlg"></i> <i class="fa fa-desktop" *ngIf="isDesktopFlg"></i></span>
 	<button (click)="exitButtonPressed()" type="button" class="btn btn-secondary roundButton"><i
 			class="fa fa-arrow-left"></i>
 		Exit</button>
@@ -68,12 +70,18 @@
 <!---gray bar--->
 <div [style.background-color]="adminModeFlg?'red':'gray'"
 	style="z-index: 201; opacity: .75; background-color: gray; text-align: center;  position: fixed; top: 45px; width: 100%; height: 55px;">
-	<span *ngIf="!showControls" style="color: white; font-size: 24px;"><i class="fa fa-spinner fa-spin"></i>&nbsp;
-		<span *ngIf="loadingFlg">Loading...</span><span *ngIf="currentPlayer && currentPlayer.cpuFlg"><img
-				src="assets/graphics/images/flag{{currentPlayer.nation || 1}}.gif" height="50"> <i
-				class="fa fa-android"></i> Computer
-			taking
-			turn...</span>
+	<span *ngIf="!showControls" style="color: white; font-size: 20px;">
+		&nbsp;
+		<span *ngIf="loadingFlg"><i class="fa fa-spinner fa-spin"></i> Loading...</span>
+		<span *ngIf="currentPlayer && currentPlayer.cpuFlg">
+			<i class="fa fa-android"></i>
+			<img src="assets/graphics/images/flag{{currentPlayer.nation || 1}}.gif" height="50"> 
+			<i class="fa fa-spinner fa-spin"></i> {{currentPlayer.status}}
+			
+			<span (click)="cpuSpeedFlgChanged()" class="checkBoxLink"><i *ngIf="!hiSpeedFlg" class="fa fa-square-o"></i><i *ngIf="hiSpeedFlg" class="fa fa-check-square-o"></i> High Speed</span>
+
+				
+			</span>
 	</span></div>
 <!---second bar--->
 <div *ngIf="showControls"
@@ -295,18 +303,18 @@
 	<div>
 		<button (click)="withdrawGeneralButtonClicked()" id="generalWithdrawButton" type="button"
 			class="btn btn-success roundButton tall2"><i class="fa fa-arrow-left"></i> Withdraw</button>
-		<button onClick="closePopup('generalWithdrawPopup')" type="button"
-			class="btn btn-danger roundButton tall2"><i class="fa fa-arrow-down"></i> Stay</button>
+		<button onClick="closePopup('generalWithdrawPopup')" type="button" class="btn btn-danger roundButton tall2"><i
+				class="fa fa-arrow-down"></i> Stay</button>
 		<p>
 	</div>
 	<div *ngIf="user.rank <= 2" style="font-size: 12px;">Press 'Stay' to keep your General on the front lines.</div>
 </div>
 
-<div id="advisorPopup" (click)="playGameButtonPressed()" *ngIf="currentPlayer" class="popupScreenNoPad"
-	style="width: 200px; z-index: 9999;">
-	<div ng-style="ngStyleLogs(gameObj.currentNation)" style="color: black;"><img
-			src="assets/graphics/images/flag{{currentPlayer.nation}}.gif" height=20> Military Advisor</div>
-	<img ng-if="currentPlayer.nation>0" src="assets/graphics/advisors/general{{currentPlayer.nation}}.jpg" width=100%>
+<div id="advisorPopup" (click)="playGameButtonPressed()" class="popupScreenNoPad" style="width: 200px; z-index: 9999;">
+	<div ng-style="ngStyleLogs(gameObj.currentNation)" style="color: black;">
+		<img src="assets/graphics/images/flag{{currentPlayerNation}}.gif" height=20> Military Advisor
+	</div>
+	<img src="assets/graphics/advisors/general{{currentPlayerNation}}.jpg" width=100%>
 	<div style="padding: 3px;">
 		<i class="fa fa-certificate"></i> <span id="advisorMessage"></span>
 	</div>
@@ -361,7 +369,8 @@
 	<div>
 		<i class="fa fa-exclamation-triangle"></i> Player has run out of time! Skip player?
 	</div>
-	<button onClick="closePopup('skipPlayerPopup')" id="" type="button" class="btn btn-primary roundButton tall2">Cancel</button>
+	<button onClick="closePopup('skipPlayerPopup')" id="" type="button"
+		class="btn btn-primary roundButton tall2">Cancel</button>
 	<button (click)="skipPlayerPressed()" id="" type="button" class="btn btn-danger roundButton tall2">Skip!</button>
 	<p>
 </div>
@@ -383,12 +392,26 @@
 </div>
 
 <div id="accountSitPopup" class="popupScreen2" style="z-index: 999">
-	<div><font size=3 color=#03a><i class="fa fa-exclamation-triangle"></i> Account Sit?</font> </div>
-	<div>You are an ally of this player, who has gone more than 12 hours without taking a turn. You can take the turn if you want.</div>
-   	<button onClick="closePopup('accountSitPopup')" id="" type="button" class="btn btn-danger roundButton">No Thanks</button>
-   	<button (click)="accountSitButtonClicked()" id="" type="button" class="btn btn-primary roundButton tall">Yes!</button><p>
+	<div>
+		<font size=3 color=#03a><i class="fa fa-exclamation-triangle"></i> Account Sit?</font>
 	</div>
+	<div>You are an ally of this player, who has gone more than 12 hours without taking a turn. You can take the turn if
+		you want.</div>
+	<button onClick="closePopup('accountSitPopup')" id="" type="button" class="btn btn-danger roundButton">No
+		Thanks</button>
+	<button (click)="accountSitButtonClicked()" id="" type="button"
+		class="btn btn-primary roundButton tall">Yes!</button>
+	<p>
+</div>
 
+
+<div id="undoMovesPopup" class="popupScreen2">
+	<div class="title">-Undo Moves-</div>
+	<div>Note: You may or may not be able to undo your moves. By clicking "Refresh Board" it will take you back to the
+		last saved state.</div>
+	<button onClick="closePopup('undoMovesPopup')" type="button" class="btn btn-secondary roundButton">Cancel</button>
+	<button (click)="refreshGameBoard()" type="button" class="btn btn-warning roundButton">Refresh Board</button>
+</div>
 
 <div id="diplomacyWarningPopup" class="popupScreen2">
 	<div class="title">-End Turn-</div>
@@ -443,9 +466,9 @@
 
 <app-game-players-popup #gamePlayersPopup></app-game-players-popup>
 <app-production-queue-popup #productionQueuePopup></app-production-queue-popup>
-<app-units-popup #unitsPopup [adminModeFlg]="adminModeFlg"></app-units-popup>
+<app-units-popup #unitsPopup [adminModeFlg]="adminModeFlg" (messageEvent)="battleHappened($event)"></app-units-popup>
 <app-tech-popup #techPopup [adminModeFlg]="adminModeFlg"></app-tech-popup>
 <app-logs-popup #logsPopup></app-logs-popup>
-<app-chat-popup #chatPopup></app-chat-popup>
+<app-chat-popup #chatPopup (messageEvent)="battleHappened($event)"></app-chat-popup>
 <app-audio-popup #audioPopup (messageEvent)="musicUpdated($event)"></app-audio-popup>
 <app-diplomacy-popup #diplomacyPopup (messageEvent)="diplomacyDone($event)"></app-diplomacy-popup>

@@ -1,10 +1,10 @@
 function spVersion() {
-	return 'v4.10';
+	return 'v4.12';
 }
 function googleAds() {
-	window.onload = function() {
+	window.onload = function () {
 		(adsbygoogle = window.adsbygoogle || []).push({});
-	  }  
+	}
 }
 function getScriptV() {
 	return 'v3.5';
@@ -188,7 +188,7 @@ function getIPInfo(userName, pwd) {
 	});
 }
 function getIPInfo2(userName, pwd) {
-	showAlertPopup('ip Request!!',1);
+	showAlertPopup('ip Request!!', 1);
 	var code = btoa(pwd);
 	var option = 3;
 	if (option == 1)
@@ -231,7 +231,7 @@ function getIPInfo2(userName, pwd) {
 			console.log('ipify', JSON.stringify(data, null, 2));
 		});
 }
-function getDisplayUnitCount(terr, fogOfWar, hardFog, yourPlayer=null) {
+function getDisplayUnitCount(terr, fogOfWar, hardFog, yourPlayer = null) {
 	if (terr.treatyStatus >= 3 || fogOfWar != 'Y')
 		return terr.unitCount.toString();
 	if (hardFog == 'Y' && !terr.illuminateFlg) {
@@ -473,7 +473,9 @@ function militaryAdvisorPopup(message, voiceOverId, muteSound) {
 function militaryAdvisorPopup2(message) {
 	playSound('clearThroat.mp3');
 	displayFixedPopup("advisorPopup");
-	document.getElementById("advisorMessage").innerHTML = message;
+	var e = document.getElementById("advisorMessage");
+	if (e)
+		e.innerHTML = message;
 }
 function showTreatyConfirmationPopup(message, msgId, nation) {
 	localStorage.confirmationOption = msgId;
@@ -514,19 +516,19 @@ function clearCurrentGameId() {
 }
 function computerAnnouncement(user, msg) {
 	console.log('computerAnnouncement', msg);
-		const url = getHostname() + "/webSuperpowers.php";
-		var body = JSON.stringify({ user_login: user.userName, code: user.code, action: 'computerAnnouncement', msg: msg });
+	const url = getHostname() + "/webSuperpowers.php";
+	var body = JSON.stringify({ user_login: user.userName, code: user.code, action: 'computerAnnouncement', msg: msg });
 
-		const postData = {
-			method: 'POST',
-			headers: new Headers(),
-			body: body
-		};
-		fetch(url, postData).then((resp) => resp.text())
-			.then((data) => {
-				console.log(data);
-			})
-			.catch(error => {
-			});
+	const postData = {
+		method: 'POST',
+		headers: new Headers(),
+		body: body
+	};
+	fetch(url, postData).then((resp) => resp.text())
+		.then((data) => {
+			console.log(data);
+		})
+		.catch(error => {
+		});
 }
 

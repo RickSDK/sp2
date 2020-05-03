@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, NgZone } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { analyzeAndValidateNgModules, ThrowStmt } from '@angular/compiler';
 import { DiplomacyPopupComponent } from '../diplomacy-popup/diplomacy-popup.component';
@@ -76,6 +76,7 @@ declare var numberHumanAllies: any;
 //---spLib.js
 declare var scrollToCapital: any;
 declare var popupBattleReport: any;
+declare var getCheckedValueOfField: any;
 //---computer.js
 declare var purchaseCPUUnits: any;
 declare var moveCPUUnits: any;
@@ -98,6 +99,7 @@ declare var landDistFromTerr: any;
 declare var isUnitOkToMove: any;
 declare var findMainBase: any;
 declare var allUnitsAttack: any;
+declare var isAtWarWith: any;
 declare var addTestScore: any;
 declare var checkIlluminateFlg: any;
 
@@ -120,7 +122,8 @@ declare var spVersion: any;
 @Component({
 	selector: 'app-board',
 	templateUrl: './board.component.html',
-	styleUrls: ['./board.component.scss']
+	styleUrls: ['./board.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BoardComponent extends BaseComponent implements OnInit {
 	@ViewChild(DiplomacyPopupComponent) diplomacyModal: DiplomacyPopupComponent;
@@ -140,10 +143,13 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public ableToTakeThisTurn = true;
 	public uploadMultiplayerFlg = false;
 	public progress = 0;
-	public isMobileFlg = true;
+	public isMobileFlg = true; // < 1200px
+	public isDesktopFlg = false; // > 600px
+	public hiSpeedFlg = false;
 	public spriteInMotionFlg = false;
 	public spritePieceId = 2;
 	public spriteShipId = 4;
+	public currentPlayerNation = 1;
 	public technologyPurchases = [];
 	//	public spriteObj: any;
 	public carrierAddedFlg = false;
@@ -174,7 +180,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		'Round 6. Players can now attack other players! This is the limited attack round, meaning you can take at most one other player\'s territory and lose at most one territory.',
 	];
 
-	constructor(private router: Router, private route: ActivatedRoute) {
+	constructor(private ngZone: NgZone, private cdr: ChangeDetectorRef, private router: Router, private route: ActivatedRoute) {
 		super();
 		this.route.queryParams
 			.subscribe(params => {
@@ -189,9 +195,14 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.svgs = loadSVGs();
 		this.warAudio.loop = true;
 		this.gameObj = { territories: [] };
+		//this.cdr.detach();
+
 		this.initBoard();
 	}
 	//----------------load board------------------
+	ngStylePositionSvg(svg: any) {
+		return { left: svg.left, top: svg.top }
+	}
 	initBoard() {
 		this.gameMusic.loop = true;
 		this.gameMusic.volume = 0.5;
@@ -261,6 +272,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	loadBoard() {
 		updateProgressBar(70);
+		this.cdr.detectChanges();
 		var e = document.getElementById('terr1');
 		if (e) {
 			var cp = getCurrentPlayer(this.gameObj);
@@ -270,12 +282,13 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				this.yourPlayer = getYourPlayer(this.gameObj, this.user.userName);
 			if (this.yourPlayer)
 				this.yourNation = this.yourPlayer.nation;
-
+			this.currentPlayerNation = this.yourNation;
 			console.log('--yourPlayer', this.yourPlayer);
 			refreshAllTerritories(this.gameObj, this.yourPlayer, this.superpowersData, this.yourPlayer)
 			refreshBoard(this.gameObj.territories);
 			this.gameObj.players.sort(function (a, b) { return a.turn - b.turn; });
 			var left = window.innerWidth - 55;
+			this.isDesktopFlg = window.innerWidth >= 600;
 			if (left > 1282) {
 				setTimeout(() => { playersPanelMoved(); }, 500);
 				this.isMobileFlg = false;
@@ -283,6 +296,11 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			setTimeout(() => { this.startTheAction(); }, 700);
 			setTimeout(() => { positionPurchasePanel(); }, 900);
 		} else {
+			updateProgressBar(100);
+			stopSpinner();
+			this.loadingFlg = false;
+			this.showAlertPopup('Error loading game!', 1);
+			this.cdr.detectChanges();
 			console.log('board not loaded!!!');
 		}
 	}
@@ -290,6 +308,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 
 	//----------------start turn------------------
+	refreshGameBoard() {
+		closePopup('undoMovesPopup');
+		this.initBoard();
+	}
 	startTheAction() {
 		if (isMusicOn())
 			this.gameMusic.play();
@@ -317,11 +339,17 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	adminFixBoard() {
 		this.showAlertPopup('Fix on!', 1);
-		var terrId = 24;
+
+		var terrId = 17;
 		var terr = this.gameObj.territories[terrId - 1];
+		setTimeout(() => {
+			this.addUnitToTerr(terr, 2, true, true);
+		}, 1000);
+
+		return;
 		terr.units.forEach(unit => {
 			if (unit.att > 0) {
-				unit.terr = 30;
+				unit.terr = 38;
 			}
 		});
 	}
@@ -335,18 +363,28 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		///uploadCompletedGameStats(this.gameObj, 'Russian Republic|European Union|Communist China|Middle-East Federation', this.superpowersData, this.yourPlayer, this.user);
 		//-------------------- test
 		if (0) {
-			this.gameObj.turnId = 4; //<--- test
-			this.haltActionFlg = true;
-		}
-		if (0) {
 			this.adminFixBoard();
 		}
 
 		this.haltPurchaseFlg = false; //cpu only!
 		this.haltCombatActionFlg = false;
 		this.haltActionFlg = false;
+		if (0) {
+			this.gameObj.turnId = 5; //<--- test
+			this.haltActionFlg = true;
+			this.haltPurchaseFlg = true;
+			this.haltCombatActionFlg = true;
+		}
 		//--------------------end test
 		this.currentPlayer = getCurrentPlayer(this.gameObj);
+		if(0) {
+			// if chaning turn
+			this.currentPlayer.status='Attack';
+			this.currentPlayer.money=0;
+			//select * from SP_PLAYER where game = '11297'
+			//update SP_GAME set turn = '49204' where row_id = '11297'
+		}
+		this.currentPlayerNation = this.currentPlayer.nation;
 		if (this.currentPlayer.userName == this.user.userName && this.yourPlayer.nation != this.currentPlayer.nation)
 			this.yourPlayer = this.currentPlayer;
 
@@ -434,14 +472,14 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			});
 		});
 		this.currentPlayer.treatyOfferedNation = treatyOfferedNation;
-
+		this.cdr.detectChanges();
 
 		if (this.ableToTakeThisTurn)
 			this.displayMilitaryAdvisorMessage();
 		else {
 			this.initializePlayer();
 		}
-
+		this.cdr.detectChanges();
 	}
 	checkEMPAndTimer(player, gameObj, ableToTakeThisTurn) {
 		var url = this.getHostname() + "/webSuperpowers.php";
@@ -583,6 +621,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				displayFixedPopup('introPopup');
 				playVoiceClip('bt01welcome.mp3');
 				playIntroSequence();
+				this.cdr.detectChanges();
 			} else {
 				this.forceUserToClickTerritory(62);
 				militaryAdvisorPopup('Begin the conquest! It\'s time to expand your empire. Click on Ukraine to invade.');
@@ -631,14 +670,22 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	playGameButtonPressed() {
 		closePopup('advisorPopup');
 		console.log('playGameButtonPressed');
+		setTimeout(() => {
+			positionPurchasePanel();
+		}, 1000);
+
 		this.initializePlayer();
 	}
 	initializePlayer() {
 		playVoiceClip('nation' + this.currentPlayer.nation + '.mp3');
 		this.showControls = !this.currentPlayer.cpu;
+		this.cdr.detectChanges();
+		if(!this.currentPlayer.cpu)
+			this.cdr.reattach();
 		if (localStorage.chatFlg == 'Y') {
 			setTimeout(() => {
 				changeClass('chatButton', 'btn btn-warning tight roundButton glowYellow');
+				this.cdr.detectChanges();
 				//				showUpArrowAtElement('chatButton');
 			}, 1000);
 		}
@@ -694,6 +741,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 		this.checkTreatyOffers(player);
 		scrollToCapital(this.currentPlayer.nation);
+		this.cdr.detectChanges();
 
 		if (player.cpu)
 			this.computerGo();
@@ -704,6 +752,11 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.hideActionButton = !this.currentPlayer.battleFlg;
 		if (this.currentPlayer.cpuFlg)
 			this.computerGo();
+	}
+	cpuSpeedFlgChanged() {
+		this.playClick();
+		this.showControls = false;
+		this.hiSpeedFlg = !this.hiSpeedFlg;
 	}
 	computerGoClicked() {
 		playClick();
@@ -720,9 +773,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.currentPlayer.status == 'Purchase')
 			this.currentPlayer.status = 'Waiting';
 
+		this.cdr.detectChanges();
+		this.cdr.detach();
+		var delay = (this.hiSpeedFlg) ? 100 : 1500;
 		setTimeout(() => {
 			this.computerStarting();
-		}, 1500);
+		}, delay);
 	}
 	computerStarting() {
 		if (this.currentPlayer.status == 'Waiting') {
@@ -734,6 +790,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	computerPurchase() {
 		purchaseCPUUnits(this.currentPlayer, this.gameObj, this.superpowersData);
 		this.currentPlayer.status = 'Purchase';
+		this.cdr.detectChanges();
 
 		if (this.haltPurchaseFlg) {
 			this.showControls = true;
@@ -785,6 +842,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		this.advanceMainBase();
 
+		this.cdr.detectChanges();
+		var delay = (this.hiSpeedFlg) ? 100 : 3000;
 		if (this.haltCombatActionFlg) {
 			this.showControls = true;//<---testing only!!
 			showAlertPopup('action halted!', 1);
@@ -793,12 +852,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.currentPlayer.status = 'Move';
 			setTimeout(() => {
 				this.computerMove();
-			}, 3000);
+			}, delay);
 		}
 	}
 	attemptToAttackACapital(player: any, gameObj: any) {
 		this.gameObj.territories.forEach(terr => {
-			if (terr.capital && terr.nation < 99 && terr.owner != player.nation && okToAttack(terr, player.nation, gameObj)) {
+			if (terr.capital && terr.nation < 99 && terr.owner != player.nation && okToAttack(player, terr, gameObj)) {
 				if (terr.owner == 0 || treatyStatus(player, terr.owner) == 0) {
 					var terrAtt;
 					terr.land.forEach(terrId => {
@@ -882,7 +941,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			borders.forEach(borderId => {
 				if (borderId > 0) {
 					var terr2 = this.gameObj.territories[borderId - 1];
-					if (terr2.nation < 99 && terr2.owner != player.nation && terr2.unitCount > min && okToAttack(terr2, player.nation, this.gameObj)) {
+					if (terr2.nation < 99 && terr2.owner != player.nation && terr2.unitCount > min && isAtWarWith(player, terr2, this.gameObj)) {
 						min = terr2.unitCount;
 						bestTerr = terr2;
 					}
@@ -959,7 +1018,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		for (var x = 0; x < terr.land.length; x++) {
 			var id = terr.land[x];
 			var terr2 = this.gameObj.territories[id - 1];
-			if (terr2.factoryCount > 0 && terr2.owner != attacker.nation && numberVal(terr2.defendingFighterId) == 0 && !terr2.facBombed && okToAttack(attacker, terr2, gameObj)) {
+			if (terr2.factoryCount > 0 && terr2.owner != attacker.nation && numberVal(terr2.defendingFighterId) == 0 && !terr2.facBombed && isAtWarWith(attacker, terr2, gameObj)) {
 				bestTerr = terr2;
 			} else
 				bestTerr = this.findStratBombOfTerr(terr2, attacker, range, bestTerr, gameObj);
@@ -995,7 +1054,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		for (var x = 0; x < terr.land.length; x++) {
 			var id = terr.land[x];
 			var terr2 = this.gameObj.territories[id - 1]; //treatyStatus(attacker, terr2.owner)
-			if (!terr2.nuked && terr2.unitCount > max && terr2.owner != attacker.nation && okToAttack(attacker, terr2, gameObj)) {
+			if (!terr2.nuked && terr2.unitCount > max && terr2.owner != attacker.nation && isAtWarWith(attacker, terr2, gameObj)) {
 				max = terr2.unitCount;
 				bestTerr = terr2;
 			}
@@ -1124,6 +1183,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			fortifyThisTerritory(this.currentPlayer, this.gameObj);
 
 		this.refreshPlayerTerritories(this.currentPlayer, this.gameObj, this.superpowersData, this.yourPlayer);
+		this.cdr.detectChanges();
 
 		if (this.currentPlayer.cpu)
 			doCpuDiplomacyOffer(this.currentPlayer, this.gameObj, this.superpowersData);
@@ -1299,10 +1359,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.battleReport = this.getBattleReportFromBattleObj(battleObj);
 		//		console.log('!!!2!!!', this.battleReport);
 		setTimeout(() => {
+			this.cdr.detectChanges();
+		}, 300);
+		setTimeout(() => {
 			popupBattleReport(this.battleReport);
-		}, 2000);
-
-
+			this.cdr.detectChanges();
+		}, 1000);
 		if (battleObj.militaryObj.wonFlg) {
 			var terr = this.selectedTerritory;
 			if (this.bonusInfantryFlg) {
@@ -1325,6 +1387,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	battleHappened(msg: string) {
 		//emitted from terr-popup
+		this.cdr.detectChanges();
 		if (msg == 'done!') {
 			this.completeTurnButtonPressed();
 			return;
@@ -1381,6 +1444,24 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.spriteShipId = obj.id;
 			spriteObj.name = 'spriteShip';
 		}
+		if (obj.nukeFlg) {
+			setTimeout(() => {
+				shakeScreen()
+				whiteoutScreen();
+				playSound('bomb4.mp3');
+				this.positionNuke(t2, false);
+			}, 1200);
+		}
+		if (obj.cruiseFlg) {
+			setTimeout(() => {
+				shakeScreen()
+				playSound('bomb4.mp3');
+				this.positionNuke(t2, true);
+			}, 1200);
+		}
+
+		if (!this.isDesktopFlg && this.currentPlayer.cpu)
+			return;
 
 		if (obj.id == 14)
 			spriteObj.name = 'sprite14';
@@ -1399,23 +1480,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			e.style.left = (terr.x - 10).toString() + 'px';
 			e.style.top = (terr.y + 80).toString() + 'px';
 			e.style.height = '30px';
-			this.moveSprite(100, spriteObj);
+			this.cdr.detectChanges();
+			this.ngZone.runOutsideAngular(() => this.moveSprite(100, spriteObj));
 		}
-		if (obj.nukeFlg) {
-			setTimeout(() => {
-				shakeScreen()
-				whiteoutScreen();
-				playSound('bomb4.mp3');
-				this.positionNuke(t2, false);
-			}, 1200);
-		}
-		if (obj.cruiseFlg) {
-			setTimeout(() => {
-				shakeScreen()
-				playSound('bomb4.mp3');
-				this.positionNuke(t2, true);
-			}, 1200);
-		}
+
 
 	}
 	moveSprite(amount: number, spriteObj: any) {
@@ -1433,6 +1501,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			if (amount <= 0) {
 				//				this.spriteInMotionFlg = false;
 				e.style.display = 'none';
+				this.cdr.detectChanges();
 			} else {
 				setTimeout(() => {
 					this.moveSprite(amount, spriteObj);
@@ -1440,6 +1509,29 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			}
 		}
 	}
+	/*moveSprite(amount: number, spriteObj: any) {
+		amount -= 1;
+		var range = spriteObj.left1 - spriteObj.left2;
+		var left = spriteObj.left2 + range * amount / 100;
+
+		var range2 = spriteObj.top1 - spriteObj.top2;
+		var top = spriteObj.top2 + range2 * amount / 100;
+
+		var e = document.getElementById(spriteObj.name);
+		if (e) {
+			e.style.left = (left - 10).toString() + 'px';
+			e.style.top = (top + 80).toString() + 'px';
+			if (amount <= 0) {
+				//				this.spriteInMotionFlg = false;
+				e.style.display = 'none';
+				this.cdr.detectChanges();
+			} else {
+				requestAnimationFrame(function(){ // call requestAnimationFrame again with parameters
+					moveSprite(amount, spriteObj);
+				})
+			}
+		}
+	}*/
 	positionNuke(t2: any, cruiseFlg: boolean) {
 		this.nukeFrameNum = 1;
 		var spriteName = cruiseFlg ? 'cruiseSprite' : 'nukeSprite';
@@ -1453,7 +1545,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				e.style.top = (t2.y + 10).toString() + 'px';
 			}
 		}
-		this.annimateNuke(1);
+		this.ngZone.runOutsideAngular(() => this.annimateNuke(1));
+
 	}
 	annimateNuke(num: number) {
 		if (num > 18) {
@@ -1468,12 +1561,16 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			return;
 		}
 		this.nukeFrameNum = num;
+		this.cdr.detectChanges();
 		setTimeout(() => {
 			this.annimateNuke(num + 1);
 		}, 160);
 	}
 	annimateUnit(piece: number, terr: any) {
 		playSound('Swoosh.mp3', 0, false);
+		if (!this.isDesktopFlg && this.currentPlayer.cpu)
+			return;
+
 		if (this.spriteInMotionFlg) {
 			return;
 		}
@@ -1485,7 +1582,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			e.style.left = terr.x + 'px';
 			e.style.top = (terr.y + 100).toString() + 'px';
 			e.style.height = '100px';
-			this.zoomSprite(100);
+			this.cdr.detectChanges();
+			this.ngZone.runOutsideAngular(() => this.zoomSprite(100));
 		}
 	}
 	zoomSprite(height: number) {
@@ -1552,6 +1650,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			displayFixedPopup('diplomacyWarningPopup');
 		} else if (this.currentPlayer.status == 'Place Units')
 			this.placeUnitsAndEndTurn();
+		this.cdr.detectChanges();
 	}
 	placeUnitsAndEndTurn() {
 		playClick();
@@ -1561,7 +1660,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.gameObj.actionButtonMessage = '';
 		this.currentPlayer.status = 'Place Units';
 		this.carrierAddedFlg = false;
-		var numAddedUnitsToAdd = this.addUnitsToBoard();;
+		var numAddedUnitsToAdd = this.addUnitsToBoard();
+		this.cdr.detectChanges();
 		setTimeout(() => {
 			this.endTurn();
 		}, numAddedUnitsToAdd * 95);
@@ -1649,7 +1749,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		startSpinner('Saving...', '150px', 'spinnerOKButton');
 		updateProgressBar(30);
 		this.currentPlayer.status = 'Waiting';
-		this.currentPlayer.money += this.currentPlayer.income;
 		playSound('clink.wav');
 		localStorage.generalRetreatObj = '';
 		this.currentPlayer.news = [];
@@ -1657,11 +1756,14 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.currentPlayer.requestedHotSpot = 0;
 		this.gameObj.secondsSinceUpdate = 0;
 		this.currentPlayer.requestedTarget = 0;
+
 		checkVictoryConditions(this.currentPlayer, this.gameObj, this.superpowersData, this.yourPlayer, this.user);
 		addIncomeForPlayer(this.currentPlayer, this.gameObj);
+		this.currentPlayer.money += this.currentPlayer.income;
 		var damageReport = getDamageReport(this.currentPlayer, this.gameObj, this.superpowersData);
 		logItem(this.gameObj, this.currentPlayer, 'Turn Completed', this.currentPlayer.income + ' Coins Collected.', '', '', '', '', damageReport);
 		var prevPlayer = this.currentPlayer;
+		this.cdr.detectChanges();
 		if (this.gameObj.gameOver) {
 			if (isMusicOn()) {
 				this.gameMusic.pause();
@@ -1820,13 +1922,18 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		var gUnits = this.superpowersData.units;
 		var units = [];
 		var k = Object.keys(unitHash);
+		var techBought = false;
 		k.forEach(function (unitId) {
 			var count = unitHash[unitId];
 			var piece = gUnits[unitId];
 			if (piece.id == 18)
-				displayFixedPopup('technologyPopup');
+				techBought = true;
 			units.push(count + ' ' + piece.name);
 		});
+		if (techBought) {
+			displayFixedPopup('technologyPopup');
+			this.cdr.detectChanges();
+		}
 		this.logItem(player, 'Purchases', units.join(', '));
 	}
 	removeEMPFromServer() {
@@ -1962,17 +2069,20 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	scrollToNation(nation) {
 		scrollToCapital(nation);
 	}
-	ngClassFlag = function (terr) {
-		var flagShadow = ' hoverShadowed';
-		if (terr.treatyStatus >= 3)
-			flagShadow = ' flagAlly';
-		if (terr.treatyStatus == 0)
-			flagShadow = ' flagEnemy';
-		var hover = isMobile() ? '' : flagShadow;
+	ngClassFlag = function (terr, isDesktopFlg) {
+		var hover = '';
+		if (isDesktopFlg) {
+			var flagShadow = ' hoverShadowed';
+			if (terr.treatyStatus >= 3)
+				flagShadow = ' flagAlly';
+			if (terr.treatyStatus == 0)
+				flagShadow = ' flagEnemy';
+			hover = flagShadow;
+		}
 		if (terr.capital && terr.id < 79)
 			return "flagCapital" + hover;
 		else
-			return "flag " + hover;
+			return "flag" + hover;
 	}
 	ngStyleHalo = function (terr, x, y) {
 		return { 'top': (terr.y + y).toString() + 'px', 'left': (terr.x + x).toString() + 'px' }

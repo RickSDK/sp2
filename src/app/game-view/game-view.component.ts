@@ -17,6 +17,7 @@ export class GameViewComponent extends BaseComponent implements OnInit {
   @Input('ableToTakeThisTurn') ableToTakeThisTurn: any;
   public user: any;
   public createdDay = '';
+  public disableButtonFlg = false;
 
   constructor() { super(); }
 
@@ -82,5 +83,16 @@ export class GameViewComponent extends BaseComponent implements OnInit {
       if (player.userId != '30')
         player.cpu = false;
     });
+  }
+  turnIntoCPU() {
+    this.playClick();
+    this.disableButtonFlg = true;
+    var currentPlayer = getCurrentPlayer(this.gameObj);
+    currentPlayer.cpu = true;
+  }
+  undoMoves() {
+    this.playClick();
+    this.closeModal('#gamePlayersPopup');
+    displayFixedPopup('undoMovesPopup');
   }
 }

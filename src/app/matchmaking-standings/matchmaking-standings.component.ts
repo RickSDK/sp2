@@ -153,12 +153,14 @@ export class MatchmakingStandingsComponent extends BaseComponent implements OnIn
 
     if (points > fifthPlace)
       points = fifthPlace;
-    var tollarance = 60;
+    var tollarance = 100 - this.fullLeaderList.length;
+    if (tollarance < 15)
+      tollarance = 15;
     var readyList = [];
     var ipHash = {};
     this.fullLeaderList.forEach(function (player) {
       player.ptDiff = Math.abs(player.points - points);
-      if(player.games_max > player.games_playing && player.days_old <= 1) {
+      if (player.games_max > player.games_playing && player.days_old <= 1) {
         console.log('player ready: ', player.userName, player.ptDiff);
         if (player.ptDiff <= tollarance) {
 
@@ -166,12 +168,12 @@ export class MatchmakingStandingsComponent extends BaseComponent implements OnIn
           if (num == 0)
             ipHash[player.ip] = 0;
           ipHash[player.ip]++;
-  
+
           if (ipHash[player.ip] == 1)
             readyList.push(player);
           else
             console.log('ip dupe!!', player.name, player.ip);
-        }  
+        }
       }
     });
     console.log(readyList.length + ' players within ' + tollarance + ' points of ' + points);
@@ -191,6 +193,7 @@ export class MatchmakingStandingsComponent extends BaseComponent implements OnIn
       numPlayers = 7;
 
     if (readyList.length < numPlayers) {
+      this.availablePlayers = readyList.length;
       this.showAlertPopup('Not enough players found! tollarance: ' + tollarance + ', players found: ' + readyList.length, 1);
       return;
     }
@@ -202,7 +205,7 @@ export class MatchmakingStandingsComponent extends BaseComponent implements OnIn
     console.log(gameType, numPlayers, fList);
     this.startthisMMGame(fList, gameType); //start_games
   }
-  startthisMMGame(pList:string, type:string) {
+  startthisMMGame(pList: string, type: string) {
     const url = this.getHostname() + "/webLadder.php";
     const postData = this.getPostDataFromObj({ userId: this.user.userId, code: this.user.code, action: 'start_games2', pList: pList, type: type });
 

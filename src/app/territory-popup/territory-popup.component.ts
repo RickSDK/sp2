@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, Input} from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { TerrButtonsComponent } from '../terr-buttons/terr-buttons.component';
 import { TerrPurchaseComponent } from '../terr-purchase/terr-purchase.component';
@@ -158,12 +158,14 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     if (this.terrButtonsComp)
       this.terrButtonsComp.initChild();
 
-    if (this.terrPurchaseComp)
+    if (this.terrPurchaseComp) {
       this.terrPurchaseComp.initChild(terr);
-    else {
+      this.battleHappened.emit('cdr');
+    } else {
       setTimeout(() => {
         if (this.terrPurchaseComp)
           this.terrPurchaseComp.initChild(terr);
+          this.battleHappened.emit('cdr');
       }, 500);
     }
 
@@ -192,6 +194,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
 
     setTimeout(() => {
       this.showUnitsForMovementBG();
+      this.battleHappened.emit('cdr');
     }, 30);
     //    }
   }
@@ -318,6 +321,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     if (this.displayBattle.airDefenseUnits.length > 0) {
       startToRollAAGuns(this.displayBattle, this.selectedTerritory);
       this.changeDiceUnitsToImg(this.displayBattle.airDefenseUnits, 'spin.gif');
+      this.battleHappened.emit('cdr');
       setTimeout(() => {
         this.aaGunsRoll();
       }, this.battleDelay);
@@ -330,6 +334,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     rollAAGuns(this.displayBattle, this.selectedTerritory, this.gameObj);
     this.changeDiceUnitsToImg(this.displayBattle.attackUnits, 'spin.gif');
     this.changeDiceUnitsToImg(this.displayBattle.defendingUnits, 'dice.png');
+    this.battleHappened.emit('cdr');
     setTimeout(() => {
       this.attackerRolls();
     }, this.battleDelay);
@@ -338,12 +343,14 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   attackerRolls() {
     rollAttackDice(this.displayBattle, this.gameObj);
     this.changeDiceUnitsToImg(this.displayBattle.defendingUnits, 'spin.gif');
+    this.battleHappened.emit('cdr');
     setTimeout(() => {
       this.rollDefenderDice();
     }, this.battleDelay);
   }
   rollDefenderDice() {
     rollDefenderDice(this.displayBattle, this.selectedTerritory, this.currentPlayer, this.moveTerr, this.gameObj, this.superpowersData);
+    this.battleHappened.emit('cdr');
     if (!this.displayBattle.militaryObj.battleInProgress) {
       this.battleCompletedEmit.emit(this.displayBattle);
       if (this.displayBattle.militaryObj.wonFlg)

@@ -4,6 +4,14 @@
 	top: 0;
 	height: 1px;
 }
+.checkBoxLink {
+	font-size: 18px;
+	color: black;
+	cursor: pointer;
+}
+.checkBoxLink:hover {
+	font-weight: 700;
+}
 
 @media screen and (min-width: 619px) {
 	#menu1Button {

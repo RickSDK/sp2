@@ -243,7 +243,7 @@
                                                 class="fa {{ngClassGameType(game.gameType)}}"></i> {{game.type}}</div>
                                         <button (click)="enterGame(game)" type="button"
                                             [ngClass]="ngClassGameButton(game)" class="btn btn-default roundButton"
-                                            style="font-size: 26px;">
+                                            style="font-size: 26px; white-space: nowrap;">
                                             <i class="fa fa-arrow-right"></i>
                                             <span *ngIf="game.joinGameFlg">Join</span>
                                             <span *ngIf="!game.joinGameFlg">Enter</span>

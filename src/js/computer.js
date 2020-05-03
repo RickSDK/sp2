@@ -178,10 +178,13 @@ function doCpuDiplomacyRespond(player, gameObj, superpowersData) {
     }
     player.offers.forEach(function (nation) {
         var status = player.treaties[nation - 1];
-        var treatyStatus = (status < 2) ? 2 : 3;
-        if (treatyStatus == 2)
+        var roundsW = roundsOfWar(player, nation, gameObj);
+        var roundsP = roundsOfPeace(player, nation, gameObj);
+        console.log('roundsW', roundsW);
+        console.log('roundsP', roundsP);
+        if (status < 2 && (roundsW>3 || gameObj.round<6))
             acceptOfferFromNation(player, nation, gameObj, superpowersData);
-        if (treatyStatus == 3) {
+        if (status == 2) {
             if (player.allySpotsOpen > 0)
                 acceptOfferFromNation(player, nation, gameObj, superpowersData);
             else {
@@ -214,8 +217,10 @@ function declareWarIfNeeded(gameObj, player, superpowersData) {
             var status = treatyStatus(player, p2.nation);
             var roundsP = roundsOfPeace(player, p2.nation, gameObj);
             var roundsW = roundsOfWar(player, p2.nation, gameObj);
-            if ((status == 1 || status == 2) && roundsP > 3 && (player.alliesMaxed || p2.alliesMaxed))
+             if ((status == 1 || status == 2) && roundsP > 3 && (player.alliesMaxed || p2.alliesMaxed)) {
+                console.log('declareing war!!!');
                 declareWarOnNation(p2.nation, gameObj, player, superpowersData);
+            }
         });
     }
 }
@@ -437,6 +442,11 @@ function okToAttackReason(player, terr, gameObj) {
     }
 
     return 'ok';
+}
+function isAtWarWith(player, terr, gameObj) {
+    //use in place of okToAttack
+    var status = treatyStatus(player, terr.owner);
+    return (status==0 && gameObj.round>5);
 }
 function okToAttack(player, terr, gameObj) {
     if (terr.attackedByNation == player.nation && terr.attackedRound == gameObj.round)
