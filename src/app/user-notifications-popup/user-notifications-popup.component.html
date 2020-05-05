@@ -30,19 +30,23 @@
             <div class="btn-group">
                 <button (click)="changeSegment(0)" type="button" class="btn btn-default roundButton segmentButton"
                     [ngClass]="ngClassSegment(segmentIdx,0)" style="min-width: 60px;">
-                    AT&T
+                    <span style="font-size: 12px;">AT&T</span>
                 </button>
                 <button (click)="changeSegment(1)" type="button" class="btn btn-default roundButton segmentButton"
                     [ngClass]="ngClassSegment(segmentIdx,1)" style="min-width: 60px;">
-                    Verizon
+                    <span style="font-size: 12px;">Verizon</span>
                 </button>
                 <button (click)="changeSegment(2)" type="button" class="btn btn-default roundButton segmentButton"
                     [ngClass]="ngClassSegment(segmentIdx,2)" style="min-width: 60px;">
-                    T-Mobile
+                    <span style="font-size: 12px;">T-Mobile</span>
                 </button>
                 <button (click)="changeSegment(3)" type="button" class="btn btn-default roundButton segmentButton"
                     [ngClass]="ngClassSegment(segmentIdx,3)" style="min-width: 60px;">
-                    Sprint
+                    <span style="font-size: 12px;">Sprint</span>
+                </button>
+                <button (click)="changeSegment(4)" type="button" class="btn btn-default roundButton segmentButton"
+                    [ngClass]="ngClassSegment(segmentIdx,4)" style="min-width: 60px;">
+                    <span style="font-size: 12px;">cellcom</span>
                 </button>
             </div>
         </div>

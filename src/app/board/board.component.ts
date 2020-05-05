@@ -342,15 +342,34 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	adminFixBoard() {
 		this.showAlertPopup('Fix on!', 1);
 
-		var terrId = 112;
+		var terrId = 64;
 		var terr = this.gameObj.territories[terrId - 1];
+		terr.owner =3;
+		return;
+
+		var player = this.gameObj.players[3];
+		player.money = 41;
+		//		player2.defenseFlg = false;
+
+		setTimeout(() => {
+			this.addUnitToTerr(terr, 10, true, true);
+		}, 1000);
+		var terrId2 = 67;
+		var terr2 = this.gameObj.territories[terrId2 - 1];
+		setTimeout(() => {
+			this.addUnitToTerr(terr2, 2, true, true);
+		}, 1000);
+		return;
+		var player2 = this.gameObj.players[2];
+		player2.money = 25;
+		return;
 
 		terr.units.forEach(unit => {
 			if (unit.piece == 4) {
 				unit.terr = 107;
 			}
 		});
-		return;
+
 
 		var player2 = this.gameObj.players[1];
 		player2.money = 35;
@@ -359,9 +378,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		var player7 = this.gameObj.players[6];
 		player7.money = 40;
 
-		setTimeout(() => {
-			this.addUnitToTerr(terr, 2, true, true);
-		}, 1000);
+
 
 
 	}
@@ -382,16 +399,13 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.haltCombatActionFlg = false;
 		this.haltActionFlg = false;
 		if (0) {
-			this.gameObj.turnId = 5; //<--- test
+			//this.gameObj.turnId = 5; //<--- test
 			this.haltActionFlg = true;
-			this.haltPurchaseFlg = true;
+			this.haltPurchaseFlg = false;
 			this.haltCombatActionFlg = true;
 		}
 		//--------------------end test
 		this.currentPlayer = getCurrentPlayer(this.gameObj);
-		if (this.currentPlayer.money < this.currentPlayer.income && this.gameObj.round <= 6)
-			this.currentPlayer.money = this.currentPlayer.income; // temp fix!!
-
 		if (0) {
 			// if chaning turn
 			this.currentPlayer.status = 'Attack';
@@ -431,6 +445,11 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.showControls = true;
 			this.gameObj.unitPurchases = [];
 			clearCurrentGameId();
+			this.gameMusic.pause();
+			this.endGameMusic.play();
+			checkVictoryConditions(this.currentPlayer, this.gameObj, this.superpowersData, this.yourPlayer, this.user);
+			this.showAlertPopup(this.gameObj.currentSituation);
+			this.cdr.detectChanges();
 			return;
 		}
 		if (this.gameObj.multiPlayerFlg && this.yourPlayer && this.yourPlayer.nation > 0) {
@@ -445,22 +464,17 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.yourPlayer = this.currentPlayer;
 		}
 		if (this.gameObj.multiPlayerFlg && !this.currentPlayer.cpu && this.gameObj.secondsSinceUpdate > 30) {
-			if (this.user.userName == 'Rick' || this.user.userName == this.gameObj.host || (this.yourPlayer && this.yourPlayer.alive)) {
-				console.log('secondsSinceUpdate', this.gameObj.secondsSinceUpdate);
-				console.log('secondsLeftToTakeTurn:', 86400 - this.gameObj.secondsSinceUpdate);
-
-				if (this.yourPlayer && this.yourPlayer.cpu && this.yourPlayer.alive) {
-					this.showAlertPopup('Looks like you went awol so the computer took over your turn. Restoring you back into the game.', 1);
-					this.yourPlayer.cpu = false;
-					setTimeout(() => {
-						saveGame(this.gameObj, this.user, this.currentPlayer);
-					}, 1000);
-				} else {
-					if (this.user.userName == this.currentPlayer.userName && this.gameObj.mmFlg) {
-						this.currentPlayer.empCount = 0;
-					}
-					this.checkEMPAndTimer(this.currentPlayer, this.gameObj, this.ableToTakeThisTurn);
+			if (this.yourPlayer && this.yourPlayer.cpu && this.yourPlayer.alive) {
+				this.showAlertPopup('Looks like you went awol so the computer took over your turn. Restoring you back into the game.', 1);
+				this.yourPlayer.cpu = false;
+				setTimeout(() => {
+					saveGame(this.gameObj, this.user, this.currentPlayer);
+				}, 1000);
+			} else {
+				if (this.user.userName == this.currentPlayer.userName && this.gameObj.mmFlg) {
+					this.currentPlayer.empCount = 0;
 				}
+				this.checkEMPAndTimer(this.currentPlayer, this.gameObj, this.ableToTakeThisTurn);
 			}
 		}
 
@@ -487,21 +501,30 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		var postData = this.getPostDataFromObj({ user_login: this.user.userName, code: this.user.code, action: 'checkEMPAndTimer', gameId: gameObj.id });
 		this.showSkipPlayerButtonFlg = false;
 		this.showAccountSitButtonFlg = false;
+		if (!ableToTakeThisTurn)
+			displayFixedPopup('currentTurnPopup');
 
 		fetch(url, postData).then((resp) => resp.text())
 			.then((data) => {
-				//console.log(data);
+				console.log(data);
 				if (this.verifyServerResponse(data)) {
 					var c = data.split("|");
 					var obj = { gameId: c[1], turn: c[2], empCount: c[3], uid: c[4], minutesReduced: numberVal(c[5]), time_elapsed: numberVal(c[6]), rank: numberVal(c[7]), nation: numberVal(c[8]), mygames_last_login: c[9], time_elapsedUser: numberVal(c[10]) }
-					var adjustedSeconds = obj.time_elapsed + obj.minutesReduced * 60;
-					this.gameObj.timer = timerFromSeconds(86400 - adjustedSeconds);
+					var secondsLeftInTimer = 86400 - obj.time_elapsed;
+					this.gameObj.timer = timerFromSeconds(86400 - obj.time_elapsed);
 					var secondsSinceLastLogin = getDateFromString(obj.mygames_last_login);
 					var hours = Math.round(secondsSinceLastLogin / 3600);
 					var minutesAway = Math.round(secondsSinceLastLogin / 60);
 					this.gameObj.lastLogin = lastLoginFromSeconds(secondsSinceLastLogin);
+					if (1) {
+						console.log('obj', obj);
+						console.log('secondsLeftInTimer', secondsLeftInTimer);
+						console.log('obj.time_elapsed', obj.time_elapsed);
+						console.log('obj.minutesReduced', obj.minutesReduced);
+						console.log('this.gameObj.secondsSinceUpdate', this.gameObj.secondsSinceUpdate);
+						console.log('secondsSinceLastLogin', secondsSinceLastLogin);
+					}
 					player.empCount = obj.empCount;
-					displayFixedPopup('currentTurnPopup');
 					if (obj.nation == player.nation && this.gameObj.secondsSinceUpdate > 30) {
 						var playerIsAwol = false;
 						if (hours > 30 && obj.rank < 8) {
@@ -534,13 +557,16 @@ export class BoardComponent extends BaseComponent implements OnInit {
 							this.gameObj.secondsSinceUpdate = 0;
 							this.currentPlayer.cpu = true;
 							this.computerGo();
-						} else if (this.gameObj.secondsSinceUpdate > 43200 && this.yourPlayer && this.yourPlayer.treaties[this.currentPlayer.nation - 1] == 3) {
+						} else if (secondsLeftInTimer < 43200 && this.yourPlayer && this.yourPlayer.treaties[this.currentPlayer.nation - 1] == 3) {
 							this.showAccountSitButtonFlg = true;
-						} else if (player.nation != this.yourNation && adjustedSeconds > 86400) {
+						} else if (player.nation != this.yourNation && secondsLeftInTimer <= 0) {
 							if (minutesAway < 15)
 								this.showAlertPopup('Player has run out of time but appears to be online now.');
-							else
-								this.showSkipPlayerButtonFlg = true;
+							else {
+								if (this.user.userName == 'Rick' || this.user.userName == this.gameObj.host || (this.yourPlayer && this.yourPlayer.alive && this.gameObj.autoSkip))
+									this.showSkipPlayerButtonFlg = true;
+
+							}
 						}
 					}
 					this.cdr.detectChanges();
@@ -691,7 +717,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			setTimeout(() => {
 				changeClass('chatButton', 'btn btn-warning tight roundButton glowYellow');
 				this.cdr.detectChanges();
-				//				showUpArrowAtElement('chatButton');
 			}, 1000);
 		}
 

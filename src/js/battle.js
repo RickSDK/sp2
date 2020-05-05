@@ -132,7 +132,7 @@ function reorderAttackUnitsSoLandUnitRemains(attackUnits) {
     highestLandId = 0;
     highestLandCas = 0;
     attackUnits.forEach(unit => {
-        if ((unit.type == 1 || unit.type == 4) && unit.cas > highestLandCas) {
+        if ((unit.type == 1 || unit.type == 4) && !unit.returnFlg && unit.cas > highestLandCas) {
             highestLandCas = unit.cas;
             highestLandId = unit.id;
         }
@@ -565,8 +565,8 @@ function rollAttackDice(battle, gameObj, stratFlg = false) {
             else
                 unit.dice.push('dice' + diceRoll + '.png');
         }
-        if(unit.piece == 25 || unit.piece == 42)
-            unit.dead=true;
+        if (unit.piece == 25 || unit.piece == 42)
+            unit.dead = true;
 
         battle.attHits += unitHits;
         if (unit.piece == 43 && battle.numDefDroneKillers > 0) {
@@ -977,8 +977,6 @@ function nukeBattleCompleted(displayBattle, selectedTerritory, currentPlayer, mo
 }
 function battleCompleted(displayBattle, selectedTerritory, currentPlayer, moveTerr, gameObj, superpowersData) {
     if (displayBattle.militaryObj.wonFlg) {
-        selectedTerritory.defeatedByNation = currentPlayer.nation;
-        selectedTerritory.defeatedByRound = gameObj.round;
         transferControlOfTerr(selectedTerritory, currentPlayer.nation, gameObj, true, currentPlayer);
         if (!currentPlayer.cpu) {
             if (displayBattle.defHits == 0)
@@ -1054,14 +1052,18 @@ function wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, ti
         currentPlayer.losses += losses;
         currentPlayer.kd = getKdForPlayer(currentPlayer);
     }
-    if (displayBattle.militaryObj.wonFlg && gameObj.round == gameObj.attack)
+    if (displayBattle.militaryObj.wonFlg && gameObj.round == gameObj.attack && selectedTerritory.defeatedByRound != gameObj.round)
         currentPlayer.attackFlg = true;
     addIncomeForPlayer(currentPlayer, gameObj);
 
     if (displayBattle.defender > 0) {
         var p2 = playerOfNation(displayBattle.defender, gameObj);
-        if (displayBattle.militaryObj.wonFlg && gameObj.round == gameObj.attack)
-            p2.defenseFlg = true;
+        if (displayBattle.militaryObj.wonFlg) {
+            if (gameObj.round == gameObj.attack && selectedTerritory.nation < 99 && selectedTerritory.defeatedByRound != gameObj.round)
+                p2.defenseFlg = true;
+            selectedTerritory.defeatedByNation = currentPlayer.nation;
+            selectedTerritory.defeatedByRound = gameObj.round;
+        }
         addIncomeForPlayer(p2, gameObj);
         p2.kills += losses;
         p2.losses += hits;
@@ -1258,7 +1260,7 @@ function hostileActObj(type, terr, gameObj, player) {
             message = 'You can\'t attack other players, or be attacked until round ' + gameObj.attack + '.';
             allowFlg = false;
         }
-        if (type == 'attack' && terr.owner > 0 && gameObj.round == gameObj.attack && terr.nation < 99) {
+        if (type == 'attack' && terr.owner > 0 && gameObj.round == gameObj.attack && terr.nation < 99 && terr.defeatedByRound != gameObj.round) {
             var p2 = playerOfNation(terr.owner, gameObj);
             if (player.attackFlg) {
                 message = 'Limited attack round: You are only allowed to take over 1 enemy territory on this round.';

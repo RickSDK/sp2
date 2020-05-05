@@ -92,6 +92,7 @@ function distanceBetweenTerrs(terr1, terr2, max, land, air, sea, allyHash, terri
     var maxAir = 9;
     var maxSea = 9;
 
+    //return { land: 2, air: 2, sea: 2 };
     //------
     if (terr2.nation < 99)
         sea = 9;
@@ -129,8 +130,10 @@ function distanceBetweenTerrs(terr1, terr2, max, land, air, sea, allyHash, terri
         var nextSea = sea;
         if (terr.nation < 99) {
             nextSea = 9;
-            if (isTerritoryBlocked(terr1.owner, terr, allyHash))
+            if (isTerritoryBlocked(terr1.owner, terr, allyHash)) {
                 nextLand = 9;
+            }
+
         }
         if (terr.nation == 99) {
             nextLand = 9;
@@ -151,7 +154,9 @@ function distanceBetweenTerrs(terr1, terr2, max, land, air, sea, allyHash, terri
 function isTerritoryBlocked(fromNation, terr, allyHash) {
     if (terr.owner == fromNation || terr.unitCount == 0)
         return false;
-    if (allyHash[terr.owner] == 1)
+    if (allyHash[fromNation] == true)
+        return false;
+    if (allyHash[terr.owner] == true)
         return false;
     return true;
 }
@@ -713,7 +718,7 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
         for (var i = 0; i < ter.units.length; i++) {
             var unit = ter.units[i];
 
-            var isTransport = (selectedShipPiece==4 || selectedShipPiece==45 || selectedShipPiece==49);
+            var isTransport = (selectedShipPiece == 4 || selectedShipPiece == 45 || selectedShipPiece == 49);
             if (optionType == 'loadUnits' && unit.type == 1)
                 unit.allowMovementFlg = (isTransport && selectedShips > 0 && unit.movesLeft > 0 && unit.mv > 0);
             if (optionType == 'loadUnits' && unit.type == 2)

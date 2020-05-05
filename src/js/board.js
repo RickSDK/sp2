@@ -1781,6 +1781,7 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 	var winnningPlayer = 'Unknown';
 	var liveHumanPlayerCount = 0;
 	gameObj.players.forEach(function (player) {
+		player.wonFlg = false;
 		if (player.alive && !player.cpu)
 			liveHumanPlayerCount++;
 		if (player.income > maxIncome) {
