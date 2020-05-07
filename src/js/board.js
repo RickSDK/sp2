@@ -831,6 +831,7 @@ function resetPlayerUnits(player, gameObj) {
 	setLastRoundsOfPeaceAndWar(player, gameObj);
 }
 function doubleCheckCargoUnits(unit, gameObj) {
+	console.log('doubleCheckCargoUnits');
 	var cargoUnits = 0;
 	var cargo = [];
 	if (unit.cargo && unit.cargo.length > 0) {

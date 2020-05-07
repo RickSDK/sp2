@@ -284,6 +284,7 @@ function moveTheseUnitsToThisTerritory(units, selectedTerritory, gameObj) {
     return { t1: terr1Id, t2: selectedTerritory.id, id: piece };
 }
 function removeThisUnitFromTransport(unit, gameObj) {
+    console.log('removeThisUnitFromTransport');
     var transport = findUnitOfId(unit.cargoOf, gameObj);
     if (transport && transport.cargo) {
         transport.movesLeft = 0;
@@ -297,6 +298,11 @@ function removeThisUnitFromTransport(unit, gameObj) {
     unit.cargoOf = 0;
 }
 function moveCargoWithThisUnit(unit, gameObj, terr1Id) {
+    unit.cargo.forEach(cUnit => {
+        var cargo = findUnitOfId(cUnit.id, gameObj);
+        if (cargo)
+            cargo.terr = unit.terr;
+    });
     for (var u = 0; u < gameObj.units.length; u++) {
         var cargo = gameObj.units[u];
         if (cargo.cargoOf && cargo.cargoOf == unit.id && cargo.owner == unit.owner && cargo.terr == terr1Id) {
@@ -687,8 +693,8 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
         fighterUnitClicked.checked = false;
         showAlertPopup('No room for your fighter!', 1);
     }
-    if (fightersSelected > 0 && selectedTerritory.nation == 99)
-        console.log('fighter situation', fightersSelected, carriersSelected, selectedTerritory.carrierSpace, carrierCargo);
+ //   if (fightersSelected > 0 && selectedTerritory.nation == 99)
+ //       console.log('fighter situation', fightersSelected, carriersSelected, selectedTerritory.carrierSpace, carrierCargo);
     if (u) {
         selectedFormUnit = { piece: u.piece, max: totalUnitCounts[u.piece], num: selectedUnitCounts[u.piece] };
         if (selectedUnitForm > 0 && totalUnitCounts[u.piece] < 5)

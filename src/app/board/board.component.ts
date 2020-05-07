@@ -342,34 +342,43 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	adminFixBoard() {
 		this.showAlertPopup('Fix on!', 1);
 
-		var terrId = 64;
+		var terrId = 62;
 		var terr = this.gameObj.territories[terrId - 1];
-		terr.owner =3;
-		return;
+	
 
-		var player = this.gameObj.players[3];
-		player.money = 41;
+
+
+		var player = this.gameObj.players[2];
+		player.money = 40;
 		//		player2.defenseFlg = false;
 
+		terr.units.forEach(unit => {
+	//		if (unit.piece == 15) {
+				unit.owner = 0;
+				unit.nation = 0;
+	//		}
+		});
+
+		return;
 		setTimeout(() => {
 			this.addUnitToTerr(terr, 10, true, true);
 		}, 1000);
-		var terrId2 = 67;
-		var terr2 = this.gameObj.territories[terrId2 - 1];
-		setTimeout(() => {
-			this.addUnitToTerr(terr2, 2, true, true);
-		}, 1000);
+
 		return;
 		var player2 = this.gameObj.players[2];
 		player2.money = 25;
 		return;
 
-		terr.units.forEach(unit => {
-			if (unit.piece == 4) {
-				unit.terr = 107;
-			}
-		});
 
+		var terrId2 = 62;
+		var terr2 = this.gameObj.territories[terrId2 - 1];
+		setTimeout(() => {
+			this.addUnitToTerr(terr2, 28, true, true);
+			this.addUnitToTerr(terr2, 28, true, true);
+			this.addUnitToTerr(terr2, 28, true, true);
+			this.addUnitToTerr(terr2, 6, true, true);
+			this.addUnitToTerr(terr2, 6, true, true);
+		}, 1000);
 
 		var player2 = this.gameObj.players[1];
 		player2.money = 35;

@@ -95,8 +95,14 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
             empFlg = true;
         if (unit.piece == 12)
             attSBSHps += unit.bcHp - unit.damage - 1;
-        if (unit.cargoOf > 0)
+        if (unit.cargoOf > 0) {
             displayBattle.allowRetreat = false;
+            var transport = findUnitOfId(unit.cargoOf, gameObj);
+            if(transport && transport.subType=='transport') {
+                transport.movesLeft = 0;
+            }
+        }
+            
         if (unit.piece == 10) {
             localStorage.generalTerr1 = unit.terr;
             displayBattle.allowGeneralRetreat = true;
@@ -163,6 +169,16 @@ function startBattle(terr, player, gameObj, superpowersData, battle) {
         console.log('bad attack!!', terr.name);
         return;
     }
+    battle.attackUnits.forEach(unit => {
+        if(unit.cargo && unit.cargo.length>0) {
+            unit.cargo.forEach(cargoUnit => {
+                console.log('moving', cargoUnit);
+                var u = findUnitOfId(cargoUnit.id, gameObj);
+                u.terr = terr.id;
+            });
+        }
+    });
+
 
     if (cost > 0) {
         var p2 = playerOfNation(terr.owner, gameObj);
@@ -784,10 +800,25 @@ function sinkCargo(unit, gameObj) {
         });
     }
 }
-function markRemainerAsDead(units, targetHash, gameObj) {
+function unitCannotBeHealed(battle, unit) {
+    if (!battle || unit.subType != 'soldier')
+        return true;
+
+    if (battle && battle.defActiveMedics > 0) {
+        battle.defActiveMedics--;
+        var healedFlg = healInfantryByMedic(battle.defendingUnits);
+        if (healedFlg) {
+            battle.defSoldiersHealed++;
+            return false;
+        }
+    }
+    return true;
+}
+function markRemainerAsDead(units, targetHash, gameObj, battle) {
     units.forEach(unit => {
         if (unit.dead)
             return;
+
         if (unit.type == 3 && targetHash['noplanes'] > 0) {
             targetHash['noplanes']--;
             unit.dead = true;
@@ -802,33 +833,39 @@ function markRemainerAsDead(units, targetHash, gameObj) {
         }
         if (unit.subType == 'soldier' && targetHash['soldierOnly'] > 0) {
             targetHash['soldierOnly']--;
-            unit.dead = true;
+            if (unitCannotBeHealed(battle, unit))
+                unit.dead = true;
             return;
         }
         if (targetHash['default'] > 0) {
             targetHash['default']--;
-            unit.dead = true;
+            if (unitCannotBeHealed(battle, unit))
+                unit.dead = true;
             sinkCargo(unit, gameObj);
             return;
         }
         if (targetHash['planesTanks'] > 0) {
             targetHash['planesTanks']--;
-            unit.dead = true;
+            if (unitCannotBeHealed(battle, unit))
+                unit.dead = true;
             return;
         }
         if (targetHash['vehicles2'] > 0) {
             targetHash['vehicles2']--;
-            unit.dead = true;
+            if (unitCannotBeHealed(battle, unit))
+                unit.dead = true;
             return;
         }
         if (targetHash['vehicles'] > 0) {
             targetHash['vehicles']--;
-            unit.dead = true;
+            if (unitCannotBeHealed(battle, unit))
+                unit.dead = true;
             return;
         }
         if (targetHash['planes'] > 0) {
             targetHash['planes']--;
-            unit.dead = true;
+            if (unitCannotBeHealed(battle, unit))
+                unit.dead = true;
             return;
         }
         if (unit.subType != 'hero' && targetHash['nuke'] > 0) {
@@ -882,14 +919,7 @@ function markCasualties(battle, gameObj) {
             addAPointOfDamageToSbs(battle.defendingUnits);
             return;
         }
-        if (battle.defActiveMedics > 0) {
-            battle.defActiveMedics--;
-            var healedFlg = healInfantryByMedic(battle.defendingUnits);
-            if (healedFlg) {
-                battle.defSoldiersHealed++;
-                return;
-            }
-        }
+
         if (!targetHash[target])
             targetHash[target] = 0;
         targetHash[target]++;
@@ -898,7 +928,8 @@ function markCasualties(battle, gameObj) {
     hits = battle.attHits;
     markPlanesAsDead(battle.defendingUnits, targetHash);
     markTanksAsDead(battle.defendingUnits, targetHash);
-    markRemainerAsDead(battle.defendingUnits, targetHash, gameObj);
+
+    markRemainerAsDead(battle.defendingUnits, targetHash, gameObj, battle);
 }
 function healInfantryByMedic(units) {
     var healedFlg = false;
@@ -1108,6 +1139,8 @@ function fixSeaCargo(terr, gameObj) {
 }
 
 function squareUpAllCargo(units, gameObj) {
+    //return; // this seems to be messing things up
+    console.log('squareUpAllCargo');
     units.forEach(function (transport) {
         if (!transport.dead && transport.cargo && transport.cargo.length > 0) {
             var cargo = [];

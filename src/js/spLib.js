@@ -1,5 +1,5 @@
 function spVersion() {
-	return 'v4.16';
+	return 'v4.18';
 }
 function googleAds() {
 	window.onload = function () {
