@@ -56,9 +56,21 @@ export class GamePlayersPopupComponent extends BaseComponent implements OnInit {
 
     checkVictoryConditions(currentPlayer, gameObj, this.superpowersData);
 
+    var unitCountHash = {}
+    gameObj.units.forEach(function (unit) {
+      if (!unitCountHash[unit.owner])
+        unitCountHash[unit.owner] = 0;
+
+      if (unit.att > 0)
+        unitCountHash[unit.owner]++;
+    });
+
     gameObj.players.forEach(player => {
+      player.unitCount = unitCountHash[player.nation] || 0;
       addIncomeForPlayer(player, gameObj);
     });
+
+
 
     //------------------allies
     this.displayPlayers = gameObj.players.slice(0);
@@ -90,7 +102,7 @@ export class GamePlayersPopupComponent extends BaseComponent implements OnInit {
     var terr2 = this.gameObj.territories[this.generalRetreatObj.terrId2 - 1];
     refreshTerritory(terr1, this.gameObj, this.currentPlayer, this.superpowersData, this.currentPlayer);
     refreshTerritory(terr2, this.gameObj, this.currentPlayer, this.superpowersData, this.currentPlayer);
-}
+  }
 
   showGraphs() {
     this.buttonIdx = 2;

@@ -108,11 +108,11 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     });
     var cruiseFlg = false;
     if (terr.nation < 99 && terr.owner != currentPlayer.nation && currentPlayer.status == 'Attack') {
-      if (currentPlayer.nation == 4 || currentPlayer.tech[7]) {
+      if (currentPlayer.nation == 4 || currentPlayer.tech[7] || currentPlayer.cruiseFlg) {
         var borders = terr.borders.split('+');
         borders.forEach(terrId => {
           var t = gameObj.territories[terrId - 1];
-          if (t && t.nation == 99 && t.treatyStatus >= 3 && t.unitCount > 0)
+          if (t && t.nation == 99 && t.unitCount > 0)
             cruiseFlg = true;
         });
       }

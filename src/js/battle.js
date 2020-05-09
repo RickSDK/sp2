@@ -1218,9 +1218,10 @@ function transferControlOfTerr(terr, nation, gameObj, annihilationFlg, player) {
         }
     });
     terr.units = terrUnits;
+    return nation;
 }
 function transferControlOfTerrAndRefresh(terr, nation, gameObj, currentPlayer, superpowersData, yourPlayer) {
-    transferControlOfTerr(terr, nation, gameObj, false);
+    transferControlOfTerr(terr, nation, gameObj, false, currentPlayer);
     refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPlayer)
 }
 function addNewUnitToBoard(gameObj, terr, piece, superpowersData) {

@@ -341,11 +341,15 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	adminFixBoard() {
 		this.showAlertPopup('Fix on!', 1);
+		return;
 
-		var terrId = 62;
+		var terrId = 2;
 		var terr = this.gameObj.territories[terrId - 1];
-	
+		terr.owner = 1;
 
+		var terrId2 = 4;
+		var terr2 = this.gameObj.territories[terrId2 - 1];
+		terr2.owner = 1;
 
 
 		var player = this.gameObj.players[2];
@@ -353,13 +357,13 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		//		player2.defenseFlg = false;
 
 		terr.units.forEach(unit => {
-	//		if (unit.piece == 15) {
-				unit.owner = 0;
-				unit.nation = 0;
-	//		}
+			//		if (unit.piece == 15) {
+			unit.owner = 0;
+			unit.nation = 0;
+			//		}
 		});
 
-		return;
+
 		setTimeout(() => {
 			this.addUnitToTerr(terr, 10, true, true);
 		}, 1000);
@@ -429,6 +433,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.gameObj.currentNation = this.currentPlayer.nation;
 		this.gameObj.actionButtonMessage = '';
 		this.currentPlayer.cpuFlg = this.currentPlayer.cpu;
+		this.currentPlayer.cruiseFlg = this.currentPlayer.tech[7];
 
 		console.log('===[' + this.superpowersData.superpowers[this.currentPlayer.nation] + ']===');
 		if (!this.currentPlayer.news)
@@ -525,7 +530,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					var hours = Math.round(secondsSinceLastLogin / 3600);
 					var minutesAway = Math.round(secondsSinceLastLogin / 60);
 					this.gameObj.lastLogin = lastLoginFromSeconds(secondsSinceLastLogin);
-					if (1) {
+					if (0) {
 						console.log('obj', obj);
 						console.log('secondsLeftInTimer', secondsLeftInTimer);
 						console.log('obj.time_elapsed', obj.time_elapsed);
@@ -536,21 +541,29 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					player.empCount = obj.empCount;
 					if (obj.nation == player.nation && this.gameObj.secondsSinceUpdate > 30) {
 						var playerIsAwol = false;
-						if (hours > 30 && obj.rank < 8) {
-							if (gameObj.type == 'battlebots' || gameObj.type == 'freeforall' || gameObj.round <= 2) {
+						if (hours > 24) {
+							var numAllies = numberHumanAllies(player, gameObj);
+							if (hours > 30 && obj.rank <= 8) {
+								if (gameObj.type == 'battlebots' || gameObj.type == 'freeforall' || gameObj.round <= 2) {
+									playerIsAwol = true;
+								}
+								if (hours > 40 && gameObj.round <= 4)
+									playerIsAwol = true;
+								if (hours > 60 && gameObj.round <= 6)
+									playerIsAwol = true;
+							}
+							if (hours >= 60 && numAllies == 0) {
 								playerIsAwol = true;
 							}
-							if (hours > 40 && gameObj.round <= 4)
+							if (hours >= 80) {
 								playerIsAwol = true;
-							if (hours > 60 && gameObj.round <= 6)
-								playerIsAwol = true;
+							}
+							console.log('----possible awol----');
+							console.log('hours', hours);
+							console.log('rank', obj.rank);
+							console.log('numAllies', numAllies);
+							console.log('playerIsAwol', playerIsAwol);
 						}
-						if (hours > 60) {
-							var num = numberHumanAllies(player);
-							if (num == 0)
-								playerIsAwol = true;
-						}
-
 						if (ableToTakeThisTurn && obj.time_elapsed > 36000) {
 							var elapsedHours = Math.round(obj.time_elapsed / 3600);
 							var newTimer = 24 - elapsedHours + 6;
@@ -562,9 +575,11 @@ export class BoardComponent extends BaseComponent implements OnInit {
 							else
 								showAlertPopup('Slow Turn Response: The game has been waiting on your turn for ' + elapsedHours + ' hours. Your next turn timer will start with only ' + newTimer + ' hours. Taking turns faster will bring your timer back up to 24 hours.', 1);
 						} else if (playerIsAwol) {
-							logItem(this.gameObj, this.currentPlayer, 'Player Awol', 'Playered turned into CPU after being away from game for ' + hours + ' hours.');
+							logItem(this.gameObj, this.currentPlayer, 'Player Awol', 'Playered turned into CPU after being away from game for ' + hours + ' hours. Visiting the game will restore the player to human.');
 							this.gameObj.secondsSinceUpdate = 0;
 							this.currentPlayer.cpu = true;
+							this.closePopup('currentTurnPopup');
+							this.showAlertPopup('Player has gone awol!', 1);
 							this.computerGo();
 						} else if (secondsLeftInTimer < 43200 && this.yourPlayer && this.yourPlayer.treaties[this.currentPlayer.nation - 1] == 3) {
 							this.showAccountSitButtonFlg = true;

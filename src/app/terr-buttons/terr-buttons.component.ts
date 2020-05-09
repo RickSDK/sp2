@@ -81,7 +81,7 @@ export class TerrButtonsComponent extends BaseComponent implements OnInit {
   }
   tranferConfirmButtonClicked() {
     playClick();
-    transferControlOfTerr(this.selectedTerritory, this.allyNation, this.gameObj, false);
+    transferControlOfTerr(this.selectedTerritory, this.allyNation, this.gameObj, false, this.currentPlayer);
     this.initChild();
     refreshTerritory(this.selectedTerritory, this.gameObj, this.currentPlayer, this.superpowersData, this.currentPlayer);
     $('#territoryPopup').modal('toggle');

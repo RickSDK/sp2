@@ -1921,13 +1921,13 @@ function getMilitaryReportObj(gameObj, currentPlayer, line) {
 	else
 		customMilitaryReport2(obj, line, gameObj.round);
 }
-function numberHumanAllies(player) {
+function numberHumanAllies(player, gameObj) {
 	var num=0;
 	var nation=0;
 	player.treaties.forEach(function(t) {
 		nation++;
 		if(t==3 && nation!=player.nation) {
-			var p = playerOfNation(nation);
+			var p = playerOfNation(nation, gameObj);
 			if(!p.cpu)
 				num++;
 		}

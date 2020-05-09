@@ -243,7 +243,7 @@ function loadTheseUnitsOntoSelectedTransport(units, selectedTerritory, gameObj) 
         }
     });
 
-    squareUpAllCargo(units, gameObj);
+    //squareUpAllCargo(units, gameObj);
     illuminateThisTerritory(selectedTerritory, gameObj);
     return { t1: terr1Id, t2: selectedTerritory.id, id: piece };
 }
@@ -279,7 +279,7 @@ function moveTheseUnitsToThisTerritory(units, selectedTerritory, gameObj) {
         if (unit.cargo && unit.cargo.length > 0)
             moveCargoWithThisUnit(unit, gameObj, terr1Id);
     }
-    squareUpAllCargo(units, gameObj);
+    //squareUpAllCargo(units, gameObj);
     illuminateThisTerritory(selectedTerritory, gameObj);
     return { t1: terr1Id, t2: selectedTerritory.id, id: piece };
 }
