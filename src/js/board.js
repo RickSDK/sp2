@@ -1,7 +1,14 @@
 
 function refreshAllTerritories(gameObj, currentPlayer, superpowersData, yourPlayer) {
+	console.log('refreshAllTerritories');
 	gameObj.territories.forEach(function (terr) {
 		refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPlayer);
+	});
+}
+function refreshAllPlayerTerritories(gameObj, currentPlayer, superpowersData, yourPlayer) {
+	gameObj.territories.forEach(function (terr) {
+		if(terr.owner == currentPlayer.nation)
+			refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPlayer);
 	});
 }
 function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPlayer) {
@@ -224,8 +231,8 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 				unitCount++;
 		}
 	});
-	if (aircraftCarriers.length > 0)
-		squareUpAllCargo(aircraftCarriers, gameObj);
+	//if (aircraftCarriers.length > 0)
+		//squareUpAllCargo(aircraftCarriers, gameObj);
 	units.sort(function (a, b) { return a.piece - b.piece; });
 	terr.units = units;
 	terr.movableTroopCount = movableTroopCount;

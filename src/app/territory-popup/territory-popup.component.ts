@@ -152,7 +152,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       this.optionType = 'production';
     }
     this.checkSendButtonStatus(null);
-    checkCargoForTerr(terr, gameObj);
+    //checkCargoForTerr(terr, gameObj);
     this.allowFactoryFlg = isFactoryAllowedOnTerr(terr, this.gameObj);
 
     if (this.terrButtonsComp)

@@ -1127,6 +1127,7 @@ function fixSeaCargo(terr, gameObj) {
             findTransportForThisCargo(fighterUnit, terr, gameObj);
         });
     }
+    return;
     terr.units.forEach(function (cargoUnit) {
         if (cargoUnit.cargoOf && cargoUnit.cargoOf > 0) {
             var gameUnit = findUnitOfId(cargoUnit.cargoOf, gameObj);

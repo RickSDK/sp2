@@ -81,28 +81,28 @@
 		<i class="fa fa-flag" style="font-size: 26px;"></i>
 		<div style="font-size: 10px;">Surrender</div>
 	</button>
-	<button *ngIf="ableToTakeThisTurn || user.userName=='Rick'" (click)="computerGo()" type="button" class="btn btn-secondary roundButton">
+	<button *ngIf="ableToTakeThisTurn || user.userName=='Rick'" (click)="computerGo()" type="button" class="btn btn-primary roundButton">
 		<i class="fa fa-android" style="font-size: 26px;"></i>
 		<div style="font-size: 10px;">Let AI Take Turn</div>
 	</button>
-	<button (click)="reportBug()" type="button" class="btn btn-warning roundButton">
+	<button (click)="reportBug()" type="button" class="btn btn-primary roundButton">
 		<i class="fa fa-bug" style="font-size: 26px;"></i>
 		<div style="font-size: 10px;">Report Bug</div>
 	</button>
-	<button (click)="undoMoves()" type="button" class="btn btn-success roundButton">
+	<button (click)="undoMoves()" type="button" class="btn btn-primary roundButton">
 		<i class="fa fa-refresh" style="font-size: 26px;"></i>
 		<div style="font-size: 10px;">Undo-Moves</div>
 	</button>
 	<span *ngIf="user.userName=='Rick'" style="border: 1px solid black; height: 80px;">
-		<button *ngIf="user.userName=='Rick'" (click)="adminSaveGame()" type="button" class="btn btn-danger roundButton">
+		<button *ngIf="user.userName=='Rick'" (click)="adminSaveGame()" type="button" class="btn btn-warning roundButton">
 			<i class="fa fa-floppy-o" style="font-size: 26px;"></i>
 			<div style="font-size: 10px;">Save Game</div>
 		</button>
-		<button *ngIf="0" (click)="turnAllPlayersHuman()" type="button" class="btn btn-danger roundButton">
+		<button *ngIf="0" (click)="turnAllPlayersHuman()" type="button" class="btn btn-warning roundButton">
 			<i class="fa fa-user" style="font-size: 26px;"></i>
 			<div style="font-size: 10px;">Turn all Human</div>
 		</button>
-		<button *ngIf="user.userName=='Rick'" (click)="turnIntoCPU()" [disabled]="disableButtonFlg" type="button" class="btn btn-danger roundButton">
+		<button *ngIf="user.userName=='Rick'" (click)="turnIntoCPU()" [disabled]="disableButtonFlg" type="button" class="btn btn-warning roundButton">
 			<i class="fa fa-android" style="font-size: 26px;"></i>
 			<div style="font-size: 10px;">Turn into CPU</div>
 		</button>

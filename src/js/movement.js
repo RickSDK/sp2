@@ -15,6 +15,9 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
 
         return true;
     }
+    if(unit.piece==43 && toTerr.nation==99)
+        return false;
+        
     if (unit.movesLeft == 0)
         return false;
     if (unit.mv == 0)
@@ -367,11 +370,13 @@ function findTransportForThisCargo(unit, terr, gameObj) {
             }
         }
     }
+    cleanup
     console.log('no transport found!!!', unit, terr.units.length);
-    unit.terr = unit.prevTerr;
-    showAlertPopup('no transport found!', 1);
+    //unit.terr = unit.prevTerr;
+    //showAlertPopup('no transport found!', 1);
 }
 function loadThisUnitOntoThisTransport(unit, transport) {
+    console.log('loadThisUnitOntoThisTransport');
     if (!unit || !transport || unit.owner != transport.owner) {
         console.log('!!unit', unit);
         console.log('!!transport', transport);
@@ -582,6 +587,10 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
                     }
                     if (unit.piece == 7 && optionType == 'attack' && unit.cargo && unit.cargo.length > 0) {
                         bomberUnit = e;
+                    }
+                    if(unit.piece == 43 && selectedTerritory.nation==99) {
+                        showAlertPopup('Drones cannot fly over water.', 1);
+                        e.checked = false;
                     }
                     if (unit.piece == 44 && optionType == 'attack') {
                         if (selectedTerritory.id > 79) {

@@ -102,6 +102,7 @@ declare var allUnitsAttack: any;
 declare var isAtWarWith: any;
 declare var addTestScore: any;
 declare var checkIlluminateFlg: any;
+declare var refreshAllPlayerTerritories: any;
 
 //---combat.js
 declare var playSoundForPiece: any;
@@ -170,6 +171,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public bonusFactoryFlg = false;
 	public showSkipPlayerButtonFlg = false;
 	public showAccountSitButtonFlg = false;
+	public refreshTerritoryHash: any;
 	public purchaseIndex = 0;
 	public selectedTerritory: any;
 	public battleReport = { flag: 'flag2.gif', type: 'Battle', icon: 'fa-crosshairs', attNation: 2, defNation: 3, attCasualties: 1, defCasualties: 4, wonFlg: false, result: 'Lost!', terrX: 0, terrY: 0, cruiseFlg: false };
@@ -445,7 +447,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.gameObj.hardFog == 'Y')
 			illuminateTerritories(this.gameObj);
 
-		refreshAllTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
+		if(!this.currentPlayer.cpu)
+			refreshAllPlayerTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 		this.findTargets();
 
 		this.currentPlayer.allies = alliesFromTreaties(this.currentPlayer);
@@ -727,6 +730,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		console.log('playGameButtonPressed');
 		setTimeout(() => {
 			positionPurchasePanel();
+			this.cdr.detectChanges();
 		}, 1000);
 
 		this.initializePlayer();
@@ -734,7 +738,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	initializePlayer() {
 		playVoiceClip('nation' + this.currentPlayer.nation + '.mp3');
 		this.showControls = !this.currentPlayer.cpu;
-		this.cdr.detectChanges();
 		if (!this.currentPlayer.cpu)
 			this.cdr.reattach();
 		if (localStorage.chatFlg == 'Y') {
@@ -748,6 +751,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.initializePlayerForPurchase();
 		if (this.currentPlayer.status == 'Attack')
 			this.initializePlayerForAttack();
+		this.cdr.detectChanges();
 	}
 	skipPlayerPressed() {
 		this.playClick();
@@ -816,6 +820,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		playClick();
 		playSound('yes.mp3');
 		closePopup('computerTakeTurnPopup');
+		logItem(this.gameObj, this.currentPlayer, 'Turn Skipped', 'Turn skipped by ' + this.user.userName);
 		this.computerGo();
 	}
 	computerGo() {
@@ -1318,7 +1323,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			changeClass('completeTurnButton', 'glowButton');
 
 		if (terr.cargoTypeUnits > 0 || terr.carrierCargo > 0 || terr.carrierSpace > 0) {
-			fixSeaCargo(terr, gameObj);
+			//fixSeaCargo(terr, gameObj);
 		}
 		refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, (this.ableToTakeThisTurn) ? this.currentPlayer : this.yourPlayer);
 		displayLeaderAndAdvisorInfo(terr, currentPlayer, this.yourPlayer, user, gameObj, this.superpowersData.superpowers, 'home');
@@ -1628,6 +1633,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.spriteInMotionFlg) {
 			return;
 		}
+		if(piece==15)
+			refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 		this.spriteInMotionFlg = true;
 		this.spritePieceId = piece;
 		var e = document.getElementById('sprite');
@@ -1723,12 +1730,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	addUnitsToBoard() {
 		this.showControls = false;
 		var fighterWaterFlg = false;
-		var refreshHash = {};
+		this.refreshTerritoryHash = {};
 		var newUnits = [];
 		for (var x = 0; x < this.gameObj.unitPurchases.length; x++) {
 			var unit = this.gameObj.unitPurchases[x];
 			newUnits.push(unit);
-			refreshHash[unit.terr] = 1;
+			this.refreshTerritoryHash[unit.terr] = true;
 			if (unit.piece == 8)
 				this.carrierAddedFlg = true;
 			if (isUnitFighterUnit(unit.piece) && unit.terr >= 79)
@@ -1755,14 +1762,25 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		this.purchaseIndex = 0;
 		var numAddedUnitsToAdd = 0;
+		var lastTerrId = 0;
 		newUnits.forEach(purchUnit => {
 			numAddedUnitsToAdd++;
 			setTimeout(() => {
+				if (purchUnit.terr != lastTerrId) {
+					if(lastTerrId>0)
+						this.refreshThisTerrId(lastTerrId);
+					lastTerrId = purchUnit.terr;
+				}
 				this.doThisPurchaseUnit(newUnits, this.gameObj);
 			}, numAddedUnitsToAdd * 95);
 		});
 
 		return numAddedUnitsToAdd;
+	}
+	refreshThisTerrId(id: number) {
+		var terr = this.gameObj.territories[id-1];
+		refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
+		this.cdr.detectChanges();
 	}
 	addFightersToTransports(player: any) {
 		this.gameObj.units.forEach(unit => {
@@ -1782,7 +1800,13 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		terr.displayUnitCount = getDisplayUnitCount(terr, gameObj.fogOfWar, gameObj.hardFog);
 	}
 	endTurn() {
-		refreshAllTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
+		////refreshAllTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
+		var k = Object.keys(this.refreshTerritoryHash);
+		for (var x = 0; x < k.length; x++) {
+			var tid = parseInt(k[x]);
+			var terr = this.gameObj.territories[tid - 1];
+			refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
+		}
 		if (this.carrierAddedFlg && !this.currentPlayer.cpuFlg) {
 			this.showControls = true;
 			this.gameObj.actionButtonMessage = 'Complete Turn';
@@ -1817,7 +1841,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		var damageReport = getDamageReport(this.currentPlayer, this.gameObj, this.superpowersData);
 		logItem(this.gameObj, this.currentPlayer, 'Turn Completed', this.currentPlayer.income + ' Coins Collected.', '', '', '', '', damageReport);
 		var prevPlayer = this.currentPlayer;
-		this.cdr.detectChanges();
 		if (this.gameObj.gameOver) {
 			if (isMusicOn()) {
 				this.gameMusic.pause();
@@ -1859,7 +1882,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			updateProgressBar(100);
 			stopSpinner();
 		}
-
+		this.cdr.detectChanges();
 	}
 	surrenderConfirmButtonPressed() {
 		closePopup('surrenderPopup');
@@ -2072,7 +2095,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					targetHash[terr.id] = true;
 					var closestTerr = this.whichLandTerrIsClosest(terr, target, this.gameObj);
 					if (closestTerr && closestTerr.owner == currentPlayer.nation) {
-						console.log('moving large army!', terr.name, closestTerr.name)
 						terr.units.forEach(unit => {
 							if (isUnitOkToMove(unit, currentPlayer.nation)) {
 								unit.terr = closestTerr.id;
@@ -2098,6 +2120,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		return bestTerr;
 	}
 	refreshPlayerTerritories(player: any, gameObj: any, superpowersData: any, yourPlayer: any) {
+		console.log('refreshPlayerTerritories');
 		this.gameObj.territories.forEach(function (terr) {
 			if (terr.owner == player.nation) {
 				refreshTerritory(terr, gameObj, player, superpowersData, yourPlayer);

@@ -180,8 +180,6 @@ function doCpuDiplomacyRespond(player, gameObj, superpowersData) {
         var status = player.treaties[nation - 1];
         var roundsW = roundsOfWar(player, nation, gameObj);
         var roundsP = roundsOfPeace(player, nation, gameObj);
-        console.log('roundsW', roundsW);
-        console.log('roundsP', roundsP);
         if (status < 2 && (roundsW > 3 || gameObj.round < 6))
             acceptOfferFromNation(player, nation, gameObj, superpowersData);
         if (status == 2) {
