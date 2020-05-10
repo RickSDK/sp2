@@ -1,46 +1,73 @@
-var clickSound = new Audio('assets/sounds//click.mp3');
-var cannonSound = new Audio('assets/sounds//Cannon.mp3');
-var cheerSound = new Audio('assets/sounds//Cheer.mp3');
-var crowdBooSound = new Audio('assets/sounds//CrowdBoo.mp3');
-/*
-var clickSound = new Audio('http://www.superpowersgame.com/app/sounds/click.mp3');
-var cannonSound = new Audio('http://www.superpowersgame.com/app//sounds/Cannon.mp3');
-var cheerSound = new Audio('http://www.superpowersgame.com/app//sounds/Cheer.mp3');
-var crowdBooSound = new Audio('http://www.superpowersgame.com/app//sounds/CrowdBoo.mp3');*/
+var clickSound = new Audio('assets/sounds/click.mp3');
+clickSound.preload = 'auto';
+var clinkSound = new Audio('assets/sounds/clink.mp3');
+clinkSound.preload = 'auto';
+var openModalSound = new Audio('assets/sounds/open.mp3');
+openModalSound.preload = 'auto';
+var closeModalSound = new Audio('assets/sounds/open.mp3');
+closeModalSound.preload = 'auto';
+var zapSound = new Audio('assets/sounds/zap.mp3');
+zapSound.preload = 'auto';
+var swooshSound = new Audio('assets/sounds/Swoosh.mp3');
+swooshSound.preload = 'auto';
+var airHornSound = new Audio('assets/sounds/AirHorn.mp3');
+airHornSound.preload = 'auto';
+var nineMmSound = new Audio('assets/sounds/9mm.mp3');
+nineMmSound.preload = 'auto';
+var dripSound = new Audio('assets/sounds/drip.mp3');
+dripSound.preload = 'auto';
 
 var voiceOverAudio = new Audio('assets/voice/bt01welcome.mp3');
-//clickSound.play();
-function playClick(muteSound) {
-	playSound('', 1, muteSound)
-}
-function playCannon(muteSound) {
-	playSound('', 2, muteSound)
-}
-function playSound(fileName, num, muteSound) {
-	if (muteSound || !isSoundOn()) {
-		console.log('no sound ', fileName)
-		return;
-	}
-	if (localStorage.muteSound && localStorage.muteSound == 'Y') {
-		console.log('muted ', fileName)
-		return;
-	}
-	if (num && num > 0)
-		fileName = '';
-	if (fileName && fileName.length > 0) {
-		var audio = new Audio('assets/sounds/' + fileName);
-//		var audio = new Audio('http://www.superpowersgame.com/app/sounds/' + fileName);
-		audio.play();
-	}
-	if (num == 1 && clickSound)
-		clickSound.play();
-	if (num == 2 && cannonSound)
-		cannonSound.play();
-	if (num == 3 && cheerSound)
-		cheerSound.play();
-	if (num == 4 && crowdBooSound)
-		crowdBooSound.play();
 
+function playClick() {
+	if (!isSoundOn()) {
+		return;
+	}
+	clickSound.play();
+}
+function playSound(fileName) {
+	if (!isSoundOn()) {
+		return;
+	}
+	if(fileName == 'clink.wav') {
+		clinkSound.play();
+		return;
+	}
+	if(fileName == 'open') {
+		openModalSound.play();
+		return;
+	}	
+	if(fileName == 'close') {
+		closeModalSound.play();
+		return;
+	}
+	if(fileName == 'zap.mp3') {
+		zapSound.play();
+		return;
+	}
+	if(fileName == 'Swoosh.mp3') {
+		swooshSound.play();
+		return;
+	}
+	if(fileName == 'AirHorn.mp3') {
+		airHornSound.play();
+		return;
+	}
+	if(fileName == '9mm.mp3') {
+		nineMmSound.play();
+		return;
+	}	
+	if(fileName == 'drip.mp3') {
+		dripSound.play();
+		return;
+	}
+	if (fileName && fileName.length > 0) {
+		console.log('playing sound: ', fileName);
+		var audio = new Audio('assets/sounds/' + fileName);
+		audio.play();
+	} else {
+		console.log('illegal sound!!!')
+	}
 }
 function isMusicOn() {
 	return (!localStorage.musicBox || localStorage.musicBox.length == 0);

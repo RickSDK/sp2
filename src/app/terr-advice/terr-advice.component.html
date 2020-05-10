@@ -22,7 +22,7 @@
                     <div *ngIf="optionType == 'attack'" style="font-size: 12px;">
                         "{{battleAnalysisObj.battleLeaderMessage}}"</div>
 
-                    <div *ngIf="ableToTakeThisTurn">
+                    <div *ngIf="ableToTakeThisTurn && currentPlayer.status != 'Diplomacy'">
                         <div *ngIf="yourPlayer.diplomacyFlg && yourPlayer.treatyOfferedNation>0"
                             class="borderClass3" style="font-size: 12px; padding: 2px;">
                             <i class="fa fa-flag"></i> Treaty has been offered to

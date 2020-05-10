@@ -512,7 +512,7 @@ function acceptOfferFromNation(player, nation, gameObj, superpowersData) {
 	changeTreaty(player, player2, treatyStatus, gameObj, superpowersData);
 }
 function rejectOfferFromNation(player, nation, gameObj) {
-	playSound('click.mp3');
+	playClick();
 	var player2 = playerOfNation(nation, gameObj);
 	logDiplomacyNews(player, player2, 4);
 	logItem(gameObj, player, 'Diplomacy', 'Treaty from ' + player2.userName + ' rejected.', '', 0, nation);

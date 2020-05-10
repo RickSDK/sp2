@@ -32,10 +32,13 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
   public battleshipCost = 0;
   public brokeFlg = false;
   public superBCForm: any;
+  public clinkSound: any;
 
   constructor() { super(); }
 
   ngOnInit(): void {
+    //this.clinkSound = new Audio('assets/sounds/clink.wav');
+    //this.clinkSound.preload = 'auto';
   }
   initChild(terr: any) {
     this.allowFactoryFlg = isFactoryAllowedOnTerr(terr, this.gameObj);
@@ -62,7 +65,7 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
         return;
       }
     }
-    if(piece==52) {
+    if (piece == 52) {
       this.currentPlayer.empBoughtFlg = true;
       this.showAlertPopup('Warning: If you buy an EMP, you will not have the option to redo your purchases.');
     }
@@ -99,7 +102,7 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
     return num;
   }
   clearQueue() {
-    playSound('clink.wav');
+    playClick();
     var newUnits = [];
     var terrId = this.selectedTerritory.id;
     var units = this.superpowersData.units;
@@ -236,7 +239,7 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
     this.currentPlayer.money -= (this.superBCForm.cost - 15);
     this.gameObj.superBCForm = this.superBCForm;
     this.currentPlayer.battleshipCost = this.superBCForm.cost;
-    playSound('clink.wav');
+    this.clinkSound.play();
     closePopup('battleshipPopup');
     addUniToQueue(12, 1, this.superpowersData, this.currentPlayer, this.gameObj, this.selectedTerritory);
   }

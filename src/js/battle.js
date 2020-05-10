@@ -1265,7 +1265,7 @@ function hostileActObj(type, terr, gameObj, player) {
         allowFlg = false;
     }
     if (hostileType) {
-        if (terr.owner == 0 && terr.capital && terr.nation < 99 && gameObj.round < gameObj.attack) {
+        if (terr.owner == 0 && terr.capital && terr.nation < 99 && gameObj.round < gameObj.attack && type == 'attack') {
             if (player.cap && player.cap > 1) {
                 message = 'You can only take over one capital before round 6.';
                 allowFlg = false;

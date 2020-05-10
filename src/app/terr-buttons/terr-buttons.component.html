@@ -1,7 +1,7 @@
 <!------------------action buttons----------------------------->
-<div class="terr-card">
+<div class="terr-card" *ngIf="currentPlayer.status == 'Attack' || currentPlayer.status == 'Place Units'" >
     <div class="spTitle">Action Panel</div>
-    <div *ngIf="currentPlayer.status != 'Purchase'" style="background-color: #ccc; color: black;">
+    <div style="background-color: #ccc; color: black;">
         <!-- troop movement-->
         <div
             *ngIf="(selectedTerritory.treatyStatus>=3 || (selectedTerritory.nation==99 && selectedTerritory.unitCount==0))">

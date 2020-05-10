@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild, Input} from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, Input } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { TerrButtonsComponent } from '../terr-buttons/terr-buttons.component';
 import { TerrPurchaseComponent } from '../terr-purchase/terr-purchase.component';
@@ -44,6 +44,7 @@ declare var checkThisNumberBoxesForUnit: any;
 declare var verifyUnitsAreLegal: any;
 declare var packageSelectedUnits: any;
 declare var loadParatroopers: any;
+declare var showUnits1TerritoryAway: any;
 
 @Component({
   selector: 'app-territory-popup',
@@ -120,7 +121,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     terr.cruiseFlg = cruiseFlg;
     this.checkAllTroops = false;
     this.selectedTerritory = terr;
-    if(user.userName == 'Rick')
+    if (user.userName == 'Rick')
       console.log(terr.name, terr);
     var totalUnitsThatCanMove = 0;
 
@@ -152,7 +153,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       this.optionType = 'production';
     }
     this.checkSendButtonStatus(null);
-    //checkCargoForTerr(terr, gameObj);
+    checkCargoForTerr(terr, gameObj);
     this.allowFactoryFlg = isFactoryAllowedOnTerr(terr, this.gameObj);
 
     if (this.terrButtonsComp)
@@ -165,7 +166,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       setTimeout(() => {
         if (this.terrPurchaseComp)
           this.terrPurchaseComp.initChild(terr);
-          this.battleHappened.emit('cdr');
+        this.battleHappened.emit('cdr');
       }, 500);
     }
 
@@ -191,13 +192,17 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     this.optionType = type;
     this.loadingFlg = true;
     this.checkSendButtonStatus(null);
+    this.moveTerr = showUnits1TerritoryAway(this.optionType, this.gameObj, this.currentPlayer, this.totalMoveTerrs, this.selectedTerritory);
+    this.battleHappened.emit('cdr');
+    
 
     setTimeout(() => {
       this.showUnitsForMovementBG();
       this.battleHappened.emit('cdr');
     }, 30);
-    //    }
+    
   }
+
   showUnitsForMovementBG() {
     var obj = showUnitsForMovementBG2(this.optionType, this.gameObj, this.currentPlayer, this.totalMoveTerrs, this.selectedTerritory);
     this.moveTerr = obj.moveTerr;
@@ -230,7 +235,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       this.moveTroopsButtonPressed();
   }
   moveTroopsButtonPressed() {
-    if (this.user.rank < 2 && this.gameObj.round == 1 && this.selectedTerritory.id == 62) { 
+    if (this.user.rank < 2 && this.gameObj.round == 1 && this.selectedTerritory.id == 62) {
       //-----------ukraine, basic training--------
       var attackUnits = getSelectedUnits(this.moveTerr);
       if (attackUnits.length < 8) {

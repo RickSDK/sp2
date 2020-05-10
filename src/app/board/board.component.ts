@@ -198,6 +198,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.user = userObjFromUser();
 		this.svgs = loadSVGs();
 		this.warAudio.loop = true;
+		this.warAudio.preload = 'auto';
 		this.gameObj = { territories: [] };
 		//this.cdr.detach();
 
@@ -504,7 +505,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			});
 		});
 		this.currentPlayer.treatyOfferedNation = treatyOfferedNation;
-		this.cdr.detectChanges();
 
 		if (this.ableToTakeThisTurn)
 			this.displayMilitaryAdvisorMessage();
@@ -1267,14 +1267,18 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.initializePlayerForAttack();
 	}
 	diplomacyDone(msg: string) {
-		if (this.currentPlayer.offers.length == 0)
+		if (this.currentPlayer.offers.length == 0) {
 			this.gameObj.actionButtonMessage = 'Purchase Complete';
+			this.currentPlayer.status = 'Purchase';
+		}
 		scrollToCapital(this.currentPlayer.nation);
 	}
 	checkTreatyOffers(player) {
 		if (this.ableToTakeThisTurn && (player.offers.length > 0 || player.news.length > 0 || player.botRequests.length > 0)) {
-			if (player.offers.length > 0)
+			if (player.offers.length > 0) {
 				this.gameObj.actionButtonMessage = 'Diplomacy';
+				this.currentPlayer.status = 'Diplomacy';
+			}
 			this.diplomacyModal.show(this.gameObj, this.ableToTakeThisTurn, this.currentPlayer, this.yourPlayer);
 		}
 		if (player.cpu)

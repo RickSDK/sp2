@@ -15,9 +15,9 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
 
         return true;
     }
-    if(unit.piece==43 && toTerr.nation==99)
+    if (unit.piece == 43 && toTerr.nation == 99)
         return false;
-        
+
     if (unit.movesLeft == 0)
         return false;
     if (unit.mv == 0)
@@ -420,6 +420,32 @@ function expectedHitsFromStrength(strength) {
     else
         return (strength / 6).toFixed(1);
 }
+function showUnits1TerritoryAway(optionType, gameObj, currentPlayer, totalMoveTerrs, selectedTerritory) {
+    var borders = selectedTerritory.borders.split('+');
+    var moveTerr = [];
+    var allyHash = {};
+    currentPlayer.allies.forEach(function (ally) {
+        allyHash[ally] = true;
+    });
+
+    borders.forEach(border => {
+        var tid = parseInt(border);
+        var terr = gameObj.territories[tid - 1];
+        terr.distObj = distanceBetweenTerrs(terr, selectedTerritory, 2, 0, 0, 0, allyHash, gameObj.territories);
+        var moveUnits = 0;
+        terr.units.forEach(function (unit) {
+            unit.allowMovementFlg = false;
+            if (checkMovement(terr.distObj, unit, optionType, currentPlayer, selectedTerritory)) {
+                moveUnits++;
+                unit.allowMovementFlg = true;
+            }
+        });
+        if (moveUnits > 0)
+            moveTerr.push(terr);
+
+    });
+    return moveTerr;
+}
 function showUnitsForMovementBG2(optionType, gameObj, currentPlayer, totalMoveTerrs, selectedTerritory) {
     if (optionType == 'loadPlanes' || optionType == 'loadChoppers')
         totalMoveTerrs = [selectedTerritory];
@@ -588,7 +614,7 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
                     if (unit.piece == 7 && optionType == 'attack' && unit.cargo && unit.cargo.length > 0) {
                         bomberUnit = e;
                     }
-                    if(unit.piece == 43 && selectedTerritory.nation==99) {
+                    if (unit.piece == 43 && selectedTerritory.nation == 99) {
                         showAlertPopup('Drones cannot fly over water.', 1);
                         e.checked = false;
                     }
@@ -702,8 +728,8 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
         fighterUnitClicked.checked = false;
         showAlertPopup('No room for your fighter!', 1);
     }
- //   if (fightersSelected > 0 && selectedTerritory.nation == 99)
- //       console.log('fighter situation', fightersSelected, carriersSelected, selectedTerritory.carrierSpace, carrierCargo);
+    //   if (fightersSelected > 0 && selectedTerritory.nation == 99)
+    //       console.log('fighter situation', fightersSelected, carriersSelected, selectedTerritory.carrierSpace, carrierCargo);
     if (u) {
         selectedFormUnit = { piece: u.piece, max: totalUnitCounts[u.piece], num: selectedUnitCounts[u.piece] };
         if (selectedUnitForm > 0 && totalUnitCounts[u.piece] < 5)
