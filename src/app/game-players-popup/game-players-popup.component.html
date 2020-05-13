@@ -48,7 +48,7 @@
 				<app-game-view *ngIf="buttonIdx==4" [gameObj]="gameObj" [ableToTakeThisTurn]="ableToTakeThisTurn">
 				</app-game-view>
 
-				<div *ngIf="generalRetreatFlg" class="borderClass3">
+				<div *ngIf="generalRetreatFlg && ableToTakeThisTurn" class="borderClass3">
 					<img src="assets/graphics/units/piece10u.png" height="30">
 					<div>General Withdraw Options</div>
 					<button [disabled]="generalRetreatObj.currentLoc == generalRetreatObj.terrId1" (click)="moveGeneralToTerr(generalRetreatObj.terrId1)" type="button" class="btn btn-primary roundButton">

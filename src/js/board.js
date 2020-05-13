@@ -7,7 +7,7 @@ function refreshAllTerritories(gameObj, currentPlayer, superpowersData, yourPlay
 }
 function refreshAllPlayerTerritories(gameObj, currentPlayer, superpowersData, yourPlayer) {
 	gameObj.territories.forEach(function (terr) {
-		if(terr.owner == currentPlayer.nation)
+		if (terr.owner == currentPlayer.nation)
 			refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPlayer);
 	});
 }
@@ -196,7 +196,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 				}
 				if (unit.type == 1 || unit.subType == 'fighter') {
 					cargoTypeUnits++;
-					if (unit.terr == terr.id)
+					if (numberVal(unit.cargoOf) == 0)
 						strandedCargo.push(unit);
 				}
 				if (unit.type == 1 || unit.type == 2) {
@@ -232,7 +232,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 		}
 	});
 	//if (aircraftCarriers.length > 0)
-		//squareUpAllCargo(aircraftCarriers, gameObj);
+		//squareUpAllAircraftCarriers(aircraftCarriers, gameObj);
 	units.sort(function (a, b) { return a.piece - b.piece; });
 	terr.units = units;
 	terr.movableTroopCount = movableTroopCount;
@@ -307,13 +307,10 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 
 	if (strandedCargo.length == 0)
 		terr.strandedCargo = [];
-	if (terr.id >= 79 && terr.cargoTypeUnits > 0) {
-		if (terr.cargoTypeUnits == terr.unitCount)
-			terr.strandedCargo = strandedCargo;
-		else if (terr.cargoUnits > terr.cargoSpace)
-			terr.strandedCargo = strandedCargo;
-	}
 
+	terr.strandedCargo = strandedCargo;
+	if(strandedCargo.length>0)
+		fixCargoOnTerr(strandedCargo, terr, gameObj);
 	var flag = flagOfOwner(terr.owner, terr, showDetailsFlg, totalUnitCount, terr.defeatedByNation, terr.nuked, terr.attackedByNation);
 	terr.flag = flag;
 	//	if (gameObj.historyMode) {
@@ -1815,7 +1812,7 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 		if (team.income > maxIncome && team.numPlayers > 1) {
 			maxIncome = team.income;
 			winnningPlayer = 'Team ' + team.name;
-			leadingTeam =  team.name;
+			leadingTeam = team.name;
 		}
 	});
 	gameObj.winningTeamFlg = (yourPlayer && yourPlayer.team == winningTeam);
@@ -1828,10 +1825,10 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 		return;
 	}
 	var leadingTeamList = playersOfTeam(leadingTeam, gameObj, superpowersData);
-	if(leadingTeam==0 || leadingTeamList.length<2)
-		gameObj.currentSituation = winnningPlayer +' is winning!';
+	if (leadingTeam == 0 || leadingTeamList.length < 2)
+		gameObj.currentSituation = winnningPlayer + ' is winning!';
 	else
-		gameObj.currentSituation = 'Team #' + leadingTeam + ' of ' + leadingTeamList.join(' & ') +' is winning!';
+		gameObj.currentSituation = 'Team #' + leadingTeam + ' of ' + leadingTeamList.join(' & ') + ' is winning!';
 	var victoryRound = numberVal(gameObj.victoryRound);
 	if (victoryMet) {
 		var msg = 'Victory Conditions met! ' + winnningPlayer + ' controls ' + maxCapitalsHeld + ' capitals. Game will end in round ' + victoryRound + ' if they are held.';
@@ -1929,13 +1926,13 @@ function getMilitaryReportObj(gameObj, currentPlayer, line) {
 		customMilitaryReport2(obj, line, gameObj.round);
 }
 function numberHumanAllies(player, gameObj) {
-	var num=0;
-	var nation=0;
-	player.treaties.forEach(function(t) {
+	var num = 0;
+	var nation = 0;
+	player.treaties.forEach(function (t) {
 		nation++;
-		if(t==3 && nation!=player.nation) {
+		if (t == 3 && nation != player.nation) {
 			var p = playerOfNation(nation, gameObj);
-			if(!p.cpu)
+			if (!p.cpu)
 				num++;
 		}
 	});

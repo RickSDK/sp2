@@ -148,6 +148,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public isDesktopFlg = false; // > 600px
 	public hiSpeedFlg = false;
 	public spriteInMotionFlg = false;
+	public hidePlayersPanelFlag = false;
 	public spritePieceId = 2;
 	public spriteShipId = 4;
 	public currentPlayerNation = 1;
@@ -344,10 +345,18 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	adminFixBoard() {
 		this.showAlertPopup('Fix on!', 1);
+
+		var terrId = 51;
+		var terr = this.gameObj.territories[terrId - 1];
+		var x=0;
+		terr.units.forEach(unit => {
+			//		if (unit.piece == 15) {
+			if(x++<4)
+				unit.terr = 3;
+			//		}
+		});
 		return;
 
-		var terrId = 2;
-		var terr = this.gameObj.territories[terrId - 1];
 		terr.owner = 1;
 
 		var terrId2 = 4;
@@ -448,7 +457,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.gameObj.hardFog == 'Y')
 			illuminateTerritories(this.gameObj);
 
-		if(!this.currentPlayer.cpu)
+		if (!this.currentPlayer.cpu)
 			refreshAllPlayerTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 		this.findTargets();
 
@@ -561,6 +570,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 							if (hours >= 80) {
 								playerIsAwol = true;
 							}
+							if (secondsLeftInTimer > 43200)
+								secondsLeftInTimer = 43000; // allow for account sit
+
 							console.log('----possible awol----');
 							console.log('hours', hours);
 							console.log('rank', obj.rank);
@@ -799,7 +811,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 		this.checkTreatyOffers(player);
 		scrollToCapital(this.currentPlayer.nation);
-		this.cdr.detectChanges();
 
 		if (player.cpu)
 			this.computerGo();
@@ -1637,7 +1648,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.spriteInMotionFlg) {
 			return;
 		}
-		if(piece==15)
+		if (piece == 15)
 			refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 		this.spriteInMotionFlg = true;
 		this.spritePieceId = piece;
@@ -1667,7 +1678,14 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 	}
 	arrowsButtonClicked() {
-		playersPanelMoved();
+		this.hidePlayersPanelFlag = true;
+		//playersPanelMoved();
+	}
+	eyeButtonPressed() {
+		this.hidePlayersPanelFlag = false;
+		setTimeout(() => {
+			positionPurchasePanel();
+		}, 500);
 	}
 	svgClick() {
 	}
@@ -1702,6 +1720,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		playClick();
 		hideArrow();
 		changeClass('completeTurnButton', 'btn btn-success roundButton');
+		if (this.currentPlayer.status == 'Diplomacy') {
+			this.diplomacyModal.show(this.gameObj, this.ableToTakeThisTurn, this.currentPlayer, this.yourPlayer);
+			return;
+		}
 		if (this.currentPlayer.status == 'Purchase') {
 			this.completingPurchases();
 			if (this.user.rank < 2 && this.gameObj.round == 1) {
@@ -1771,7 +1793,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			numAddedUnitsToAdd++;
 			setTimeout(() => {
 				if (purchUnit.terr != lastTerrId) {
-					if(lastTerrId>0)
+					if (lastTerrId > 0)
 						this.refreshThisTerrId(lastTerrId);
 					lastTerrId = purchUnit.terr;
 				}
@@ -1782,7 +1804,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		return numAddedUnitsToAdd;
 	}
 	refreshThisTerrId(id: number) {
-		var terr = this.gameObj.territories[id-1];
+		var terr = this.gameObj.territories[id - 1];
 		refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 		this.cdr.detectChanges();
 	}

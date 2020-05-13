@@ -98,11 +98,11 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
         if (unit.cargoOf > 0) {
             displayBattle.allowRetreat = false;
             var transport = findUnitOfId(unit.cargoOf, gameObj);
-            if(transport && transport.subType=='transport') {
+            if (transport && transport.subType == 'transport') {
                 transport.movesLeft = 0;
             }
         }
-            
+
         if (unit.piece == 10) {
             localStorage.generalTerr1 = unit.terr;
             displayBattle.allowGeneralRetreat = true;
@@ -170,7 +170,7 @@ function startBattle(terr, player, gameObj, superpowersData, battle) {
         return;
     }
     battle.attackUnits.forEach(unit => {
-        if(unit.cargo && unit.cargo.length>0) {
+        if (unit.cargo && unit.cargo.length > 0) {
             unit.cargo.forEach(cargoUnit => {
                 console.log('moving', cargoUnit);
                 var u = findUnitOfId(cargoUnit.id, gameObj);
@@ -1007,6 +1007,8 @@ function nukeBattleCompleted(displayBattle, selectedTerritory, currentPlayer, mo
     wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, title, selectedTerritory, moveTerr, 1500, weaponType);
 }
 function battleCompleted(displayBattle, selectedTerritory, currentPlayer, moveTerr, gameObj, superpowersData) {
+    if (displayBattle.militaryObj.wonFlg && selectedTerritory.owner>0 && gameObj.round == gameObj.attack && selectedTerritory.defeatedByRound != gameObj.round)
+        currentPlayer.attackFlg = true;
     if (displayBattle.militaryObj.wonFlg) {
         transferControlOfTerr(selectedTerritory, currentPlayer.nation, gameObj, true, currentPlayer);
         if (!currentPlayer.cpu) {
@@ -1083,8 +1085,6 @@ function wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, ti
         currentPlayer.losses += losses;
         currentPlayer.kd = getKdForPlayer(currentPlayer);
     }
-    if (displayBattle.militaryObj.wonFlg && gameObj.round == gameObj.attack && selectedTerritory.defeatedByRound != gameObj.round)
-        currentPlayer.attackFlg = true;
     addIncomeForPlayer(currentPlayer, gameObj);
 
     if (displayBattle.defender > 0) {
@@ -1138,7 +1138,16 @@ function fixSeaCargo(terr, gameObj) {
     });
 
 }
-
+function fixCargoOnTerr(strandedCargo, terr, gameObj) {
+    console.log('fixCargoOnTerr', terr.name);
+    strandedCargo.forEach(unit => {
+        findTransportForThisCargo(unit, terr, gameObj);
+        console.log('fix', unit);
+    });
+}
+function squareUpAllAircraftCarriers(units, gameObj) {
+    console.log('squareUpAllAircraftCarriers');
+}
 function squareUpAllCargo(units, gameObj) {
     //return; // this seems to be messing things up
     console.log('squareUpAllCargo');

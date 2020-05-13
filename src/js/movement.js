@@ -155,7 +155,7 @@ function distanceBetweenTerrs(terr1, terr2, max, land, air, sea, allyHash, terri
     return { land: maxLand, air: maxAir, sea: maxSea };
 }
 function isTerritoryBlocked(fromNation, terr, allyHash) {
-    if (terr.owner == fromNation || terr.unitCount == 0)
+    if (terr.owner == fromNation || terr.unitCount == 0 || fromNation==0)
         return false;
     if (allyHash[fromNation] == true)
         return false;

@@ -137,7 +137,7 @@
 	Menu</button>
 
 <!-----------------players sidebar------------------>
-<div id="sidelinePopup" (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 0)"
+<div id="sidelinePopup" *ngIf="!hidePlayersPanelFlag" (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 0)"
 	style="cursor: pointer; position: fixed; min-width: 50px; max-width: 68px; top: 150px; left: 0; border: 1px solid black; text-align: center; box-shadow: 3px 3px 5px #000; transition: all 1s ease;">
 	<div id="playerPanel" class="roundedPanel" *ngIf="currentPlayer">
 		<div style="background-color: #444; color: white; font-size: 10px;">Players</div>
@@ -158,13 +158,13 @@
 	</div>
 </div>
 
-<button id="sidelineButton" *ngIf="isMobileFlg" (click)="arrowsButtonClicked()" type="button"
+<button id="sidelineButton" *ngIf="isMobileFlg && !hidePlayersPanelFlag" (click)="hidePlayersPanelFlag=true" type="button"
 	style="cursor: pointer; position: fixed; min-width: 50px; max-width: 60px; top: 320px; left: 0; transition: all 1s ease;"
-	class="btn btn-secondary roundButton"><i class="fa fa-arrows-h"></i></button>
+	class="btn btn-secondary roundButton"><i class="fa fa-arrow-down"></i></button>
 
 <!-----------------purchase sidebar------------------>
 <div id="purchaseSideBar" (click)="productionQueuePopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)"
-	*ngIf="showPanelsFlg"
+	*ngIf="showPanelsFlg && !hidePlayersPanelFlag"
 	style="cursor: pointer; position: fixed; min-width: 50px; max-width: 60px; top: 360px; left: 0; border: 1px solid black; text-align: center; box-shadow: 3px 3px 5px #000; transition: all 1s ease;">
 	<div class="roundedPanel" *ngIf="currentPlayer">
 		<div style="background-color: #444; color: white; font-size: 10px;">Purchases</div>
@@ -173,6 +173,10 @@
 
 	</div>
 </div>
+
+<button *ngIf="hidePlayersPanelFlag" (click)="eyeButtonPressed()" type="button"
+	style="position: fixed; bottom: 0; left: 0;"
+	class="btn btn-primary roundButton"><i class="fa fa-eye"></i></button>
 
 
 <img (click)="dismissArrow()" id="arrow" src="assets/graphics/images/arrow.png"
