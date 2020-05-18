@@ -290,7 +290,8 @@ function removeThisUnitFromTransport(unit, gameObj) {
     console.log('removeThisUnitFromTransport');
     var transport = findUnitOfId(unit.cargoOf, gameObj);
     if (transport && transport.cargo) {
-        transport.movesLeft = 0;
+        if(transport.piece==4)
+            transport.movesLeft = 0;
         var cargo = [];
         transport.cargo.forEach(cUnit => {
             if (cUnit.id != unit.id)
@@ -370,7 +371,6 @@ function findTransportForThisCargo(unit, terr, gameObj) {
             }
         }
     }
-    cleanup
     console.log('no transport found!!!', unit, terr.units.length);
     //unit.terr = unit.prevTerr;
     //showAlertPopup('no transport found!', 1);
@@ -678,7 +678,7 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
                                 showAlertPopup('No transports there!', 1);
                             e.checked = false;
                         }
-                        if (moveOrLoadFlg && carrierCargo > selectedTerritory.carrierSpace) {
+                        if (unit.subType == 'fighter' && moveOrLoadFlg && carrierCargo > selectedTerritory.carrierSpace) {
                             if (selectedTerritory.carrierSpace > 0)
                                 showAlertPopup('Not enough room on your carriers. Removing fighters.', 1);
                             else

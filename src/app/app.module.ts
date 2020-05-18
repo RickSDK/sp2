@@ -62,6 +62,7 @@ import { TeamBalancingComponent } from './team-balancing/team-balancing.componen
 import { EditProfilePopupComponent } from './edit-profile-popup/edit-profile-popup.component';
 import { UserNotificationsPopupComponent } from './user-notifications-popup/user-notifications-popup.component';
 import { HomeScreenPopupComponent } from './home-screen-popup/home-screen-popup.component';
+import { GoogleAdsComponent } from './google-ads/google-ads.component';
 
 @NgModule({
   declarations: [
@@ -124,7 +125,8 @@ import { HomeScreenPopupComponent } from './home-screen-popup/home-screen-popup.
     TeamBalancingComponent,
     EditProfilePopupComponent,
     UserNotificationsPopupComponent,
-    HomeScreenPopupComponent
+    HomeScreenPopupComponent,
+    GoogleAdsComponent
   ],
   imports: [
     BrowserModule,

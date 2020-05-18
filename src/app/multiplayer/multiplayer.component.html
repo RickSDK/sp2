@@ -2,7 +2,7 @@
 
 <div style="text-align: center;">
     <div
-        style="max-width: 800px; display: inline-block; width: 100%; box-shadow: 15px 15px 15px #000; background-color: white;">
+        style="max-width: 800px; display: inline-block; width: 100%; box-shadow: 15px 15px 15px #000; background-color: black;">
 
         <a routerLink="/">
             <div style="background-color: #444; text-align: center;">
@@ -405,16 +405,7 @@
                 Users Online: <span style="color: white;">{{multiPlayerObj.usersOnline}}</span>
             </div>
 
-            <div style="background-color: gray;">
-                <!-- Google AdSense -->
-                <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-2626924352662007"
-                    data-ad-slot="3410873039" data-ad-format="auto" data-full-width-responsive="true"></ins>
-                <script>
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
-            </div>
-
+            <app-google-ads></app-google-ads>
 
         </div>
     </div>

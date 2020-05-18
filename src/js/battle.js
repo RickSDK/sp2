@@ -1007,7 +1007,7 @@ function nukeBattleCompleted(displayBattle, selectedTerritory, currentPlayer, mo
     wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, title, selectedTerritory, moveTerr, 1500, weaponType);
 }
 function battleCompleted(displayBattle, selectedTerritory, currentPlayer, moveTerr, gameObj, superpowersData) {
-    if (displayBattle.militaryObj.wonFlg && selectedTerritory.owner>0 && gameObj.round == gameObj.attack && selectedTerritory.defeatedByRound != gameObj.round)
+    if (displayBattle.militaryObj.wonFlg && selectedTerritory.owner > 0 && gameObj.round == gameObj.attack && selectedTerritory.defeatedByRound != gameObj.round)
         currentPlayer.attackFlg = true;
     if (displayBattle.militaryObj.wonFlg) {
         transferControlOfTerr(selectedTerritory, currentPlayer.nation, gameObj, true, currentPlayer);
@@ -1291,6 +1291,14 @@ function hostileActObj(type, terr, gameObj, player) {
                 message = 'This will cost you ' + cost + ' coins to attack, because you were not at war at the beginning of the turn. You can attack for free next turn.';
             else
                 message = 'This will cost you ' + cost + ' coins to break the ' + treatyName + '! Alternatively, you can declare war this turn and then attack for free next turn.';
+
+            if (cost == 15) {
+                var p2 = playerOfNation(terr.owner, gameObj);
+                if (p2.cpu) {
+                    message = 'You cannot attack a computer ally! Declare war this turn and you can attack next turn.';
+                    allowFlg = false;
+                }
+            }
         }
         if (type == 'bomb' && terr.bombed) {
             message = 'This country has already been bombed.';

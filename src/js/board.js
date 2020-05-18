@@ -232,7 +232,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 		}
 	});
 	//if (aircraftCarriers.length > 0)
-		//squareUpAllAircraftCarriers(aircraftCarriers, gameObj);
+	//squareUpAllAircraftCarriers(aircraftCarriers, gameObj);
 	units.sort(function (a, b) { return a.piece - b.piece; });
 	terr.units = units;
 	terr.movableTroopCount = movableTroopCount;
@@ -309,7 +309,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 		terr.strandedCargo = [];
 
 	terr.strandedCargo = strandedCargo;
-	if(strandedCargo.length>0)
+	if (strandedCargo.length > 0)
 		fixCargoOnTerr(strandedCargo, terr, gameObj);
 	var flag = flagOfOwner(terr.owner, terr, showDetailsFlg, totalUnitCount, terr.defeatedByNation, terr.nuked, terr.attackedByNation);
 	terr.flag = flag;
@@ -1403,6 +1403,14 @@ function arrayObjOfLine(line, id) {
 	return finList;
 }
 function addUniToQueue(piece, count, superpowersData, currentPlayer, gameObj, selectedTerritory) {
+	var terrId = 0;
+	if (selectedTerritory && selectedTerritory.id)
+		terrId = selectedTerritory.id;
+
+	if (terrId == 0) {
+		console.log('error in addUniToQueue!');
+		return;
+	}
 	var unit = superpowersData.units[piece];
 	var cost = unit.cost;
 
@@ -1410,7 +1418,7 @@ function addUniToQueue(piece, count, superpowersData, currentPlayer, gameObj, se
 		if (currentPlayer.money - cost >= 0) {
 			currentPlayer.money -= cost;
 			var id = gameObj.unitPurchases.length + 1;
-			gameObj.unitPurchases.push({ id: id, terr: selectedTerritory.id, piece: piece });
+			gameObj.unitPurchases.push({ id: id, terr: terrId, piece: piece });
 		}
 	}
 	if (piece == 16)

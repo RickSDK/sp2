@@ -289,6 +289,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			if (this.yourPlayer)
 				this.yourNation = this.yourPlayer.nation;
 			this.currentPlayerNation = this.yourNation;
+			console.log('--gameObj', this.gameObj);
 			console.log('--yourPlayer', this.yourPlayer);
 			refreshAllTerritories(this.gameObj, this.yourPlayer, this.superpowersData, this.yourPlayer)
 			refreshBoard(this.gameObj.territories);
@@ -346,13 +347,13 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	adminFixBoard() {
 		this.showAlertPopup('Fix on!', 1);
 
-		var terrId = 51;
+		var terrId = 98;
 		var terr = this.gameObj.territories[terrId - 1];
-		var x=0;
+		var x = 0;
 		terr.units.forEach(unit => {
 			//		if (unit.piece == 15) {
-			if(x++<4)
-				unit.terr = 3;
+			if (x++ < 4)
+				unit.terr = 105;
 			//		}
 		});
 		return;
@@ -877,10 +878,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		if (this.currentPlayer.primaryTargetId > 0)
 			this.allUnitsAttack(this.currentPlayer.primaryTargetId);
-
-		if (this.gameObj.round != 6) {
+		else {
 			var obj = findAmphibiousAttacks(this.gameObj, this.currentPlayer);
-			if (obj && obj.attackUnits.length > 0) {
+			if (this.gameObj.round != 6 && obj && obj.attackUnits.length > 0) {
 				this.doThisBattle(obj);
 				if (obj && obj.ampFlg) {
 					this.doThisBattle({ attackUnits: obj.ampAttUnits, defUnits: obj.ampDefUnits, t1: obj.ampAttTerr.id, t2: obj.ampDefTerr.id, id: 2, terr: obj.ampDefTerr, attTerr: obj.ampAttTerr });
@@ -1228,7 +1228,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		recallBoats(this.gameObj, this.currentPlayer);
 
-		if (this.gameObj.round != 6 && this.currentPlayer.nation != 4) {
+		if (this.currentPlayer.primaryTargetId == 0 && this.currentPlayer.nation != 4) {
 			var obj = findAmphibiousAttacks(this.gameObj, this.currentPlayer, true);
 			if (obj && obj.attackUnits.length > 0) {
 				this.doThisBattle(obj);

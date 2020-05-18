@@ -32,13 +32,10 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
   public battleshipCost = 0;
   public brokeFlg = false;
   public superBCForm: any;
-  public clinkSound: any;
 
   constructor() { super(); }
 
   ngOnInit(): void {
-    //this.clinkSound = new Audio('assets/sounds/clink.wav');
-    //this.clinkSound.preload = 'auto';
   }
   initChild(terr: any) {
     this.allowFactoryFlg = isFactoryAllowedOnTerr(terr, this.gameObj);
@@ -57,7 +54,7 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
       return;
     }
     if (this.selectedTerritory.nation == 99 && isUnitFighterUnit(piece)) {
-      var space = this.numCarriersInQueue();
+      //var space = this.numCarriersInQueue();
       var carrierSpace = this.selectedTerritory.carrierSpace + this.numCarriersInQueue() * 2;
       var carrierCargo = this.selectedTerritory.carrierCargo + this.numFightersInQueue();
       if (carrierSpace < carrierCargo + count) {
@@ -76,7 +73,6 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
       this.addUpBattleShipCost();
       return;
     }
-    playSound('clink.wav');
     if (piece == 15 || piece == 19) {
       if (this.facBombedFlg)
         this.facBombedFlg = false;
@@ -239,7 +235,6 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
     this.currentPlayer.money -= (this.superBCForm.cost - 15);
     this.gameObj.superBCForm = this.superBCForm;
     this.currentPlayer.battleshipCost = this.superBCForm.cost;
-    this.clinkSound.play();
     closePopup('battleshipPopup');
     addUniToQueue(12, 1, this.superpowersData, this.currentPlayer, this.gameObj, this.selectedTerritory);
   }

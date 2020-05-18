@@ -178,6 +178,7 @@ export class MatchmakingStandingsComponent extends BaseComponent implements OnIn
     });
     console.log(readyList.length + ' players within ' + tollarance + ' points of ' + points);
     readyList.sort(function (a, b) { return a.ptDiff - b.ptDiff; });
+
     var numPlayers = 8;
     var gameTypes = ["battlebots", "diplomacy", "autobalance", "freeforall", "firefight", "hungerGames", "barbarian", "co-op", "ffa-5", "ffa-6", "ffa-7"];
     var gameType = gameTypes[Math.floor((Math.random() * gameTypes.length))];
