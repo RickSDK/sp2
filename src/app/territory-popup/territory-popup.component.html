@@ -234,10 +234,10 @@
 					[ableToTakeThisTurn]="ableToTakeThisTurn" [hostileMessage]="hostileMessage"
 					[totalUnitsThatCanMove]="totalUnitsThatCanMove" (messageEvent)="buttonClicked($event)">
 				</app-terr-buttons>
-
 				<app-terr-units *ngIf="optionType=='home' || optionType=='production'"
+					(messageEvent)="buttonClicked($event)"
 					[selectedTerritory]="selectedTerritory" [currentPlayer]="currentPlayer"
-					[superpowersData]="superpowersData" [gameObj]="gameObj" [user]="user">
+					[superpowersData]="superpowersData" [gameObj]="gameObj" [user]="user" [ableToTakeThisTurn]="ableToTakeThisTurn">
 				</app-terr-units>
 
 				<!--#########################################################################################-->

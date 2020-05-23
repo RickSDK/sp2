@@ -174,13 +174,13 @@
                         <div style="font-size: 10px;">MatchMaking</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count4}})</div>
                     </button>
-                    <button *ngIf="adminFlg" (click)="filterGames(5)" type="button"
+                    <button *ngIf="adminFlg && count5>0" (click)="filterGames(5)" type="button"
                         class="btn btn-warning roundButton  segmentButton hidden-xxs" style="min-width: 60px;">
                         <i class="fa fa-bug" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">Bugs</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count5}})</div>
                     </button>
-                    <button *ngIf="adminFlg" (click)="filterGames(6)" type="button"
+                    <button *ngIf="adminFlg && count6>0" (click)="filterGames(6)" type="button"
                         class="btn btn-warning roundButton  segmentButton hidden-xxs" style="min-width: 60px;">
                         <i class="fa fa-clock-o" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">Stale</div>
@@ -360,7 +360,7 @@
                                                 <th>Player</th>
                                                 <th>$</th>
                                                 <th *ngIf="game.type=='Locked'">T</th>
-                                                <th><i class="fa fa-clock-o"></i></th>
+                                                <th></th>
                                             </tr>
                                             <tr *ngFor="let player of game.players">
                                                 <td><img src="assets/graphics/images/flag{{player.nation}}.gif"
@@ -379,7 +379,7 @@
                                                         class="btn btn-primary roundButton">{{player.team}}
                                                     </button>
                                                 </td>
-                                                <td style="font-size: 12px; color: gray;">{{player.clock}}hr
+                                                <td style="font-size: 12px; color: gray;">
                                                     <button
                                                         *ngIf="game.host == user.userName && game.status == 'Open' && player.userName != user.userName"
                                                         (click)="removePlayerFromGame(game, player)" type="button"

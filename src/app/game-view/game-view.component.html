@@ -50,10 +50,10 @@
 					<font color=#c00><i class="fa fa-check"></i> Allows-Skip</font>
 				</td>
 			</tr>
-			<tr *ngIf="gameObj.restrict_units_flg=='Y'">
+			<tr *ngIf="gameObj.restrict_units_flg">
 				<td><b>No Special Units:</b></td>
 				<td>
-					<font color=#c00>{{gameObj.restrict_units_flg}}</font>
+					<font color="green"><i class="fa fa-check"></i></font>
 				</td>
 			</tr>
 			<tr *ngIf="gameObj.no_stats_flg=='Y' && !gameObj.mmFlg">

@@ -14,7 +14,6 @@ export class GoogleAdsComponent implements AfterViewInit  {
   ngAfterViewInit() {
     try{
       console.log('google!');
-
       (window['adsbygoogle'] = window['adsbygoogle'] || []).push({});
     }catch(e){
       console.error("error");

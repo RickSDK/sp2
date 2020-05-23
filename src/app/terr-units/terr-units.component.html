@@ -1,15 +1,11 @@
 <!------------------top units----------------------------->
 <div class="terr-card">
     <div>
-        <img *ngFor="let nation of selectedTerritory.flags" src="assets/graphics/images/flag{{nation}}.gif" height=30>
+        <img *ngFor="let nation of selectedTerritory.flags" src="assets/graphics/images/flag{{nation}}.gif" height=30 style="cursor: pointer;"
+        (click)="switchOwnership(nation)">
         {{selectedTerritory.name}} units
         <button *ngIf="selectedTerritory.unitCount>0" (click)="unitDetailFlg=!unitDetailFlg" type="button"
             class="btn btn-secondary roundButton"><i class="fa fa-retweet"></i></button>
-    </div>
-    <div *ngIf="ableToTakeThisTurn && selectedTerritory.id>79 && selectedTerritory.flags.length>1"
-        style="font-size: 11px;"> Multiple nations. Change View:
-        <img style="cursor: pointer;" ng-click="changeTerrFlag(nation)" *ngFor="let nation of selectedTerritory.flags"
-            src="assets/graphics/images/flag{{nation}}.gif" height=30>
     </div>
     <div *ngIf="ableToTakeThisTurn && selectedTerritory.id <= 79 && selectedTerritory.flags.length > 1 && selectedTerritory.owner==currentPlayer.nation && currentPlayer.status=='Attack'"
         style="font-size: 11px;"> Multiple nations. <button ng-click="attackButtonClicked()" id="warButton"

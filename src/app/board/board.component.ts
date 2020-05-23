@@ -586,10 +586,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 							if (newTimer < 6)
 								newTimer = 6;
 
-							if (obj.minutesReduced > 0)
-								showAlertPopup('Slow Turn Response: Your turn timer has dropped below 12 hours. Your timer started with ' + obj.minutesReduced + ' minutes reduced due to a previous slow turn. Your next turn timer will start with only ' + newTimer + ' hours. Taking turns faster will bring your timer back up to 24 hours.', 1);
-							else
-								showAlertPopup('Slow Turn Response: The game has been waiting on your turn for ' + elapsedHours + ' hours. Your next turn timer will start with only ' + newTimer + ' hours. Taking turns faster will bring your timer back up to 24 hours.', 1);
+							showAlertPopup('Slow Turn Response: The game has been waiting on your turn for ' + elapsedHours + ' hours. Try visiting the site at least twice per day to keep games moving.', 1);
 						} else if (playerIsAwol) {
 							logItem(this.gameObj, this.currentPlayer, 'Player Awol', 'Playered turned into CPU after being away from game for ' + hours + ' hours. Visiting the game will restore the player to human.');
 							this.gameObj.secondsSinceUpdate = 0;

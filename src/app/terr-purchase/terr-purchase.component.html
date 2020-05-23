@@ -69,7 +69,7 @@
             class="btn btn-default"><i class="fa fa-plane"></i> Air</button>
         <button (click)="changeProdType(2, selectedTerritory)" [ngClass]="ngClassSegment(segmentIdx,2)" type="button"
             class="btn btn-default"><i class="fa fa-anchor"></i> Sea</button>
-        <button *ngIf="adminModeFlg || (gameObj.restrict_units_flg !='Y' && user.rank>=4)" (click)="changeProdType(3, selectedTerritory)"
+        <button *ngIf="adminModeFlg || (!gameObj.restrict_units_flg && user.rank>=4)" (click)="changeProdType(3, selectedTerritory)"
             [ngClass]="ngClassSegment(segmentIdx,3)" type="button" class="btn btn-default"><i class="fa fa-star"></i>
             Sp</button>
     </div>
