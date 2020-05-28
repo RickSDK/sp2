@@ -65,8 +65,9 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
         return false; // cargo
     }
     if (optionType == 'movement' && unit.type == 2 && toTerr.nation == 99 && unit.cargoOf > 0) {
-        return false; // fighters
+ //       return false; // fighters
     }
+ 
     if (optionType == 'movement' && unit.piece == 7 && toTerr.nation == 99) {
         return false; // bombers
     }

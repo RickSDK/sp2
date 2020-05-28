@@ -347,8 +347,17 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	adminFixBoard() {
 		this.showAlertPopup('Fix on!', 1);
 
-		var terrId = 98;
+		var terrId = 110;
 		var terr = this.gameObj.territories[terrId - 1];
+
+
+		setTimeout(() => {
+			this.addUnitToTerr(terr, 10, true, true);
+			this.addUnitToTerr(terr, 11, true, true);
+		}, 1000);
+
+		return;
+
 		var x = 0;
 		terr.units.forEach(unit => {
 			//		if (unit.piece == 15) {
@@ -493,11 +502,13 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 		if (this.gameObj.multiPlayerFlg && !this.currentPlayer.cpu && this.gameObj.secondsSinceUpdate > 30) {
 			if (this.yourPlayer && this.yourPlayer.cpu && this.yourPlayer.alive) {
-				this.showAlertPopup('Looks like you went awol so the computer took over your turn. Restoring you back into the game.', 1);
-				this.yourPlayer.cpu = false;
-				setTimeout(() => {
-					saveGame(this.gameObj, this.user, this.currentPlayer);
-				}, 1000);
+				if(this.currentPlayer.awolFlg) {
+					this.showAlertPopup('Looks like you went awol so the computer took over your turn. Restoring you back into the game.', 1);
+					this.yourPlayer.cpu = false;
+					setTimeout(() => {
+						saveGame(this.gameObj, this.user, this.currentPlayer);
+					}, 1000);	
+				}
 			} else {
 				if (this.user.userName == this.currentPlayer.userName && this.gameObj.mmFlg) {
 					this.currentPlayer.empCount = 0;
@@ -591,6 +602,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 							logItem(this.gameObj, this.currentPlayer, 'Player Awol', 'Playered turned into CPU after being away from game for ' + hours + ' hours. Visiting the game will restore the player to human.');
 							this.gameObj.secondsSinceUpdate = 0;
 							this.currentPlayer.cpu = true;
+							this.currentPlayer.awolFlg = true;
 							this.closePopup('currentTurnPopup');
 							this.showAlertPopup('Player has gone awol!', 1);
 							this.computerGo();
