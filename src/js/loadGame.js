@@ -234,11 +234,14 @@ function loadPlayersFromObj(pObj, userName) {
 function loadPlayers(numPlayers, startingNation, rank, user) {
 	var players = [];
 	var humanTurn=Math.floor((Math.random() * numPlayers));
-	if(!rank || rank < 2)
-		humanTurn=0;
 
 	var nationsHash={};
 	nationsHash[startingNation]=1;
+	if(!rank || rank < 2) {
+		humanTurn=0;
+		nationsHash[3]=1; // no russia
+		nationsHash[6]=1; // no mef
+	}
 	var cpuNum=1;
 	for(var x=0; x<numPlayers; x++) {
 		var cpuFlg=true;

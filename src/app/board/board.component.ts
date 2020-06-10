@@ -676,7 +676,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			var tStatus = treatyStatus(this.currentPlayer, terr.owner);
 			if (tStatus > 2)
 				this.currentPlayer.secondaryTargetId = 0;
-			if (this.currentPlayer.cpu && (tStatus == 1 || tStatus == 2))
+			if (this.currentPlayer.cpu && (tStatus == 1))
 				declareWarOnNation(terr.owner, this.gameObj, this.currentPlayer, this.superpowersData);
 		}
 		if (this.currentPlayer.hotSpotId > 0) { // clear hot spot if lost
@@ -759,6 +759,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	initializePlayer() {
 		playVoiceClip('nation' + this.currentPlayer.nation + '.mp3');
+		refreshAllTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 		this.showControls = !this.currentPlayer.cpu;
 		if (!this.currentPlayer.cpu)
 			this.cdr.reattach();
@@ -1887,7 +1888,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.hideActionButton = false;
 			this.showControls = true;
 
-			saveGame(this.gameObj, this.user, this.currentPlayer, false, true, prevPlayer, this.currentPlayer.cpu, 0);
+			saveGame(this.gameObj, this.user, this.currentPlayer, false, true, prevPlayer, 0);
 			if (!this.gameObj.multiPlayerFlg) {
 				addTestScore(this.gameObj);
 				if (this.gameObj.winningTeamFlg && this.user.rank < 2) {
@@ -1907,7 +1908,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				sendEmailFlg = false;
 
 			var secondsLeft = 0;
-			saveGame(this.gameObj, this.user, this.currentPlayer, sendEmailFlg, true, prevPlayer, this.currentPlayer.cpu, secondsLeft);
+			saveGame(this.gameObj, this.user, this.currentPlayer, sendEmailFlg, true, prevPlayer, secondsLeft);
 			setTimeout(() => {
 				this.gameObj.unitPurchases = [];
 				this.loadCurrentPlayer();
@@ -1938,7 +1939,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.currentPlayer.cpu = true;
 			var sp = this.superpowersData.superpowers[this.currentPlayer.nation];
 			showAlertPopup(sp + ' has surrendered! The computer will play out the turns from here.');
-			this.placeUnitsAndEndTurn();
+			this.computerGo();
 		} else {
 			this.gameObj.gameOver = true;
 			this.currentPlayer.alive = false;

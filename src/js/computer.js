@@ -47,6 +47,8 @@ function purchaseCPUUnits(player, gameObj, superpowersData) {
         player.money += 5;
     if (gameObj.round > 20)
         player.money -= 5;
+    if (gameObj.round >= 100 && player.cpu)
+        player.money += 350; // keep players from dragging feet
 
     var placedInf = numberVal(player.placedInf);
     if (placedInf < 3) {
@@ -216,11 +218,15 @@ function declareWarIfNeeded(gameObj, player, superpowersData) {
             var roundsP = roundsOfPeace(player, p2.nation, gameObj);
             var roundsW = roundsOfWar(player, p2.nation, gameObj);
             if ((status == 1 || status == 2) && roundsP > 3 && (player.alliesMaxed || p2.alliesMaxed)) {
+                console.log('xxxdeclare war', roundsP);
                 declareWarOnNation(p2.nation, gameObj, player, superpowersData);
             }
             if (gameObj.type == 'co-op' && gameObj.round > 50) {
-                if (status > 0 && !p2.cpu)
+                if (status > 0 && !p2.cpu) {
+                    console.log('xxxdeclare war2');
                     declareWarOnNation(p2.nation, gameObj, player, superpowersData);
+                }
+                    
                 if (status == 0 && p2.cpu && p2.alive)
                     changeTreaty(player, p2, 3, gameObj, superpowersData);
             }

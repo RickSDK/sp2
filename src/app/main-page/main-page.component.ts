@@ -34,7 +34,6 @@ export class MainPageComponent extends BaseComponent implements OnInit {
       this.user.rank = 0;
       saveUserObj(this.user);
       this.user = userObjFromUser();
-
     }
     console.log(this.user);
     //this.flexSprite(100);

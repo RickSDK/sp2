@@ -45,6 +45,7 @@
 
 					<div style="padding: 3px;">
 						<!--battle board-->
+						<div style="font-weight: 700; color: rgb(59, 100, 189);">The Battlefield</div>
 						<table border=1 width=100% align=center
 							style="box-shadow: 3px 3px 3px #444; border-radius: 5px;">
 							<tr [ngStyle]="ngStyleLogs(displayBattle.defNation)">
@@ -312,13 +313,13 @@
 						<!--     each terr  moveTerr, totalMoveTerrs -->
 						<div *ngFor="let terr of moveTerr; let i = index" [ngStyle]="ngStyleLogs(terr.nation)"
 							class="terrClass" style="border: 1px solid black;">
-							<div style="padding-left: 5px; font-size: 18px; font-weight: 700; text-align: left;">
-								{{terr.name}} <span style="font-size: 10px; color: gray;">air: {{terr.distObj.air}} sea:
-									{{terr.distObj.sea}} land: {{terr.distObj.land}}</span>
-								<span style="float: right;">
-									<span *ngIf="terr.movableTroopCount >= 2" style="font-size: 10px;">Select All
+							<div *ngIf="terr.movableUnitCount >= 2" style="padding-left: 5px; font-size: 14px; font-weight: 700; text-align: left;">
+								{{terr.name}} <span *ngIf="0" style="font-size: 10px; color: gray;">air: {{terr.distObj.air}} sea:
+									{{terr.distObj.sea}} land: {{terr.distObj.land}} {{terr.movableUnitCount}} | {{terr.movableTroopCount}}</span>
+								<span style="float: right;" *ngIf="terr.movableUnitCount >= 2">
+									<span  style="font-size: 10px;">Select All
 									</span>
-									<div *ngIf="terr.units.length>=2" class="squaredOne squaredOneGreen"
+									<div class="squaredOne squaredOneGreen"
 										style="display: inline-block; padding: 0; margin: 1px;">
 										<input (click)="selectAllUnitsForTerr(terr)" type="checkbox" value="None"
 											id="{{'ter'+terr.id}}" name="check" />
@@ -327,15 +328,14 @@
 									</div>
 								</span>
 							</div>
-							<hr style="padding: 0; margin: 5px;">
+							<span *ngIf="terr.movableUnitCount < 2" style="padding-left: 5px; font-size: 14px; font-weight: 700; float: left; padding-right: 5px;">{{terr.name}}</span>
 							<div *ngFor="let unit of terr.units" style="display: inline-block;">
-								<span *ngIf="unit.allowMovementFlg">
-									<div class="squaredOne" style="display: inline-block; padding: 0; margin: 1px;">
+								<span *ngIf="unit.att">
+									<div *ngIf="unit.allowMovementFlg" class="squaredOne" style="display: inline-block; padding: 0; margin: 1px;">
 										<input (click)="checkSendButtonStatus(unit, terr)" type="checkbox" value="None"
 											id="{{'unit'+unit.id}}" name="check" />
 										<label for="{{'unit'+unit.id}}"></label>
-									</div> <i class="fa fa-hourglass-half"
-										*ngIf="unit.piece==28 && gameObj.round-1 == unit.medicRound"></i>
+									</div> 
 									<span style="margin-right: 10px;"> <img *ngIf="unit.piece>0"
 											src="{{ngUnitSrc(unit.piece, unit.nation)}}" height=20
 											title="{{unit.name}}"><span *ngIf="unit.cargoOf>0">(c)</span><span

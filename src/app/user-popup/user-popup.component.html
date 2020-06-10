@@ -219,7 +219,7 @@
 
             </div>
             <div class="modal-footer">
-                <button *ngIf="selfProfileFlg && user.userName != 'Guest'" (click)="userLogout()" type="button"
+                <button *ngIf="user.userId" (click)="userLogout()" type="button"
                     class="btn btn-secondary roundButton">
                     <i class="fa fa-sign-out"></i> Logout
                 </button>

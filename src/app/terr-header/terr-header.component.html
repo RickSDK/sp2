@@ -32,21 +32,29 @@
 </div>
 <!---------- ally info -->
 
-<div *ngIf="ableToTakeThisTurn && selectedTerritory.owner>0 && selectedTerritory.treatyStatus<4">
+<div *ngIf="selectedTerritory.owner>0 && selectedTerritory.treatyStatus<4">
     <table width=100% border=1 style="font-size: 12px;">
         <tr>
             <td [style.background-color]="selectedTerritory.treatyStatus==0?'red':'#ccc'"><i
                     *ngIf="selectedTerritory.treatyStatus==0" class="fa fa-check"
-                    style="color: black; font-size: 14px;"></i> War</td>
+                    style="color: black; font-size: 14px;"></i>
+                    <img src="assets/graphics/misc/news0.png" height="22" title="War">
+                     War</td>
             <td [style.background-color]="selectedTerritory.treatyStatus==1?'orange':'#ccc'"><i
                     *ngIf="selectedTerritory.treatyStatus==1" class="fa fa-check"
-                    style="color: black; font-size: 14px;"></i> Non-Aggression</td>
+                    style="color: black; font-size: 14px;"></i>
+                    <img src="assets/graphics/misc/news1.png" height="22" title="Non-Aggression">
+                     Non-Aggression</td>
             <td [style.background-color]="selectedTerritory.treatyStatus==2?'yellow':'#ccc'"><i
                     *ngIf="selectedTerritory.treatyStatus==2" class="fa fa-check"
-                    style="color: black; font-size: 14px;"></i> Peace</td>
+                    style="color: black; font-size: 14px;"></i> 
+                    <img src="assets/graphics/misc/news2.png" height="22" title="Peace">
+                        Peace</td>
             <td [style.background-color]="selectedTerritory.treatyStatus==3?'green':'#ccc'"><i
                     *ngIf="selectedTerritory.treatyStatus==3" class="fa fa-check"
-                    style="color: white; font-size: 14px;"></i> Ally</td>
+                    style="color: white; font-size: 14px;"></i> 
+                    <img src="assets/graphics/misc/news3.png" height="22" title="Ally">
+                    Ally</td>
         </tr>
     </table>
     <div *ngIf="0">

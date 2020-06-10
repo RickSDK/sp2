@@ -42,7 +42,7 @@ function zipUpHistoryData(gameObj, user, nation) {
 		});
 */
 }
-function saveGame(gameObj, user, currentPlayer, sendEmailFlg, endOfTurn, prevPlayer, nextPlayerCPU, secondsLeft) {
+function saveGame(gameObj, user, currentPlayer, sendEmailFlg, endOfTurn, prevPlayer, secondsLeft) {
 	if (!gameObj) {
 		showAlertPopup('Error on save game. no gameObj', 1);
 		return;
@@ -72,6 +72,8 @@ function saveGame(gameObj, user, currentPlayer, sendEmailFlg, endOfTurn, prevPla
 		nextUpdateNation = currentPlayer.nation;
 	}
 	console.log('++++++++saveGame++++++++++');
+	console.log('currentPlayer', currentPlayer);
+	console.log('prevPlayer', prevPlayer);
 
 	if (gameObj.multiPlayerFlg) {
 		//		setInnerHTMLFromElement('statusOkButton', 'Wait');
@@ -110,15 +112,18 @@ function saveGame(gameObj, user, currentPlayer, sendEmailFlg, endOfTurn, prevPla
 
 		fetch(url, postData).then((resp) => resp.text())
 			.then((data) => {
+				console.log('turn', currentPlayer.userId);
+				console.log('income', currentPlayer.income);
+				console.log('team', currentPlayer.team);
 				console.log('data', data);
 				if (verifyServerResponse('success', data)) {
 					var items = data.split("|");
 					localStorage.setItem("gameUpdDt", items[7]);
-//					console.log('+++new gameUpdDt+++', localStorage.gameUpdDt, sendEmailFlg);
+					console.log('+sendEmailFlg+', sendEmailFlg);
 					if (sendEmailFlg) {
 						emailNextPlayer(data, gameObj.name);
 					}
-					if (!nextPlayerCPU && endOfTurn) {
+					if (!currentPlayer.cpu && endOfTurn) {
 						updateStatusMessage('Success!', true);
 						disableButton('spinnerOKButton', false);
 					}
@@ -214,13 +219,13 @@ function registerIP(ipCode) {
 		});*/
 }
 function emailNextPlayer(line, gameName) {
-//	console.log('emailNextPlayer', line, gameName);
 	var parts = line.split('|');
 	if (parts.length > 1) {
 		var textMsg = parts[4];
 		if (textMsg && textMsg.length > 0)
 			sendEmailToNextPlayer(textMsg, 0, gameName);
 		var email = parts[5];
+		console.log('emailNextPlayer', textMsg, email, gameName);
 		if (email && email.length > 0)
 			sendEmailToNextPlayer(email, 0, gameName);
 	}

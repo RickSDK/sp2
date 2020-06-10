@@ -9,7 +9,7 @@
 </a>
 
 <div style="width: 100%; text-align: center;">
-	<div style="max-width: 400px; display: inline-block; box-shadow: 2px 2px 5px #000;">
+	<div style="max-width: 600px; display: inline-block; box-shadow: 2px 2px 5px #000;">
 
 		<div style="background-color: #ccc; text-align: center; padding: 5px;">
 			<div style="font-size: 10px; color: gray;">Version {{appVersion}}</div>
@@ -42,7 +42,7 @@
 
 		<div class="modal-body" style="padding: 0;">
 			<div *ngIf="buttonIdx==0" style="background-color: white;">
-				<img src="assets/graphics/splash/poster02.jpg" width="100%">
+				<img src="assets/graphics/splash/poster03.png" width="100%">
 				<div style="padding: 10px;">
 					<p class="darkBlue" style="font-size: 16px; font-weight: 800; text-align: center;">Nation will rise
 						against nation, kingdom against kingdom.<p>
@@ -75,7 +75,7 @@
 				</div>
 			</div>
 			<div *ngIf="buttonIdx==1">
-				<img src="assets/graphics/splash/poster01.png" width="100%">
+				<img src="assets/graphics/splash/poster04.png" width="100%">
 				<table class="spTable">
 					<tr *ngFor="let item of overviewList" style="border-bottom: 1px solid gray;">
 						<td align="center"><img src="assets/graphics/units/piece{{item.piece}}u.png"
@@ -84,7 +84,7 @@
 					</tr>
 				</table>
 			</div>
-			<div *ngIf="buttonIdx==2" style="padding: 10px; background-color: white;">
+			<div *ngIf="buttonIdx==2" style="padding: 10px; background-color: white; text-align: left;">
 				<img src="assets/graphics/splash/splash1024.png" width="100%">
 				<p>If you are familiar with RISK or Axis & Allies, this game will be very easy for you to pick up. If
 					you
@@ -96,7 +96,6 @@
 					<div class="headline2">Action Sequence</div>
 					1. Purchase Units<br>
 					2. Combat<br>
-
 					<div class="headline2">Purchase Units</div>
 					<p><img src="assets/graphics/units/piece2u.png" height=20><img
 							src="assets/graphics/units/piece3u.png" height=20><img
@@ -305,6 +304,7 @@
 				</ul>
 			</div>
 			<div *ngIf="buttonIdx==4" style="text-align: center; background-color: white;">
+				<img src="assets/graphics/splash/poster02.jpg" width="100%">
 				<button (click)="emailPopup.show()" type="button" class="btn btn-primary roundButton">
 					<i class="fa fa-envelope" style="font-size: 24px;"></i><br>Contact
 				</button>

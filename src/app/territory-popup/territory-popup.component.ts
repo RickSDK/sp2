@@ -18,6 +18,7 @@ declare var autoButtonPressed: any;
 declare var getSelectedUnits: any;
 declare var showAlertPopup: any;
 declare var highlightCompleteTurnButton: any;
+declare var refreshTerritory: any;
 //battle.js
 declare var highlightTheseUnits: any;
 declare var playSoundForPiece: any;
@@ -125,15 +126,21 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       console.log(terr.name, terr);
     var totalUnitsThatCanMove = 0;
 
+    var superpowersData = this.superpowersData;
     var moveTerr = [];
     this.gameObj.territories.forEach(function (terr) {
-      totalUnitsThatCanMove += terr.movableTroopCount;
-      if (terr.movableTroopCount > 0) {
-        terr.distObj = { land: 9, air: 9, sea: 9 };
-        moveTerr.push(terr);
+      if(terr.movableTroopCount>0) {
+        refreshTerritory(terr, gameObj, currentPlayer, superpowersData, currentPlayer);
+        totalUnitsThatCanMove += terr.movableTroopCount;
+        if (terr.movableTroopCount > 0) {
+          terr.distObj = { land: 9, air: 9, sea: 9 };
+          moveTerr.push(terr);
+        }
       }
+
     });
     this.totalMoveTerrs = moveTerr;
+    console.log('moveTerr', moveTerr);
     this.hostileMessage = populateHostileMessage('home', this.selectedTerritory, this.gameObj, this.currentPlayer);
     this.totalUnitsThatCanMove = totalUnitsThatCanMove;
     this.optionType = 'home';
@@ -143,7 +150,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       terr.facFlg = checkWaterForFactory(terr, currentPlayer.nation, gameObj);
 
     if (user.rank < 2 && gameObj.round == 1 && currentPlayer.status == 'Purchase')
-      showAlertPopup('Welcome new recruit! If not sure what to buy, simply get 4 tanks. they are good all-purpose attack units.')
+      showAlertPopup('Welcome new recruit! Click the "Buy" buttons below to begin construction of new units. Then Press "Purchase Complete"')
 
     if (ableToTakeThisTurn && currentPlayer.status == 'Purchase' && terr.facFlg) {
       if (this.selectedTerritory.nation == 99)

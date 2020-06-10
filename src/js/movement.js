@@ -64,8 +64,8 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
     if (optionType == 'movement' && unit.type == 1 && toTerr.nation == 99 && distObj.air > 1) {
         return false; // cargo
     }
-    if (optionType == 'movement' && unit.type == 2 && toTerr.nation == 99 && unit.cargoOf > 0) {
- //       return false; // fighters
+    if (optionType == 'movement' && unit.type == 2 && toTerr.nation == 99 && unit.cargoOf > 0 && unit.terr>=79) {
+        return false; // fighters
     }
  
     if (optionType == 'movement' && unit.piece == 7 && toTerr.nation == 99) {
@@ -476,8 +476,9 @@ function showUnitsForMovementBG2(optionType, gameObj, currentPlayer, totalMoveTe
                 unit.allowMovementFlg = true;
             }
         });
+        terr.movableUnitCount = moveUnits;
         totalUnitsThatCanMove += moveUnits;
-        if (moveUnits > 0)
+        if (terr.unitCount > 0)
             moveTerr.push(terr);
     }
     return { totalUnitsThatCanMove: totalUnitsThatCanMove, moveTerr: moveTerr };
@@ -727,7 +728,10 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
     }
     if (moveOrLoadFlg && fighterUnitClicked && selectedTerritory.nation == 99 && selectedTerritory.carrierSpace == 0 && carriersSelected == 0) {
         fighterUnitClicked.checked = false;
-        showAlertPopup('No room for your fighter!', 1);
+        if(selectedTerritory.unitCount>0)
+            showAlertPopup('No available carrier for your fighter!', 1);
+        else
+            showAlertPopup('Fighters cannot move to water zones', 1);
     }
     //   if (fightersSelected > 0 && selectedTerritory.nation == 99)
     //       console.log('fighter situation', fightersSelected, carriersSelected, selectedTerritory.carrierSpace, carrierCargo);
