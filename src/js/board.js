@@ -909,6 +909,7 @@ function cleanUpTerritories(player, gameObj) {
 	return numFactories;
 }
 function addIncomeForPlayer(player, gameObj) {
+	console.log('xxxaddIncomeForPlayer');
 	if (!player || player.nation == 0)
 		return;
 	var terrHash = {};
@@ -982,8 +983,8 @@ function addIncomeForPlayer(player, gameObj) {
 	player.nukes = false;
 	player.sat = player.tech[18];
 	gameObj.units.forEach(function (unit) {
-		if (unit.owner == player.nation && unit.mv > 0 && !unit.dead) {
-			if (unit.piece == 14)
+		if (unit.owner == player.nation && !unit.dead) {
+			if (unit.piece == 14 || unit.piece == 52)
 				player.nukes = true;
 			units++;
 		}
@@ -1258,7 +1259,6 @@ function getTerrOfUnitId(id, gameObj) {
 	return terrId;
 }
 function doubleCheckCargoIsOnTransport(unit, transport) {
-	//loadThisUnitOntoThisTransport
 	var loadedFlg = false;
 	var cargoUnits = 0;
 	transport.cargo.forEach(function (cUnit) {
@@ -1804,7 +1804,9 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 	});
 	if (liveHumanPlayerCount == 0 && gameObj.multiPlayerFlg) {
 		showAlertPopup('No humans left! Ending game.');
-		//gameObj.gameOver = true;
+		gameObj.gameOver = true;
+		uploadCompletedGameStats(gameObj, '', superpowersData, yourPlayer, user);
+		return;
 	}
 
 	var maxCapitalsHeld;

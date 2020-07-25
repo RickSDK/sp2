@@ -95,4 +95,31 @@ export class GameViewComponent extends BaseComponent implements OnInit {
     this.closeModal('#gamePlayersPopup');
     displayFixedPopup('undoMovesPopup');
   }
+  resyncTurn() {
+    this.playClick();
+    var currentPlayer = getCurrentPlayer(this.gameObj);
+
+    var url = this.getHostname() + "/webSuperpowers.php";
+
+    const postData = this.getPostDataFromObj({
+      userId: this.user.userId,
+      code: this.user.code,
+      gameId: this.gameObj.id,
+      action: 'resetTurn',
+      id: currentPlayer.userId
+    });
+    console.log(postData);
+
+    fetch(url, postData).then((resp) => resp.text())
+      .then((data) => {
+        console.log('data', data);
+        if (this.verifyServerResponse(data)) {
+          this.closeModal('#gamePlayersPopup');
+          this.showAlertPopup('Done!');
+        }
+      })
+      .catch(error => {
+        this.showAlertPopup('Unable to reach server: ' + error, 1);
+      });
+  }
 }

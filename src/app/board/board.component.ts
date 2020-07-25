@@ -175,6 +175,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public refreshTerritoryHash: any;
 	public purchaseIndex = 0;
 	public selectedTerritory: any;
+	public battleObj: any;
 	public battleReport = { flag: 'flag2.gif', type: 'Battle', icon: 'fa-crosshairs', attNation: 2, defNation: 3, attCasualties: 1, defCasualties: 4, wonFlg: false, result: 'Lost!', terrX: 0, terrY: 0, cruiseFlg: false };
 	public advisorFirst6RoundsMessage = [
 		'Round 1. Click on your capital to purchase new units.',
@@ -347,26 +348,50 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	adminFixBoard() {
 		this.showAlertPopup('Fix on!', 1);
 
-		var terrId = 110;
-		var terr = this.gameObj.territories[terrId - 1];
 
+
+
+		var terrId2 = 101;
+		var terr2 = this.gameObj.territories[terrId2 - 1];
 
 		setTimeout(() => {
-			this.addUnitToTerr(terr, 10, true, true);
-			this.addUnitToTerr(terr, 11, true, true);
+			//this.addUnitToTerr(terr2, 10, true, true);
+		}, 1000);
+
+		//terr2.owner = 6;
+
+		setTimeout(() => {
+			this.addUnitToTerr(terr2, 27, true, true);
+			this.addUnitToTerr(terr2, 5, true, true);
+			this.addUnitToTerr(terr2, 5, true, true);
+			this.addUnitToTerr(terr2, 5, true, true);
+			this.addUnitToTerr(terr2, 5, true, true);
+			this.addUnitToTerr(terr2, 5, true, true);
+			this.addUnitToTerr(terr2, 5, true, true);
 		}, 1000);
 
 		return;
 
+		var terrId = 86;
+		var terr = this.gameObj.territories[terrId - 1];
+
+
+
 		var x = 0;
 		terr.units.forEach(unit => {
-			//		if (unit.piece == 15) {
-			if (x++ < 4)
-				unit.terr = 105;
-			//		}
+			if (unit.piece != 12) {
+				unit.dead = true;
+			}
 		});
 		return;
 
+
+		setTimeout(() => {
+			this.addUnitToTerr(terr, 2, true, true);
+			this.addUnitToTerr(terr, 2, true, true);
+			this.addUnitToTerr(terr, 2, true, true);
+			this.addUnitToTerr(terr, 2, true, true);
+		}, 1000);
 		terr.owner = 1;
 
 		var terrId2 = 4;
@@ -502,12 +527,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 		if (this.gameObj.multiPlayerFlg && !this.currentPlayer.cpu && this.gameObj.secondsSinceUpdate > 30) {
 			if (this.yourPlayer && this.yourPlayer.cpu && this.yourPlayer.alive) {
-				if(this.currentPlayer.awolFlg) {
+				if (this.currentPlayer.awolFlg) {
 					this.showAlertPopup('Looks like you went awol so the computer took over your turn. Restoring you back into the game.', 1);
 					this.yourPlayer.cpu = false;
 					setTimeout(() => {
 						saveGame(this.gameObj, this.user, this.currentPlayer);
-					}, 1000);	
+					}, 1000);
 				}
 			} else {
 				if (this.user.userName == this.currentPlayer.userName && this.gameObj.mmFlg) {
@@ -537,6 +562,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	checkEMPAndTimer(player, gameObj, ableToTakeThisTurn) {
 		var url = this.getHostname() + "/webSuperpowers.php";
 		var postData = this.getPostDataFromObj({ user_login: this.user.userName, code: this.user.code, action: 'checkEMPAndTimer', gameId: gameObj.id });
+		//console.log(this.user.userName, this.user.code);
 		this.showSkipPlayerButtonFlg = false;
 		this.showAccountSitButtonFlg = false;
 		if (!ableToTakeThisTurn)
@@ -834,9 +860,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.computerGo();
 	}
 	cpuSpeedFlgChanged() {
+		this.hiSpeedFlg = !this.hiSpeedFlg;
 		this.playClick();
 		this.showControls = false;
-		this.hiSpeedFlg = !this.hiSpeedFlg;
 	}
 	computerGoClicked() {
 		playClick();
@@ -1207,6 +1233,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	doThisBattle(obj: any) {
 		if (obj && obj.attackUnits && obj.attackUnits.length > 0) {
+			this.moveFlagBetweenTerrs({ t1: obj.t1, t2: obj.t2, nation: this.currentPlayer.nation });
+
 			this.moveSpriteBetweenTerrs(obj);
 			if (obj.terr.owner == this.currentPlayer.nation) {
 				moveTheseUnitsToThisTerritory(obj.attackUnits, obj.terr, this.gameObj);
@@ -1386,7 +1414,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	addUnitToTerr(terr: any, piece: number, allowMovesFlg: boolean, refreshFlg: boolean) {
 		if (piece == 52)
 			allowMovesFlg = true;
-		var nation = this.currentPlayer.nation;
+		var nation = this.currentPlayer.nation;		// player
+//		var nation = terr.owner; 					// terr owner
 		if (terr.owner != this.currentPlayer.nation && terr.nation == 99)
 			terr.owner = this.currentPlayer.nation;
 		var newId = this.gameObj.unitId;
@@ -1439,9 +1468,14 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		};
 	}
 	battleCompletedEmit(battleObj: any) {
-		//		console.log('!!!battleCompletedEmit!!!', battleObj);
+		this.battleObj = battleObj;
+		console.log('!!!battleCompletedEmit!!!', battleObj);
 		this.battleReport = this.getBattleReportFromBattleObj(battleObj);
-		//		console.log('!!!2!!!', this.battleReport);
+
+		if (battleObj.stratBombFlg) {
+			popupBattleReport(battleObj, 'stratBombPopup');
+		}
+		//console.log('!!!2!!!', this.battleReport);
 		setTimeout(() => {
 			this.cdr.detectChanges();
 		}, 300);
@@ -1567,8 +1601,37 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.cdr.detectChanges();
 			this.ngZone.runOutsideAngular(() => this.moveSprite(100, spriteObj));
 		}
-
-
+	}
+	getFlagSprite() {
+		if (this.displayOfName('spriteFlg1') != 'block')
+			return 'spriteFlg1'
+		if (this.displayOfName('spriteFlg2') != 'block')
+			return 'spriteFlg2'
+		return 'spriteFlg3';
+	}
+	displayOfName(name: string) {
+		var e = document.getElementById(name);
+		if (e) {
+			return e.style.display;
+		} else return
+		'block';
+	}
+	moveFlagBetweenTerrs(obj: any) {
+		var terr = this.gameObj.territories[obj.t1 - 1];
+		var t2 = this.gameObj.territories[obj.t2 - 1];
+		var spriteObj = { top1: terr.y, left1: terr.x, top2: t2.y, left2: t2.x, name: this.getFlagSprite() };
+		var e = document.getElementById(spriteObj.name);
+		if (e) {
+			if (e.style.display == 'block')
+				return;
+			(<HTMLImageElement>e).src = 'assets/graphics/images/flag' + obj.nation + '.gif';
+			e.style.display = 'block';
+			e.style.left = (terr.x - 10).toString() + 'px';
+			e.style.top = (terr.y + 80).toString() + 'px';
+			e.style.height = '30px';
+			this.cdr.detectChanges();
+			this.ngZone.runOutsideAngular(() => this.moveSprite(100, spriteObj));
+		}
 	}
 	moveSprite(amount: number, spriteObj: any) {
 		amount -= 1;

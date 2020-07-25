@@ -43,6 +43,7 @@ function zipUpHistoryData(gameObj, user, nation) {
 */
 }
 function saveGame(gameObj, user, currentPlayer, sendEmailFlg, endOfTurn, prevPlayer, secondsLeft) {
+	//return; //no save!
 	if (!gameObj) {
 		showAlertPopup('Error on save game. no gameObj', 1);
 		return;

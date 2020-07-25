@@ -1,8 +1,7 @@
 <div class="modal fade" id="territoryPopup" tabindex="-1" role="dialog">
 	<div class="modal-dialog modal-lg" role="document" style="max-width: 400px;">
 		<div class="modal-content" *ngIf="selectedTerritory">
-			<div class="modal-header"
-				style="vertical-align: middle; background-color: #337ab7;  border: 0">
+			<div class="modal-header" style="vertical-align: middle; background-color: #337ab7;  border: 0">
 				<img *ngIf="selectedTerritory" src="assets/graphics/images/{{selectedTerritory.flag || 'flag1.gif'}}"
 					title="{{superpowersData.superpowers[selectedTerritory.owner]}}" height=40>
 				&nbsp;<span *ngIf="adminModeFlg"
@@ -236,9 +235,9 @@
 					[totalUnitsThatCanMove]="totalUnitsThatCanMove" (messageEvent)="buttonClicked($event)">
 				</app-terr-buttons>
 				<app-terr-units *ngIf="optionType=='home' || optionType=='production'"
-					(messageEvent)="buttonClicked($event)"
-					[selectedTerritory]="selectedTerritory" [currentPlayer]="currentPlayer"
-					[superpowersData]="superpowersData" [gameObj]="gameObj" [user]="user" [ableToTakeThisTurn]="ableToTakeThisTurn">
+					(messageEvent)="buttonClicked($event)" [selectedTerritory]="selectedTerritory"
+					[currentPlayer]="currentPlayer" [superpowersData]="superpowersData" [gameObj]="gameObj"
+					[user]="user" [ableToTakeThisTurn]="ableToTakeThisTurn">
 				</app-terr-units>
 
 				<!--#########################################################################################-->
@@ -313,11 +312,14 @@
 						<!--     each terr  moveTerr, totalMoveTerrs -->
 						<div *ngFor="let terr of moveTerr; let i = index" [ngStyle]="ngStyleLogs(terr.nation)"
 							class="terrClass" style="border: 1px solid black;">
-							<div *ngIf="terr.movableUnitCount >= 2" style="padding-left: 5px; font-size: 14px; font-weight: 700; text-align: left;">
-								{{terr.name}} <span *ngIf="0" style="font-size: 10px; color: gray;">air: {{terr.distObj.air}} sea:
-									{{terr.distObj.sea}} land: {{terr.distObj.land}} {{terr.movableUnitCount}} | {{terr.movableTroopCount}}</span>
+							<div *ngIf="terr.movableUnitCount >= 2"
+								style="padding-left: 5px; font-size: 14px; font-weight: 700; text-align: left;">
+								{{terr.name}} <span *ngIf="0" style="font-size: 10px; color: gray;">air:
+									{{terr.distObj.air}} sea:
+									{{terr.distObj.sea}} land: {{terr.distObj.land}} {{terr.movableUnitCount}} |
+									{{terr.movableTroopCount}}</span>
 								<span style="float: right;" *ngIf="terr.movableUnitCount >= 2">
-									<span  style="font-size: 10px;">Select All
+									<span style="font-size: 10px;">Select All
 									</span>
 									<div class="squaredOne squaredOneGreen"
 										style="display: inline-block; padding: 0; margin: 1px;">
@@ -328,14 +330,16 @@
 									</div>
 								</span>
 							</div>
-							<span *ngIf="terr.movableUnitCount < 2" style="padding-left: 5px; font-size: 14px; font-weight: 700; float: left; padding-right: 5px;">{{terr.name}}</span>
+							<span *ngIf="terr.movableUnitCount < 2"
+								style="padding-left: 5px; font-size: 14px; font-weight: 700; float: left; padding-right: 5px;">{{terr.name}}</span>
 							<div *ngFor="let unit of terr.units" style="display: inline-block;">
-								<span *ngIf="unit.att">
-									<div *ngIf="unit.allowMovementFlg" class="squaredOne" style="display: inline-block; padding: 0; margin: 1px;">
+								<span *ngIf="unit.mv">
+									<div *ngIf="unit.allowMovementFlg" class="squaredOne"
+										style="display: inline-block; padding: 0; margin: 1px;">
 										<input (click)="checkSendButtonStatus(unit, terr)" type="checkbox" value="None"
 											id="{{'unit'+unit.id}}" name="check" />
 										<label for="{{'unit'+unit.id}}"></label>
-									</div> 
+									</div>
 									<span style="margin-right: 10px;"> <img *ngIf="unit.piece>0"
 											src="{{ngUnitSrc(unit.piece, unit.nation)}}" height=20
 											title="{{unit.name}}"><span *ngIf="unit.cargoOf>0">(c)</span><span
@@ -449,6 +453,8 @@
 			<div class="modal-header" style="background-color: #337ab7;  border: 0">
 				<button (click)="closeModal('#territoryPopup')" type="button"
 					class="btn btn-secondary roundButton">Close</button>
+				<button *ngIf="adminModeFlg" (click)="adminAllowMovePressed()" type="button"
+					class="btn btn-secondary roundButton">Admin Allow Move</button>
 				<button *ngIf="ableToTakeThisTurn && optionType=='production'" (click)="completePurchaseButtonClicked()"
 					type="button" class="btn btn-success roundButton">Purchase Complete</button>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">

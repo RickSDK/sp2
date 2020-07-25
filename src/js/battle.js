@@ -32,6 +32,7 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
         defNation: selectedTerritory.owner,
         allowGeneralRetreat: false,
         allowRetreat: true,
+        destoryerIncludedFlg: false,
         militaryMessage: '',
         defender: selectedTerritory.owner,
         attacker: attackPlayer.nation,
@@ -54,6 +55,7 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
     var defSBSHps = 0;
     var defActiveMedics = 0;
     var numDefDroneKillers = 0;
+    var destoryerIncludedFlg = false;
     selectedTerritory.units.forEach(unit => {
         if (unit.owner != attackPlayer.nation && isUnitOkToDefend(unit)) {
             if (defenseUnitOkForType(unit, stratBombFlg, displayBattle.seaBattleFlg, fighterDefenseFlg)) {
@@ -68,6 +70,8 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
                     defSBSHps += unit.bcHp - unit.damage - 1;
                 if (unit.piece == 28)
                     defActiveMedics++;
+                if (unit.piece == 27)
+                    destoryerIncludedFlg = true;
                 if (unit.targetDroneFlg)
                     numDefDroneKillers++;
             }
@@ -76,6 +80,7 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
     displayBattle.numDefDroneKillers = numDefDroneKillers;
     displayBattle.defSBSHps = defSBSHps;
     displayBattle.defActiveMedics = defActiveMedics;
+    displayBattle.destoryerIncludedFlg = destoryerIncludedFlg;
 
     var attSBSHps = 0;
     var attActiveMedics = 0;
@@ -458,13 +463,14 @@ function strategicBombBattle(player, targetTerr, attackUnits, gameObj, superpowe
     playSound('bombers.mp3');
     var battle = initializeBattle(player, targetTerr, attackUnits, gameObj, true);
     startBattle(targetTerr, player, gameObj, superpowersData, battle);
-    rollAAGuns(battle, targetTerr);
+    rollAAGuns(battle, targetTerr, gameObj, true);
     removeCasualties(battle, gameObj, player, true, superpowersData);
     rollAttackDice(battle, gameObj, true);
 
     var hits = battle.attHits;
     for (var x = 0; x < battle.defTargets.length; x++)
         battle.attCasualties.push(7);
+
     if (battle.defHits > 0)
         playSound('Scream.mp3');
 
@@ -509,7 +515,7 @@ function highlightTheseUnits(moveTerr, units) {
         }
     }
 }
-function addAAGunesToBattle(battle, terr) {
+function addAAGunesToBattle(battle, terr, stratBombFlg) {
     var aaGunsPerPLane = terr.adCount;
     if (aaGunsPerPLane > 2)
         aaGunsPerPLane = 2;
@@ -525,6 +531,12 @@ function addAAGunesToBattle(battle, terr) {
                 battle.airDefenseUnits.push({ piece: 13, nation: 1, dice: [] })
         }
     });
+    if (stratBombFlg && terr.defendingFighterId > 0) {
+        battle.defendingUnits.forEach(unit => {
+            if (unit.subType == 'fighter')
+                battle.airDefenseUnits.push({ piece: unit.piece, nation: 1, dice: [] })
+        });
+    }
 }
 function startToRollAAGuns(battle, selectedTerritory) {
     addAAGunesToBattle(battle, selectedTerritory);
@@ -532,14 +544,19 @@ function startToRollAAGuns(battle, selectedTerritory) {
         unit.dice.push('dice.png');
     });
 }
-function rollAAGuns(battle, selectedTerritory, gameObj) {
-    addAAGunesToBattle(battle, selectedTerritory);
+function rollAAGuns(battle, selectedTerritory, gameObj, stratBombFlg) {
+    addAAGunesToBattle(battle, selectedTerritory, stratBombFlg);
     battle.attTargets = [];
     battle.defTargets = [];
     battle.airDefenseUnits.forEach(unit => {
         unit.dice = [];
         var diceRoll = Math.floor((Math.random() * 6) + 1);
-        if (diceRoll <= 1) {
+        var hitScore = 1;
+        if (unit.piece != 13)
+            hitScore = 5;
+        if (unit.piece == 22)
+            hitScore = 3;
+        if (diceRoll <= hitScore) {
             unit.dice.push('diceh' + diceRoll + '.png');
             battle.defHits++;
             battle.defTargets.push('planes');
@@ -573,7 +590,7 @@ function rollAttackDice(battle, gameObj, stratFlg = false) {
                     unitHits = 1;
                 else
                     unitHits++;
-                if (unit.piece == 5 || unit.piece == 21 || unit.piece == 47)
+                if ((!battle.destoryerIncludedFlg && unit.piece == 5) || unit.piece == 21 || unit.piece == 47)
                     unitGetsInstantKill(unit, battle, gameObj);
                 else
                     battle.attTargets.push(unit.target);
@@ -724,6 +741,8 @@ function rollDefenderDice(battle, selectedTerritory, currentPlayer, moveTerr, ga
             if (selectedTerritory.owner == 0 && !selectedTerritory.capital && cpuHits > 2) {
                 diceRoll = 6; // make sure neutrals don't do too much damage
             }
+            if (battle.attNation == 4 && battle.round == 1 && battle.generalUnit > 0 && battle.defender == 0 && battle.bonusUnitsFlg && battle.defendingUnits.length == 2 && battle.defHits > 0)
+                diceRoll = 6; // don't let general die!
             if (diceRoll <= unit.def) {
                 unit.dice.push('diceh' + diceRoll + '.png');
                 battle.defHits++;
@@ -1007,7 +1026,7 @@ function nukeBattleCompleted(displayBattle, selectedTerritory, currentPlayer, mo
     wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, title, selectedTerritory, moveTerr, 1500, weaponType);
 }
 function battleCompleted(displayBattle, selectedTerritory, currentPlayer, moveTerr, gameObj, superpowersData) {
-    if (displayBattle.militaryObj.wonFlg && selectedTerritory.owner > 0 && gameObj.round == gameObj.attack && selectedTerritory.defeatedByRound != gameObj.round)
+    if (selectedTerritory.nation < 99 && displayBattle.militaryObj.wonFlg && selectedTerritory.owner > 0 && gameObj.round == gameObj.attack && selectedTerritory.defeatedByRound != gameObj.round)
         currentPlayer.attackFlg = true;
     if (displayBattle.militaryObj.wonFlg) {
         transferControlOfTerr(selectedTerritory, currentPlayer.nation, gameObj, true, currentPlayer);

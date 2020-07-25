@@ -79,8 +79,11 @@
 			<img src="assets/graphics/images/flag{{currentPlayer.nation || 1}}.gif" height="50">
 			<i class="fa fa-spinner fa-spin"></i> {{currentPlayer.status}}
 
-			<span (click)="cpuSpeedFlgChanged()" class="checkBoxLink"><i *ngIf="!hiSpeedFlg"
-					class="fa fa-square-o"></i><i *ngIf="hiSpeedFlg" class="fa fa-check-square-o"></i> High Speed</span>
+			<span (click)="hiSpeedFlg = !hiSpeedFlg" class="checkBoxLink"> <!--cpuSpeedFlgChanged()-->
+				<i *ngIf="!hiSpeedFlg" class="fa fa-square-o"></i>
+				<i *ngIf="hiSpeedFlg" class="fa fa-check-square-o"></i>
+				High Speed
+			</span>
 
 
 		</span>
@@ -137,7 +140,8 @@
 	Menu</button>
 
 <!-----------------players sidebar------------------>
-<div id="sidelinePopup" *ngIf="!hidePlayersPanelFlag" (click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 0)"
+<div id="sidelinePopup" *ngIf="!hidePlayersPanelFlag"
+	(click)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 0)"
 	style="cursor: pointer; position: fixed; min-width: 50px; max-width: 68px; top: 150px; left: 0; border: 1px solid black; text-align: center; box-shadow: 3px 3px 5px #000; transition: all 1s ease;">
 	<div id="playerPanel" class="roundedPanel" *ngIf="currentPlayer">
 		<div style="background-color: #444; color: white; font-size: 10px;">Players</div>
@@ -158,7 +162,8 @@
 	</div>
 </div>
 
-<button id="sidelineButton" *ngIf="isMobileFlg && !hidePlayersPanelFlag" (click)="hidePlayersPanelFlag=true" type="button"
+<button id="sidelineButton" *ngIf="isMobileFlg && !hidePlayersPanelFlag" (click)="hidePlayersPanelFlag=true"
+	type="button"
 	style="cursor: pointer; position: fixed; min-width: 50px; max-width: 60px; top: 320px; left: 0; transition: all 1s ease;"
 	class="btn btn-secondary roundButton"><i class="fa fa-arrow-down"></i></button>
 
@@ -175,8 +180,7 @@
 </div>
 
 <button *ngIf="hidePlayersPanelFlag" (click)="eyeButtonPressed()" type="button"
-	style="position: fixed; bottom: 0; left: 0;"
-	class="btn btn-primary roundButton"><i class="fa fa-eye"></i></button>
+	style="position: fixed; bottom: 0; left: 0;" class="btn btn-primary roundButton"><i class="fa fa-eye"></i></button>
 
 
 <img (click)="dismissArrow()" id="arrow" src="assets/graphics/images/arrow.png"
@@ -201,6 +205,30 @@
 	</table>
 	<div class="darkBlueBg" style="font-size: 10px;">{{battleReport.result}}</div>
 </div>
+<div id="stratBombPopup" onClick="closePopup('stratBombPopup')" class="popupMsg off"
+	style="padding: 0; position: absolute; text-align: center; border-radius: 10px; overflow:hidden; width: 100px;">
+	<div class="darkBlueBg">Strategic Bomb</div>
+	<div *ngIf="battleObj">
+		<div>
+			<span *ngFor="let unit of battleObj.airDefenseUnits">
+				<img src="{{ngUnitSrc(unit.piece)}}" style="max-height: 18px; max-width: 30px;">
+				<img *ngFor="let dice of unit.dice" src="assets/graphics/dice/{{dice}}" height="18">
+			</span>
+		</div>
+		<div>
+			<span *ngFor="let unit of battleObj.attackUnits">
+				<img src="{{ngUnitSrc(unit.piece)}}" style="max-height: 18px; max-width: 30px;">
+				<img *ngFor="let dice of unit.dice" src="assets/graphics/dice/{{dice}}" height="18">
+			</span>
+		</div>
+		<div>
+			<img *ngFor="let piece of battleObj.defCasualties" src="{{ngUnitSrc(piece)}}"
+				style="max-height: 18px; max-width: 30px;">
+		</div>
+	</div>
+</div>
+
+
 <div id="popupMsgBox" onClick="closePopup('popupMsgBox')" class="popupMsg off"
 	style="padding: 5px; position: absolute; width: 240px;">
 	<table padding=3 style="width: 100%; background-color: yellow;">
@@ -253,8 +281,7 @@
 	<div><a routerLink="/"><button id="intro5" class="off" type="button">Exit Game</button></a></div>
 </div>
 
-<div id="currentTurnPopup" class="popupScreenNoPad" style="text-align:center;"
-	onClick="closePopup('currentTurnPopup')">
+<div id="currentTurnPopup" class="popupScreenNoPad" style="text-align:center;" onClick="closePopup('currentTurnPopup')">
 	<div *ngIf="gameObj && currentPlayer">
 		<div class="title">Current Turn</div>
 		<div><img src="assets/graphics/images/flag{{currentPlayer.nation}}.gif" height=60></div>
@@ -265,24 +292,27 @@
 		</div>
 		<div>Income: <span class="bgHighlight">{{currentPlayer.income}}</span></div>
 		<div>Money: <span class="bgHighlight">{{currentPlayer.money}}</span></div>
-		<div *ngIf="currentPlayer.status != 'Purchase'">Status: <span class="bgHighlight">{{currentPlayer.status}}</span>
+		<div *ngIf="currentPlayer.status != 'Purchase'">Status: <span
+				class="bgHighlight">{{currentPlayer.status}}</span>
 		</div>
 
 		<div class="borderClass3">
 			<div><i class="fa fa-user"></i> <span class="bgHighlight">{{currentPlayer.userName}}</span></div>
 			<div><i class="fa fa-clock-o"></i> Timer: <span class="bgHighlight">{{gameObj.timer}}</span></div>
-			<div><i class="fa fa-arrow-down"></i> Last Login: <span class="bgHighlight">{{gameObj.lastLogin}}</span></div>
+			<div><i class="fa fa-arrow-down"></i> Last Login: <span class="bgHighlight">{{gameObj.lastLogin}}</span>
+			</div>
 		</div>
 		<hr>
 
 		<div *ngIf="showSkipPlayerButtonFlg" class="borderClass3" style="padding: 10px; width: 140px;">
 			<div style="font-size: 12px;">Player has run out of time and can be skipped</div>
-			<button (click)="skipPlayerPressed()" id="" type="button" class="btn btn-danger roundButton tall2">Skip Player!</button>
+			<button (click)="skipPlayerPressed()" id="" type="button" class="btn btn-danger roundButton tall2">Skip
+				Player!</button>
 		</div>
 		<div *ngIf="showAccountSitButtonFlg" class="borderClass3" style="padding: 10px; width: 160px;">
 			<div style="font-size: 12px;">You are able to account sit for this player</div>
 			<button (click)="accountSitButtonClicked()" id="" type="button"
-			class="btn btn-warning roundButton tall">Account Sit!</button>
+				class="btn btn-warning roundButton tall">Account Sit!</button>
 		</div>
 
 	</div>
@@ -492,6 +522,13 @@
 	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 60px;; max-width: 60px;">
 <img id="spriteInf5" src="assets/graphics/units/piece2u.png"
 	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 60px;; max-width: 60px;">
+
+<img id="spriteFlg1" src="assets/graphics/images/flag1.gif"
+	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 40px;; max-width: 40px;">
+<img id="spriteFlg2" src="assets/graphics/images/flag1.gif"
+	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 40px;; max-width: 40px;">
+<img id="spriteFlg3" src="assets/graphics/images/flag1.gif"
+	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 40px;; max-width: 40px;">
 
 <img id="nukeSprite" src="assets/graphics/anim/nuke{{nukeFrameNum}}.png"
 	style="display: block; position: absolute; left: -200px; top: 200px; height: 200px;">

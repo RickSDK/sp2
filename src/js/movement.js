@@ -213,9 +213,9 @@ function findBomberForParatrooper(unit, selectedTerritory, optinType) {
     if (unit.cargoUnits == 0)
         unit.cargoUnits = cargoUnitsForUnit(unit);
     selectedTerritory.units.forEach(function (transport) {
-        if (optinType == 'loadPlanes' && transport.piece == 7 && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits)
+        if (optinType == 'loadPlanes' && transport.piece == 7 && transport.owner == unit.owner && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits)
             selectedTransport = transport;
-        if (optinType == 'loadChoppers' && transport.piece == 50 && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits)
+        if (optinType == 'loadChoppers' && transport.piece == 50 && transport.owner == unit.owner && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits)
             selectedTransport = transport;
     });
     if (selectedTransport)
@@ -377,11 +377,16 @@ function findTransportForThisCargo(unit, terr, gameObj) {
     //showAlertPopup('no transport found!', 1);
 }
 function loadThisUnitOntoThisTransport(unit, transport) {
-    console.log('loadThisUnitOntoThisTransport');
-    if (!unit || !transport || unit.owner != transport.owner) {
-        console.log('!!unit', unit);
-        console.log('!!transport', transport);
-        showAlertPopup('invalid cargo', 1);
+    if (!unit) {
+        showAlertPopup('no unit selected!', 1);
+        return;
+    }
+    if (!transport) {
+         showAlertPopup('no transport selected!', 1);
+        return;
+    }
+    if (unit.owner != transport.owner) {
+         showAlertPopup('transport and cargo are different owners!', 1);
         return;
     }
     if (!transport.cargoLoadedThisTurn)
@@ -478,7 +483,7 @@ function showUnitsForMovementBG2(optionType, gameObj, currentPlayer, totalMoveTe
         });
         terr.movableUnitCount = moveUnits;
         totalUnitsThatCanMove += moveUnits;
-        if (terr.unitCount > 0)
+        if (terr.unitCount > 0 || terr.movableTroopCount>0)
             moveTerr.push(terr);
     }
     return { totalUnitsThatCanMove: totalUnitsThatCanMove, moveTerr: moveTerr };

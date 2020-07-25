@@ -108,18 +108,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
         }
       }
     });
-    var cruiseFlg = false;
-    if (terr.nation < 99 && terr.owner != currentPlayer.nation && currentPlayer.status == 'Attack') {
-      if (currentPlayer.nation == 4 || currentPlayer.tech[7] || currentPlayer.cruiseFlg) {
-        var borders = terr.borders.split('+');
-        borders.forEach(terrId => {
-          var t = gameObj.territories[terrId - 1];
-          if (t && t.nation == 99 && t.unitCount > 0)
-            cruiseFlg = true;
-        });
-      }
-    }
-    terr.cruiseFlg = cruiseFlg;
+
     this.checkAllTroops = false;
     this.selectedTerritory = terr;
     if (user.userName == 'Rick')
@@ -166,6 +155,20 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     if (this.terrButtonsComp)
       this.terrButtonsComp.initChild();
 
+
+    var cruiseFlg = false;
+    if (terr.nation < 99 && terr.owner != currentPlayer.nation && currentPlayer.status == 'Attack') {
+      if (currentPlayer.nation == 4 || currentPlayer.tech[7] || currentPlayer.cruiseFlg) {
+        var borders = terr.borders.split('+');
+        borders.forEach(terrId => {
+          var t = gameObj.territories[terrId - 1];
+          if (t && t.nation == 99 && t.unitCount > 0)
+            cruiseFlg = true;
+        });
+      }
+    }
+    terr.cruiseFlg = cruiseFlg;
+
     if (this.terrPurchaseComp) {
       this.terrPurchaseComp.initChild(terr);
       this.battleHappened.emit('cdr');
@@ -176,7 +179,6 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
         this.battleHappened.emit('cdr');
       }, 500);
     }
-
   }
   completePurchaseButtonClicked() {
     this.battleHappened.emit('done!');
@@ -192,6 +194,12 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   moveSpriteBetweenTerrs(obj: any) {
     //{ t1: terr1.id, t2: terr2.id, id: piece }
     this.messageEvent.emit(obj);
+  }
+  adminAllowMovePressed() {
+    this.playClick();
+    this.selectedTerritory.units.forEach(unit => {
+      unit.movesLeft = 2;
+    });
   }
   buttonClicked(type) {
     //this event emitted from app-terr-buttons

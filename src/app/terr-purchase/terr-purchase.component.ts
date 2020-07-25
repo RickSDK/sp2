@@ -161,7 +161,7 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
       this.productionDisplayUnits.push(this.superpowersData.units[6]);
       this.productionDisplayUnits.push(this.superpowersData.units[13]);
     }
-    if (segmentIdx == 2 || segmentIdx == 3) { //special
+    if (!this.gameObj.restrict_units_flg && (segmentIdx == 2 || segmentIdx == 3)) { //special
       var num2 = parseInt(this.currentPlayer.nation) + 19;
       if (this.adminModeFlg || this.user.rank >= 4)
         this.tryThisUnit(num2);

@@ -23,8 +23,8 @@ function purchaseCPUUnits(player, gameObj, superpowersData) {
         }
     });
     if (factoryTerritories.length == 0) {
-        showAlertPopup(superpowers[player.nation] + ' eliminated!');
-        removeAlliancesForNation(player.nation, gameObj);
+        //showAlertPopup(superpowersData.superpowers[player.nation] + ' eliminated!');
+        //removeAlliancesForNation(player.nation, gameObj);
         player.alive = false;
         return;
     }
