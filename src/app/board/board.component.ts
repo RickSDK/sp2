@@ -175,6 +175,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public refreshTerritoryHash: any;
 	public purchaseIndex = 0;
 	public selectedTerritory: any;
+	public strandedAAGuns = [];
 	public battleObj: any;
 	public battleReport = { flag: 'flag2.gif', type: 'Battle', icon: 'fa-crosshairs', attNation: 2, defNation: 3, attCasualties: 1, defCasualties: 4, wonFlg: false, result: 'Lost!', terrX: 0, terrY: 0, cruiseFlg: false };
 	public advisorFirst6RoundsMessage = [
@@ -260,9 +261,17 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			.then((data) => {
 				updateProgressBar(40);
 				this.gameObj = loadMultiPlayerGame(data);
-				localStorage.gameUpdDt = this.gameObj.gameUpdDt;
-				console.log('+++gameUpdDt+++', localStorage.gameUpdDt);
-				this.beginToLoadTheBoard();
+				if (this.gameObj && this.gameObj.name) {
+					localStorage.gameUpdDt = this.gameObj.gameUpdDt;
+					console.log('+++gameUpdDt+++', localStorage.gameUpdDt);
+					this.beginToLoadTheBoard();
+				} else {
+					updateProgressBar(100);
+					this.loadingFlg = false;
+					showAlertPopup('Loading error! ' + data, 1);
+					stopSpinner();
+					this.cdr.detectChanges();
+				}
 			})
 			.catch(error => {
 				this.showAlertPopup('Unable to reach server: ' + error, 1);
@@ -562,7 +571,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	checkEMPAndTimer(player, gameObj, ableToTakeThisTurn) {
 		var url = this.getHostname() + "/webSuperpowers.php";
 		var postData = this.getPostDataFromObj({ user_login: this.user.userName, code: this.user.code, action: 'checkEMPAndTimer', gameId: gameObj.id });
-		//console.log(this.user.userName, this.user.code);
 		this.showSkipPlayerButtonFlg = false;
 		this.showAccountSitButtonFlg = false;
 		if (!ableToTakeThisTurn)
@@ -574,22 +582,27 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				if (this.verifyServerResponse(data)) {
 					var c = data.split("|");
 					var obj = { gameId: c[1], turn: c[2], empCount: c[3], uid: c[4], minutesReduced: numberVal(c[5]), time_elapsed: numberVal(c[6]), rank: numberVal(c[7]), nation: numberVal(c[8]), mygames_last_login: c[9], time_elapsedUser: numberVal(c[10]) }
-					var secondsLeftInTimer = 86400 - obj.time_elapsed;
-					this.gameObj.timer = timerFromSeconds(86400 - obj.time_elapsed);
+					//var secondsLeftInTimer = 86400 - obj.time_elapsed; // not sure if this is right
+					var secondsLeftInTimer = 86400 - this.gameObj.secondsSinceUpdate;
+					this.gameObj.timer = timerFromSeconds(secondsLeftInTimer);
 					var secondsSinceLastLogin = getDateFromString(obj.mygames_last_login);
 					var hours = Math.round(secondsSinceLastLogin / 3600);
 					var minutesAway = Math.round(secondsSinceLastLogin / 60);
 					this.gameObj.lastLogin = lastLoginFromSeconds(secondsSinceLastLogin);
-					if (0) {
+					if (1) {
+						console.log('#################################');
 						console.log('obj', obj);
 						console.log('secondsLeftInTimer', secondsLeftInTimer);
 						console.log('obj.time_elapsed', obj.time_elapsed);
 						console.log('obj.minutesReduced', obj.minutesReduced);
 						console.log('this.gameObj.secondsSinceUpdate', this.gameObj.secondsSinceUpdate);
 						console.log('secondsSinceLastLogin', secondsSinceLastLogin);
+						console.log('obj.nation', obj.nation);
+						console.log('player.nation', player.nation);
 					}
 					player.empCount = obj.empCount;
-					if (obj.nation == player.nation && this.gameObj.secondsSinceUpdate > 30) {
+					if ((obj.nation == player.nation || gameObj.top1Nation == gameObj.top2Nation) && this.gameObj.secondsSinceUpdate > 30) {
+						console.log('checking for awol');
 						var playerIsAwol = false;
 						if (hours > 24) {
 							var numAllies = numberHumanAllies(player, gameObj);
@@ -617,7 +630,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 							console.log('numAllies', numAllies);
 							console.log('playerIsAwol', playerIsAwol);
 						}
-						if (ableToTakeThisTurn && obj.time_elapsed > 36000) {
+						if (ableToTakeThisTurn && obj.time_elapsed > 57600) {
 							var elapsedHours = Math.round(obj.time_elapsed / 3600);
 							var newTimer = 24 - elapsedHours + 6;
 							if (newTimer < 6)
@@ -1344,6 +1357,24 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			return;
 		}
 		if (this.ableToTakeThisTurn) {
+			if(this.strandedAAGuns.length>0) {
+				moveTheseUnitsToThisTerritory(this.strandedAAGuns, terr, gameObj);
+				this.showAlertPopup('Units moved!',1);
+				this.strandedAAGuns = [];
+				return;
+			}
+			if (terr.adCount > 0 && terr.unitCount == 0 && terr.nation == 99) {
+				this.showAlertPopup('Stranded AA guns here. Click on the territory that they should be on.', 1);
+				var strandedAAGuns = [];
+				terr.units.forEach(unit => {
+					if (unit.piece == 13)
+						strandedAAGuns.push(unit);
+				});
+				this.strandedAAGuns = strandedAAGuns;
+				terr.adCount = 0;
+				terr.units=[];
+				return;
+			}
 			if (this.forcedClickNation > 0) {
 				if (terr.id == this.forcedClickNation) {
 					if (this.forcedClickNation == 62) {
@@ -1415,7 +1446,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (piece == 52)
 			allowMovesFlg = true;
 		var nation = this.currentPlayer.nation;		// player
-//		var nation = terr.owner; 					// terr owner
+		//		var nation = terr.owner; 					// terr owner
 		if (terr.owner != this.currentPlayer.nation && terr.nation == 99)
 			terr.owner = this.currentPlayer.nation;
 		var newId = this.gameObj.unitId;
@@ -2087,6 +2118,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				this.currentPlayer.empPurchaseRd = this.gameObj.round;
 				var terr = this.gameObj.territories[pUnit.terr - 1];
 				this.addUnitToTerr(terr, pUnit.piece, false, false);
+				player.nukes = true;
 			}
 			if (unitHash[id])
 				unitHash[id]++;

@@ -3,7 +3,8 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
     //console.log('cm', distObj, optionType);
     if (unit.owner != currentPlayer.nation)
         return false;
-    if (optionType == 'cruise') {
+    
+        if (optionType == 'cruise') {
         if (unit.didAttackFlg)
             return false;
         if (distObj.air > 1)
@@ -64,25 +65,28 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
     if (optionType == 'movement' && unit.type == 1 && toTerr.nation == 99 && distObj.air > 1) {
         return false; // cargo
     }
-    if (optionType == 'movement' && unit.type == 2 && toTerr.nation == 99 && unit.cargoOf > 0 && unit.terr>=79) {
+    if (optionType == 'movement' && unit.type == 2 && toTerr.nation == 99 && unit.cargoOf > 0 && unit.terr >= 79) {
         return false; // fighters
     }
- 
+
     if (optionType == 'movement' && unit.piece == 7 && toTerr.nation == 99) {
         return false; // bombers
     }
     if (optionType == 'movement' && distObj.land == 0)
         return false;
+
     var movement = (optionType == 'attack' || optionType == 'bomb' || optionType == 'nuke') ? unit.moveAtt : unit.mv;
     if (unit.subType == 'missile' && distObj.air <= movement) {
         return true;
     }
+
     if (unit.type == 1 && distObj.land <= movement)
         return true;
     if ((unit.type == 2 || unit.type == 4 || unit.subType == 'missile') && distObj.air <= movement)
         return true;
     if (unit.type == 3 && distObj.sea <= movement - numberVal(unit.movesTaken))
         return true;
+        
     return false;
 }
 function distanceBetweenTerrs(terr1, terr2, max, land, air, sea, allyHash, territories) {
@@ -156,7 +160,7 @@ function distanceBetweenTerrs(terr1, terr2, max, land, air, sea, allyHash, terri
     return { land: maxLand, air: maxAir, sea: maxSea };
 }
 function isTerritoryBlocked(fromNation, terr, allyHash) {
-    if (terr.owner == fromNation || terr.unitCount == 0 || fromNation==0)
+    if (terr.owner == fromNation || terr.unitCount == 0 || fromNation == 0)
         return false;
     if (allyHash[fromNation] == true)
         return false;
@@ -291,7 +295,7 @@ function removeThisUnitFromTransport(unit, gameObj) {
     console.log('removeThisUnitFromTransport');
     var transport = findUnitOfId(unit.cargoOf, gameObj);
     if (transport && transport.cargo) {
-        if(transport.piece==4)
+        if (transport.piece == 4)
             transport.movesLeft = 0;
         var cargo = [];
         transport.cargo.forEach(cUnit => {
@@ -316,6 +320,7 @@ function moveCargoWithThisUnit(unit, gameObj, terr1Id) {
     }
 }
 function findTransportForThisCargo(unit, terr, gameObj) {
+    //console.log('findTransportForThisCargo', unit);
     unit.movesLeft = 2;
     if (unit.cargoUnits == 0)
         unit.cargoUnits = cargoUnitsForUnit(unit);
@@ -382,11 +387,11 @@ function loadThisUnitOntoThisTransport(unit, transport) {
         return;
     }
     if (!transport) {
-         showAlertPopup('no transport selected!', 1);
+        showAlertPopup('no transport selected!', 1);
         return;
     }
     if (unit.owner != transport.owner) {
-         showAlertPopup('transport and cargo are different owners!', 1);
+        showAlertPopup('transport and cargo are different owners!', 1);
         return;
     }
     if (!transport.cargoLoadedThisTurn)
@@ -483,7 +488,7 @@ function showUnitsForMovementBG2(optionType, gameObj, currentPlayer, totalMoveTe
         });
         terr.movableUnitCount = moveUnits;
         totalUnitsThatCanMove += moveUnits;
-        if (terr.unitCount > 0 || terr.movableTroopCount>0)
+        if (terr.unitCount > 0 || terr.movableTroopCount > 0)
             moveTerr.push(terr);
     }
     return { totalUnitsThatCanMove: totalUnitsThatCanMove, moveTerr: moveTerr };
@@ -733,7 +738,7 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
     }
     if (moveOrLoadFlg && fighterUnitClicked && selectedTerritory.nation == 99 && selectedTerritory.carrierSpace == 0 && carriersSelected == 0) {
         fighterUnitClicked.checked = false;
-        if(selectedTerritory.unitCount>0)
+        if (selectedTerritory.unitCount > 0)
             showAlertPopup('No available carrier for your fighter!', 1);
         else
             showAlertPopup('Fighters cannot move to water zones', 1);

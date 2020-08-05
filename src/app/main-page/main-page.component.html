@@ -40,10 +40,10 @@
 							<div style="padding: 5px; background-color: white;">
 								<div style="font-size: 14px;"><img src="assets/graphics/ranks/rank{{user.rank}}.png"
 										style="max-height: 45px; max-width: 120px;"
-										title="{{superpowersData.ranks[user.rank].name}}"></div>
+										title="{{yourRankName}}"></div>
 							</div>
 							<div *ngIf="superpowersData" style="background-color: #444; color: white;">
-								{{superpowersData.ranks[user.rank].name}}
+								{{yourRankName}}
 							</div>
 						</div>
 					</div>
@@ -100,13 +100,13 @@
 					</td>
 					<td><img src="assets/graphics/ranks/rank{{user.rank}}.png"
 							style="max-width: 75px; max-height: 100px;">
-						<div style="font-size: 12px; font-weight: 700;">{{superpowersData.ranks[user.rank].name}}</div>
+						<div style="font-size: 12px; font-weight: 700;">{{yourRankName}}</div>
 					</td>
 				</tr>
 			</table>
 			<div class="borderClass2"> Next Rank: <img src="assets/graphics/ranks/rank{{user.rank+1}}.png" height="22">
-				{{superpowersData.ranks[user.rank+1].name}}
-				<div style="font-size: 12px;">{{superpowersData.ranks[user.rank+1].desc}}</div>
+				{{yourNextRankName}}
+				<div style="font-size: 12px;">{{yourNextRankDesc}}</div>
 			</div>
 		</div>
 

@@ -157,7 +157,8 @@ function updateStatusMessage(msg, successFlg) {
 	var e = document.getElementById("statusImg");
 	if (e) {
 		if (successFlg) {
-			document.getElementById("popupMessage").innerHTML = 'Game Saved';
+			setInnerHTMLFromElement('popupMessage', 'Game Saved');
+			//document.getElementById("popupMessage").innerHTML = 'Game Saved';
 			disableButton('spinnerOKButton', false);
 			e.src = "assets/graphics/misc/green.png";
 			setInnerHTMLFromElement('statusMsg', '');
@@ -390,10 +391,11 @@ function loadLastSavedGame(multiPlayerFlg) {
 	}
 }
 function loadMultiPlayerGame(data) {
-	//	console.log('loadMultiPlayerGame...');
+		
 	var c = data.split('|');
 	var gameObj = parseSavedGame(c[0], c[1], c[2], c[3], c[4]);
-	if (gameObj.name.indexOf("'") > -1) {
+
+	if (gameObj.name && gameObj.name.indexOf("'") > -1) {
 		gameObj.name = gameObj.name.replace("'", "");
 	}
 	gameObj.gameUpdDt = c[5];

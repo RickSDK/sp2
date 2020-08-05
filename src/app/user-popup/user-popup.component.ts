@@ -59,6 +59,9 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
     'avatar8.jpg'
   ];
   public gameScores = [];
+  public yourRankName:string = '';
+  public yourNextRankName:string = '';
+  public yourNextRankDesc:string = '';
 
   constructor(private router: Router) { super(); }
 
@@ -70,6 +73,11 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
     if (!displayUser.rank && displayUser.userId>0) {
       this.displayUser.rank = 2;
       this.displayUser.imgSrc = imageSrcFromObj();
+    }
+    if(displayUser.rank && displayUser.rank>0 && this.superpowersData) {
+      this.yourRankName = this.superpowersData.ranks[displayUser.rank].name;
+      this.yourNextRankName = this.superpowersData.ranks[displayUser.rank+1].name;
+      this.yourNextRankDesc = this.superpowersData.ranks[displayUser.rank].name;
     }
 
     var nextRank = this.numberVal(this.user.rank) + 1;

@@ -462,6 +462,10 @@ function landTheCruiseBattle(player, targetTerr, attackUnits, gameObj, superpowe
 function strategicBombBattle(player, targetTerr, attackUnits, gameObj, superpowersData) {
     playSound('bombers.mp3');
     var battle = initializeBattle(player, targetTerr, attackUnits, gameObj, true);
+    //remove paratroopers
+    battle.attackUnits.forEach(unit => {
+        unit.cargo = [];
+    });
     startBattle(targetTerr, player, gameObj, superpowersData, battle);
     rollAAGuns(battle, targetTerr, gameObj, true);
     removeCasualties(battle, gameObj, player, true, superpowersData);
@@ -598,7 +602,7 @@ function rollAttackDice(battle, gameObj, stratFlg = false) {
             else
                 unit.dice.push('dice' + diceRoll + '.png');
         }
-        if (unit.piece == 25 || unit.piece == 42)
+        if (unit.piece == 23 || unit.piece == 25 || unit.piece == 42)
             unit.dead = true;
 
         battle.attHits += unitHits;

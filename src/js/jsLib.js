@@ -73,11 +73,13 @@ function globalAddress(city, state, country) {
 }
 function addMinutesToDate(minutes) {
 	var e = document.getElementById('dateEntryField');
-	str = e.innerHTML;
-	d = convertStringToDate(str);
-	var newD = dateAdd(d, minutes);
-	selectedValue = convertDateToString(newD);
-	e.innerHTML = selectedValue;
+	if (e) {
+		var str = e.innerHTML;
+		d = convertStringToDate(str);
+		var newD = dateAdd(d, minutes);
+		selectedValue = convertDateToString(newD);
+		e.innerHTML = selectedValue;
+	}
 }
 
 function valueOfInput(id) {
@@ -179,7 +181,7 @@ function timerFromSeconds(seconds) {
 	var min = Math.floor(seconds / 60);
 	if (hours > 1)
 		return hours + ' hrs';
-	else if(hours == 1)
+	else if (hours == 1)
 		return '1 hr ';
 	else
 		return min + ' min';

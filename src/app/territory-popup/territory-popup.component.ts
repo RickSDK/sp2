@@ -89,6 +89,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   show(terr: any, currentPlayer: any, gameObj: any, ableToTakeThisTurn: boolean, user: any, yourPlayer: any) {
     this.yourPlayer = yourPlayer;
     this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);
+
     $("#territoryPopup").modal();
 
     $('#territoryPopup').on('hidden.bs.modal', function () {
@@ -150,6 +151,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     }
     this.checkSendButtonStatus(null);
     checkCargoForTerr(terr, gameObj);
+
     this.allowFactoryFlg = isFactoryAllowedOnTerr(terr, this.gameObj);
 
     if (this.terrButtonsComp)

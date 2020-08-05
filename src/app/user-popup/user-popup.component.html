@@ -94,7 +94,7 @@
                                 <img src="assets/graphics/ranks/rank{{displayUser.rank}}.png"
                                     style="max-width: 180px; max-height: 160px;">
                             </div>
-                            <div>{{superpowersData.ranks[displayUser.rank].name}}</div>
+                            <div>{{yourRankName}}</div>
                         </div>
                     </div>
 
@@ -125,9 +125,9 @@
                                 <tr>
                                     <td style="font-size: 12px;"><img src="assets/graphics/ranks/rank{{nextRank}}.png"
                                             height="40"><br>
-                                        <b>{{superpowersData.ranks[nextRank].name}}</b>
+                                        <b>{{yourNextRankName}}</b>
                                     </td>
-                                    <td class="darkBlue">{{superpowersData.ranks[nextRank].desc}}</td>
+                                    <td class="darkBlue">{{yourNextRankDesc}}</td>
                                 </tr>
                             </table>
                             <div *ngIf="infoFlg">Click on the 'Ranks' button below for details.</div>

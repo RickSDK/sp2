@@ -1,5 +1,5 @@
 function spVersion() {
-	return 'v4.38';
+	return 'v4.40';
 }
 function googleAds() {
 	window.onload = function () {
@@ -472,13 +472,12 @@ function militaryAdvisorPopup(message, voiceOverId, muteSound) {
 function militaryAdvisorPopup2(message) {
 	playSound('clearThroat.mp3');
 	displayFixedPopup("advisorPopup");
-	var e = document.getElementById("advisorMessage");
-	if (e)
-		e.innerHTML = message;
+	setInnerHTMLFromElement("advisorMessage", message);
 }
 function showTreatyConfirmationPopup(message, msgId, nation) {
 	localStorage.confirmationOption = msgId;
-	document.getElementById("treatyConfirmationMessage").innerHTML = message;
+	setInnerHTMLFromElement("treatyConfirmationMessage", message);
+	//document.getElementById("treatyConfirmationMessage").innerHTML = message;
 	document.getElementById("treatyFlag").src = "assets/graphics/images/flag" + nation + ".gif";
 	displayFixedPopup("treatyConfirmationPopup");
 }

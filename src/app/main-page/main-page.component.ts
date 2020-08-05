@@ -22,12 +22,20 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   public expandFlg = false;
   public singleGameId: number;
   public showHomeButtonFlg = true;
+  public yourRankName:string = '';
+  public yourNextRankName:string = '';
+  public yourNextRankDesc:string = '';
 
   constructor(private router: Router) { super(); }
 
   ngOnInit(): void {
     this.hostname = getHostname();
     this.user = userObjFromUser();
+    if(this.user.rank && this.user.rank>0 && this.superpowersData) {
+      this.yourRankName = this.superpowersData.ranks[this.user.rank].name;
+      this.yourNextRankName = this.superpowersData.ranks[this.user.rank+1].name;
+      this.yourNextRankDesc = this.superpowersData.ranks[this.user.rank].name;
+    }
     if (0) {
       //reset user to new recruit
       localStorage.rank = 0;

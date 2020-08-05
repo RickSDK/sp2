@@ -156,8 +156,8 @@ function startSpinner(title, top, submitButton) {
 			disableButton(submitButton, true);
 		}, 200);
 	}
-		
-	document.getElementById("popupMessage").innerHTML = title;
+	setInnerHTMLFromElement('popupMessage', title);
+	//document.getElementById("popupMessage").innerHTML = title;
 }
 function stopSpinner(submitButton) {
 	updateProgressBar(100);
@@ -178,15 +178,18 @@ function showAlertPopup(message, soundFlg) {
 	var e = document.getElementById('alertPopup');
 	if (e) {
 		displayFixedPopup("alertPopup");
-		document.getElementById("alertMessage").innerHTML = message;
+		setInnerHTMLFromElement("alertMessage", message);
+		//document.getElementById("alertMessage").innerHTML = message;
 	} else {
 		displayFixedPopup("alertPopupMain");
-		document.getElementById("alertMessageMain").innerHTML = message;
+		setInnerHTMLFromElement("alertMessageMain", message);
+		//document.getElementById("alertMessageMain").innerHTML = message;
 	}
 }
 function showAlertPopup2(message, index) {
 	displayFixedPopup("alertPopup2", index);
-	document.getElementById("infoMessage").innerHTML = message;
+	setInnerHTMLFromElement("infoMessage", message);
+	//document.getElementById("infoMessage").innerHTML = message;
 }
 function showAdvancedPopup(message, nation, message2) {
 	setTimeout(function () { showAdvancedPopup2(message, nation, message2); }, 2000);
@@ -208,7 +211,8 @@ function showConfirmationPopup(message, msgId, index) {
 }
 function showConfirmationPopup2(message, msgId, index) {
 	localStorage.confirmationOption = msgId;
-	document.getElementById("confirmationMessage2").innerHTML = message;
+	setInnerHTMLFromElement("confirmationMessage2", message);
+	//document.getElementById("confirmationMessage2").innerHTML = message;
 	displayFixedPopup("confirmationPopup2", index);
 }
 function displayPopup(name, index) {
