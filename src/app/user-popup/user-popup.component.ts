@@ -97,7 +97,7 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
   editProfileImageButtonClicked() {
     if (this.selfProfileFlg) {
       if (this.displayUser.userId > 0)
-        this.editServerProfileSettings();
+        this.editServerProfileSettings(0);
       else
         this.editUserImageFlg = !this.editUserImageFlg;
     }
@@ -108,11 +108,11 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
     displayFixedPopup('notificationsPopup', true);
     this.userNotificationsPopupComponent.initChild();
   }
-  editServerProfileSettings() {
+  editServerProfileSettings(num=0) {
     this.playClick();
     this.closeModal('#userPopup');
     displayFixedPopup('profileEditPopup', true);
-    this.editProfilePopupComponent.initChild();
+    this.editProfilePopupComponent.initChild(num);
   }
   saveNotificationsPressed() {
 

@@ -145,7 +145,7 @@
                         <div style="font-size: 10px; margin-top: -2px;">Peace</div>
                     </button>
                     <button title="Offer Alliance"
-                        *ngIf="player.alive && ableToTakeThisTurn && gameObj.allowAlliances && !currentPlayer.diplomacyFlg && player.treaties[currentPlayer.nation-1]==2 && gameObj.type!='barbarian' && gameObj.type!='battlebots'"
+                        *ngIf="player.alive && ableToTakeThisTurn && gameObj.allowAlliances && !currentPlayer.diplomacyFlg && player.treaties[currentPlayer.nation-1]==2 && gameObj.type!='barbarian' && gameObj.type!='battlebots' && gameObj.type!='co-op'"
                         (click)="offerTreaty(3, player.nation)" type="button" class="btn btn-success roundButton"><img
                             src="assets/graphics/misc/news3.png" height=25>
                         <div style="font-size: 10px; margin-top: -2px;">Ally</div>

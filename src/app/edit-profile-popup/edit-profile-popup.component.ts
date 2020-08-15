@@ -68,10 +68,10 @@ export class EditProfilePopupComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
   }
-  initChild() {
+  initChild(num=0) {
     this.changesMadeFlg = false;
     this.loadImageNum = 0;
-    this.segmentIdx = 0;
+    this.segmentIdx = num;
     this.away_flg = this.serverUser.away_flg;
     this.chat_color = this.serverUser.chat_color;
     this.chat_font = this.serverUser.chat_font;

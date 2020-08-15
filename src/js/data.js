@@ -70,7 +70,7 @@ function populateUnits() {
 function getTechs() {
 	var techs = [];
 	var i = 1;
-	techs.push({ id: i++, name: 'Stealth', desc: 'All fighters now defend at +1 and are immune to AA guns. Kamakazis face at most 1 AA.' });
+	techs.push({ id: i++, name: 'Stealth', desc: 'All fighters now defend at +1 and are immune to AA guns (except for battleships). Kamakazis face at most 1 AA.' });
 	techs.push({ id: i++, name: 'AGM Maverick Missiles', desc: 'All Planes can target tanks and artillery (not special units) when attacking and defending.' });
 	techs.push({ id: i++, name: 'Advanced Radar', desc: 'All Fighters scramble against bomb raids. Basic fighters (non-special units) can target other planes attacking and defending. Also bombers face at most 1 AA gun (except against battleships).' });
 	techs.push({ id: i++, name: 'Rocketry', desc: ' Artillery now roll 4 dice instead of 3. Nukes have a range of 3.' });
@@ -78,7 +78,7 @@ function getTechs() {
 	techs.push({ id: i++, name: 'Anthrax Warheads', desc: 'Artillery now roll 6 dice. Nukes get 18 hits and have a range of 5.' });
 	techs.push({ id: i++, name: 'Homing Torpedoes', desc: 'Your subs now attack and defend at 3' });
 	techs.push({ id: i++, name: 'Cruise Missiles', desc: 'Subs and battleships get 1 free attack per turn on any adjacent land territory. Casualties do not get to return fire.' });
-	techs.push({ id: i++, name: 'BGM Tomahawk Missiles', desc: 'Cruise missiles now target all vehicles (including special units). Also extra cruise missile dice for all battleships and cruisers (no bonus dice for subs)' });
+	techs.push({ id: i++, name: 'BGM Tomahawk Missiles', desc: 'Cruise missiles now target tanks and artillery first (not special units). Also extra cruise missile dice for all battleships and cruisers (no bonus dice for subs)' });
 	techs.push({ id: i++, name: 'Factory Automation', desc: '+5 income bonus per turn' });
 	techs.push({ id: i++, name: 'Mass Production', desc: '+5 income bonus per turn' });
 	techs.push({ id: i++, name: 'Industry', desc: '+5 income bonus per turn' });

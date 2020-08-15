@@ -137,7 +137,7 @@
                     </app-sp-table>
                     <app-sp-table *ngIf="displayUser.userId>0 && adminObj && user.userId==10" [dataObj]="adminObj">
                     </app-sp-table>
-                    <app-sp-table (click)="editServerProfileSettings()"
+                    <app-sp-table (click)="editServerProfileSettings(2)"
                         *ngIf="displayUser.userId>0 && selfProfileFlg && profileCustomizationObj"
                         [dataObj]="profileCustomizationObj">
                     </app-sp-table>

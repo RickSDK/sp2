@@ -450,7 +450,7 @@ function landTheCruiseBattle(player, targetTerr, attackUnits, gameObj, superpowe
     battle.defHits = 0;
     var target = 'default';
     if (player.tech[9])
-        target = 'vehicles2';
+        target = 'vehicles';
     addhitsToList(battle.attTargets, target, battle.attHits);
     markCasualties(battle, gameObj);
     battle.attackUnits.forEach(unit => {
@@ -1150,7 +1150,7 @@ function fixSeaCargo(terr, gameObj) {
             findTransportForThisCargo(fighterUnit, terr, gameObj);
         });
     }
-    return;
+    /*
     terr.units.forEach(function (cargoUnit) {
         if (cargoUnit.cargoOf && cargoUnit.cargoOf > 0) {
             var gameUnit = findUnitOfId(cargoUnit.cargoOf, gameObj);
@@ -1159,7 +1159,7 @@ function fixSeaCargo(terr, gameObj) {
             }
         }
     });
-
+    */
 }
 function fixCargoOnTerr(strandedCargo, terr, gameObj) {
     console.log('fixCargoOnTerr', terr.name);

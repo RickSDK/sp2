@@ -357,50 +357,28 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	adminFixBoard() {
 		this.showAlertPopup('Fix on!', 1);
 
-
-
-
-		var terrId2 = 101;
-		var terr2 = this.gameObj.territories[terrId2 - 1];
-
-		setTimeout(() => {
-			//this.addUnitToTerr(terr2, 10, true, true);
-		}, 1000);
-
-		//terr2.owner = 6;
-
-		setTimeout(() => {
-			this.addUnitToTerr(terr2, 27, true, true);
-			this.addUnitToTerr(terr2, 5, true, true);
-			this.addUnitToTerr(terr2, 5, true, true);
-			this.addUnitToTerr(terr2, 5, true, true);
-			this.addUnitToTerr(terr2, 5, true, true);
-			this.addUnitToTerr(terr2, 5, true, true);
-			this.addUnitToTerr(terr2, 5, true, true);
-		}, 1000);
-
-		return;
-
-		var terrId = 86;
+		var terrId = 50;
 		var terr = this.gameObj.territories[terrId - 1];
 
+		if(0) {
+			var x = 0;
+			terr.units.forEach(unit => {
+				if (unit.piece == 10 || unit.piece == 11) {
+					unit.terr = 40;
+				}
+			});
+		}
 
 
-		var x = 0;
-		terr.units.forEach(unit => {
-			if (unit.piece != 12) {
-				unit.dead = true;
-			}
-		});
-		return;
+if(1) {
+	setTimeout(() => {
+		this.addUnitToTerr(terr, 37, true, true);
+		this.addUnitToTerr(terr, 37, true, true);
+	}, 1000);
+}
 
 
-		setTimeout(() => {
-			this.addUnitToTerr(terr, 2, true, true);
-			this.addUnitToTerr(terr, 2, true, true);
-			this.addUnitToTerr(terr, 2, true, true);
-			this.addUnitToTerr(terr, 2, true, true);
-		}, 1000);
+		/*
 		terr.owner = 1;
 
 		var terrId2 = 4;
@@ -447,7 +425,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		var player7 = this.gameObj.players[6];
 		player7.money = 40;
 
-
+*/
 
 
 	}
@@ -589,7 +567,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					var hours = Math.round(secondsSinceLastLogin / 3600);
 					var minutesAway = Math.round(secondsSinceLastLogin / 60);
 					this.gameObj.lastLogin = lastLoginFromSeconds(secondsSinceLastLogin);
-					if (1) {
+					if (0) {
 						console.log('#################################');
 						console.log('obj', obj);
 						console.log('secondsLeftInTimer', secondsLeftInTimer);
@@ -1060,7 +1038,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			borders.forEach(borderId => {
 				if (borderId > 0) {
 					var terr2 = this.gameObj.territories[borderId - 1];
-					if (terr2.nation < 99 && terr2.owner != player.nation && terr2.unitCount > min && isAtWarWith(player, terr2, this.gameObj)) {
+					if (terr2.nation < 99 && terr2.owner != player.nation && !terr2.nuked && terr2.unitCount > min && isAtWarWith(player, terr2, this.gameObj)) {
 						min = terr2.unitCount;
 						bestTerr = terr2;
 					}
@@ -1881,13 +1859,14 @@ export class BoardComponent extends BaseComponent implements OnInit {
 						unit.piece = 19;
 				}
 			}
-			if (unit.piece > 0)
+			if (unit.piece > 0) {
 				this.addUnitToTerr(terr, unit.piece, false, false);
+			}
 		}
 		this.gameObj.unitPurchases = [];
 
 		if (fighterWaterFlg) {
-			this.addFightersToTransports(this.currentPlayer);
+			//this.addFightersToTransports(this.currentPlayer);
 		}
 
 		this.purchaseIndex = 0;
