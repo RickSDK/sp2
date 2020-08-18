@@ -41,8 +41,8 @@
                 <i class="fa fa-mobile"></i> Add Text Notifications
             </button>
         </div>
-        <div *ngIf="loadingFlg" style="font-size: 24px;"><i class="fa fa-spinner fa-spin"></i>&nbsp; Working...</div>
-
+        <app-progress-bar *ngIf="loadingFlg"></app-progress-bar>
+ 
         <div *ngIf="!loadingFlg">
 
 
@@ -405,7 +405,7 @@
                 Users Online: <span style="color: white;">{{multiPlayerObj.usersOnline}}</span>
             </div>
 
-            <app-google-ads></app-google-ads>
+            <!--<app-google-ads></app-google-ads>-->
 
         </div>
     </div>

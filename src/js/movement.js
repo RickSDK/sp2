@@ -217,9 +217,9 @@ function findBomberForParatrooper(unit, selectedTerritory, optinType) {
     if (unit.cargoUnits == 0)
         unit.cargoUnits = cargoUnitsForUnit(unit);
     selectedTerritory.units.forEach(function (transport) {
-        if (optinType == 'loadPlanes' && transport.piece == 7 && transport.owner == unit.owner && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits)
+        if (optinType == 'loadPlanes' && transport.piece == 7 && transport.movesLeft > 0 && transport.owner == unit.owner && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits)
             selectedTransport = transport;
-        if (optinType == 'loadChoppers' && transport.piece == 50 && transport.owner == unit.owner && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits)
+        if (optinType == 'loadChoppers' && transport.piece == 50 && transport.movesLeft > 0 && transport.owner == unit.owner && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits)
             selectedTransport = transport;
     });
     if (selectedTransport)

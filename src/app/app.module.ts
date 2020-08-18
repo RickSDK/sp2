@@ -63,6 +63,7 @@ import { EditProfilePopupComponent } from './edit-profile-popup/edit-profile-pop
 import { UserNotificationsPopupComponent } from './user-notifications-popup/user-notifications-popup.component';
 import { HomeScreenPopupComponent } from './home-screen-popup/home-screen-popup.component';
 import { GoogleAdsComponent } from './google-ads/google-ads.component';
+import { ProgressBarComponent } from './progress-bar/progress-bar.component';
 
 @NgModule({
   declarations: [
@@ -126,7 +127,8 @@ import { GoogleAdsComponent } from './google-ads/google-ads.component';
     EditProfilePopupComponent,
     UserNotificationsPopupComponent,
     HomeScreenPopupComponent,
-    GoogleAdsComponent
+    GoogleAdsComponent,
+    ProgressBarComponent
   ],
   imports: [
     BrowserModule,

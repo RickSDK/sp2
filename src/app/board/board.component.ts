@@ -287,7 +287,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 	}
 	loadBoard() {
-		updateProgressBar(70);
+		updateProgressBar(90);
 		this.cdr.detectChanges();
 		var e = document.getElementById('terr1');
 		if (e) {

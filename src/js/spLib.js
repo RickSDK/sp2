@@ -1,5 +1,5 @@
 function spVersion() {
-	return 'v4.42';
+	return 'v4.46';
 }
 function googleAds() {
 	window.onload = function () {
@@ -232,9 +232,9 @@ function getIPInfo2(userName, pwd) {
 		});
 }
 function getDisplayUnitCount(terr, fogOfWar, hardFog, yourPlayer = null) {
-	if (terr.treatyStatus >= 3 || fogOfWar != 'Y')
+	if (terr.treatyStatus >= 3 || !fogOfWar)
 		return terr.unitCount.toString();
-	if (hardFog == 'Y' && !terr.illuminateFlg) {
+	if (hardFog && !terr.illuminateFlg) {
 		return '?';
 	}
 	return countToFog(terr.unitCount);

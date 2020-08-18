@@ -54,9 +54,9 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
       return;
     }
     if (this.selectedTerritory.nation == 99 && isUnitFighterUnit(piece)) {
-      //var space = this.numCarriersInQueue();
-      var carrierSpace = this.selectedTerritory.carrierSpace + this.numCarriersInQueue() * 2;
-      var carrierCargo = this.selectedTerritory.carrierCargo + this.numFightersInQueue();
+      var carrierSpace = this.selectedTerritory.carrierSpace + this.numCarriersInQueue(this.selectedTerritory) * 2;
+      var carrierCargo = this.selectedTerritory.carrierCargo + this.numFightersInQueue(this.selectedTerritory);
+      console.log('xxx', carrierSpace, carrierCargo, count);
       if (carrierSpace < carrierCargo + count) {
         this.showAlertPopup('no room for this fighter!', 1);
         return;
@@ -81,18 +81,18 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
     }
     addUniToQueue(piece, count, this.superpowersData, this.currentPlayer, this.gameObj, this.selectedTerritory);
   }
-  numFightersInQueue() {
+  numFightersInQueue(terr: any) {
     var num = 0;
     this.gameObj.unitPurchases.forEach(unitPurch => {
-      if (isUnitFighterUnit(unitPurch.piece))
+      if (isUnitFighterUnit(unitPurch.piece) && unitPurch.terr == terr.id)
         num++;
     });
     return num;
   }
-  numCarriersInQueue() {
+  numCarriersInQueue(terr: any) {
     var num = 0;
     this.gameObj.unitPurchases.forEach(unitPurch => {
-      if (unitPurch.piece == 8)
+      if (unitPurch.piece == 8 && unitPurch.terr == terr.id)
         num++;
     });
     return num;
