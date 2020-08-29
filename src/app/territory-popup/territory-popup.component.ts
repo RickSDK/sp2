@@ -120,7 +120,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     var moveTerr = [];
     this.gameObj.territories.forEach(function (terr) {
       if(terr.movableTroopCount>0) {
-        refreshTerritory(terr, gameObj, currentPlayer, superpowersData, currentPlayer);
+        refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPlayer);
         totalUnitsThatCanMove += terr.movableTroopCount;
         if (terr.movableTroopCount > 0) {
           terr.distObj = { land: 9, air: 9, sea: 9 };

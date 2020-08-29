@@ -338,7 +338,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	}
 	terr.adCount = adCount;
 	terr.economicCenterCount = economicCenterCount;
-	terr.fogOfWar = (gameObj.fogOfWar == 'Y' && numberVal(status) < 3);
+	terr.fogOfWar = (gameObj.fogOfWar && numberVal(status) < 3);
 	if (terr.fogOfWar)
 		results = ['-fog of war-'];
 	var unitStr = (terr.unitCount == 1) ? 'unit' : 'units';

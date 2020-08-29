@@ -142,9 +142,7 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
             }
           } // <-- for
 
-          if (accountSitTotal > 0)
-            this.showAlertPopup('You are able to account sit in game: ' + accountSitGameName);
-          else if (slowResponseFlg)
+          if (slowResponseFlg)
             this.showAlertPopup('You have run out of time in one of your games. Please take it asap.');
 
           this.fullGameList = fullGameList;

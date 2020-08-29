@@ -37,11 +37,28 @@
                             *ngIf="!editPostMode">Send</span></button>
 
                 </section>
+
+
+                <div class="btn-group" *ngIf="gameId>1">
+                    <button (click)="changeFilter(0)" type="button" class="btn btn-default roundButton"
+                        [ngClass]="ngClassSegment(filterNation,0)">All</button>
+                    <button *ngIf="0" (click)="changeFilter(-1)" type="button" class="btn btn-default roundButton"
+                        [ngClass]="ngClassSegment(filterNation,-1)">Allies
+                    </button>
+                    <button *ngFor="let player of alivePlayers" [ngClass]="ngClassSegment(filterNation, player.nation)"
+                        (click)="changeFilter(player.nation)" type="button" class="btn btn-success roundButton"><img
+                            src="assets/graphics/images/flag{{player.nation}}.gif" height=25>
+                    </button>
+                </div>
+
+
                 <section style="background-color: black; color: white; padding: 5px;">
                     <!--- chat messages ------->
                     <div *ngFor="let chat of chatMessages" (click)="replyToChat(chat)">
-                        {{chat.newFlg}} <span *ngIf="gameObj && chat.round>0"><font color=yellow><b>{{chat.round}}</b></font> <img
-                            src="assets/graphics/images/flag{{chat.nation}}.gif" height=20></span>
+                        {{chat.newFlg}} <span *ngIf="gameObj && chat.round>0">
+                            <font color=yellow><b>{{chat.round}}</b></font> <img
+                                src="assets/graphics/images/flag{{chat.nation}}.gif" height=20>
+                        </span>
 
                         <font color="#ccffcc">{{chat.name}}: </font>
                         <font color="{{chat.fontcolor}}">{{chat.message}}</font>
@@ -57,10 +74,10 @@
                 </section>
                 <section class="darkBlueBg">
                     <div style="color: white;">
-                        <button *ngIf="chatMessages.length>0 && gameObj && !bugFlg" (click)="toggleEditMode()" type="button"
-                            class="btn btn-secondary roundButton">Edit</button>
-                        <button *ngIf="chatCount>chatMessages.length && gameObj && !bugFlg" (click)="showOlderMessages()" type="button"
-                            class="btn btn-secondary roundButton">Show Older
+                        <button *ngIf="chatMessages.length>0 && gameObj && !bugFlg" (click)="toggleEditMode()"
+                            type="button" class="btn btn-secondary roundButton">Edit</button>
+                        <button *ngIf="chatCount>chatMessages.length && gameObj && !bugFlg"
+                            (click)="showOlderMessages()" type="button" class="btn btn-secondary roundButton">Show Older
                             Messages</button>
                         <font color=#ccc>Users Online:</font> {{usersOnline}}
                     </div>

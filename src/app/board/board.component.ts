@@ -357,23 +357,23 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	adminFixBoard() {
 		this.showAlertPopup('Fix on!', 1);
 
-		var terrId = 50;
+		var terrId = 38;
 		var terr = this.gameObj.territories[terrId - 1];
 
-		if(0) {
+		if(1) {
 			var x = 0;
 			terr.units.forEach(unit => {
 				if (unit.piece == 10 || unit.piece == 11) {
-					unit.terr = 40;
+					unit.terr = 37;
 				}
 			});
 		}
 
 
-if(1) {
+if(0) {
 	setTimeout(() => {
-		this.addUnitToTerr(terr, 37, true, true);
-		this.addUnitToTerr(terr, 37, true, true);
+		this.addUnitToTerr(terr, 10, true, true, true);
+		this.addUnitToTerr(terr, 11, true, true, true);
 	}, 1000);
 }
 
@@ -1420,11 +1420,13 @@ if(1) {
 		highlightCapital(this.currentPlayer.nation);
 		playVoiceSound(22);
 	}
-	addUnitToTerr(terr: any, piece: number, allowMovesFlg: boolean, refreshFlg: boolean) {
+	addUnitToTerr(terr: any, piece: number, allowMovesFlg: boolean, refreshFlg: boolean, terrOwnerFlg=false) {
 		if (piece == 52)
 			allowMovesFlg = true;
+
 		var nation = this.currentPlayer.nation;		// player
-		//		var nation = terr.owner; 					// terr owner
+		if(terrOwnerFlg)
+			var nation = terr.owner; 					// terr owner
 		if (terr.owner != this.currentPlayer.nation && terr.nation == 99)
 			terr.owner = this.currentPlayer.nation;
 		var newId = this.gameObj.unitId;
@@ -2020,8 +2022,8 @@ if(1) {
 			addTestScore(this.gameObj, this.currentPlayer);
 			this.currentPlayer.cpu = true;
 			clearCurrentGameId();
-			if (this.gameObj.fogOfWar == 'Y') {
-				this.gameObj.fogOfWar = 'N';
+			if (this.gameObj.fogOfWar) {
+				this.gameObj.fogOfWar = false;
 				refreshAllTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 			}
 		}

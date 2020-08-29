@@ -1,10 +1,11 @@
 
 function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
     //console.log('cm', distObj, optionType);
+    // if this function returns true, a checkbox will show up
     if (unit.owner != currentPlayer.nation)
         return false;
-    
-        if (optionType == 'cruise') {
+
+    if (optionType == 'cruise') {
         if (unit.didAttackFlg)
             return false;
         if (distObj.air > 1)
@@ -31,6 +32,8 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
         }
         if (unit.type == 1 && toTerr.nation == 99)
             return false;
+        if (unit.type == 1 && unit.returnFlg && unit.terr > 79)
+            return false;
     }
     if (optionType == 'nuke' && unit.subType != 'missile')
         return false;
@@ -45,16 +48,24 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
     if (optionType == 'loadUnits') {
         if (unit.terr == toTerr.id && unit.type == 3)
             return true;
-        if (distObj.air == 1 && unit.type == 1)
+        if (distObj.air == 1 && unit.type == 1 && toTerr.transportSpace > 0)
             return true;
-        if (unit.subType == 'fighter')
+        if (unit.subType == 'fighter' && toTerr.carrierSpace > 0)
+            return true;
+
+        if (distObj.air == 0)
             return true;
 
         return false;
     }
-    if (optionType == 'loadUnits') {
-        if (distObj.air == 0)
-            return true;
+    if (optionType == 'movement' && toTerr.nation == 99) {
+        //water loading
+        if (unit.subType == 'fighter' && toTerr.carrierSpace == 0)
+            return false;
+        if (unit.type == 1 && toTerr.transportSpace == 0)
+            return false;
+        if (unit.type == 1 && distObj.air != 1)
+            return false;
     }
     if (unit.type == 1 && unit.terr >= 79) {
         if (distObj.air == 1 && toTerr.nation < 99)
@@ -86,7 +97,7 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
         return true;
     if (unit.type == 3 && distObj.sea <= movement - numberVal(unit.movesTaken))
         return true;
-        
+
     return false;
 }
 function distanceBetweenTerrs(terr1, terr2, max, land, air, sea, allyHash, territories) {
@@ -320,8 +331,9 @@ function moveCargoWithThisUnit(unit, gameObj, terr1Id) {
     }
 }
 function findTransportForThisCargo(unit, terr, gameObj) {
-    //console.log('findTransportForThisCargo', unit);
-    unit.movesLeft = 2;
+    console.log('findTransportForThisCargo', unit);
+    if (unit.type == 1)
+        unit.movesLeft = 2;
     if (unit.cargoUnits == 0)
         unit.cargoUnits = cargoUnitsForUnit(unit);
     if (unit.piece == 10 || unit.piece == 11 || unit.piece == 13) {
@@ -413,10 +425,16 @@ function loadThisUnitOntoThisTransport(unit, transport) {
 
     transport.cargoLoadedThisTurn += unit.cargoUnits;
     unit.cargoOf = transport.id;
-    //    console.log('xxx', transport.id, unit.cargoUnits, transport.cargoUnits, unit.cargoOf);
     if (!transport.cargo)
         transport.cargo = [];
-    transport.cargo.push({ id: unit.id, piece: unit.piece, cargoUnits: unit.cargoUnits });
+
+    var allowFlg = true;
+    transport.cargo.forEach(c => {
+        if (c.id == unit.id)
+            allowFlg = false;
+    });
+    if (allowFlg)
+        transport.cargo.push({ id: unit.id, piece: unit.piece, cargoUnits: unit.cargoUnits });
 }
 function refreshBoardFromMove(moveTerr, selectedTerritory, gameObj, superpowersData, currentPlayer, yourPlayer) {
     for (var x = 0; x < moveTerr.length; x++) {
@@ -776,11 +794,11 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
 
             var isTransport = (selectedShipPiece == 4 || selectedShipPiece == 45 || selectedShipPiece == 49);
             if (optionType == 'loadUnits' && unit.type == 1)
-                unit.allowMovementFlg = (isTransport && selectedShips > 0 && unit.movesLeft > 0 && unit.mv > 0);
+                unit.allowMovementFlg = (isTransport && selectedShips > 0 && unit.movesLeft > 0 && unit.mv > 0 && ter.distObj.air == 1);
             if (optionType == 'loadUnits' && unit.type == 2)
                 unit.allowMovementFlg = (selectedShipPiece == 8 && selectedShips > 0 && unit.movesLeft > 0 && unit.mv > 0);
             if (optionType == 'loadUnits' && (unit.piece == 10 || unit.piece == 11 || unit.piece == 13))
-                unit.allowMovementFlg = (selectedShips > 0 && unit.movesLeft > 0 && unit.mv > 0);
+                unit.allowMovementFlg = (selectedShips > 0 && unit.movesLeft > 0 && unit.mv > 0 && ter.distObj.air == 1);
 
             var e = document.getElementById('unit' + unit.id);
             if (e && e.checked) {

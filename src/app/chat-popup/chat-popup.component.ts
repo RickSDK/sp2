@@ -30,6 +30,8 @@ export class ChatPopupComponent extends BaseComponent implements OnInit {
   public yourPlayer: any;
   public gameId = 1;
   public bugFlg = false;
+  public filterNation: number = 0;
+  public allMessages: any;
 
   constructor() { super(); }
 
@@ -62,6 +64,18 @@ export class ChatPopupComponent extends BaseComponent implements OnInit {
 
     this.openModal('#chatPopup');
   }
+  changeFilter(num: number) {
+    this.filterNation = num;
+    this.filterChatMessages();
+  }
+  filterChatMessages() {
+    var messages = [];
+    this.allMessages.forEach(msg => {
+      if (this.filterNation == 0 || this.filterNation == msg.nation)
+        messages.push(msg);
+    });
+    this.chatMessages = messages;
+  }
   loadChatMessages(noLimitFlg: string) {
     const url = this.getHostname() + "/webChat.php";
     const postData = this.getPostDataFromObj({ user_login: this.user.userName, code: this.user.code, game_id: this.gameId, noLimitFlg: noLimitFlg });
@@ -79,6 +93,7 @@ export class ChatPopupComponent extends BaseComponent implements OnInit {
             chatMessages.push(messageFromLine(msg));
         });
         this.chatMessages = chatMessages;
+        this.allMessages = chatMessages;
         this.messageEvent.emit('refresh');
       })
       .catch(error => {
