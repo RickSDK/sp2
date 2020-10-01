@@ -394,11 +394,9 @@
 						</div>
 						<div *ngIf="battleAnalysisObj">
 							<button *ngIf="optionType=='attack'" [disabled]="totalUnitsThatCanMove==0"
-								(click)="autoButtonPressed()" type="button" class="btn btn-secondary roundButton"><i
-									class="fa fa-check-square-o"></i> Auto</button>
+								(click)="autoButtonPressed()" type="button" class="btn btn-success roundButton"> Auto</button>
 							<button *ngIf="totalUnitsThatCanMove>0" (click)="selectAllButtonChecked()" type="button"
-								[disabled]="totalUnitsThatCanMove==0" class="btn btn-secondary roundButton"><i
-									class="fa fa-check-square-o"></i> All</button>
+								[disabled]="totalUnitsThatCanMove==0" class="btn btn-success roundButton"> All</button>
 							<button (click)="moveTroopsButtonPressed()" [disabled]="battleAnalysisObj.numAttUnits==0"
 								type="button" class="btn btn-success roundButton"
 								style="min-width: 120px; height: 50px;"><i class="fa fa-arrow-right"></i> Go</button>
@@ -412,6 +410,12 @@
 
 
 					</div>
+
+					<button (click)="showMoreMovementOptions()" *ngIf="showMoreTerrFlg" type="button"
+						class="btn btn-success roundButton" style="min-width: 120px; height: 50px;"><i
+							class="fa fa-plus"></i> Show more territories</button>
+
+
 					<div *ngIf="loadingFlg" class="progress-bar progress-bar-info progress-bar-striped"
 						role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
 						Busy...
@@ -454,7 +458,9 @@
 				<button (click)="closeModal('#territoryPopup')" type="button"
 					class="btn btn-secondary roundButton">Close</button>
 				<button *ngIf="adminModeFlg" (click)="adminAllowMovePressed()" type="button"
-					class="btn btn-secondary roundButton">Admin Allow Move</button>
+					class="btn btn-secondary roundButton" title="allow all units here to move">Unfeeze Units</button>
+				<button *ngIf="adminModeFlg" (click)="moveHerosPressed()" type="button"
+					class="btn btn-secondary roundButton">Move Heros</button>
 				<button *ngIf="ableToTakeThisTurn && optionType=='production'" (click)="completePurchaseButtonClicked()"
 					type="button" class="btn btn-success roundButton">Purchase Complete</button>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">

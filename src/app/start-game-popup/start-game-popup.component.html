@@ -16,13 +16,9 @@
 
                     <table width="90%">
                         <tr>
-                            <td><img src="assets/graphics/units/leader2.png" height="200"></td>
                             <td>
-                                <p style="font-size: 12px; color: #337ab7;"><i class="fa fa-lock"></i> Win a single
-                                    player game to unlock more game modes!</p>
-                                <p><img src="assets/graphics/images/flag2.gif" height="25">&nbsp;<b>Basic Training:</b>
-                                    You will be starting out as
-                                    European Union.</p>
+                                <img src="assets/graphics/units/leader2.png" height="200">
+                                <div>Starting as European Union, your goal is to conquer the world!</div>
                             </td>
                         </tr>
                     </table>
@@ -154,7 +150,7 @@
                 <div><button (click)="startGame()" type="button" class="btn btn-danger roundButton medium glowRed">Start
                         Game!</button></div>
 
-                <div style="font-size: 10px;">Note single player games are just for fun. Stats are not saved and do not
+                <div *ngIf="user.rank > 2" style="font-size: 10px;">Note single player games are just for fun. Stats are not saved and do not
                     affect your multi-player record or standings. You can surrender at any time without penalty.</div>
 
 

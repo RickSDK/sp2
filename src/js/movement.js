@@ -62,6 +62,8 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
         //water loading
         if (unit.subType == 'fighter' && toTerr.carrierSpace == 0)
             return false;
+        if ((unit.subType == 'hero' || unit.subType=='aa') && toTerr.cargoSpace > 0 && distObj.air == 1)
+            return true;
         if (unit.type == 1 && toTerr.transportSpace == 0)
             return false;
         if (unit.type == 1 && distObj.air != 1)

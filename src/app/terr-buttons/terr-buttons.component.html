@@ -14,7 +14,7 @@
                 class="btn btn-success roundButton"><i class="fa fa-arrow-down"></i>&nbsp; Move Here</button>
             <button [disabled]="optionType=='movement'"
                 *ngIf="selectedTerritory.treatyStatus==4 && selectedTerritory.nation==99"
-                (click)="changeOptionType('movement')" type="button" class="btn btn-success roundButton"><i
+                (click)="changeOptionType('loadShips')" type="button" class="btn btn-success roundButton"><i
                     class="fa fa-ship"></i>&nbsp; Load Ships</button>
             <button [disabled]="optionType=='loadPlanes'" *ngIf="selectedTerritory.bomberCount>0"
                 (click)="changeOptionType('loadPlanes')" id="loadPlaneButton" type="button"
@@ -134,7 +134,7 @@
 
 
         <button *ngIf="infoFlg || (optionType=='attack' && totalUnitsThatCanMove>0)" (click)="infoFlg = !infoFlg" id=""
-            type="button" class="btn btn-secondary roundButton"><i class="fa fa-info-circle"></i> Battle</button>
+            type="button" class="btn btn-secondary roundButton"><i class="fa fa-info-circle"></i> Info</button>
 
 
         <div *ngIf="infoFlg" class="borderClass2" style="text-align: left; font-size: 12px;">

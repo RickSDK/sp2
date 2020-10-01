@@ -240,6 +240,7 @@ function loadPlayers(numPlayers, startingNation, rank, user) {
 	if(!rank || rank < 2) {
 		humanTurn=0;
 		nationsHash[3]=1; // no russia
+		nationsHash[5]=1; // no china
 		nationsHash[6]=1; // no mef
 	}
 	var cpuNum=1;

@@ -64,6 +64,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   public productionDisplayUnits = [];
   public allyNation = 1;
   public allies = [];
+  public showMoreTerrFlg = false;
   public loadingFlg = false;
   public loadPlanesFlg = false;
   public loadBoatsFlg = false;
@@ -88,25 +89,27 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   }
   show(terr: any, currentPlayer: any, gameObj: any, ableToTakeThisTurn: boolean, user: any, yourPlayer: any) {
     this.yourPlayer = yourPlayer;
+    this.user = user;
+    this.currentPlayer = currentPlayer;
     this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);
 
     $("#territoryPopup").modal();
 
     $('#territoryPopup').on('hidden.bs.modal', function () {
-      if (gameObj.round <= 2 && user.rank < 2) {
-        if (currentPlayer.status == 'Purchase') {
-          if (currentPlayer.money == 20)
-            playVoiceClip('bt07Germany.mp3');
-          else
-            playVoiceClip('bt08PurchComplete.mp3');
-        } else {
-          var ter = gameObj.territories[61];
-          if (ter.owner == 2 && gameObj.round == 1) {
-            showAlertPopup('Good job! Click "Complete Turn" at the top to finish your turn.');
-            closePopup('generalWithdrawPopup');
-            highlightCompleteTurnButton();
-          }
-        }
+      if (user.rank < 2 && currentPlayer.status == 'Purchase' && gameObj.round < 5) {
+        if (currentPlayer.money == 20)
+          playVoiceClip('bt07Germany.mp3');
+        else
+          playVoiceClip('bt08PurchComplete.mp3');
+      }
+      if (user.rank < 2 && currentPlayer.status == 'Attack') {
+        //          var ter = gameObj.territories[61];
+        //          if (ter.owner == 2 && gameObj.round == 1) {
+        //           showAlertPopup('Good job! Click "Complete Turn" at the top to finish your turn.');
+        closePopup('generalWithdrawPopup');
+        if (gameObj.round > 1 && gameObj.round < 5)
+          highlightCompleteTurnButton(gameObj.round == 1);
+        //         }
       }
     });
 
@@ -119,7 +122,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     var superpowersData = this.superpowersData;
     var moveTerr = [];
     this.gameObj.territories.forEach(function (terr) {
-      if(terr.movableTroopCount>0) {
+      if (terr.movableTroopCount > 0) {
         refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPlayer);
         totalUnitsThatCanMove += terr.movableTroopCount;
         if (terr.movableTroopCount > 0) {
@@ -183,6 +186,11 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     }
   }
   completePurchaseButtonClicked() {
+    playClick();
+    if (this.user.rank < 2 && this.currentPlayer.money >= 5 && this.selectedTerritory.id == 7) {
+      this.showAlertPopup('Be sure to spend all your money!');
+      return;
+    }
     this.battleHappened.emit('done!');
     this.closeModal('#territoryPopup');
   }
@@ -203,21 +211,34 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       unit.movesLeft = 2;
     });
   }
+  moveHerosPressed() {
+    this.playClick();
+  }
   buttonClicked(type) {
     //this event emitted from app-terr-buttons
+    if (type == 'loadShips') {
+      this.showMoreTerrFlg = true;
+      this.loadingFlg = false;
+      type = 'movement';
+    } else {
+      this.showMoreTerrFlg = false;
+      this.loadingFlg = true;
+      setTimeout(() => {
+        this.showUnitsForMovementBG();
+        this.battleHappened.emit('cdr');
+      }, 30);
+    }
     this.hostileMessage = populateHostileMessage(type, this.selectedTerritory, this.gameObj, this.currentPlayer);
     this.optionType = type;
-    this.loadingFlg = true;
     this.checkSendButtonStatus(null);
     this.moveTerr = showUnits1TerritoryAway(this.optionType, this.gameObj, this.currentPlayer, this.totalMoveTerrs, this.selectedTerritory);
     this.battleHappened.emit('cdr');
-    
-
-    setTimeout(() => {
-      this.showUnitsForMovementBG();
-      this.battleHappened.emit('cdr');
-    }, 30);
-    
+  }
+  showMoreMovementOptions() {
+    this.loadingFlg = true;
+    this.showMoreTerrFlg = false;
+    this.showUnitsForMovementBG();
+    this.battleHappened.emit('cdr');
   }
 
   showUnitsForMovementBG() {

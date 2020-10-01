@@ -128,10 +128,12 @@ export class BaseComponent implements OnInit {
   }
   openModal(id: string) {
     this.segmentIdx = 0;
-    playSound('open');
-    $(id).on('hidden.bs.modal', function () {
-      playSound('close', 0, false);
-    });
+    playClick();
+    //playSound('open');
+//    $(id).on('hidden.bs.modal', function () {
+ //     playClick();
+      //playSound('close', 0, false);
+  //  });
     $(id).modal();
   }
   closeModal(id: string) {

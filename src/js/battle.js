@@ -40,6 +40,7 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
         battleDetails: '',
         cruiseFlg: cruiseFlg,
         seaBattleFlg: (selectedTerritory.nation == 99),
+        terr: selectedTerritory.id,
         terrX: selectedTerritory.x,
         terrY: selectedTerritory.y,
         bonusUnitsFlg: (selectedTerritory.owner == 0 && selectedTerritory.nation < 99)
@@ -100,7 +101,7 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
             empFlg = true;
         if (unit.piece == 12)
             attSBSHps += unit.bcHp - unit.damage - 1;
-        if (unit.cargoOf > 0) {
+        if (unit.cargoOf > 0 && selectedTerritory.nation < 99) {
             displayBattle.allowRetreat = false;
             var transport = findUnitOfId(unit.cargoOf, gameObj);
             if (transport && transport.subType == 'transport') {
@@ -174,15 +175,18 @@ function startBattle(terr, player, gameObj, superpowersData, battle) {
         console.log('bad attack!!', terr.name);
         return;
     }
-    battle.attackUnits.forEach(unit => {
-        if (unit.cargo && unit.cargo.length > 0) {
-            unit.cargo.forEach(cargoUnit => {
-                console.log('moving', cargoUnit);
-                var u = findUnitOfId(cargoUnit.id, gameObj);
-                u.terr = terr.id;
-            });
-        }
-    });
+    if(!battle.cruiseFlg && !battle.stratBombFlg) {
+        battle.attackUnits.forEach(unit => {
+            if (unit.cargo && unit.cargo.length > 0) {
+                unit.cargo.forEach(cargoUnit => {
+                    console.log('moving', cargoUnit);
+                    var u = findUnitOfId(cargoUnit.id, gameObj);
+                    u.terr = terr.id;
+                });
+            }
+        });
+    }
+
 
 
     if (cost > 0) {
@@ -712,6 +716,7 @@ function japGeneralAttacks(battle) {
         targetUnit.owner = battle.attacker;
         targetUnit.nation = battle.attacker;
         battle.defCasualties.push(targetUnit.piece);
+        battle.attackUnits.push(targetUnit);
     }
 }
 function unitGetsInstantKill(unit, battle, gameObj) {

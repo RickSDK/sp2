@@ -35,15 +35,30 @@
 								<img src="{{ngUnitSrc(unit.id)}}" style="max-height:40px; max-width:80px">
 								<div style="font-size: 10px;">{{unit.name}}</div>
 							</span>
-							<!--				<button *ngFor="let unit of unitList" (click)="selectUnit(unit)" type="button"
-							class="btn btn-light roundButton" [ngClass]="ngClassSegment(selectedUnit.id,unit.id)">
-							<img *ngIf="unit.flag>0" src="assets/graphics/images/flag{{unit.flag}}.gif" height=30> <img
-								src="{{ngUnitSrc(unit.id)}}" style="max-height:40px; max-width:80px"></button>-->
 						</div>
 					</div>
 				</div>
 
+
+
 				<app-unit-detail nation="1" [selectedUnit]="selectedUnit"></app-unit-detail>
+
+				<hr>
+				<button (click)="showUnitPriorityFlg = !showUnitPriorityFlg" 
+							type="button" class="btn btn-primary roundButton">Unit Priority</button>
+
+				<div *ngIf="showUnitPriorityFlg">
+					<table class="spTable" align="center" width="300" style="width: 300px; max-width: 300px;">
+						<tr>
+							<th>Unit</th>
+							<th>Priority</th>
+						</tr>
+						<tr *ngFor="let unit of casList">
+							<td><img src="{{ngUnitSrc(unit.id)}}" [title]="unit.name" style="max-height:40px; max-width:80px"></td> 
+							<td>{{unit.cas}}</td> 
+						</tr>
+					</table>
+				</div>
 
 
 				<div *ngIf="loadingFlg"><i class="fa fa-spinner fa-spin"></i> Loading...</div>

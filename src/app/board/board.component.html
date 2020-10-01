@@ -88,12 +88,11 @@
 			<img src="assets/graphics/images/flag{{currentPlayer.nation || 1}}.gif" height="50">
 			<i class="fa fa-spinner fa-spin"></i> {{currentPlayer.status}}
 
-			<span (click)="hiSpeedFlg = !hiSpeedFlg" class="checkBoxLink">
-				<!--cpuSpeedFlgChanged()-->
+			<!--<span (click)="hiSpeedFlg = !hiSpeedFlg" class="checkBoxLink">
 				<i *ngIf="!hiSpeedFlg" class="fa fa-square-o"></i>
 				<i *ngIf="hiSpeedFlg" class="fa fa-check-square-o"></i>
 				High Speed
-			</span>
+			</span>-->
 
 
 		</span>
@@ -238,6 +237,19 @@
 	</div>
 </div>
 
+<div *ngIf="user.rank < 2 && showControls" class="bottomHelp1">
+	<div class="bottomHelp2">
+		<table>
+			<tr>
+				<td><img src="assets/graphics/advisors/general2.jpg" height="60"></td>
+				<td>
+					<div style="font-size: 12px;">New Player Help</div>
+					<div><b>{{newPlayerHelpText}}</b></div>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
 
 <div id="popupMsgBox" onClick="closePopup('popupMsgBox')" class="popupMsg off"
 	style="padding: 5px; position: absolute; width: 240px;">
@@ -284,8 +296,11 @@
 	<img src="assets/graphics/splash/spLogoSmall.png" width=280>
 	<div id="intro1" class="off" style="font-size: 22px; margin-top: 20px;">Nations rise against nations...</div>
 	<div id="intro2" class="off" style="font-size: 22px; margin-top: 20px;">Total war has broken out!</div>
-	<div id="intro3" class="off" style="font-size: 16px; margin-top: 20px;">The world has
-		formed 8 mighty superpower alliances. All at war with each other.</div>
+	<div id="intro3" class="off" style="font-size: 16px; margin-top: 20px;">
+		<p>The world has
+			formed 8 mighty superpower alliances. All at war with each other.</p>
+			<p>You goal is to conquer at least 6 of them!</p>
+	</div>
 	<div style="padding: 10px;"><button (click)="introContinuePressed()" id="intro4" class="off" type="button"
 			style="height: 60px;">Start the Game!</button></div>
 	<div><a routerLink="/"><button id="intro5" class="off" type="button">Exit Game</button></a></div>

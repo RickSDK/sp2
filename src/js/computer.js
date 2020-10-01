@@ -1,4 +1,4 @@
-function purchaseCPUUnits(player, gameObj, superpowersData) {
+function purchaseCPUUnits(player, gameObj, superpowersData, rank) {
     if (gameObj.round <= 18)
         purchaseTechnology(0, player, gameObj, superpowersData);
     if (gameObj.round == 10)
@@ -50,6 +50,9 @@ function purchaseCPUUnits(player, gameObj, superpowersData) {
     if (gameObj.round >= 100 && player.cpu)
         player.money += 350; // keep players from dragging feet
 
+    if (rank < 2 && player.money >= 25)
+        player.money -= 15;
+
     var placedInf = numberVal(player.placedInf);
     if (placedInf < 3) {
         for (var x = placedInf; x < 3; x++) {
@@ -66,14 +69,14 @@ function purchaseCPUUnits(player, gameObj, superpowersData) {
     if (num <= 6) {
         addComputerFactory(player, superpowersData, gameObj);
     }
-    if (num >= 2 && player.income >= 30)
-        player.money += 8;
-
+        
     var difficultyNum = numberVal(gameObj.difficultyNum);
     if (difficultyNum == -1)
         player.money -= 10;
     if (difficultyNum == 1)
         player.money += 10;
+    
+        console.log('difficultyNum', difficultyNum, rank);
     if (num == 2 && waterway && waterway.id > 0) {
         addUniToQueue(4, 1, superpowersData, player, gameObj, waterway);
         addUniToQueue(5, 1, superpowersData, player, gameObj, waterway);
@@ -89,7 +92,8 @@ function purchaseCPUUnits(player, gameObj, superpowersData) {
     if (num == 6) {
         addUniToQueue(7, 1, superpowersData, player, gameObj, terr1);
     }
-    if (num == 7 || player.money >= 45) {
+    if (num == 7 || player.money >= 45 && rank > 2) {
+        console.log('xxx just bought nuke!');
         addUniToQueue(14, 1, superpowersData, player, gameObj, terr1);
     }
     if (player.money >= 10) {
@@ -226,7 +230,7 @@ function declareWarIfNeeded(gameObj, player, superpowersData) {
                     console.log('xxxdeclare war2');
                     declareWarOnNation(p2.nation, gameObj, player, superpowersData);
                 }
-                    
+
                 if (status == 0 && p2.cpu && p2.alive)
                     changeTreaty(player, p2, 3, gameObj, superpowersData);
             }

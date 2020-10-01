@@ -12,6 +12,19 @@
 .checkBoxLink:hover {
 	font-weight: 700;
 }
+.bottomHelp1 {
+	position: fixed; 
+	bottom: 0; 
+	width: 100%;
+	text-align: center;
+}
+.bottomHelp2 {
+	display: inline-block;
+	background-color: #ccc; 
+	border: 1px solid black;
+	border-radius: 5px;
+	box-shadow: 5px 5px 5px #777;
+}
 
 @media screen and (min-width: 619px) {
 	#menu1Button {

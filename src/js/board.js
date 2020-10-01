@@ -301,7 +301,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	if (yourPlayer && yourPlayer.nation > 0)
 		status = treatyStatus(yourPlayer, terr.owner);
 
-	var showDetailsFlg = (gameObj.fogOfWar != 'Y' || status > 2);
+	var showDetailsFlg = (!gameObj.fogOfWar || status > 2);
 	if (terr.unitsPlacedInCargo != terr.unitsHeldInCargo)
 		checkCargoForTerr(terr, gameObj)
 
@@ -390,7 +390,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	terr.treatyStatusAtStart = obj.statusAtStart;
 	terr.isAlly = obj.isAlly;
 	terr.enemyForce = getEnemyForceForTerr(terr, gameObj);
-	terr.displayUnitCount = getDisplayUnitCount(terr, gameObj.fogOfWar, gameObj.hardFog, yourPlayer);
+	terr.displayUnitCount = getDisplayUnitCount(terr, gameObj);
 	var titleUnitCount = unitCount;
 	if (terr.fogOfWar)
 		titleUnitCount = terr.displayUnitCount;
@@ -601,7 +601,7 @@ function scrubGameObj(gameObj, gUnits) {
 	gameObj.icon = ngClassGameTypeMain(gameObj.type);
 	gameObj.desc = gameDescForType(gameObj.type);
 	if (gameObj.gameOver)
-		gameObj.fogOfWar = 'N';
+		gameObj.fogOfWar = false;
 	if (!gameObj.unitPurchases)
 		gameObj.unitPurchases = [];
 }
@@ -909,7 +909,6 @@ function cleanUpTerritories(player, gameObj) {
 	return numFactories;
 }
 function addIncomeForPlayer(player, gameObj) {
-	console.log('xxxaddIncomeForPlayer');
 	if (!player || player.nation == 0)
 		return;
 	var terrHash = {};
@@ -1195,8 +1194,9 @@ function getYourPlayer(gameObj, userName) {
 	}
 	return humanPlayer;
 }
-function highlightCompleteTurnButton() {
-	playVoiceClip('bt10EndTurn.mp3');
+function highlightCompleteTurnButton(playSoundFlg = false) {
+	if(playSoundFlg)
+		playVoiceClip('bt10EndTurn.mp3');
 	changeClass('completeTurnButton', 'glowButton');
 	showUpArrowAtElement('completeTurnButton');
 }

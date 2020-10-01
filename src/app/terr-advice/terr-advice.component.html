@@ -1,6 +1,6 @@
 <!------------------leader----------------------------->
 <div class="spCard">
-    <div>
+    <div *ngIf="user.rank>1 || selectedTerritory.owner>0">
         <div style="color: white;"><img src="assets/graphics/images/flag{{selectedTerritory.owner}}.gif"
                 height=20>&nbsp;
             <span *ngIf="selectedTerritory.nation>0">{{superpowersData.superpowers[selectedTerritory.owner]}}

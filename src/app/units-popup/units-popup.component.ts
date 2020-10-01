@@ -16,11 +16,13 @@ export class UnitsPopupComponent extends BaseComponent implements OnInit {
 	@Output() messageEvent = new EventEmitter<string>();
 	@Input('adminModeFlg') adminModeFlg: string;
 	public units = [];
+	public casList = [];
 	public user: any;
 	public loadingFlg = true;
 	public unitList = [];
 	public userStrategies = [];
 	public selectedStrategy: any;
+	public showUnitPriorityFlg = false;
 	public classTypes = [
 		'Land Units',
 		'Air Units',
@@ -62,6 +64,14 @@ export class UnitsPopupComponent extends BaseComponent implements OnInit {
 		//	this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);
 		this.openModal('#unitsPopup');
 		this.segmentIdx = 0;
+		var casList = [];
+		this.units.forEach(unit => {
+			if (unit.cas > 0 && unit.cas < 99)
+				casList.push(unit);
+		});
+		this.casList = casList;
+		this.casList.sort(function (a, b) { return a.cas - b.cas; });
+		console.log(this.casList);
 
 	}
 	selectButton(idx) {
@@ -131,7 +141,7 @@ export class UnitsPopupComponent extends BaseComponent implements OnInit {
 				items.forEach(function (item) {
 					if (item.length > 10) {
 						var c = item.split("|");
-						if(c.length>2)
+						if (c.length > 2)
 							userStrategies.push({ id: c[0], userName: c[1], rank: c[2], graphic: userGraphicFromLine(c[3]), row_id: c[4], desc: c[5] });
 					}
 				});
@@ -145,8 +155,8 @@ export class UnitsPopupComponent extends BaseComponent implements OnInit {
 	uploadStrategyPressed() {
 		var strategyText = this.databaseSafeValueOfInput('strategyText');
 		if (strategyText.length == 0) {
-		  this.showAlertPopup('no strategyText', 1);
-		  return;
+			this.showAlertPopup('no strategyText', 1);
+			return;
 		}
 		this.playClick();
 		this.playSound('Cheer.mp3');
@@ -157,18 +167,18 @@ export class UnitsPopupComponent extends BaseComponent implements OnInit {
 		console.log(postData);
 
 		fetch(url, postData).then((resp) => resp.text())
-		  .then((data) => {
-			if (this.verifyServerResponse(data)) {
-				this.loadStrategyItems(this.selectedUnit.id);
-			}
-		  })
-		  .catch(error => {
-			this.showAlertPopup('Unable to reach server: ' + error, 1);
-		  });
+			.then((data) => {
+				if (this.verifyServerResponse(data)) {
+					this.loadStrategyItems(this.selectedUnit.id);
+				}
+			})
+			.catch(error => {
+				this.showAlertPopup('Unable to reach server: ' + error, 1);
+			});
 
-		
+
 	}
-	deleteStratButtonPressed(strategy:any) {
+	deleteStratButtonPressed(strategy: any) {
 		this.playClick();
 		this.selectedStrategy = strategy;
 		this.displayFixedPopup('confirmationPopup');
@@ -181,16 +191,16 @@ export class UnitsPopupComponent extends BaseComponent implements OnInit {
 		const postData = this.getPostDataFromObj({ userId: this.user.userId, code: this.user.code, action: 'deleteStrategy', id: this.selectedStrategy.row_id });
 
 		fetch(url, postData).then((resp) => resp.text())
-		  .then((data) => {
-			console.log(data);
-			if (this.verifyServerResponse(data)) {
-				this.loadStrategyItems(this.selectedUnit.id);
-			}
-		  })
-		  .catch(error => {
-			this.showAlertPopup('Unable to reach server: ' + error, 1);
-		  });
+			.then((data) => {
+				console.log(data);
+				if (this.verifyServerResponse(data)) {
+					this.loadStrategyItems(this.selectedUnit.id);
+				}
+			})
+			.catch(error => {
+				this.showAlertPopup('Unable to reach server: ' + error, 1);
+			});
 
-		}
+	}
 
 }

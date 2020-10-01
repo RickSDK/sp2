@@ -26,13 +26,13 @@
 					<font color=#000>Y</font>
 				</td>
 			</tr>
-			<tr *ngIf="gameObj.fogOfWar!='Y' && gameObj.hardFog!='Y'">
+			<tr *ngIf="!gameObj.fogOfWar && gameObj.hardFog!='Y'">
 				<td><b>Visibility:</b></td>
 				<td>
 					<font color=#08f><i class="fa fa-sun-o"></i> Standard</font>
 				</td>
 			</tr>
-			<tr *ngIf="gameObj.fogOfWar=='Y' && gameObj.hardFog!='Y'">
+			<tr *ngIf="gameObj.fogOfWar && gameObj.hardFog!='Y'">
 				<td><b>Visibility:</b></td>
 				<td>
 					<font color=#08f><i class="fa fa-moon-o"></i> Fog-of-War</font>
@@ -85,7 +85,7 @@
 		<i class="fa fa-android" style="font-size: 26px;"></i>
 		<div style="font-size: 10px;">Let AI Take Turn</div>
 	</button>
-	<button (click)="reportBug()" type="button" class="btn btn-primary roundButton">
+	<button *ngIf="gameObj.multiPlayerFlg" (click)="reportBug()" type="button" class="btn btn-primary roundButton">
 		<i class="fa fa-bug" style="font-size: 26px;"></i>
 		<div style="font-size: 10px;">Report Bug</div>
 	</button>

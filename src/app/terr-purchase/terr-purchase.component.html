@@ -113,11 +113,11 @@
                 <td>
                     <button *ngIf="unit.id != 19 || allowFactoryFlg" [disabled]="currentPlayer.money<unit.cost || (unit.id==12 && currentPlayer.battleshipCost>0)"
                         id="{{'buy'+unit.id}}" (click)="addUniToQueue(unit.id, 1)" type="button"
-                        class="btn btn-secondary roundButton"><i class="fa fa-lock" *ngIf="unit.locked"></i><span
+                        class="btn btn-primary roundButton"><i class="fa fa-lock" *ngIf="unit.locked"></i><span
                             ng-hide="unit.locked">buy</span></button>
                     <button *ngIf="unit.id != 12 && unit.id != 19 && unit.id != 52" [disabled]="currentPlayer.money<unit.cost*2"
                         id="{{'buy5'+unit.id}}" (click)="addUniToQueue(unit.id, 5)" type="button"
-                        class="btn btn-secondary roundButton">x5</button>
+                        class="btn btn-primary roundButton">x5</button>
                 </td>
             </tr>
             <!------factory-->
@@ -139,7 +139,7 @@
                 </td>
                 <td>
                     <button [disabled]="currentPlayer.money<15" id="buy15" (click)="addUniToQueue(15, 1)" type="button"
-                        class="btn btn-secondary roundButton">buy</button>
+                        class="btn btn-primary roundButton">buy</button>
                 </td>
             </tr>
             <!------emp-->
@@ -161,7 +161,7 @@
                 </td>
                 <td>
                     <button (click)="addUniToQueue(52, 1)" type="button"
-                        class="btn btn-secondary roundButton">buy</button>
+                        class="btn btn-primary roundButton">buy</button>
                 </td>
             </tr>
         </table>
@@ -169,7 +169,7 @@
                 title="Repair bombed factory"> <i class="fa fa-arrow-right"></i>
             <img src="assets/graphics/units/piece15.gif" height=20 title="Repair bombed factory">
             <font color=#fc0>15</font> <button id="" (click)="addUniToQueue(15, 1)" type="button"
-                class="btn btn-secondary roundButton">buy</button>
+                class="btn btn-primary roundButton">buy</button>
         </div>
         <div style="padding: 10px;">
             <img src="assets/graphics/images/coin.png" height=30 title="coins"> Coins: <span

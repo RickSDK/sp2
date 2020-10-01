@@ -147,7 +147,7 @@ function saveGame(gameObj, user, currentPlayer, sendEmailFlg, endOfTurn, prevPla
 		localStorage.setItem("players", JSON.stringify(obj.players));
 		localStorage.setItem("territories", JSON.stringify(compressTerritories(obj.territories)));
 		localStorage.setItem("units", JSON.stringify(compressUnits(obj.units)));
-		updateProgressBar(100);
+		//updateProgressBar(100);
 		stopSpinner();
 	}
 }
@@ -391,7 +391,6 @@ function loadLastSavedGame(multiPlayerFlg) {
 	}
 }
 function loadMultiPlayerGame(data) {
-		
 	var c = data.split('|');
 	var gameObj = parseSavedGame(c[0], c[1], c[2], c[3], c[4]);
 

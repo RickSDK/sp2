@@ -1,5 +1,5 @@
 function spVersion() {
-	return 'v4.49';
+	return 'v4.53';
 }
 function googleAds() {
 	window.onload = function () {
@@ -231,10 +231,10 @@ function getIPInfo2(userName, pwd) {
 			console.log('ipify', JSON.stringify(data, null, 2));
 		});
 }
-function getDisplayUnitCount(terr, fogOfWar, hardFog, yourPlayer = null) {
-	if (terr.treatyStatus >= 3 || !fogOfWar)
+function getDisplayUnitCount(terr, gameObj) {
+	if (terr.treatyStatus >= 3 || !gameObj.fogOfWar || gameObj.gameOver)
 		return terr.unitCount.toString();
-	if (hardFog && !terr.illuminateFlg) {
+	if (gameObj.hardFog && !terr.illuminateFlg) {
 		return '?';
 	}
 	return countToFog(terr.unitCount);

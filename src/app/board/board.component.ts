@@ -103,6 +103,7 @@ declare var isAtWarWith: any;
 declare var addTestScore: any;
 declare var checkIlluminateFlg: any;
 declare var refreshAllPlayerTerritories: any;
+declare var highlightCompleteTurnButton: any;
 
 //---combat.js
 declare var playSoundForPiece: any;
@@ -146,7 +147,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public progress = 0;
 	public isMobileFlg = true; // < 1200px
 	public isDesktopFlg = false; // > 600px
-	public hiSpeedFlg = false;
+	public hiSpeedFlg = true;
 	public spriteInMotionFlg = false;
 	public hidePlayersPanelFlag = false;
 	public spritePieceId = 2;
@@ -165,6 +166,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public haltPurchaseFlg = false;
 	public haltCombatActionFlg = false;
 	public haltActionFlg = false;
+	public newPlayerHelpText = 'Press Start Button';
 	public nukeFrameNum = 1;
 	public forcedClickNation = 0;
 	public spVersion = spVersion();
@@ -225,6 +227,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				//load game
 				console.log('+++ load single player....', localStorage.currentGameId);
 				this.gameObj = loadSinglePlayerGame();
+				this.gameObj.fogOfWar = (this.gameObj.fogOfWar == true || this.gameObj.fogOfWar == 'Y');
 			} else {
 				//new game
 				var startingNation = numberVal(localStorage.startingNation);
@@ -357,27 +360,35 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	adminFixBoard() {
 		this.showAlertPopup('Fix on!', 1);
 
-		var terrId = 38;
+		var terrId = 30;
 		var terr = this.gameObj.territories[terrId - 1];
 
-		if(1) {
+		if (0) {
 			var x = 0;
 			terr.units.forEach(unit => {
 				if (unit.piece == 10 || unit.piece == 11) {
-					unit.terr = 37;
+					unit.terr = 9;
 				}
 			});
 		}
 
 
-if(0) {
-	setTimeout(() => {
-		this.addUnitToTerr(terr, 10, true, true, true);
-		this.addUnitToTerr(terr, 11, true, true, true);
-	}, 1000);
-}
+		if (0) {
+			setTimeout(() => {
+				this.addUnitToTerr(terr, 10, true, true, true);
+				//this.addUnitToTerr(terr, 11, true, true, true);
+			}, 1000);
+		}
 
-
+		if (0) {
+			terr.owner = 4;
+			terr.units.forEach(unit => {
+				//		if (unit.piece == 15) {
+				unit.owner = 4;
+				unit.nation = 4;
+				//		}
+			});
+		}
 		/*
 		terr.owner = 1;
 
@@ -390,12 +401,7 @@ if(0) {
 		player.money = 40;
 		//		player2.defenseFlg = false;
 
-		terr.units.forEach(unit => {
-			//		if (unit.piece == 15) {
-			unit.owner = 0;
-			unit.nation = 0;
-			//		}
-		});
+
 
 
 		setTimeout(() => {
@@ -752,8 +758,11 @@ if(0) {
 	forceUserToClickTerritory(terrId: number) {
 		this.forcedClickNation = terrId;
 		highlightTerritoryWithArrow(terrId, this.gameObj);
+		var terr = this.gameObj.territories[terrId - 1];
+		this.changeSVGColor(true, terrId, terr.owner);
 	}
 	introContinuePressed() {
+		this.newPlayerHelpText = 'Click on Germany';
 		closePopup('introPopup');
 		playVoiceClip('bt02EU.mp3');
 		this.playGameButtonPressed();
@@ -816,6 +825,7 @@ if(0) {
 		localStorage.generalRetreatObj = '';
 		this.gameObj.unitPurchases = [];
 		this.gameObj.superBCForm.cost = 0;
+		this.newPlayerHelpText = 'Purchase units then press "Purchase Complete"';
 
 		resetPlayerUnits(player, this.gameObj); //<------------------------------------------------- clean player units
 		if (this.currentPlayer.mainBaseID == 0)
@@ -842,13 +852,48 @@ if(0) {
 
 		if (player.cpu)
 			this.computerGo();
+		else {
+			if (this.user.rank < 2 && this.gameObj.round <= 2) {
+				this.forceUserToClickTerritory(7);
+				this.newPlayerHelpText = 'Purchase units then press "Purchase Complete". Click on Germany.';
+			}
+			if (this.user.rank < 2 && this.gameObj.round == 3) {
+				this.forceUserToClickTerritory(62);
+				this.newPlayerHelpText = 'Build a new factory in Ukraine. Click on Ukraine.';
+			}
+		}
 
 	}
 	initializePlayerForAttack() {
+		this.newPlayerHelpText = 'Make an attack, or move units or press "End Turn"';
+
 		this.gameObj.actionButtonMessage = 'Complete Turn';
 		this.hideActionButton = !this.currentPlayer.battleFlg;
 		if (this.currentPlayer.cpuFlg)
 			this.computerGo();
+		else {
+			if (this.user.rank < 2) {
+				if (this.gameObj.round == 1) {
+					this.forceUserToClickTerritory(62);
+					playVoiceClip('bt09Ukraine.mp3');
+					this.newPlayerHelpText = 'Make an attack!. Click on Ukraine.';
+				}
+				if (this.gameObj.round == 2) {
+					this.forceUserToClickTerritory(15);
+					this.newPlayerHelpText = 'Advance into Russia! Click on Chechnya to attack.';
+				}
+				if (this.gameObj.round == 3) {
+					this.forceUserToClickTerritory(14);
+					this.newPlayerHelpText = 'Keep fighting! Click on Karelia to attack.';
+				}
+				if (this.gameObj.round == 4) {
+					this.forceUserToClickTerritory(13);
+					this.newPlayerHelpText = 'Your goal is to take over 6 capitals. See if you have enough forces to attack Russia.';
+				}
+
+			} else
+				playVoiceClip('beginConquest.mp3');
+		}
 	}
 	cpuSpeedFlgChanged() {
 		this.hiSpeedFlg = !this.hiSpeedFlg;
@@ -886,7 +931,7 @@ if(0) {
 		}
 	}
 	computerPurchase() {
-		purchaseCPUUnits(this.currentPlayer, this.gameObj, this.superpowersData);
+		purchaseCPUUnits(this.currentPlayer, this.gameObj, this.superpowersData, this.user.rank);
 		this.currentPlayer.status = 'Purchase';
 		this.cdr.detectChanges();
 
@@ -919,13 +964,13 @@ if(0) {
 
 		this.attemptToAttackACapital(this.currentPlayer, this.gameObj);
 
-		if (this.gameObj.round > 6 && this.currentPlayer.tech[3])
+		if (this.gameObj.round > 6 && this.user.rank > 1 && this.currentPlayer.tech[3])
 			this.attemptCPUToNuke();
 
 		if (this.gameObj.round > 6 && this.currentPlayer.tech[8])
 			this.attemptCPUToCruise();
 
-		if (this.gameObj.round > 6)
+		if (this.gameObj.round > 6 && this.user.rank > 1)
 			this.attemptCPUStrategicBomb();
 
 		if (this.currentPlayer.primaryTargetId != this.currentPlayer.mainBaseID) {
@@ -1327,7 +1372,8 @@ if(0) {
 	forcedClickMessage() {
 		var ter = this.gameObj.territories[this.forcedClickNation - 1];
 		showAlertPopup('Please click on ' + ter.name, 1);
-		highlightTerritoryWithArrow(this.forcedClickNation, this.gameObj);
+		this.forceUserToClickTerritory(this.forcedClickNation);
+		//highlightTerritoryWithArrow(this.forcedClickNation, this.gameObj);
 	}
 	terrClicked(popup: any, terr: any, gameObj: any, ableToTakeThisTurn: any, currentPlayer: any, user: any) {
 		if (!this.showControls) {
@@ -1335,9 +1381,9 @@ if(0) {
 			return;
 		}
 		if (this.ableToTakeThisTurn) {
-			if(this.strandedAAGuns.length>0) {
+			if (this.strandedAAGuns.length > 0) {
 				moveTheseUnitsToThisTerritory(this.strandedAAGuns, terr, gameObj);
-				this.showAlertPopup('Units moved!',1);
+				this.showAlertPopup('Units moved!', 1);
 				this.strandedAAGuns = [];
 				return;
 			}
@@ -1350,14 +1396,15 @@ if(0) {
 				});
 				this.strandedAAGuns = strandedAAGuns;
 				terr.adCount = 0;
-				terr.units=[];
+				terr.units = [];
 				return;
 			}
 			if (this.forcedClickNation > 0) {
 				if (terr.id == this.forcedClickNation) {
-					if (this.forcedClickNation == 62) {
+					if (this.forcedClickNation == 62 && this.gameObj.round == 1) {
 						showAlertPopup('Click "Attack" and send all your units into Ukraine.');
 					}
+					this.forcedClickNation = 0;
 				} else {
 					this.forcedClickMessage();
 					return;
@@ -1420,12 +1467,12 @@ if(0) {
 		highlightCapital(this.currentPlayer.nation);
 		playVoiceSound(22);
 	}
-	addUnitToTerr(terr: any, piece: number, allowMovesFlg: boolean, refreshFlg: boolean, terrOwnerFlg=false) {
+	addUnitToTerr(terr: any, piece: number, allowMovesFlg: boolean, refreshFlg: boolean, terrOwnerFlg = false) {
 		if (piece == 52)
 			allowMovesFlg = true;
 
 		var nation = this.currentPlayer.nation;		// player
-		if(terrOwnerFlg)
+		if (terrOwnerFlg)
 			var nation = terr.owner; 					// terr owner
 		if (terr.owner != this.currentPlayer.nation && terr.nation == 99)
 			terr.owner = this.currentPlayer.nation;
@@ -1461,7 +1508,7 @@ if(0) {
 			refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 		} else {
 			//			terr.unitCount++;
-			//			terr.displayUnitCount = getDisplayUnitCount(terr, this.gameObj.fogOfWar, this.gameObj.hardFog);
+			//			terr.displayUnitCount = getDisplayUnitCount(terr, this.gameObj);
 		}
 	}
 	getBattleReportFromBattleObj(battleObj: any) {
@@ -1480,7 +1527,19 @@ if(0) {
 	}
 	battleCompletedEmit(battleObj: any) {
 		this.battleObj = battleObj;
+		this.newPlayerHelpText = 'Press "Complete Turn" button at the top.';
 		console.log('!!!battleCompletedEmit!!!', battleObj);
+		if(battleObj.terr == 62 && this.user.rank<2 && battleObj.militaryObj.wonFlg) {
+			this.showAlertPopup('Congratulations! Your first win! Click "Complete Turn" at the top to continue.');
+			highlightCompleteTurnButton(true);
+		}
+		if(battleObj.terr == 13 && this.user.rank<2 && battleObj.militaryObj.wonFlg) {
+			this.showAlertPopup('Congratulations! You have taken over your second capital! This boosts your income by 10 coins per turn. Also you can now purchase units directly on Russia! Control 6 capitals to win the game.');
+		}
+		if (this.forcedClickNation > 0) {
+			console.log('cleared!!');
+			this.forcedClickNation = 0;
+		}
 		this.battleReport = this.getBattleReportFromBattleObj(battleObj);
 
 		if (battleObj.stratBombFlg) {
@@ -1523,9 +1582,6 @@ if(0) {
 		}
 		if (this.hideActionButton)
 			this.hideActionButton = false;
-		if (this.user.rank < 2 && this.gameObj.round == 1) {
-			this.forcedClickNation = 0;
-		}
 	}
 	withdrawGeneralButtonClicked() {
 		var terr2;
@@ -1793,8 +1849,9 @@ if(0) {
 			showAlertPopup('Place your 3 infantry first.', 1);
 			return;
 		}
-		if (this.user.rank < 2 && this.gameObj.round == 1 && this.currentPlayer.money >= 20 && this.currentPlayer.status == 'Purchase') {
-			showAlertPopup('Conduct purchases first. Click on your capital, ' + this.superpowersData.superpowers[this.currentPlayer.nation] + '.', 1);
+		if (this.user.rank < 2 && this.gameObj.round<=6 && this.currentPlayer.money >= 5 && this.currentPlayer.status == 'Purchase') {
+			showAlertPopup('Spend all of your money. Click on Germany to purchase units.', 1);
+			this.forceUserToClickTerritory(7);
 			return;
 		}
 		if (this.forcedClickNation == 62) {
@@ -1810,12 +1867,6 @@ if(0) {
 		}
 		if (this.currentPlayer.status == 'Purchase') {
 			this.completingPurchases();
-			if (this.user.rank < 2 && this.gameObj.round == 1) {
-				this.forcedClickNation = 62;
-				highlightTerritoryWithArrow(this.forcedClickNation, this.gameObj);
-				playVoiceClip('bt09Ukraine.mp3');
-			} else
-				playVoiceClip('beginConquest.mp3');
 		} else if (this.currentPlayer.status == 'Attack') {
 			this.hideActionButton = false;
 			displayFixedPopup('diplomacyWarningPopup');
@@ -1908,7 +1959,7 @@ if(0) {
 		var terr = gameObj.territories[unit.terr - 1];
 		this.annimateUnit(unit.piece, terr);
 		terr.unitCount++;
-		terr.displayUnitCount = getDisplayUnitCount(terr, gameObj.fogOfWar, gameObj.hardFog);
+		terr.displayUnitCount = getDisplayUnitCount(terr, gameObj);
 	}
 	endTurn() {
 		////refreshAllTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
@@ -1935,8 +1986,10 @@ if(0) {
 			}
 		}
 		this.uploadMultiplayerFlg = this.gameObj.multiPlayerFlg;
-		startSpinner('Saving...', '150px', 'spinnerOKButton');
-		updateProgressBar(30);
+		if (this.gameObj.multiPlayerFlg) {
+			startSpinner('Saving...', '150px', 'spinnerOKButton');
+			updateProgressBar(30);
+		}
 		this.currentPlayer.status = 'Waiting';
 		playSound('clink.wav');
 		localStorage.generalRetreatObj = '';
