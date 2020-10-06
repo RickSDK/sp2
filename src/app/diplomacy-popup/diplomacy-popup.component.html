@@ -52,6 +52,15 @@
                 <!--offers-->
                 <div *ngIf="currentPlayer.offers.length>0" style="text-align: center;" class="borderClass3">
                     <div class="blueBgWhite"><i class="fa fa-handshake-o"></i> Diplomacy</div>
+                    <div *ngIf="gameObj.maxAllies > 0">
+                        <div>Maximum # allies: <span class="bgHighlight">{{gameObj.maxAllies}}</span></div>
+                        <div class="borderClass3">
+                            <div class="blueBgWhite">Current Allies</div> 
+                            <img *ngFor="let ally of currentPlayer.allies" src="assets/graphics/images/flag{{ally}}.gif" height="40">
+                            <div *ngIf="currentPlayer.allies.length == 0">None</div>
+                        </div>
+                    </div>
+
                     <div *ngFor="let offer of currentPlayer.offers" class="borderClass2">
                         <table width=100%>
                             <tr>
@@ -63,7 +72,7 @@
                                     </span>
                                     <span *ngIf="currentPlayer.treaties[offer-1]==2">
                                         <div>Alliance offered!</div>
-                                        <div style="font-size: 12px; color: gray;">{{superpowersData.superpowers[offer]}} would like to form an alliance. This means you are now on the same team and can win the game together!</div>
+                                        <div style="font-size: 12px; color: gray;">{{superpowersData.superpowers[offer]}} would like to form an alliance. This means would be on the same team and can win the game together!</div>
                                     </span>
                                 </td>
                                 <td>

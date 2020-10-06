@@ -73,6 +73,7 @@ declare var refreshAllTerritories: any;
 declare var getMaxAllies: any;
 declare var illuminateTerritories: any;
 declare var numberHumanAllies: any;
+declare var highlightElementWithArrow: any;
 //---spLib.js
 declare var scrollToCapital: any;
 declare var popupBattleReport: any;
@@ -145,6 +146,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public ableToTakeThisTurn = true;
 	public uploadMultiplayerFlg = false;
 	public progress = 0;
+	public btPopupMessage: string = '';
 	public isMobileFlg = true; // < 1200px
 	public isDesktopFlg = false; // > 600px
 	public hiSpeedFlg = true;
@@ -759,6 +761,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.forcedClickNation = terrId;
 		highlightTerritoryWithArrow(terrId, this.gameObj);
 		var terr = this.gameObj.territories[terrId - 1];
+		this.btPopupMessage = 'Click on ' + terr.name;
 		this.changeSVGColor(true, terrId, terr.owner);
 	}
 	introContinuePressed() {
@@ -889,6 +892,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				if (this.gameObj.round == 4) {
 					this.forceUserToClickTerritory(13);
 					this.newPlayerHelpText = 'Your goal is to take over 6 capitals. See if you have enough forces to attack Russia.';
+				}
+				if (this.gameObj.round == 5) {
+					this.forceUserToClickTerritory(17);
 				}
 
 			} else
@@ -1365,9 +1371,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				this.currentPlayer.status = 'Diplomacy';
 			}
 			this.diplomacyModal.show(this.gameObj, this.ableToTakeThisTurn, this.currentPlayer, this.yourPlayer);
+			return true;
 		}
 		if (player.cpu)
 			doCpuDiplomacyRespond(player, this.gameObj, this.superpowersData);
+
+		return false;
 	}
 	forcedClickMessage() {
 		var ter = this.gameObj.territories[this.forcedClickNation - 1];
@@ -1402,7 +1411,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			if (this.forcedClickNation > 0) {
 				if (terr.id == this.forcedClickNation) {
 					if (this.forcedClickNation == 62 && this.gameObj.round == 1) {
-						showAlertPopup('Click "Attack" and send all your units into Ukraine.');
+						this.btPopupMessage = 'Click "Attack" and send all your units into Ukraine.';
 					}
 					this.forcedClickNation = 0;
 				} else {
@@ -1428,8 +1437,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.bonusInfantryFlg = (terr.owner == 0 && !terr.capital && terr.nation < 99);
 		this.bonusFactoryFlg = (terr.owner == 0 && terr.capital && terr.nation < 99);
 		hideArrow();
-		if (currentPlayer.status == 'Purchase')
+		if (currentPlayer.status == 'Purchase') {
+			this.btPopupMessage = (this.gameObj.round == 1) ? 'Check out your available coins. Press "Buy" buttons below purchase units.' : 'Click on Germany.';
+			if (this.gameObj.round == 3)
+				this.btPopupMessage = 'Purchase a factory!';
 			changeClass('completeTurnButton', 'glowButton');
+		}
 
 		if (terr.cargoTypeUnits > 0 || terr.carrierCargo > 0 || terr.carrierSpace > 0) {
 			//fixSeaCargo(terr, gameObj);
@@ -1529,11 +1542,16 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.battleObj = battleObj;
 		this.newPlayerHelpText = 'Press "Complete Turn" button at the top.';
 		console.log('!!!battleCompletedEmit!!!', battleObj);
-		if(battleObj.terr == 62 && this.user.rank<2 && battleObj.militaryObj.wonFlg) {
-			this.showAlertPopup('Congratulations! Your first win! Click "Complete Turn" at the top to continue.');
+		if (battleObj.terr == 62 && this.user.rank < 2 && battleObj.militaryObj.wonFlg) {
+			this.btPopupMessage = 'Congratulations! Your first win! Click "Complete Turn" at the top to continue.';
+			setTimeout(() => {
+				highlightElementWithArrow('completeTurnButton');
+			}, 1000);
+
+			//this.showAlertPopup('Congratulations! Your first win! Click "Complete Turn" at the top to continue.');
 			highlightCompleteTurnButton(true);
 		}
-		if(battleObj.terr == 13 && this.user.rank<2 && battleObj.militaryObj.wonFlg) {
+		if (battleObj.terr == 13 && this.user.rank < 2 && battleObj.militaryObj.wonFlg) {
 			this.showAlertPopup('Congratulations! You have taken over your second capital! This boosts your income by 10 coins per turn. Also you can now purchase units directly on Russia! Control 6 capitals to win the game.');
 		}
 		if (this.forcedClickNation > 0) {
@@ -1849,7 +1867,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			showAlertPopup('Place your 3 infantry first.', 1);
 			return;
 		}
-		if (this.user.rank < 2 && this.gameObj.round<=6 && this.currentPlayer.money >= 5 && this.currentPlayer.status == 'Purchase') {
+		if (this.user.rank < 2 && this.gameObj.round <= 6 && this.currentPlayer.money >= 5 && this.currentPlayer.status == 'Purchase') {
 			showAlertPopup('Spend all of your money. Click on Germany to purchase units.', 1);
 			this.forceUserToClickTerritory(7);
 			return;

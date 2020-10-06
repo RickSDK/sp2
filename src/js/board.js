@@ -417,6 +417,18 @@ function hideArrow() {
 	if (e2 && e2.style.display == 'block')
 		e2.style.display = 'none';
 
+	e2 = document.getElementById('basicTrainingMessagePopup');
+	if (e2 && e2.style.display == 'block')
+		e2.style.display = 'none';
+
+	e2 = document.getElementById('arrow2');
+	if (e2 && e2.style.display == 'block')
+		e2.style.display = 'none';
+
+	e2 = document.getElementById('basicTrainingMessagePopup2');
+	if (e2 && e2.style.display == 'block')
+		e2.style.display = 'none';
+
 	changeClass('chatMessagesPopup', 'popupMsg off');
 }
 function refreshBoard(terrs) {
@@ -1195,7 +1207,7 @@ function getYourPlayer(gameObj, userName) {
 	return humanPlayer;
 }
 function highlightCompleteTurnButton(playSoundFlg = false) {
-	if(playSoundFlg)
+	if (playSoundFlg)
 		playVoiceClip('bt10EndTurn.mp3');
 	changeClass('completeTurnButton', 'glowButton');
 	showUpArrowAtElement('completeTurnButton');
@@ -1212,12 +1224,30 @@ function highlightCapital(nation) {
 }
 function highlightTerritoryWithArrow(terrId, gameObj) {
 	var terr = gameObj.territories[terrId - 1];
+	highlightMessageWithArrow(terr.x - 40, terr.y + 140);
+}
+function highlightElementWithArrow(elementId) {
+	var e = document.getElementById(elementId);
+	if (e) {
+		var box = e.getBoundingClientRect();
+		console.log('box', box);
+		highlightMessageWithArrow(box.left + 50, box.top + box.height);
+	}
+}
+function highlightMessageWithArrow(x, y) {
 	var e = document.getElementById('arrow');
 	if (e) {
 		e.style.display = 'block';
 		e.style.position = 'absolute';
-		e.style.left = (terr.x - 40).toString() + 'px';
-		e.style.top = (terr.y + 140).toString() + 'px';
+		e.style.left = (x).toString() + 'px';
+		e.style.top = (y).toString() + 'px';
+	}
+	e = document.getElementById('basicTrainingMessagePopup');
+	if (e) {
+		e.style.display = 'block';
+		e.style.position = 'absolute';
+		e.style.left = (x - 50).toString() + 'px';
+		e.style.top = (y + 90).toString() + 'px';
 	}
 }
 function showUpArrowAtElement(id) {

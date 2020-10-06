@@ -39,6 +39,8 @@ declare var closePopup: any;
 declare var checkCargoForTerr: any;
 declare var isFactoryAllowedOnTerr: any;
 declare var checkWaterForFactory: any;
+declare var highlightElementWithArrow: any;
+declare var highlightTerritoryWithArrow: any;
 //movement.js
 declare var countNumberUnitsChecked: any;
 declare var checkThisNumberBoxesForUnit: any;
@@ -97,10 +99,15 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
 
     $('#territoryPopup').on('hidden.bs.modal', function () {
       if (user.rank < 2 && currentPlayer.status == 'Purchase' && gameObj.round < 5) {
-        if (currentPlayer.money == 20)
+        if (currentPlayer.money >= 20) {
           playVoiceClip('bt07Germany.mp3');
-        else
+          highlightTerritoryWithArrow(7, gameObj);
+        }
+        else {
+          highlightCompleteTurnButton(true);
           playVoiceClip('bt08PurchComplete.mp3');
+        }
+
       }
       if (user.rank < 2 && currentPlayer.status == 'Attack') {
         //          var ter = gameObj.territories[61];
@@ -142,9 +149,34 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     if (terr.nation == 99)
       terr.facFlg = checkWaterForFactory(terr, currentPlayer.nation, gameObj);
 
-    if (user.rank < 2 && gameObj.round == 1 && currentPlayer.status == 'Purchase')
-      showAlertPopup('Welcome new recruit! Click the "Buy" buttons below to begin construction of new units. Then Press "Purchase Complete"')
+    if (user.rank < 2) {
+      if (user.rank < 2 && gameObj.round == 1 && currentPlayer.status == 'Purchase') {
+        showAlertPopup('Check out your available coins. Press "Buy" buttons below to purchase units. If not sure what to buy, just get 4 tanks.')
+      }
+      if (user.rank < 2 && gameObj.round == 2 && currentPlayer.status == 'Purchase' && terr.id == 7) {
+        showAlertPopup('Purchase an Economic Center. This will boost your income by 5 coins/turn!')
+      }
+      if (user.rank < 2 && gameObj.round == 3 && currentPlayer.status == 'Purchase' && terr.id == 62) {
+        showAlertPopup('Buy a "Factory" here. Starting with your next turn, you will be able to buy new units in Ukraine as well as Germany!')
+      }
 
+      if (user.rank < 2 && gameObj.round == 1 && currentPlayer.status == 'Attack' && terr.id == 62) {
+        showAlertPopup('Click "Attack" and then send all available units into the battle!');
+      }
+      if (user.rank < 2 && gameObj.round == 2 && currentPlayer.status == 'Attack' && terr.id == 15) {
+        showAlertPopup('Let\'s invade! Every time you defeat a territory not controlled by another player, you receive free bonus units. Press "Attack" and remember to send all available units into the battle.');
+      }
+      if (user.rank < 2 && gameObj.round == 3 && currentPlayer.status == 'Attack' && terr.id == 14) {
+        showAlertPopup('Continue pressing your attacks into Russia. Your goal is to get to the capital. Press "Attack" and remember to send all available units into the battle.');
+      }
+      if (user.rank < 2 && gameObj.round == 4 && currentPlayer.status == 'Attack' && terr.id == 13) {
+        showAlertPopup('If you have enough units, take Russia! This will boost your income by 10 coins/turn. If you don\'t have enough units, start moving forces up closer so they can attack next turn.');
+      }
+      if (user.rank < 2 && gameObj.round == 5 && currentPlayer.status == 'Attack' && terr.id == 17) {
+        showAlertPopup('If you are able to control all territories belonging to a superpower (Brown ones for Russia) you will gain additional 10 coins/turn.');
+      }
+
+    }
     if (ableToTakeThisTurn && currentPlayer.status == 'Purchase' && terr.facFlg) {
       if (this.selectedTerritory.nation == 99)
         this.changeProdType(2);
@@ -188,7 +220,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   completePurchaseButtonClicked() {
     playClick();
     if (this.user.rank < 2 && this.currentPlayer.money >= 5 && this.selectedTerritory.id == 7) {
-      this.showAlertPopup('Be sure to spend all your money!');
+      this.showAlertPopup('Buy more units!');
       return;
     }
     this.battleHappened.emit('done!');

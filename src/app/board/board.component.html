@@ -191,11 +191,6 @@
 <button *ngIf="hidePlayersPanelFlag" (click)="eyeButtonPressed()" type="button"
 	style="position: fixed; bottom: 0; left: 0;" class="btn btn-primary roundButton"><i class="fa fa-eye"></i></button>
 
-
-<img (click)="dismissArrow()" id="arrow" src="assets/graphics/images/arrow.png"
-	style="z-index: 999; position: fixed; top: 45px; left: 100px; height: 100px; display: none;">
-
-
 <div id="battlePopup" onClick="closePopup('battlePopup')" class="popupMsg off"
 	style="padding: 0; position: absolute; text-align: center; border-radius: 10px; overflow:hidden;">
 	<div class="darkBlueBg" style="font-size: 14px; padding-left: 5px; padding-right: 5px;"><b><img
@@ -237,14 +232,14 @@
 	</div>
 </div>
 
-<div *ngIf="user.rank < 2 && showControls" class="bottomHelp1">
+<div *ngIf="0 && user.rank < 2 && showControls" class="bottomHelp1">
 	<div class="bottomHelp2">
 		<table>
 			<tr>
 				<td><img src="assets/graphics/advisors/general2.jpg" height="60"></td>
 				<td>
-					<div style="font-size: 12px;">New Player Help</div>
-					<div><b>{{newPlayerHelpText}}</b></div>
+					<div style="font-size: 10px;">New Player Help</div>
+					<div style="font-size: 12px;"><b>{{newPlayerHelpText}}</b></div>
 				</td>
 			</tr>
 		</table>
@@ -297,9 +292,7 @@
 	<div id="intro1" class="off" style="font-size: 22px; margin-top: 20px;">Nations rise against nations...</div>
 	<div id="intro2" class="off" style="font-size: 22px; margin-top: 20px;">Total war has broken out!</div>
 	<div id="intro3" class="off" style="font-size: 16px; margin-top: 20px;">
-		<p>The world has
-			formed 8 mighty superpower alliances. All at war with each other.</p>
-			<p>You goal is to conquer at least 6 of them!</p>
+			<p>You goal is to conquer at least 6 world superpowers!</p>
 	</div>
 	<div style="padding: 10px;"><button (click)="introContinuePressed()" id="intro4" class="off" type="button"
 			style="height: 60px;">Start the Game!</button></div>
@@ -452,6 +445,14 @@
 	<button onClick="closePopup('promotionPopup')" id="" type="button" class="btn btn-primary roundButton tall2"><i
 			class="fa fa-check"></i> Ok!</button>
 	<p>
+</div>
+
+<img (click)="dismissArrow()" id="arrow" src="assets/graphics/images/arrow.png"
+	style="z-index: 999; position: fixed; top: 45px; left: 100px; height: 100px; display: none;">
+
+<div id="basicTrainingMessagePopup" class="popupScreen2" style="z-index: 999" onClick="closePopup('basicTrainingMessagePopup')">
+	<div>{{btPopupMessage}}</div>
+	<button  (click)="dismissArrow()" type="button" class="btn btn-primary roundButton">Ok</button>
 </div>
 
 <div id="surrenderPopup" class="popupScreenNoPad" style="max-width: 400px;">

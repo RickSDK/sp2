@@ -371,16 +371,9 @@ function findTransportForThisCargo(unit, terr, gameObj) {
         }
 
     }
-    for (var u = 0; u < terr.units.length; u++) {
-        // load fighter
-        var transport = terr.units[u];
-        if (transport.piece == 8 && transport.owner == unit.owner && unit.subType == 'fighter' && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits) {
-            loadThisUnitOntoThisTransport(unit, transport);
-            return;
-        }
-    }
     if (unit.subType == 'fighter') {
         // load fighter (search all units)
+        //console.log('xxx loadThisUnitOntoThisTransport xxx');
         for (var u = 0; u < gameObj.units.length; u++) {
             var transport = gameObj.units[u];
             if (transport.piece == 8 && unit.terr == terr.id && transport.owner == unit.owner) {
@@ -391,6 +384,15 @@ function findTransportForThisCargo(unit, terr, gameObj) {
             }
         }
     }
+    for (var u = 0; u < terr.units.length; u++) {
+        // load fighter
+        var transport = terr.units[u];
+        if (transport.piece == 8 && transport.owner == unit.owner && unit.subType == 'fighter' && transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits) {
+            loadThisUnitOntoThisTransport(unit, transport);
+            return;
+        }
+    }
+
     console.log('no transport found!!!', unit, terr.units.length);
     //unit.terr = unit.prevTerr;
     //showAlertPopup('no transport found!', 1);

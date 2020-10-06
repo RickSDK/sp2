@@ -7,6 +7,7 @@ declare var refreshTerritory: any;
 declare var transferControlOfTerr: any;
 declare var $: any;
 declare var popupNationMessage: any;
+declare var hideArrow: any;
 
 @Component({
   selector: 'app-terr-buttons',
@@ -47,6 +48,7 @@ export class TerrButtonsComponent extends BaseComponent implements OnInit {
   }
   changeOptionType(type: string) {
     playClick();
+    hideArrow();
     if (allowHostileAct(type, this.selectedTerritory, this.currentPlayer, this.gameObj)) {
       this.optionType = type;
       this.messageEvent.emit(type);

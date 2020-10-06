@@ -1,10 +1,32 @@
 <!------------------Production----------------------------->
 <div class="terr-card">
+    <div>Your Economy</div>
+    <table class="spTable" style="color: black;">
+        <tr>
+            <td>
+                <div class="tableHeader">Income</div>
+                <div><span class="money2">{{currentPlayer.income}}</span> Coins/Turn</div>
+                <div class="smallText">Conquer capitals to boost income</div>
+            </td>
+            <td>
+                <img src="assets/graphics/images/coin.png" height=40
+                title="coins">
+            </td>
+            <td>
+                <div class="tableHeader">Coins Available</div>
+                <div> <span class="money2" id="playerMoneyElementId">{{currentPlayer.money}}</span> Coins</div>
+                <div class="smallText">Spend coins below</div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="terr-card">
     <div><img src="assets/graphics/units/piece15u.png" height=20> {{selectedTerritory.name}} Production</div>
 
-
+    
     <!---------technology--------->
-    <div *ngIf="selectedTerritory.factoryCount>0 && gameObj.round>1"
+    <div *ngIf="selectedTerritory.factoryCount>0 && user.rank>0"
         style="background-color: #cdf; border: 1px solid black; border-radius: 5px;">
         <div class="darkBlueBg" style="font-size: 10px;"><i class="fa fa-cogs"></i> Technology</div>
         <table class="spTable" style="color: black;">
@@ -98,7 +120,7 @@
                         style="max-width: 60px; max-height: 40px; cursor: pointer;"
                         title="{{unit.name}}"><br>{{unit.name}}</td>
                 <td align=center>
-                    <font color=#c80><b>{{unit.cost}}</b></font>
+                    <font color=#c80 style="font-size: 16px;"><b>{{unit.cost}}</b></font>
                 </td>
                 <td align=center>
                     <font color=black>{{unit.move}}</font>

@@ -41,7 +41,7 @@
             <button (click)="changeOptionType('home')" *ngIf="optionType!='home'" type="button"
                 class="btn btn-primary roundButton">
                 <i class="fa fa-times"></i> Cancel</button>
-            <button (click)="changeOptionType('attack')" [disabled]="optionType=='attack'" type="button"
+            <button (click)="changeOptionType('attack')" id="attackButtonId" [disabled]="optionType=='attack'" type="button"
                 class="btn btn-danger roundButton">
                 <i class="fa fa-crosshairs" style="font-size: 28px;"></i><br>Attack</button>
             <button *ngIf="currentPlayer.nukes" [disabled]="optionType=='nuke'" (click)="changeOptionType('nuke')"
