@@ -191,7 +191,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 					var carrierTerr = getTerrOfUnitId(unit.cargoOf, gameObj);
 					if (carrierTerr > 0 && unit.terr != carrierTerr) {
 						//					showAlertPopup('Unloaded Fighter. Fixing.');
-						unit.terr = carrierTerr;
+						//unit.terr = carrierTerr;
 					}
 				}
 				if (unit.type == 1 || unit.subType == 'fighter') {

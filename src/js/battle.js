@@ -567,7 +567,7 @@ function rollAAGuns(battle, selectedTerritory, gameObj, stratBombFlg) {
         if (diceRoll <= hitScore) {
             unit.dice.push('diceh' + diceRoll + '.png');
             battle.defHits++;
-            battle.defTargets.push('planes');
+            battle.defTargets.push('aa'); // here!! planes
         }
         else
             unit.dice.push('dice' + diceRoll + '.png');
@@ -935,6 +935,9 @@ function markCasualties(battle, gameObj) {
         targetHash[target]++;
     });
     var hits = battle.defHits;
+    markAAFightersDead(battle.attackUnits, targetHash);
+    if(targetHash['aa']>0)
+        markAABombersDead(battle.attackUnits, targetHash);
     markPlanesAsDead(battle.attackUnits, targetHash);
     markTanksAsDead(battle.attackUnits, targetHash);
     markRemainerAsDead(battle.attackUnits, targetHash, gameObj);
@@ -958,6 +961,29 @@ function markCasualties(battle, gameObj) {
     markTanksAsDead(battle.defendingUnits, targetHash);
 
     markRemainerAsDead(battle.defendingUnits, targetHash, gameObj, battle);
+}
+function markAAFightersDead(units, targetHash) {
+    units.forEach(unit => {
+        if (unit.dead)
+            return;
+        if ((unit.subType == 'fighter') && targetHash['aa'] > 0 && unit.adLimit>0) {
+            targetHash['aa']--;
+            unit.dead = true;
+            return;
+        }
+    });
+}
+function markAABombersDead(units, targetHash) {
+    units.forEach(unit => {
+        if (unit.dead)
+            return;
+        if ((unit.piece == 7) && targetHash['aa'] > 0) {
+            targetHash['aa']--;
+            unit.dead = true;
+            return;
+        }
+    });
+    targetHash['aa'] = 0;
 }
 function healInfantryByMedic(units) {
     var healedFlg = false;
@@ -1167,6 +1193,7 @@ function fixSeaCargo(terr, gameObj) {
     */
 }
 function fixCargoOnTerr(strandedCargo, terr, gameObj) {
+    return;
     console.log('fixCargoOnTerr', terr.name);
     strandedCargo.forEach(unit => {
         findTransportForThisCargo(unit, terr, gameObj);

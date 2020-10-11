@@ -362,14 +362,18 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	adminFixBoard() {
 		this.showAlertPopup('Fix on!', 1);
 
-		var terrId = 30;
+		//var player2 = this.gameObj.players[6];
+		//player2.treaties=[0,3,3,0,0,0,4,3];
+
+		var terrId = 20;
 		var terr = this.gameObj.territories[terrId - 1];
 
 		if (0) {
 			var x = 0;
 			terr.units.forEach(unit => {
-				if (unit.piece == 10 || unit.piece == 11) {
-					unit.terr = 9;
+				if (unit.piece == 23 && x++<4) {
+					console.log('xxxhey', unit);
+					unit.terr = 136;
 				}
 			});
 		}
@@ -377,7 +381,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		if (0) {
 			setTimeout(() => {
-				this.addUnitToTerr(terr, 10, true, true, true);
+				this.addUnitToTerr(terr, 30, true, true, true);
+				this.addUnitToTerr(terr, 30, true, true, true);
+				this.addUnitToTerr(terr, 30, true, true, true);
 				//this.addUnitToTerr(terr, 11, true, true, true);
 			}, 1000);
 		}

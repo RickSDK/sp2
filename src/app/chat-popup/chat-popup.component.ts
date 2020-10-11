@@ -132,7 +132,6 @@ export class ChatPopupComponent extends BaseComponent implements OnInit {
       nation: this.recipientNation,
       bugFlg: bugFlg
     });
-    console.log(postData);
     fetch(url, postData).then((resp) => resp.text())
       .then((data) => {
         if (this.verifyServerResponse(data)) {
