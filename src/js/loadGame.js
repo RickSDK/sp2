@@ -70,9 +70,9 @@ function createNewGame(id, type, numPlayers, name, attack, pieces, startingNatio
 //		gameObj.maxAllies=0;
 	gameObj.autoNations = true;
 	gameObj.autoSkip = true;
-	gameObj.fogOfWar = fogOfWar;
+	gameObj.fogOfWar = fogOfWar == 'Y';
 	gameObj.turboFlg = turboFlg;
-	gameObj.hardFog = hardFog;
+	gameObj.hardFog = hardFog == 'Y';
 	gameObj.gameInProgressFlg = false;
 	gameObj.multiPlayerFlg = false;
 	gameObj.typeName = gameTypeNameForType(gameObj.type);

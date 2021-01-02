@@ -22,20 +22,36 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   public expandFlg = false;
   public singleGameId: number;
   public showHomeButtonFlg = true;
-  public yourRankName:string = '';
-  public yourNextRankName:string = '';
-  public yourNextRankDesc:string = '';
+  public yourRankName: string = '';
+  public yourNextRankName: string = '';
+  public yourNextRankDesc: string = '';
+  public showVideoPlayerFlg = false;
+  public showLoginFlg = true;
+  public emailInValidFlg = true;
+  public emailEnteredFlg = false;
+  public email = '';
+  public guestNum = 0;
+  public currentVideo: any;
+  public adsbygoogle: any;
+
+  public videos = [
+    { seconds: 41, src: 'http://www.superpowersgame.com/superpowers480.mov' },
+    { seconds: 325, src: 'http://www.superpowersgame.com/videos/SPGamePlay480.mov' },
+    { seconds: 24, src: 'http://www.superpowersgame.com/videos/homescreen.mov' },
+  ];
+
 
   constructor(private router: Router) { super(); }
 
   ngOnInit(): void {
     this.hostname = getHostname();
-    this.user = userObjFromUser();
-    if(this.user.rank && this.user.rank>0 && this.superpowersData) {
-      this.yourRankName = this.superpowersData.ranks[this.user.rank].name;
-      this.yourNextRankName = this.superpowersData.ranks[this.user.rank+1].name;
-      this.yourNextRankDesc = this.superpowersData.ranks[this.user.rank].name;
-    }
+
+    setTimeout(() => {
+      flexSprite();
+      (this.adsbygoogle = (window as any).adsbygoogle || []).push({});
+    }, 1000);
+
+
     if (0) {
       //reset user to new recruit
       localStorage.rank = 0;
@@ -43,27 +59,103 @@ export class MainPageComponent extends BaseComponent implements OnInit {
       saveUserObj(this.user);
       this.user = userObjFromUser();
     }
-    console.log(this.user);
-    //this.flexSprite(100);
-    flexSprite();
-    this.singleGameId = localStorage.currentGameId;
-    this.showHomeButtonFlg = localStorage.showHomeButtonFlg != 'Y';
-    //getIPInfo(localStorage.userName, localStorage.password);
-    /*
-    changeClass('splash1', 'splash-screen');
-    changeClass('splash2', 'splash-screen');
-    setTimeout(() => {
-      this.disolveSplash('splash-fade');
-    }, 2000);
-    setTimeout(() => {
-      this.disolveSplash('splash-off');
-    }, 3000);
-    */
+
+    this.user = userObjFromUser();
+
     if (this.user.userId > 0)
       this.getUserData();
     else {
-      this.displaySPPopup('initPopup');
+      if (this.user.rank < 2)
+        this.displaySPPopup('initPopup');
     }
+    this.paintMainScreen();
+
+    // flexSprite();
+    this.singleGameId = localStorage.currentGameId;
+    this.showHomeButtonFlg = localStorage.showHomeButtonFlg != 'Y';
+    //getIPInfo(localStorage.userName, localStorage.password);
+  }
+  paintMainScreen() {
+    this.user = userObjFromUser();
+    console.log('', this.user);
+    if (this.user.rank && this.user.rank > 0 && this.superpowersData) {
+      this.yourRankName = this.superpowersData.ranks[this.user.rank].name;
+      this.yourNextRankName = this.superpowersData.ranks[this.user.rank + 1].name;
+      this.yourNextRankDesc = this.superpowersData.ranks[this.user.rank].name;
+    }
+    // guestnum
+    // 0 = guest
+    // 1 = signin
+    // 2 = gameplay video watched
+    // 3 = single player completed
+    // 4 = add icon video watched
+    // 5 = multiplayer video watched
+    //---------------
+    this.guestNum = 0;
+
+    if (localStorage.videoIntroWatched == 'Y')
+      this.guestNum = 1;
+
+    if (localStorage.videoGamePlayWatched == 'Y')
+      this.guestNum = 2;
+
+    if (this.user.rank > 1) {
+
+      if (this.user.rank == 2) {
+        this.guestNum = 3;
+        if (localStorage.videoIconWatched == 'Y')
+          this.guestNum = 4;
+      }
+      if (this.user.rank > 2)
+        this.guestNum = 5;
+    }
+    if (this.guestNum == 1)
+      this.showAlertPopup('Watch the Gameplay Video and then complete a Single Player game.');
+
+    console.log('guestNum', this.guestNum);
+
+
+  }
+  playVideo(num: number) {
+    this.showVideoPlayerFlg = true;
+    setTimeout(() => {
+      this.startPlayingVideo(num);
+    }, 500);
+  }
+  startPlayingVideo(num: number) {
+    this.currentVideo = <HTMLVideoElement>document.getElementById('mainVideo');
+    if (num == 1)
+      localStorage.videoIntroWatched = 'Y';
+    if (num == 2)
+      localStorage.videoGamePlayWatched = 'Y';
+    if (num == 3)
+      localStorage.videoIconWatched = 'Y';
+    var vid = this.videos[num - 1];
+    if (this.currentVideo) {
+      this.currentVideo.src = vid.src;
+      this.currentVideo.play();
+      setTimeout(() => {
+        this.turnOffVideo();
+      }, vid.seconds * 1000);
+    }
+  }
+
+  turnOffVideo() {
+    console.log('off!');
+    this.currentVideo.pause();
+    this.showVideoPlayerFlg = false;
+    this.paintMainScreen();
+  }
+  validateField(email: string) {
+    this.showLoginFlg = email.length == 0;
+    this.emailInValidFlg = email.length == 0;
+    this.email = email;
+  }
+  emailEntered(login: any) {
+    console.log(this.email);
+    //this.emailEnteredFlg = true;
+    this.playClick();
+    login.show(this.email);
   }
   disolveSplash(className: string) {
     changeClass('splash1', className);
@@ -84,7 +176,6 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   }
   paserUserData(data) {
     this.user = parseServerDataIntoUserObj(data);
-    //console.log(this.user);
 
     localStorage.lastForumLogin = this.user.forum_last_login;
 
@@ -113,14 +204,30 @@ export class MainPageComponent extends BaseComponent implements OnInit {
     if (this.user.urgentCount > 0)
       this.showAlertPopup('Urgent Message Waiting!');
 
+    this.paintMainScreen();
+
   }
+
   multiplayGameClicked(login: any) {
+    //if (this.user.rank < 2) {
+   //   this.showAlertPopup('You must complete a single player game before playing multiplayer.', 1);
+    //  return;
+   // }
     if (this.user.userId > 0)
       this.router.navigate(['/multiplayer']);
     else
       login.show();
   }
   singlePlayerGame(startGame: any) {
+    if (this.guestNum == 0) {
+      this.showAlertPopup('Watch the Intro and Gameplay Videos first!', 1);
+      return;
+    }
+    if (this.guestNum == 1) {
+      this.showAlertPopup('Watch the Gameplay Video first!', 1);
+      return;
+    }
+
     if (this.singleGameId > 0)
       this.router.navigate(['/board']);
     else
@@ -129,13 +236,16 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   userUpdated($event) {
     this.user = userObjFromUser();
     console.log('User updated from emit!', this.user);
+    this.paintMainScreen();
   }
+  /*
   flexSprite(width: number) {
     if (this.expandFlg)
       width++;
     else
       width--;
     var e = document.getElementById('spLogo');
+    console.log('e',e);
     if (e) {
       e.style.width = width + '%';
       if (width < 75 || width > 99) {
@@ -146,23 +256,23 @@ export class MainPageComponent extends BaseComponent implements OnInit {
       //      this.flexSprite(width);
       //     }, 80);
     }
-  }
+  }*/
 }
 
 var width = 100;
 var expandFlg = false;
 function flexSprite() {
   if (expandFlg)
-    width+=.1;
+    width += .1;
   else
-    width-=.1;
+    width -= .1;
   var e = document.getElementById('spLogo');
   if (e) {
     e.style.width = width + '%';
     if (width < 75) {
       expandFlg = true;
     }
-    if(width > 99)
+    if (width > 99)
       expandFlg = false;
     requestAnimationFrame(flexSprite);
   }

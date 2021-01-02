@@ -25,6 +25,7 @@
 		</div>
 
 		<div class="popupScreen" style="display: inline-block; padding:20px; margin-top: 20px;" *ngIf="!showLoginFlg && !requestSentFlg">
+			<div>New Player Signup</div>
 			<div><input type=email id="emailField2" name="emailField2" placeholder="Email" maxlength="60"  (click)="clearValue($event)" [value]="email"></div>
 			<div><input type=text id="firstName" name="firstName" placeholder="Username" maxlength="20"  (click)="clearValue($event)" [value]="userName"></div>
 			<div><input type=password name="password1" id="password1" placeholder="Password" maxlength="20"  (click)="clearValue($event)" [value]="password"></div>

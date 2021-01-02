@@ -41,7 +41,8 @@ function saveUserObj(userObj) {
 }
 function logOutUser() {
 	localStorage.userName = '';
-	localStorage.rank = 2;
+	if (localStorage.rank > 2)
+		localStorage.rank = 2;
 	localStorage.password = '';
 	localStorage.userObj = '';
 }
@@ -72,9 +73,9 @@ function parseServerDataIntoUserObj(data) {
 	userObj.mmLosses = numberVal(f[x++]);
 	userObj.mmPoints = numberVal(f[x++]);
 	userObj.avatar = numberVal(f[x++]);
-	userObj.awayFlg = f[x++]=='Y';
-	userObj.confirmEmailFlg = f[x++]=='Y';
-	userObj.textFlg = f[x++]=='Y';
+	userObj.awayFlg = f[x++] == 'Y';
+	userObj.confirmEmailFlg = f[x++] == 'Y';
+	userObj.textFlg = f[x++] == 'Y';
 
 
 	userObj.code = btoa(localStorage.password);
@@ -82,7 +83,7 @@ function parseServerDataIntoUserObj(data) {
 
 	if (userObj.userName != localStorage.userName) {
 		localStorage.userName = userObj.userName;
-		showAlertPopup('Conflicting Usernames: '+userObj.userName+', '+localStorage.userName, 1);
+		showAlertPopup('Conflicting Usernames: ' + userObj.userName + ', ' + localStorage.userName, 1);
 	}
 
 	saveUserObj(userObj);
@@ -115,8 +116,8 @@ function getMultObjFromLine(line) {
 	obj.league_id = numberVal(c[23]);
 	obj.confirmEmailFlg = (c[24] == 'Y');
 	obj.confirmTextFlg = (c[25] == 'Y');
-	obj.email_flg = (c[26]== 'Y');
-	obj.textFlg = (c[27]== 'Y');
+	obj.email_flg = (c[26] == 'Y');
+	obj.textFlg = (c[27] == 'Y');
 	obj.forumPosts = numberVal(c[28]);
 	return obj;
 }
@@ -171,8 +172,8 @@ function userFromLine(line) {
 	obj.winsThisYear = c[x++];
 	obj.updateNeededCount = c[x++];
 	obj.country = c[x++];
-	obj.confirmEmailFlg = (c[x++] =='Y');
-	obj.confirmTextFlg = (c[x++] =='Y');
+	obj.confirmEmailFlg = (c[x++] == 'Y');
+	obj.confirmTextFlg = (c[x++] == 'Y');
 	obj.phone = c[x++];
 	obj.text_msg = c[x++];
 	obj.providerNum = c[x++];
@@ -184,12 +185,12 @@ function userFromLine(line) {
 	obj.chat_font = c[x++];
 	obj.avatar = c[x++];
 	obj.ip = c[x++];
-	obj.imgSrc = imageSrcFromObj(obj.graphic,obj.avatar);
+	obj.imgSrc = imageSrcFromObj(obj.graphic, obj.avatar);
 
 	if (obj.total_num_mins > 0 && obj.total_num_turns > 0) {
 		obj.hourlyRate = Math.round(obj.total_num_mins / 60 / obj.total_num_turns);
-		obj.fastFlg = (obj.hourlyRate<6);
-		obj.slowFlg = (obj.hourlyRate>=10);
+		obj.fastFlg = (obj.hourlyRate < 6);
+		obj.slowFlg = (obj.hourlyRate >= 10);
 	}
 
 	obj.flag = flagOfCountry(obj.country);
@@ -355,7 +356,7 @@ function gameFromLine(line, userName) {
 	obj.newActionFlg = (obj.seconds < 0);
 
 	obj.turnObj = getUserObjFromLine(userInfo);
-	obj.accountSitFlg = (obj.status == 'Playing' && obj.myTeam>0 && obj.myTeam == obj.turnTeam && obj.secondsElapsed > 43200 && userName != obj.turn);
+	obj.accountSitFlg = (obj.status == 'Playing' && obj.myTeam > 0 && obj.myTeam == obj.turnTeam && obj.secondsElapsed > 43200 && userName != obj.turn);
 	obj.slowResponseFlg = (obj.status == 'Playing' && obj.secondsElapsed > 86400 && userName == obj.turn);
 	obj.turnObj.userId = numberVal(obj.turnObj.id);
 	obj.turnObj.timeLeft = obj.timeLeft;
@@ -399,25 +400,25 @@ function mailFromLine(line) {
 	var c = line.split("|");
 	var x = 0;
 	if (c.length > 5) {
-	  obj.row_id = c[x++];
-	  obj.title = c[x++];
-	  obj.body = c[x++];
-	  obj.sender = c[x++];
-	  obj.senderName = c[x++];
-	  obj.read_flg = (c[x++] == 'Y');
-	  obj.urgent_flg = (c[x++] == 'Y');
-	  obj.num_replies = c[x++];
-	  obj.msgDate = c[x++];
-	  obj.parent_mail_id = c[x++];
-	  obj.recipient = c[x++];
-	  obj.recipientName = c[x++];
-	  obj.orig_sender = c[x++];
-	  obj.orig_recipient = c[x++];
-  
-	  obj.formattedDate = dateComponentFromDateStamp(obj.msgDate, true, true);
+		obj.row_id = c[x++];
+		obj.title = c[x++];
+		obj.body = c[x++];
+		obj.sender = c[x++];
+		obj.senderName = c[x++];
+		obj.read_flg = (c[x++] == 'Y');
+		obj.urgent_flg = (c[x++] == 'Y');
+		obj.num_replies = c[x++];
+		obj.msgDate = c[x++];
+		obj.parent_mail_id = c[x++];
+		obj.recipient = c[x++];
+		obj.recipientName = c[x++];
+		obj.orig_sender = c[x++];
+		obj.orig_recipient = c[x++];
+
+		obj.formattedDate = dateComponentFromDateStamp(obj.msgDate, true, true);
 	}
 	return obj;
-  }
+}
 function leaderFromLine(line) {
 	var c = line.split("|");
 	var obj = new Object;

@@ -4,6 +4,7 @@ import { BaseComponent } from '../base/base.component';
 declare var convertStringToDate: any;
 declare var $: any;
 declare var dateComponentFromDateStamp: any;
+declare var getDateObjFromJSDate: any;
 
 @Component({
   selector: 'app-forum-popup',
@@ -62,17 +63,17 @@ export class ForumPopupComponent extends BaseComponent implements OnInit {
             var c = item.split("|");
             if (c.length > 5) {
               x++;
-              dateStamp = convertStringToDate(c[6])
-              //dateStampText = convertStringToDate(c[6]);
-              var dif = lastForumLogin.getTime() - dateStamp.getTime();
+              var dt = getDateObjFromJSDate(c[6]);
+              var jsDate = new Date(dt.jsDate);
+              var dif = lastForumLogin.getTime() - jsDate.getTime();
               var newFlg = (dif >= 0) ? 'N' : 'Y';
               if ((c[0] == '4' || c[0] == '5') && !adminFlg)
                 return;
-              forumTopics.push({ icon: icons[x], category: c[0], name: c[1], topic_count: c[2], post_count: c[3], user: c[4], userId: c[5], dateStamp: c[6], newFlg: newFlg });
+              forumTopics.push({ icon: icons[x], category: c[0], name: c[1], topic_count: c[2], post_count: c[3], user: c[4], userId: c[5], dateStamp: dt.oracle, timeStamp: c[6], newFlg: newFlg, localDate: dt.localDate });
             }
           });
           this.forumTopics = forumTopics;
-          //console.log(forumTopics);
+          console.log(forumTopics);
         }
       })
       .catch(error => {
@@ -202,7 +203,10 @@ function forumObjFromLine(line, lastForumLogin) {
   if (c.length > 5) {
     var dateStamp = convertStringToDate(c[6]);
     var dateStampText = dateComponentFromDateStamp(c[6], true, true);
-    var dif = lastForumLogin.getTime() - dateStamp.getTime();
+    var dt = getDateObjFromJSDate(c[6]);
+    var jsDate = new Date(dt.jsDate);
+    var dif = lastForumLogin.getTime() - jsDate.getTime();
+    //var dif = lastForumLogin.getTime() - dateStamp.getTime();
     var newFlg = (dif >= 0) ? 'N' : 'Y';
     obj = { id: c[0], name: c[1], topic_count: c[2], post_count: c[3], user: c[4], userId: c[5], dateStamp: dateStampText, newFlg: newFlg, body: body, category: c[9], lastUser: c[10] };
   }

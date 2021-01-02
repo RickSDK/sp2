@@ -2,8 +2,10 @@
     position: fixed; 
     left:0;
     top: 0; 
-    width: 100%; 
-    min-height: 100%; 
+    width: auto; 
+    height: auto;
+    min-height: 100%;
+    min-width: 100%; 
     opacity: 100;
     transition: all 1s ease;
 }

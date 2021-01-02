@@ -55,14 +55,20 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
   public teams = ['1', '2', 'R'];
   public teamIdx = 0;
   public selectedTeam = this.teams[0];
+  public adsbygoogle: any;
 
   constructor(private router: Router) { super(); }
 
   ngOnInit(): void {
-    googleAds();
+    //googleAds();
     this.user = userObjFromUser();
     this.adminFlg = (this.user.userId == 10);
     this.loadGames();
+
+    setTimeout(() => {
+      (this.adsbygoogle = (window as any).adsbygoogle || []).push({});
+    }, 2000);
+
   }
   showPlayer(player: any) {
     this.userPopupComp.show(player);
@@ -105,7 +111,7 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
           var gameToStart;
           this.multiPlayerObj = getMultObjFromLine(basics);
           var accountSitGameName;
-          //console.log(this.multiPlayerObj);
+          console.log(this.multiPlayerObj);
           if (this.multiPlayerObj.urgentCount > 0)
             this.showAlertPopup('You have an urgent piece of mail!', 1);
 

@@ -1,7 +1,7 @@
 function purchaseCPUUnits(player, gameObj, superpowersData, rank) {
-    if (gameObj.round <= 18)
+    if (gameObj.round <= 18 && player.cpu)
         purchaseTechnology(0, player, gameObj, superpowersData);
-    if (gameObj.round == 10)
+    if (gameObj.round == 10 && player.cpu)
         purchaseTechnology(19, player, gameObj, superpowersData);
 
     var factoryTerritories = [];
@@ -43,15 +43,24 @@ function purchaseCPUUnits(player, gameObj, superpowersData, rank) {
     }
 
     var num = Math.floor((Math.random() * 8));
-    if (gameObj.round < 10)
-        player.money += 5;
-    if (gameObj.round > 20)
-        player.money -= 5;
-    if (gameObj.round >= 100 && player.cpu)
-        player.money += 350; // keep players from dragging feet
+    if (player.cpu) {
+        if (gameObj.round < 10)
+            player.money += 5;
+        if (gameObj.round > 20)
+            player.money -= 5;
+        if (gameObj.round >= 100)
+            player.money += 350; // keep players from dragging feet
 
-    if (rank < 2 && player.money >= 25)
-        player.money -= 15;
+        if (rank < 2 && player.money >= 25)
+            player.money -= 15;
+
+        var difficultyNum = numberVal(gameObj.difficultyNum);
+        if (difficultyNum == -1)
+            player.money -= 10;
+        if (difficultyNum == 1)
+            player.money += 10;
+    }
+
 
     var placedInf = numberVal(player.placedInf);
     if (placedInf < 3) {
@@ -69,14 +78,7 @@ function purchaseCPUUnits(player, gameObj, superpowersData, rank) {
     if (num <= 6) {
         addComputerFactory(player, superpowersData, gameObj);
     }
-        
-    var difficultyNum = numberVal(gameObj.difficultyNum);
-    if (difficultyNum == -1)
-        player.money -= 10;
-    if (difficultyNum == 1)
-        player.money += 10;
-    
-        console.log('difficultyNum', difficultyNum, rank);
+
     if (num == 2 && waterway && waterway.id > 0) {
         addUniToQueue(4, 1, superpowersData, player, gameObj, waterway);
         addUniToQueue(5, 1, superpowersData, player, gameObj, waterway);

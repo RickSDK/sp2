@@ -175,7 +175,7 @@ function startBattle(terr, player, gameObj, superpowersData, battle) {
         console.log('bad attack!!', terr.name);
         return;
     }
-    if(!battle.cruiseFlg && !battle.stratBombFlg) {
+    if (!battle.cruiseFlg && !battle.stratBombFlg) {
         battle.attackUnits.forEach(unit => {
             if (unit.cargo && unit.cargo.length > 0) {
                 unit.cargo.forEach(cargoUnit => {
@@ -534,9 +534,9 @@ function addAAGunesToBattle(battle, terr, stratBombFlg) {
             unitAdLimit = terr.battleshipAACount;
         if (unit.type == 2 || unit.type == 4) {
             if (unitAdLimit >= 1 && aaGunsPerPLane >= 1)
-                battle.airDefenseUnits.push({ piece: 13, nation: 1, dice: [] })
+                battle.airDefenseUnits.push({ piece: 13, nation: 1, targetId: unit.id, dice: [] })
             if (unitAdLimit >= 2 && aaGunsPerPLane >= 2)
-                battle.airDefenseUnits.push({ piece: 13, nation: 1, dice: [] })
+                battle.airDefenseUnits.push({ piece: 13, nation: 1, targetId: unit.id, dice: [] })
         }
     });
     if (stratBombFlg && terr.defendingFighterId > 0) {
@@ -554,6 +554,7 @@ function startToRollAAGuns(battle, selectedTerritory) {
 }
 function rollAAGuns(battle, selectedTerritory, gameObj, stratBombFlg) {
     addAAGunesToBattle(battle, selectedTerritory, stratBombFlg);
+
     battle.attTargets = [];
     battle.defTargets = [];
     battle.airDefenseUnits.forEach(unit => {
@@ -567,12 +568,24 @@ function rollAAGuns(battle, selectedTerritory, gameObj, stratBombFlg) {
         if (diceRoll <= hitScore) {
             unit.dice.push('diceh' + diceRoll + '.png');
             battle.defHits++;
-            battle.defTargets.push('aa'); // here!! planes
+            console.log('targetId!!!', unit.targetId);
+            if (unit.targetId && unit.targetId > 0)
+                destoryPlane(battle, unit.targetId);
+            else
+                battle.defTargets.push('aa'); // here!! planes
         }
         else
             unit.dice.push('dice' + diceRoll + '.png');
     });
     markCasualties(battle, gameObj);
+}
+function destoryPlane(battle, targetId) {
+    battle.attackUnits.forEach(unit => {
+        if (unit.id == targetId) {
+            unit.dead = true;
+            //battle.attCasualties.push(unit.piece);
+        }
+    });
 }
 function rollAttackDice(battle, gameObj, stratFlg = false) {
     battle.attHits = 0;
@@ -724,7 +737,7 @@ function unitGetsInstantKill(unit, battle, gameObj) {
     targetHash[unit.target] = 1;
     markPlanesAsDead(battle.defendingUnits, targetHash);
     markTanksAsDead(battle.defendingUnits, targetHash);
-    markRemainerAsDead(battle.defendingUnits, targetHash, gameObj);
+    markRemainerAsDead(battle.defendingUnits, targetHash, gameObj, battle);
 }
 function markSoliderAsDead(battle) {
     for (var x = 0; x < battle.defendingUnits.length; x++) {
@@ -742,6 +755,7 @@ function rollDefenderDice(battle, selectedTerritory, currentPlayer, moveTerr, ga
     battle.defendingUnits.forEach(unit => {
         if (unit.dead)
             return;
+
         unit.dice = [];
         var numDef = unit.numDef || 1;
         for (var x = 0; x < numDef; x++) {
@@ -750,8 +764,6 @@ function rollDefenderDice(battle, selectedTerritory, currentPlayer, moveTerr, ga
             if (selectedTerritory.owner == 0 && !selectedTerritory.capital && cpuHits > 2) {
                 diceRoll = 6; // make sure neutrals don't do too much damage
             }
-            if (battle.attNation == 4 && battle.round == 1 && battle.generalUnit > 0 && battle.defender == 0 && battle.bonusUnitsFlg && battle.defendingUnits.length == 2 && battle.defHits > 0)
-                diceRoll = 6; // don't let general die!
             if (diceRoll <= unit.def) {
                 unit.dice.push('diceh' + diceRoll + '.png');
                 battle.defHits++;
@@ -843,6 +855,9 @@ function unitCannotBeHealed(battle, unit) {
     return true;
 }
 function markRemainerAsDead(units, targetHash, gameObj, battle) {
+    if(battle && battle.generalUnit)
+        units.sort(function (a, b) { return a.cas - b.cas; });
+
     units.forEach(unit => {
         if (unit.dead)
             return;
@@ -936,11 +951,11 @@ function markCasualties(battle, gameObj) {
     });
     var hits = battle.defHits;
     markAAFightersDead(battle.attackUnits, targetHash);
-    if(targetHash['aa']>0)
+    if (targetHash['aa'] > 0)
         markAABombersDead(battle.attackUnits, targetHash);
     markPlanesAsDead(battle.attackUnits, targetHash);
     markTanksAsDead(battle.attackUnits, targetHash);
-    markRemainerAsDead(battle.attackUnits, targetHash, gameObj);
+    markRemainerAsDead(battle.attackUnits, targetHash, gameObj, battle);
 
     //-------------------defending units hit by attackers 
     targetHash = {};
@@ -966,7 +981,7 @@ function markAAFightersDead(units, targetHash) {
     units.forEach(unit => {
         if (unit.dead)
             return;
-        if ((unit.subType == 'fighter') && targetHash['aa'] > 0 && unit.adLimit>0) {
+        if ((unit.subType == 'fighter') && targetHash['aa'] > 0 && unit.adLimit > 0) {
             targetHash['aa']--;
             unit.dead = true;
             return;
@@ -1086,8 +1101,9 @@ function battleCompleted(displayBattle, selectedTerritory, currentPlayer, moveTe
     if (!currentPlayer.cpuFlg && displayBattle.militaryObj.wonFlg && displayBattle.allowGeneralRetreat) {
         var generalRetreatObj = { gameId: gameObj.id, terrId1: numberVal(localStorage.generalTerr1), terrId2: selectedTerritory.id };
         localStorage.generalRetreatObj = JSON.stringify(generalRetreatObj);
-        displayFixedPopup('generalWithdrawPopup');
-        $('#territoryPopup').modal('hide');
+        console.log(displayBattle);
+        //displayFixedPopup('generalWithdrawPopup');
+        //$('#territoryPopup').modal('hide');
     }
 }
 function removeAnyConvertedUnits(displayBattle, terrId) {
@@ -1260,7 +1276,7 @@ function getKdForPlayer(player) {
         return 0;
 }
 function transferControlOfTerr(terr, nation, gameObj, annihilationFlg, player) {
-    if (player && gameObj.allowAlliances && player.allies.length > 0 && player.treaties.length >= 8) {
+    if (player && player.allies.length > 0 && player.treaties.length >= 8) {
         if (player.treaties[terr.nation - 1] == 3)
             nation = terr.nation; //liberateNationIfNeccessary
     }

@@ -17,7 +17,7 @@ export class InfoComponent extends BaseComponent implements OnInit {
     ];
     public overviewList = [
       {piece: 2, name: 'Infantry', desc: 'Superpowers is a turn based game you can play solo or against other people. Playing against others is when the real fun begins!'},
-      {piece: 3, name: 'Tank', desc: 'The game is FREE, there is nothing to download and no user signup required to get started. Simply click the "Single Player" on the previous screen to get the ball rolling.'},
+      {piece: 3, name: 'Tank', desc: 'The game is FREE, there is nothing to download to get started. Simply click the "Single Player" on the previous screen to get the ball rolling.'},
       {piece: 1, name: 'Artillery', desc: 'The object is quite simple... take over the world! Become the leader of the world\'s biggest Superpower.'},
       {piece: 14, name: 'Nuke', desc: 'Turns consist of 2 parts: Purchase & Combat. "Purchase" phase is where you buy stuff, and "Combat" is where... well you get the idea.'},
       {piece: 11, name: 'Leader', desc: 'Once you have proven your valor in a single-player game, you are free to join our online community. Play at your own pace. You have 24 hours to take your turn, but all day to study the map!'},

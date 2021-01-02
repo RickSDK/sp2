@@ -397,6 +397,19 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	terr.title = terr.name + ' (' + titleUnitCount + ' ' + unitStr + ')\n-' + userName + '-\n' + results.join('\n');
 	if (superBC)
 		terr.title += '\n' + superBSStats;
+
+
+	if(cargoTypeUnits>0 && cargoSpace>0) {
+		doubleCheckCargoForTerr(terr, gameObj);
+	}
+}
+function doubleCheckCargoForTerr(terr, gameObj) {
+	terr.units.forEach(function (unit) {
+		if(unit.subType == 'fighter' && !unit.cargoOf) {
+			console.log('fix fighter!', unit);
+			findTransportForThisCargo(unit, terr, gameObj);
+		}
+	});
 }
 function alliesFromTreaties(player) {
 	var allies = [];
@@ -798,6 +811,7 @@ function resetPlayerUnits(player, gameObj) {
 	var leaderFlg = false;
 	var sbcFlg = false;
 	var stratBombButton = false;
+	var sbsExists = false;
 	gameObj.units.forEach(function (unit) {
 		if (unit.owner == player.nation && unit.mv > 0 && !unit.dead) {
 			unit.dice = [];
@@ -810,6 +824,8 @@ function resetPlayerUnits(player, gameObj) {
 			unit.movesTaken = 0;
 			unit.retreated = false;
 			unit.prevTerr = unit.terr;
+			if (unit.piece == 12)
+				sbsExists = true;
 			if (unit.att > 0)
 				unitCount++;
 			if (unit.piece == 10) {
@@ -838,6 +854,8 @@ function resetPlayerUnits(player, gameObj) {
 			//					checkSealUnit(unit, player);
 		}
 	});
+	if (!sbsExists && player.battleshipCost > 0)
+		player.battleshipCost = 0;
 	player.stratBombButton = stratBombButton;
 	player.sbcFlg = sbcFlg;
 	player.generalFlg = generalFlg;
@@ -1790,28 +1808,39 @@ function isUnitAirDefense(unit) {
 }
 
 function flagOfOwner(own, terr, showDetailsFlg, unitCount, defeatedByNation, nuked, attackedByNation) {
-	var flag = 'flag' + own + '.gif';
+	var flag = 'flag' + own + '.png';
+
+	if (terr.capital || terr.nation == 99)
+		flag = 'flag' + own + '.gif';
+
 	if (terr.generalFlg && showDetailsFlg)
 		flag = 'flagg' + own + '.gif';
 	if (terr.leaderFlg && showDetailsFlg)
 		flag = 'flagl' + own + '.gif';
 
-	if (own == 0 && terr.nation > 0 && terr.nation < 99)
-		flag = 'flagn' + terr.nation + '.gif';
+	if (own == 0 && terr.nation > 0 && terr.nation < 99) {
+		flag = 'flagn' + terr.nation + '.png';
+
+		if(terr.capital)
+			flag = 'flagn' + terr.nation + '.gif';
+	}
 	if (defeatedByNation > 0 || attackedByNation > 0) {
 		flag = 'flag_ex' + own + '.gif';
 	}
 	if (nuked && own > 0)
 		flag = 'flag_nuke' + own + '.gif';
 
+	if (terr.nation == 99 && unitCount == 0)
+		flag = 'flag99.gif';
 	var f = document.getElementById('flag' + terr.id);
 	if (f) {
 		if (terr.nation == 99 && unitCount == 0) {
-			flag = 'flag99.gif';
-			own = 0;
-			f.style.opacity = '.3'; // see also refreshBoard in script.js
+			f.style.opacity = '.2'; // see also refreshBoard in script.js
 		} else
 			f.style.opacity = '1';
+
+		if (0 && terr.nation < 99 && terr.owner > 0 && !terr.capital && terr.owner == terr.nation)
+			f.style.opacity = '.5'
 	}
 	return flag;
 }

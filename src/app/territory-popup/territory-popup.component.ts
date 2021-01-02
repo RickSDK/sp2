@@ -59,6 +59,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   @Output() messageEvent = new EventEmitter<string>();
   @Output() battleHappened = new EventEmitter<string>();
   @Output() battleCompletedEmit = new EventEmitter<any>();
+  @Output() withdrawGeneralClicked = new EventEmitter<any>();
   @ViewChild(TerrButtonsComponent) terrButtonsComp: TerrButtonsComponent;
   @ViewChild(TerrPurchaseComponent) terrPurchaseComp: TerrPurchaseComponent;
   public selectedTerritory: any;
@@ -113,13 +114,12 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
         //          var ter = gameObj.territories[61];
         //          if (ter.owner == 2 && gameObj.round == 1) {
         //           showAlertPopup('Good job! Click "Complete Turn" at the top to finish your turn.');
-        closePopup('generalWithdrawPopup');
+        //closePopup('generalWithdrawPopup');
         if (gameObj.round > 1 && gameObj.round < 5)
           highlightCompleteTurnButton(gameObj.round == 1);
         //         }
       }
     });
-
     this.checkAllTroops = false;
     this.selectedTerritory = terr;
     if (user.userName == 'Rick')
@@ -150,11 +150,11 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       terr.facFlg = checkWaterForFactory(terr, currentPlayer.nation, gameObj);
 
     if (user.rank < 2) {
-      if (user.rank < 2 && gameObj.round == 1 && currentPlayer.status == 'Purchase') {
-        showAlertPopup('Check out your available coins. Press "Buy" buttons below to purchase units. If not sure what to buy, just get 4 tanks.')
+      if (user.rank < 2 && gameObj.round == 1 && currentPlayer.status == 'Purchase' && terr.id==7) {
+        showAlertPopup('Check out your available coins. Press "Buy" buttons below to purchase units. For now, just get 4 tanks.')
       }
       if (user.rank < 2 && gameObj.round == 2 && currentPlayer.status == 'Purchase' && terr.id == 7) {
-        showAlertPopup('Purchase an Economic Center. This will boost your income by 5 coins/turn!')
+        showAlertPopup('Purchase an Economic Center. This will boost your income by 5 coins/turn! Also get 3 more tanks. By the way, you can only have 1 economic center per territory.')
       }
       if (user.rank < 2 && gameObj.round == 3 && currentPlayer.status == 'Purchase' && terr.id == 62) {
         showAlertPopup('Buy a "Factory" here. Starting with your next turn, you will be able to buy new units in Ukraine as well as Germany!')
@@ -177,6 +177,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       }
 
     }
+    
     if (ableToTakeThisTurn && currentPlayer.status == 'Purchase' && terr.facFlg) {
       if (this.selectedTerritory.nation == 99)
         this.changeProdType(2);
@@ -229,6 +230,11 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   autoCompletePressed() {
     playClick();
     this.autoCompleteFlg = !this.autoCompleteFlg;
+  }
+  withdrawGeneralButtonClicked() {
+    playClick();
+    this.withdrawGeneralClicked.emit();
+    this.closeModal('#territoryPopup');
   }
   moveSpriteFromTerrToTerr(terr1: any, terr2: any, piece: number) {
     this.moveSpriteBetweenTerrs({ t1: terr1.id, t2: terr2.id, id: piece });
@@ -435,7 +441,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     if (this.autoCompleteFlg) {
       if (this.displayBattle.militaryObj.battleInProgress)
         this.beginNextRoundOfBattle();
-      else
+      else if(!this.displayBattle.allowGeneralRetreat)
         this.closeModal('#territoryPopup');
     }
   }

@@ -40,9 +40,13 @@
                 class="btn btn-primary roundButton">
                 <i class="fa fa-mobile"></i> Add Text Notifications
             </button>
+            <button *ngIf="multiPlayerObj.mmPoints == 0" (click)="matchmakerStandingsPopup.show()" type="button"
+                class="btn btn-success roundButton">
+                <i class="fa fa-trophy"></i> Join Matchmaking!
+            </button>
         </div>
         <app-progress-bar *ngIf="loadingFlg"></app-progress-bar>
- 
+
         <div *ngIf="!loadingFlg">
 
 
@@ -227,7 +231,8 @@
                                 <i *ngIf="game.bugFlg" class="fa fa-bug" style="font-size: 12px; color: yellow;"></i>
                                 <i *ngIf="game.chatFlg" class="fa fa-commenting-o"
                                     style="font-size: 12px; color: yellow;"></i>
-                                {{game.name}}</div>
+                                {{game.name}}
+                            </div>
                             <table style="width: 100%;">
                                 <tr>
                                     <td>
@@ -252,7 +257,8 @@
                                         <div *ngIf="game.status=='Complete'">Game Over!</div>
                                         <div *ngIf="game.accountSitFlg">Account Sit!</div>
                                         <div *ngIf="game.status == 'Open'">
-                                            <button *ngIf="game.host == user.userName" [disabled]="game.players.length<2"
+                                            <button *ngIf="game.host == user.userName"
+                                                [disabled]="game.players.length<2"
                                                 (click)="openGameButtonPressed(game, 'start')" type="button"
                                                 class="btn btn-warning roundButton">
                                                 <i class="fa fa-play"></i> Start Game</button>
@@ -284,7 +290,8 @@
                                                 Last Login:
                                                 <span
                                                     style="font-size: 12px; color: green;"><b>{{game.turnObj.last_login_time}}</b></span>
-                                                hr ago</div>
+                                                hr ago
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
@@ -346,7 +353,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                 <div class="spCard">
+                                <div class="spCard">
                                     <div>
                                         <div class="spTitle">Players in Game</div>
                                         <table class="spTable">
@@ -367,9 +374,9 @@
                                                 </td>
                                                 <td style="color: green; font-weight: 700;">{{player.income}}</td>
                                                 <td *ngIf="game.type=='Locked'">
-                                                    <span *ngIf="game.host != user.userName || game.status != 'Open'">{{player.team}}</span>
-                                                    <button
-                                                        *ngIf="game.host == user.userName && game.status == 'Open'"
+                                                    <span
+                                                        *ngIf="game.host != user.userName || game.status != 'Open'">{{player.team}}</span>
+                                                    <button *ngIf="game.host == user.userName && game.status == 'Open'"
                                                         (click)="changeTeamOfPlayer(game, player)" type="button"
                                                         class="btn btn-primary roundButton">{{player.team}}
                                                     </button>
@@ -387,11 +394,10 @@
                                             Top-2 Player, <i class="fa fa-check"></i>: Turn</div>
                                     </div>
                                 </div>
-                                <button
-                                *ngIf="game.status == 'Playing' && user.userName == 'Rick' && game.round < 6"
-                                (click)="openGameButtonPressed(game, 'cancelGame')" type="button"
-                                class="btn btn-danger roundButton">
-                                <i class="fa fa-trash"></i> Delete Game</button>
+                                <button *ngIf="game.status == 'Playing' && user.userName == 'Rick' && game.round < 6"
+                                    (click)="openGameButtonPressed(game, 'cancelGame')" type="button"
+                                    class="btn btn-danger roundButton">
+                                    <i class="fa fa-trash"></i> Delete Game</button>
                             </div>
                         </div>
 
@@ -405,9 +411,14 @@
                 Users Online: <span style="color: white;">{{multiPlayerObj.usersOnline}}</span>
             </div>
 
-            <!--<app-google-ads></app-google-ads>-->
-
         </div>
+        <div style="display: inline-block; border: 1px solid gray; width: 100%;">
+            <div style="text-align: center; font-size: 12px; color: gray;">Google Ads</div>
+            <ins class="adsbygoogle" style="display:block;" data-ad-client="ca-pub-2626924352662007"
+                data-ad-slot="3410873039" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        </div>
+        <!--<app-google-ads></app-google-ads>-->
+
     </div>
 </div>
 

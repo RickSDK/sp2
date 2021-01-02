@@ -1,5 +1,5 @@
 <!------------------leader----------------------------->
-<div class="spCard">
+<div class="terr-card">
     <div *ngIf="user.rank>1 || selectedTerritory.owner>0">
         <div style="color: white;"><img src="assets/graphics/images/flag{{selectedTerritory.owner}}.gif"
                 height=20>&nbsp;
@@ -61,13 +61,13 @@
 </div>
 <!------------------strategyHint----------------------------->
 <div *ngIf="optionType != 'battle' && selectedTerritory.strategyHint.length>0 && selectedTerritory.nation<99"
-    class="spCard">
+    class="terr-card">
     <div>
         <div style="color: white;">
             <img src="assets/graphics/images/flag{{yourPlayer.nation}}.gif" height=20>
             Your Military Advisor
         </div>
-        <table width=100%>
+        <table width="100%">
             <tr [ngStyle]="ngStyleLogs(yourPlayer.nation)">
                 <td [style.width]="optionType == 'home'?'100px':'50px'"
                     style="background-size: cover;  background-position: center; background-image: url('assets/graphics/advisors/general{{yourPlayer.nation}}.jpg')">

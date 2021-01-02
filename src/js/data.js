@@ -202,7 +202,7 @@ function getGameTerritories() {
 	terrs.push({ id: x++, name: 'Japan', x: 1187, y: 271, nation: 4, owner: 0, type: 0, capital: true, water: 141, land: [24], enemyWater: 137, enemyZone: 32, enemyWater2: 139, enemyZone2: 26, borders: '24+141+142' });
 	terrs.push({ id: x++, name: 'Far East', x: 1166, y: 73, nation: 4, owner: 0, type: 0, water: 0, borders: '20+23+144+5', land: [20, 23, 5] });
 	terrs.push({ id: x++, name: 'Okhotsk', x: 1126, y: 211, nation: 4, owner: 0, type: 0, water: 0, borders: '22+20+24+141', land: [22, 20, 24] });
-	terrs.push({ id: x++, name: 'Manchuria', x: 1091, y: 258, nation: 4, owner: 0, type: 0, water: 0, borders: '20+23+141+21+25+30+64', land: [20, 23, 64, 30, 25, 21] });
+	terrs.push({ id: x++, name: 'Korea', x: 1091, y: 258, nation: 4, owner: 0, type: 0, water: 0, borders: '20+23+141+21+25+30+64', land: [20, 23, 64, 30, 25, 21] });
 	terrs.push({ id: x++, name: 'Peiping', x: 1075, y: 330, nation: 4, owner: 0, type: 0, water: 0, borders: '30+24+138+31', land: [30, 31, 24] });
 	terrs.push({ id: x++, name: 'Taiwan', x: 1138, y: 394, nation: 4, owner: 0, type: 0, water: 0, borders: '139', land: [] });
 	terrs.push({ id: x++, name: 'Marshall Islands', x: 1214, y: 387, nation: 4, owner: 0, type: 0, water: 0, borders: '140', land: [] });
@@ -411,7 +411,7 @@ function getGameTypes(limitedFlg, num) {
 		if (num == 3)
 			return ['freeforall', 'ffa-5', 'ffa-6', 'ffa-7'];
 
-		return ['diplomacy', 'locked', 'autobalance', 'firefight', 'battlebots', 'barbarian', 'hungerGames', 'freeforall', 'ffa-5', 'ffa-6', 'ffa-7', 'co-op'];
+		return ['diplomacy', 'autobalance', 'firefight', 'battlebots', 'barbarian', 'hungerGames', 'freeforall', 'ffa-5', 'ffa-6', 'ffa-7', 'co-op'];
 	}
 }
 function getGameTypesObj(limitedFlg, num) {

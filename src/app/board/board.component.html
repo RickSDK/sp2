@@ -1,7 +1,12 @@
 
 
 <img src="assets/graphics/images/map.png" style="margin-top: 100px; z-index: -10">
-<div style="font-size: 10px;">Superpowers</div>
+<div *ngIf="0" style="font-size: 10px;">Superpowers</div>
+<div style="display: inline-block; border: 1px solid gray; width: 100%;">
+	<div style="text-align: center; font-size: 12px; color: gray;">Google Ads</div>
+	<ins class="adsbygoogle" style="display:block;" data-ad-client="ca-pub-2626924352662007"
+		data-ad-slot="3410873039" data-ad-format="auto" data-full-width-responsive="true"></ins>
+</div>
 
 <!--<div *ngIf="0" style="margin-top: 100px; position: absolute; z-index: -10;">
 	<img id="map" src="assets/graphics/images/map.png">
@@ -47,9 +52,9 @@
 <img onClick="closePopup('target')" src="assets/graphics/images/target.png" id="target" class="targetSign off">
 
 <!---top bar--->
-<section *ngIf="currentPlayer" class="gradient"
-	style="z-index: 201; text-align: center; position: fixed; width: 100%; top: 0px; height: 44px; background-color: #ccc; box-shadow: 2px 2px 3px #000; max-height: 44px; line-height: 1.5em; overflow: hidden;">
-	<span class="hidden-xxs" style="float: left; color: #48c; font-size: 12px; padding: 10px;">Version
+<section *ngIf="currentPlayer" [class]="ngClassGradient()"
+	style="z-index: 201; text-align: center; position: fixed; width: 100%; top: 0px; height: 44px; box-shadow: 2px 2px 3px #000; max-height: 44px; line-height: 1.5em; overflow: hidden;">
+	<span class="hidden-xxs" style="float: left; color: white; font-size: 12px; padding: 10px;">Version
 		{{spVersion}} &nbsp;<i class="fa fa-mobile" *ngIf="!isDesktopFlg"></i> <i class="fa fa-desktop"
 			*ngIf="isDesktopFlg"></i></span>
 	<button (click)="exitButtonPressed()" type="button" class="btn btn-secondary roundButton"><i
@@ -568,7 +573,7 @@
 <app-loading-popup #loadingPopup></app-loading-popup>
 <app-message-popup #messagePopup></app-message-popup>
 <app-territory-popup #territoryPopup (messageEvent)="moveSpriteBetweenTerrs($event)"
-	(battleHappened)="battleHappened($event)" (battleCompletedEmit)="battleCompletedEmit($event)"
+	(battleHappened)="battleHappened($event)" (battleCompletedEmit)="battleCompletedEmit($event)" (withdrawGeneralClicked)="withdrawGeneralButtonClicked()"
 	[adminModeFlg]="adminModeFlg"></app-territory-popup>
 
 <app-game-players-popup #gamePlayersPopup></app-game-players-popup>

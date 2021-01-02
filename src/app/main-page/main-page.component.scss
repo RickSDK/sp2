@@ -9,12 +9,29 @@
     width: 100%;
     min-height: 220px;
 }
-  
+.whiteLink {
+    color: white;
+    cursor: pointer;
+}
+.whiteLink:hover {
+    font-weight: 700;
+}
 .middle {
     display: table-cell;
     vertical-align: middle;
 }
-  
+.signupWindow {
+    display: inline-block;
+    background-color: #444;
+    border: 1px solid black;
+    padding: 10px;
+	border-radius: 3px; 
+	box-shadow: 3px 3px 3px #888;
+}
+.signupWindow:hover {
+	border: 1px solid white;
+	box-shadow: 3px 3px 3px #444;
+}
 @media screen and (max-width: 576px) {
     .outer {
          min-height: 20px;

@@ -28,10 +28,12 @@
 				<div *ngIf="displayBattle && optionType == 'battle'">
 					<div *ngIf="currentPlayer.nation==6 && displayBattle.generalUnit>0" style="background-color: #ccf;">
 						<img src="assets/graphics/units/piece10u.png" height=20>
-						General took out unit <img src="{{ngUnitSrc(displayBattle.generalUnit)}}" height=20></div>
+						General took out unit <img src="{{ngUnitSrc(displayBattle.generalUnit)}}" height=20>
+					</div>
 					<div *ngIf="currentPlayer.nation==4 && displayBattle.generalUnit>0" style="background-color: #ccf;">
 						<img src="assets/graphics/units/piece10u.png" height=20>
-						General converted unit <img src="{{ngUnitSrc(displayBattle.generalUnit)}}" height=20></div>
+						General converted unit <img src="{{ngUnitSrc(displayBattle.generalUnit)}}" height=20>
+					</div>
 					<div *ngIf="displayBattle.hijackerUnit>0" style="background-color: #ccf;"><img
 							src="assets/graphics/units/piece41u.png" height=20> Hijacker converted unit <img
 							src="{{ngUnitSrc(displayBattle.hijackerUnit)}}" height=20></div>
@@ -142,9 +144,31 @@
 											title="{{superpowersData.units[piece].name}}"></span>
 								</div>
 							</div>
-							<div style="display: inline-flex; vertical-align: top;">
-								<button (click)="closeModal('#territoryPopup')" type="button"
-									class="btn btn-primary roundButton tall">OK</button></div>
+							<div>
+
+
+								<div *ngIf="displayBattle.allowGeneralRetreat">
+									<div class="borderClass">
+										<div><img src="assets/graphics/units/piece10u.png" height=40> General Can Withdraw</div>
+										<button (click)="withdrawGeneralButtonClicked()" id="generalWithdrawButton"
+											type="button" class="btn btn-success roundButton tall2"><i
+												class="fa fa-arrow-left"></i> Withdraw</button>
+										<button (click)="closeModal('#territoryPopup')" type="button"
+											class="btn btn-danger roundButton tall2"><i class="fa fa-arrow-down"></i>
+											Stay</button>
+										<div *ngIf="user.rank <= 2" style="font-size: 12px;">Press 'Stay' to keep your
+											General on the front lines.</div>
+									</div>
+
+								</div>
+								<div *ngIf="!displayBattle.allowGeneralRetreat">
+									<button (click)="closeModal('#territoryPopup')" type="button"
+										class="btn btn-primary roundButton tall">OK</button>
+								</div>
+
+
+
+							</div>
 						</div>
 						<div *ngIf="displayBattle.bonusUnitsFlg && displayBattle.militaryObj.wonFlg"
 							style="font-size: 12px;"><i class="fa fa-trophy"></i> You have been awarded troops:
@@ -306,7 +330,8 @@
 								<img src="assets/graphics/units/piece10u.png" height="20">
 								<img src="assets/graphics/units/piece11u.png" height="20">
 								Each bomber can carry up to 2 infantry, plus hero units. Only select
-								the paratroopers. Bombers are chosen automatically for you.</div>
+								the paratroopers. Bombers are chosen automatically for you.
+							</div>
 						</div>
 
 						<!--     each terr  moveTerr, totalMoveTerrs -->
@@ -394,7 +419,8 @@
 						</div>
 						<div *ngIf="battleAnalysisObj">
 							<button *ngIf="optionType=='attack'" [disabled]="totalUnitsThatCanMove==0"
-								(click)="autoButtonPressed()" type="button" class="btn btn-success roundButton"> Auto</button>
+								(click)="autoButtonPressed()" type="button" class="btn btn-success roundButton">
+								Auto</button>
 							<button *ngIf="totalUnitsThatCanMove>0" (click)="selectAllButtonChecked()" type="button"
 								[disabled]="totalUnitsThatCanMove==0" class="btn btn-success roundButton"> All</button>
 							<button (click)="moveTroopsButtonPressed()" [disabled]="battleAnalysisObj.numAttUnits==0"
@@ -456,12 +482,12 @@
 
 			<div class="modal-header" style="background-color: #337ab7;  border: 0">
 				<button (click)="closeModal('#territoryPopup')" type="button"
-					class="btn btn-secondary roundButton">Close</button>
+					class="btn btn-secondary roundButton" style="height: 60px;">Close</button>
 				<button *ngIf="adminModeFlg" (click)="adminAllowMovePressed()" type="button"
 					class="btn btn-secondary roundButton" title="allow all units here to move">Unfeeze Units</button>
 				<button *ngIf="adminModeFlg" (click)="moveHerosPressed()" type="button"
 					class="btn btn-secondary roundButton">Move Heros</button>
-				<button *ngIf="ableToTakeThisTurn && optionType=='production'" (click)="completePurchaseButtonClicked()"
+				<button *ngIf="0 && ableToTakeThisTurn && optionType=='production'" (click)="completePurchaseButtonClicked()"
 					type="button" class="btn btn-success roundButton">Purchase Complete</button>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>

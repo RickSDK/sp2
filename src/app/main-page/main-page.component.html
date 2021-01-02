@@ -3,75 +3,119 @@
 
 <span style="display: inline-block; position: absolute; padding: 5px; color: #555; font-size: 10px; top: -8px;">Version:
 	{{appVersion}}</span>
-<div style="max-width: 800px; display: block; margin-left: auto; margin-right: auto; text-align: center;">
-	<img id="spLogo" src="assets/graphics/images/superpowers.png" style="width: 100%;">
-	<div class="container-fluid" style="text-align: center;">
-		<div class="row">
-			<div class="col-sm-4" style="padding: 0;">
 
+<div style="display: table; position: absolute; left: 0; top: 0; height: 100%; width: 100%;">
+	<div style="display: table-cell; vertical-align: middle; text-align: center;">
+		<div style="max-width: 800px; display: block; margin-left: auto; margin-right: auto; text-align: center;">
+			<img id="spLogo" src="assets/graphics/images/superpowers.png" style="width: 100%;">
+			<div class="container-fluid" style="text-align: center;" *ngIf="!showVideoPlayerFlg">
+				<div class="row">
+					<div class="col-sm-4" style="padding: 0;">
 
-				<img (click)="singlePlayerGame(startGamePopup)" class="shadowed main-page-item"
-					src="assets/graphics/buttons/singleButton.png">
+						<img (click)="singlePlayerGame(startGamePopup)" class="shadowed main-page-item"
+							src="assets/graphics/buttons/singleButton.png" title="Single Player">
 
-				<div *ngIf="singleGameId>0" style="color: #337ab7; margin-top: -15px; z-index: 100; font-size: 12px;">
-					<b>Game in Progress!</b></div>
-
-				<button *ngIf="0" (click)="multiplayGameClicked(loginPopup)" type="button"
-					class="btn btn-primary circleButton"
-					style="width: 180px; height: 180px; background-size: cover; background-image: url('assets/graphics/buttons/multiplayer.png'); background-position: center; background-size: cover;">
-				</button>
-
-			</div>
-			<div class="col-sm-4 outer">
-				<div class="middle">
-
-					<div *ngIf="user" class="spCard main-page-item" (click)="userPopup.show(user)">
-						<div style="width: 100%;">
-							<div class="spTitle" style="height: 32px; padding-left: 0;">
-								<img src="{{user.imgSrc}}" style="height: 32px; max-width: 44px; float: left;">
-								<span style="padding: 5px;">{{user.userName}}</span>
-								<i class="fa fa-pencil-square-o"
-									style="float: right; padding-right: 5px; padding-top: 3px;"></i>
-								<img style="float: right;" *ngIf="user.empCount>0"
-									src="assets/graphics/units/piece52u.png" height=25>
-								<img style="float: right;" *ngIf="user.empCount>1"
-									src="assets/graphics/units/piece52u.png" height=25>
-							</div>
-							<div style="padding: 5px; background-color: white;">
-								<div style="font-size: 14px;"><img src="assets/graphics/ranks/rank{{user.rank}}.png"
-										style="max-height: 45px; max-width: 120px;"
-										title="{{yourRankName}}"></div>
-							</div>
-							<div *ngIf="superpowersData" style="background-color: #444; color: white;">
-								{{yourRankName}}
-							</div>
+						<div *ngIf="singleGameId>0"
+							style="color: #337ab7; margin-top: -15px; z-index: 100; font-size: 12px;">
+							<b>Game in Progress!</b>
 						</div>
+
+						<button *ngIf="0" (click)="multiplayGameClicked(loginPopup)" type="button"
+							class="btn btn-primary circleButton"
+							style="width: 180px; height: 180px; background-size: cover; background-image: url('assets/graphics/buttons/multiplayer.png'); background-position: center; background-size: cover;">
+						</button>
+
 					</div>
-					<div>
-						<a routerLink="/info"><button type="button"
-								class="btn btn-primary roundButton main-page-item"><i class="fa fa-info-circle"></i>
-								Info & Rules </button></a>
+					<div class="col-sm-4 outer">
+						<div class="middle">
+
+							<div *ngIf="user" class="spCard main-page-item" (click)="userPopup.show(user)">
+								<div style="width: 100%;">
+									<div class="spTitle" style="height: 32px; padding-left: 0;">
+										<img src="{{user.imgSrc}}" style="height: 32px; max-width: 44px; float: left;">
+										<span style="padding: 5px;">{{user.userName}}</span>
+										<i class="fa fa-pencil-square-o"
+											style="float: right; padding-right: 5px; padding-top: 3px;"></i>
+										<img style="float: right;" *ngIf="user.empCount>0"
+											src="assets/graphics/units/piece52u.png" height=25>
+										<img style="float: right;" *ngIf="user.empCount>1"
+											src="assets/graphics/units/piece52u.png" height=25>
+									</div>
+									<div style="padding: 5px; background-color: white;">
+										<div style="font-size: 14px;"><img
+												src="assets/graphics/ranks/rank{{user.rank}}.png"
+												style="max-height: 45px; max-width: 120px;" title="{{yourRankName}}">
+										</div>
+									</div>
+									<div *ngIf="superpowersData" style="background-color: #444; color: white;">
+										{{yourRankName}}
+									</div>
+								</div>
+							</div>
+							<div *ngIf="user.userId == 0" class="whiteLink" (click)="multiplayGameClicked(loginPopup)">Existing User Login</div>
+							<div>
+								<a routerLink="/info"><button type="button"
+										class="btn btn-primary roundButton main-page-item"><i class="fa fa-book"></i>
+										Rules </button></a>
+							</div>
+							<button *ngIf="guestNum >= 0" (click)="playVideo(1)" type="button"
+								class="btn btn-secondary roundButton" style="height: 60px;"><i class="fa fa-film"></i>
+								Intro
+								Video</button>
+							<button *ngIf="guestNum==1" (click)="playVideo(2)" type="button"
+								class="btn btn-secondary roundButton glowButton"><i class="fa fa-film"></i> Gameplay
+								Video</button>
+							<button *ngIf="guestNum==2" (click)="playVideo(2)" type="button"
+								class="btn btn-secondary roundButton"><i class="fa fa-film"></i> Gameplay
+								Video</button>
+							<button *ngIf="guestNum==3" (click)="playVideo(3)" type="button"
+								class="btn btn-secondary roundButton glowButton"><i class="fa fa-film"></i> Homescreen
+								Icon
+								Video</button>
+
+						</div>
+
+
 					</div>
-					<button *ngIf="showHomeButtonFlg" (click)="homeScreenPopup.show()" type="button" class="btn btn-primary roundButton main-page-item"><i
-							class="fa fa-home"></i> Add to Home Screen
-					</button>
+					<div class="col-sm-4" style="padding: 0;">
+
+						<img (click)="multiplayGameClicked(loginPopup)" class="shadowed main-page-item"
+							src="assets/graphics/buttons/multiButton.png" title="Multi-Player Games">
+
+						<div *ngIf="user && user.gamesTurn > 0"
+							style="color: #337ab7; margin-top: -15px; z-index: 100; font-size: 12px;"><b>Your turn in
+								{{user.gamesTurn}} games!</b>
+						</div>
+
+					</div>
 				</div>
-
-
 			</div>
-			<div class="col-sm-4" style="padding: 0;">
 
-				<img (click)="multiplayGameClicked(loginPopup)" class="shadowed main-page-item"
-					src="assets/graphics/buttons/multiButton.png">
-
-				<div *ngIf="user && user.gamesTurn > 0"
-					style="color: #337ab7; margin-top: -15px; z-index: 100; font-size: 12px;"><b>Your turn in
-						{{user.gamesTurn}} games!</b>
-				</div>
-
+			<div style="display: inline-block; border: 1px solid gray; width: 100%; max-width: 400px;">
+				<div style="text-align: center; font-size: 12px; color: gray;">Google Ads</div>
+				<ins class="adsbygoogle" style="display:block;" data-ad-client="ca-pub-2626924352662007"
+					data-ad-slot="3410873039" data-ad-format="auto" data-full-width-responsive="true"></ins>
 			</div>
+
 		</div>
 	</div>
+
+
+</div>
+
+<div *ngIf="showVideoPlayerFlg"
+	style="position: absolute; left: 0; top: 0; text-align: center; width: 100%; z-index: 100; background-color: gray; padding-bottom: 50px; box-shadow: 5px 5px 10px #444;">
+	<video id="mainVideo" style="width: 100%; height: auto; min-width: 480px; min-height: 320px;">
+		<source src="http://www.superpowersgame.com/superpowers480.mov" type="video/mp4">
+	</video>
+	<div>
+		<button (click)="turnOffVideo()" type="button" class="btn btn-secondary roundButton"><i class="fa fa-times"></i>
+			Cancel
+		</button>
+	</div>
+	<button (click)="turnOffVideo()" type="button" class="btn btn-secondary roundButton"
+		style="z-index: 1000; position: fixed; top: 0; left: 0;"><i class="fa fa-times"></i>
+	</button>
 </div>
 
 <!-------popups------------------>
@@ -82,8 +126,7 @@
 	<div style="padding: 5px;" *ngIf="user">
 		<img src="assets/graphics/advisors/leader.png" height=170>
 		<div *ngIf="user.rank < 2">
-			Welcome newbie! Want to take over the world? Yes, of course you do! Your first step will be to win a single
-			player game.
+			Welcome newbie! Want to take over the world? Yes, of course you do! Press Single Player to get started!
 		</div>
 		<div *ngIf="user.rank==2">Nice work! Now you are ready for multi-player!</div>
 		<div *ngIf="user.gamesTurn>0">It's your turn in {{user.gamesTurn}} of the multi-player games!</div>
@@ -112,7 +155,8 @@
 
 		<div *ngIf="user.newEmpFlg">
 			<img class="shadowed" src="assets/graphics/units/emp.png" title="Matchmaking" height="200">
-			<div>You have earned a new EMP! These can be used in matchmaking games only. Check out the units page to see
+			<div>You have earned a new EMP! These can be used in matchmaking games only. Check out the units page to
+				see
 				how they work.</div>
 		</div>
 		<div><button type="button" class="btn btn-primary roundButton medium">Got it!</button>

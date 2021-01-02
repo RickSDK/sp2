@@ -153,6 +153,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public spriteInMotionFlg = false;
 	public hidePlayersPanelFlag = false;
 	public spritePieceId = 2;
+	public fightersStrandedFlg = false;
 	public spriteShipId = 4;
 	public currentPlayerNation = 1;
 	public technologyPurchases = [];
@@ -181,6 +182,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public selectedTerritory: any;
 	public strandedAAGuns = [];
 	public battleObj: any;
+	public adsbygoogle: any;
 	public battleReport = { flag: 'flag2.gif', type: 'Battle', icon: 'fa-crosshairs', attNation: 2, defNation: 3, attCasualties: 1, defCasualties: 4, wonFlg: false, result: 'Lost!', terrX: 0, terrY: 0, cruiseFlg: false };
 	public advisorFirst6RoundsMessage = [
 		'Round 1. Click on your capital to purchase new units.',
@@ -210,6 +212,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		//this.cdr.detach();
 
 		this.initBoard();
+
+		setTimeout(() => {
+			(this.adsbygoogle = (window as any).adsbygoogle || []).push({});
+		  }, 3000);
 	}
 	//----------------load board------------------
 	ngStylePositionSvg(svg: any) {
@@ -365,13 +371,17 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		//var player2 = this.gameObj.players[6];
 		//player2.treaties=[0,3,3,0,0,0,4,3];
 
-		var terrId = 20;
+		var terrId = 74;
 		var terr = this.gameObj.territories[terrId - 1];
+		//	terr.owner = 4;
+		//this.addUnitToTerr(terr, 14, true, true, true);
+		//this.addUnitToTerr(terr, 14, true, true, true);
+
 
 		if (0) {
 			var x = 0;
 			terr.units.forEach(unit => {
-				if (unit.piece == 23 && x++<4) {
+				if (unit.piece == 23 && x++ < 4) {
 					console.log('xxxhey', unit);
 					unit.terr = 136;
 				}
@@ -391,10 +401,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (0) {
 			terr.owner = 4;
 			terr.units.forEach(unit => {
-				//		if (unit.piece == 15) {
-				unit.owner = 4;
-				unit.nation = 4;
-				//		}
+				if (unit.piece == 2 && unit.nation != 4) {
+					//			unit.dead = true;
+					unit.nation = 4;
+				}
 			});
 		}
 		/*
@@ -453,12 +463,17 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		///uploadCompletedGameStats(this.gameObj, 'Russian Republic|European Union|Communist China|Middle-East Federation', this.superpowersData, this.yourPlayer, this.user);
 		//-------------------- test
 		if (0) {
-			this.adminFixBoard();
+			setTimeout(() => {
+				this.adminFixBoard();
+			}, 1000);
 		}
+
 
 		this.haltPurchaseFlg = false; //cpu only!
 		this.haltCombatActionFlg = false;
 		this.haltActionFlg = false;
+		if (this.gameObj.maxAllies > 4)
+			this.gameObj.maxAllies = 3;
 		if (0) {
 			//this.gameObj.turnId = 5; //<--- test
 			this.haltActionFlg = true;
@@ -552,12 +567,14 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			});
 		});
 		this.currentPlayer.treatyOfferedNation = treatyOfferedNation;
+		playVoiceClip('nation' + this.currentPlayer.nation + '.mp3');
 
 		if (this.ableToTakeThisTurn)
 			this.displayMilitaryAdvisorMessage();
 		else {
 			this.initializePlayer();
 		}
+
 		this.cdr.detectChanges();
 	}
 	checkEMPAndTimer(player, gameObj, ableToTakeThisTurn) {
@@ -793,7 +810,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.initializePlayer();
 	}
 	initializePlayer() {
-		playVoiceClip('nation' + this.currentPlayer.nation + '.mp3');
+		//playVoiceClip('nation' + this.currentPlayer.nation + '.mp3');
 		refreshAllTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 		this.showControls = !this.currentPlayer.cpu;
 		if (!this.currentPlayer.cpu)
@@ -885,18 +902,22 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				if (this.gameObj.round == 1) {
 					this.forceUserToClickTerritory(62);
 					playVoiceClip('bt09Ukraine.mp3');
+					this.showAlertPopup('It\'s time to start World War III! Your first mission is to take over the Russia! This will boost your income by 10 coins per turn. You will need to fight your way to the capital, starting with Ukraine.');
 					this.newPlayerHelpText = 'Make an attack!. Click on Ukraine.';
 				}
 				if (this.gameObj.round == 2) {
 					this.forceUserToClickTerritory(15);
+					this.showAlertPopup('Let the invasion of Russia Commence! Click on Chechnya to attack.');
 					this.newPlayerHelpText = 'Advance into Russia! Click on Chechnya to attack.';
 				}
 				if (this.gameObj.round == 3) {
 					this.forceUserToClickTerritory(14);
+					this.showAlertPopup('Continue pushing towards the Russian capital! Click on Karelia to attack.');
 					this.newPlayerHelpText = 'Keep fighting! Click on Karelia to attack.';
 				}
 				if (this.gameObj.round == 4) {
 					this.forceUserToClickTerritory(13);
+					this.showAlertPopup('Your goal is to take over 6 capitals. See if you have enough forces to attack Russia.');
 					this.newPlayerHelpText = 'Your goal is to take over 6 capitals. See if you have enough forces to attack Russia.';
 				}
 				if (this.gameObj.round == 5) {
@@ -1083,6 +1104,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		keys.forEach(idStr => {
 			var id = numberVal(idStr) - 1;
 			var terr = this.gameObj.territories[id];
+			attackUnits = [];
 			this.gameObj.units.forEach(unit => {
 				if (unit.owner == player.nation && unit.terr == terr.id && unit.movesLeft > 0 && isUnitCruiseUnit(unit.piece)) {
 					unit.movesLeft = 0;
@@ -1101,8 +1123,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					}
 				}
 			});
-			if (bestTerr && attackUnits.length > 0)
+			if (bestTerr && attackUnits.length > 0) {
 				this.landTheCruise(terr.id, attackUnits, bestTerr, [terr], this.currentPlayer, this.gameObj, this.superpowersData);
+			}
 		});
 	}
 	attemptCPUToNuke() {
@@ -1386,7 +1409,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	forcedClickMessage() {
 		var ter = this.gameObj.territories[this.forcedClickNation - 1];
-		showAlertPopup('Please click on ' + ter.name, 1);
+		if (this.forcedClickNation == 62)
+			showAlertPopup('You need to expand your empire by taking over Ukraine!', 1);
+		else
+			showAlertPopup('Please click on ' + ter.name, 1);
 		this.forceUserToClickTerritory(this.forcedClickNation);
 		//highlightTerritoryWithArrow(this.forcedClickNation, this.gameObj);
 	}
@@ -1395,7 +1421,23 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			playSound('error.mp3');
 			return;
 		}
+		if (this.fightersStrandedFlg && this.selectedTerritory) {
+			this.fightersStrandedFlg = false;
+			var fightersToMove = this.selectedTerritory.carrierCargo - this.selectedTerritory.carrierSpace;
+			this.selectedTerritory.units.forEach(unit => {
+				if (unit.subType == 'fighter' && fightersToMove-- > 0) {
+					unit.terr = terr.id;
+				}
+			});
+			refreshTerritory(this.selectedTerritory, this.gameObj, this.currentPlayer, this.superpowersData, (this.ableToTakeThisTurn) ? this.currentPlayer : this.yourPlayer);
+			refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, (this.ableToTakeThisTurn) ? this.currentPlayer : this.yourPlayer);
+
+			this.showAlertPopup('Fighters moved.');
+			return;
+
+		}
 		if (this.ableToTakeThisTurn) {
+
 			if (this.strandedAAGuns.length > 0) {
 				moveTheseUnitsToThisTerritory(this.strandedAAGuns, terr, gameObj);
 				this.showAlertPopup('Units moved!', 1);
@@ -1421,8 +1463,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					}
 					this.forcedClickNation = 0;
 				} else {
-					this.forcedClickMessage();
-					return;
+					console.log('supposed to be forced click!');
+					//this.forcedClickMessage();
+					//return;
 				}
 			}
 			if (this.gameObj.round == 1 && this.currentPlayer.placedInf < 3) {
@@ -1450,15 +1493,18 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			changeClass('completeTurnButton', 'glowButton');
 		}
 
-		if (terr.cargoTypeUnits > 0 || terr.carrierCargo > 0 || terr.carrierSpace > 0) {
-			//fixSeaCargo(terr, gameObj);
-		}
+
 		refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, (this.ableToTakeThisTurn) ? this.currentPlayer : this.yourPlayer);
 		displayLeaderAndAdvisorInfo(terr, currentPlayer, this.yourPlayer, user, gameObj, this.superpowersData.superpowers, 'home');
 		//		terr.units = unitsForTerr(terr, gameObj.units);
 		terr.displayQueue = getDisplayQueueFromQueue(terr, this.gameObj);
 		this.selectedTerritory = terr;
-		popup.show(terr, currentPlayer, gameObj, ableToTakeThisTurn, user, this.yourPlayer);
+		if (terr.nation == 99 && terr.carrierCargo > terr.carrierSpace) {
+			this.fightersStrandedFlg = true;
+			this.showAlertPopup('Fighters stranded. Click the territory they belong to.', 1);
+		}
+		else
+			popup.show(terr, currentPlayer, gameObj, ableToTakeThisTurn, user, this.yourPlayer);
 	}
 	musicUpdated($event) {
 		if (isMusicOn()) {
@@ -1653,6 +1699,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.spriteShipId = obj.id;
 			spriteObj.name = 'spriteShip';
 		}
+
+		if (0 && !this.isDesktopFlg && this.currentPlayer.cpu)
+			return;
+
 		if (obj.nukeFlg) {
 			setTimeout(() => {
 				shakeScreen()
@@ -1668,9 +1718,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				this.positionNuke(t2, true);
 			}, 1200);
 		}
-
-		if (!this.isDesktopFlg && this.currentPlayer.cpu)
-			return;
 
 		if (obj.id == 14)
 			spriteObj.name = 'sprite14';
@@ -2015,7 +2062,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			updateProgressBar(30);
 		}
 		this.currentPlayer.status = 'Waiting';
-		playSound('clink.wav');
+		//playSound('clink.wav');
 		localStorage.generalRetreatObj = '';
 		this.currentPlayer.news = [];
 		this.currentPlayer.botRequests = [];
@@ -2334,6 +2381,15 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 	scrollToNation(nation) {
 		scrollToCapital(nation);
+	}
+	ngClassGradient = function () {
+		if (this.yourPlayer && this.currentPlayer && this.yourPlayer.nation == this.currentPlayer.nation) {
+			if (this.currentPlayer.status == 'Attack')
+				return "gradientRed";
+			else
+				return "gradientGreen";
+		}
+		return "gradientBlue";
 	}
 	ngClassFlag = function (terr, isDesktopFlg) {
 		var hover = '';

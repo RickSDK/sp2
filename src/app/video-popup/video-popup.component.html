@@ -7,10 +7,31 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="text-align: center;">
 
-        
-                <iframe width="100%" height="315" src="https://www.youtube.com/embed/PS1MBaPTEO4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <button (click)="playVideo(1)" type="button" class="btn btn-secondary roundButton"
+                    style="height: 60px;"><i class="fa fa-film"></i> Intro
+                    Video</button>
+                <button (click)="playVideo(2)" type="button" class="btn btn-secondary roundButton"
+                    style="height: 60px;"><i class="fa fa-film"></i> Gameplay
+                    Video</button>
+                <button (click)="playVideo(3)" type="button" class="btn btn-secondary roundButton"
+                    style="height: 60px;"><i class="fa fa-film"></i> Homescreen Icon
+                    Video</button>
+
+
+                <div style="text-align: center;">
+                    <video *ngIf="showVideoPlayerFlg" id="mainVideo"
+                        style="width: 100%; height: auto; min-width: 480px; min-height: 320px;">
+                        <source src="http://www.superpowersgame.com/superpowers480.mov" type="video/mp4">
+                    </video>
+                    <div *ngIf="showVideoPlayerFlg">
+                        <button (click)="turnOffVideo()" type="button" class="btn btn-secondary roundButton"><i
+                                class="fa fa-times"></i>
+                            Cancel
+                        </button>
+                    </div>
+                </div>
 
             </div>
             <div class="modal-footer">

@@ -62,7 +62,7 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
         //water loading
         if (unit.subType == 'fighter' && toTerr.carrierSpace == 0)
             return false;
-        if ((unit.subType == 'hero' || unit.subType=='aa') && toTerr.cargoSpace > 0 && distObj.air == 1)
+        if ((unit.subType == 'hero' || unit.subType == 'aa') && toTerr.cargoSpace > 0 && distObj.air == 1)
             return true;
         if (unit.type == 1 && toTerr.transportSpace == 0)
             return false;
@@ -297,12 +297,23 @@ function moveTheseUnitsToThisTerritory(units, selectedTerritory, gameObj) {
         }
         if ((unit.type == 1 || unit.type == 2) && selectedTerritory.nation == 99)
             findTransportForThisCargo(unit, selectedTerritory, gameObj);
+
+ //       if (unit.piece == 8 && unit.cargo.length == 0)
+  //          seeIfCargoShouldBeThere(unit, gameObj);
+
         if (unit.cargo && unit.cargo.length > 0)
             moveCargoWithThisUnit(unit, gameObj, terr1Id);
     }
     //squareUpAllCargo(units, gameObj);
     illuminateThisTerritory(selectedTerritory, gameObj);
     return { t1: terr1Id, t2: selectedTerritory.id, id: piece };
+}
+function seeIfCargoShouldBeThere(carrier, gameObj) {
+    return;
+    gameObj.units.forEach(fighter => {
+        if (fighter.subType=='fighter' && fighter.nation == carrier.nation)
+            console.log('fighter!!', fighter)
+    });
 }
 function removeThisUnitFromTransport(unit, gameObj) {
     console.log('removeThisUnitFromTransport');
@@ -320,6 +331,7 @@ function removeThisUnitFromTransport(unit, gameObj) {
     unit.cargoOf = 0;
 }
 function moveCargoWithThisUnit(unit, gameObj, terr1Id) {
+    console.log('xxxxmoveCargoWithThisUnit');
     unit.cargo.forEach(cUnit => {
         var cargo = findUnitOfId(cUnit.id, gameObj);
         if (cargo)

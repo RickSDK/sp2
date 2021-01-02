@@ -29,13 +29,18 @@ export class LoginPopupComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     //  this.hostname = getHostname();
     this.user = userObjFromUser();
-    this.userName = this.user.userName;
+    this.userName = '';
     this.email = '';
   }
-  show() {
+  show(email: string) {
     $("#loginPopup").modal();
     this.showLoginFlg = true;
     this.requestSentFlg = false;
+    this.email = email || '';
+    if (email && email.length > 0) {
+      this.userName = '';
+      this.showLoginFlg = false;
+    }
   }
   clearValue(event: any) {
     event.target.value = '';
@@ -43,10 +48,17 @@ export class LoginPopupComponent extends BaseComponent implements OnInit {
   loginPressed() {
     this.userName = this.databaseSafeValueOfInput('emailField');
     this.password = this.databaseSafeValueOfInput('passwordField');
-    if (!this.userName || !this.password || this.userName.length == 0 || this.password.length == 0) {
-      this.showAlertPopup('Value is blank!', 1);
+
+    if (!this.userName || this.userName.length == 0) {
+      this.showAlertPopup('Username/Email is blank!', 1);
       return;
     }
+    if (!this.password || this.password.length == 0) {
+      this.showAlertPopup('Password is blank!', 1);
+      return;
+    }
+
+    
     this.showLoginFlg = false;
     this.requestSentFlg = true;
 
@@ -72,7 +84,7 @@ export class LoginPopupComponent extends BaseComponent implements OnInit {
     if (this.verifyServerResponse(data)) {
       var userObj = parseServerDataIntoUserObj(data);
       localStorage.userName = userObj.userName;
-      //getIPInfo(localStorage.userName, localStorage.password);
+      getIPInfo(localStorage.userName, localStorage.password);
       localStorage.rank = userObj.rank;
       showAlertPopup('Success');
       this.messageEvent.emit('done');
@@ -128,10 +140,10 @@ export class LoginPopupComponent extends BaseComponent implements OnInit {
         this.showAlertPopup('Unable to reach server: ' + error, 1);
       });
 
-   }
+  }
   accountCreatedResponse() {
     var ip = 'ip';
-    var data = 'success|'+localStorage.userName+'|2|N|0|0|0||0|12|0|0|0|0|'+ip+'|soldier.JPG|0|0|0|0|0|0|'+this.user.avatar+'|';
+    var data = 'success|' + localStorage.userName + '|2|N|0|0|0||0|12|0|0|0|0|' + ip + '|soldier.JPG|0|0|0|0|0|0|' + this.user.avatar + '|';
     var userObj = parseServerDataIntoUserObj(data);
     console.log(userObj)
     getIPInfo(userObj.userName, localStorage.password);

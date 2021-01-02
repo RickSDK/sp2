@@ -48,6 +48,7 @@
 		"src/js/board.js",
     "src/js/computer.js",
     "src/js/battle.js",
+    "src/js/dateLib.js",
 		"src/js/movement.js"
 		]
           },
