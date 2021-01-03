@@ -45,6 +45,7 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
   }
 
   addUniToQueue(piece: number, count: number) {
+    playClick();
     if(this.user.rank==0 && piece != 3 && this.gameObj.round==1) {
       this.showAlertPopup('Just buy tanks this turn.', 1);
       return;
@@ -72,7 +73,6 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
     }
 
     if (piece == 12) {
-      playClick();
       displayFixedPopup('battleshipPopup');
       this.addUpBattleShipCost();
       return;

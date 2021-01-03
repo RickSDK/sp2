@@ -206,8 +206,14 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.hostname = getHostname();
 		this.user = userObjFromUser();
 		this.svgs = loadSVGs();
-		this.warAudio.loop = true;
+
+		this.warAudio.loop = false;
 		this.warAudio.preload = 'auto';
+		this.gameMusic.loop = false;
+		this.gameMusic.preload = 'auto';
+		this.endGameMusic.loop = false;
+		this.endGameMusic.preload = 'auto';
+
 		this.gameObj = { territories: [] };
 		//this.cdr.detach();
 
@@ -215,7 +221,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		setTimeout(() => {
 			(this.adsbygoogle = (window as any).adsbygoogle || []).push({});
-		  }, 3000);
+		}, 3000);
 	}
 	//----------------load board------------------
 	ngStylePositionSvg(svg: any) {
@@ -467,7 +473,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				this.adminFixBoard();
 			}, 1000);
 		}
-
 
 		this.haltPurchaseFlg = false; //cpu only!
 		this.haltCombatActionFlg = false;
@@ -837,7 +842,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	initializePlayerForPurchase() {
 		//human & cpu
-		this.gameObj.actionButtonMessage = 'Purchase Complete';
 		var player = this.currentPlayer;
 		this.hideActionButton = false;
 		player.carrierAddedFlg = false;
@@ -888,7 +892,16 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				this.newPlayerHelpText = 'Build a new factory in Ukraine. Click on Ukraine.';
 			}
 		}
-
+		this.playerSetToPurchaseAndRefresh();
+	}
+	playerSetToPurchaseAndRefresh() {
+		this.currentPlayer.status = 'Purchase';
+		this.gameObj.actionButtonMessage = 'Purchase Complete';
+		refreshAllPlayerTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
+	}
+	playerSetToAttackAndRefresh() {
+		this.currentPlayer.status = 'Attack';
+		refreshAllPlayerTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 	}
 	initializePlayerForAttack() {
 		this.newPlayerHelpText = 'Make an attack, or move units or press "End Turn"';
@@ -943,6 +956,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	computerGo() {
 		if (this.gameObj.gameOver)
 			return;
+		this.warAudio.play();
+
 		this.currentPlayer.cpuFlg = true;
 		this.showControls = false;
 		cleanUpTerritories(this.currentPlayer, this.gameObj);
@@ -957,6 +972,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}, delay);
 	}
 	computerStarting() {
+
 		if (this.currentPlayer.status == 'Waiting') {
 			this.computerPurchase();
 		} else {
@@ -972,7 +988,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.showControls = true;
 			showAlertPopup('purchases done! action halted.');
 		} else {
-			this.warAudio.play();
 			setTimeout(() => {
 				this.completingPurchases();
 			}, 200);
@@ -1333,8 +1348,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		popupBattleReport(this.battleReport);
 	}
 	computerMove() {
-		this.warAudio.pause();
-
 		recallBoats(this.gameObj, this.currentPlayer);
 
 		if (this.currentPlayer.primaryTargetId == 0 && this.currentPlayer.nation != 4) {
@@ -1378,7 +1391,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 	}
 	completingPurchases() {
-		this.currentPlayer.status = 'Attack';
+		this.playerSetToAttackAndRefresh();
 		this.hideActionButton = !this.hideActionButton;
 		this.logPurchases(this.currentPlayer);
 		scrubUnitsOfPlayer(this.currentPlayer, this.gameObj, this.superpowersData.units); // in case of tech
@@ -1388,8 +1401,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	diplomacyDone(msg: string) {
 		if (this.currentPlayer.offers.length == 0) {
-			this.gameObj.actionButtonMessage = 'Purchase Complete';
-			this.currentPlayer.status = 'Purchase';
+			this.playerSetToPurchaseAndRefresh();
 		}
 		scrollToCapital(this.currentPlayer.nation);
 	}
@@ -1700,8 +1712,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			spriteObj.name = 'spriteShip';
 		}
 
-		if (0 && !this.isDesktopFlg && this.currentPlayer.cpu)
-			return;
+		//if (0 && !this.isDesktopFlg && this.currentPlayer.cpu)
+		//	return;
 
 		if (obj.nukeFlg) {
 			setTimeout(() => {
@@ -1906,8 +1918,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 	redoPurchase() {
 		playClick();
-		this.currentPlayer.status = 'Purchase'
-		this.gameObj.actionButtonMessage = 'Purchase Complete';
+		this.playerSetToPurchaseAndRefresh();
 		this.hideActionButton = !this.hideActionButton;
 		this.logItem(this.currentPlayer, 'Redoing Purchases', 'Redo');
 	}
@@ -2076,6 +2087,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		var damageReport = getDamageReport(this.currentPlayer, this.gameObj, this.superpowersData);
 		logItem(this.gameObj, this.currentPlayer, 'Turn Completed', this.currentPlayer.income + ' Coins Collected.', '', '', '', '', damageReport);
 		var prevPlayer = this.currentPlayer;
+		setTimeout(() => {
+			this.warAudio.pause();
+		}, 2000);
 		if (this.gameObj.gameOver) {
 			if (isMusicOn()) {
 				this.gameMusic.pause();
@@ -2386,7 +2400,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.yourPlayer && this.currentPlayer && this.yourPlayer.nation == this.currentPlayer.nation) {
 			if (this.currentPlayer.status == 'Attack')
 				return "gradientRed";
-			else
+			if (this.currentPlayer.status == 'Purchase')
 				return "gradientGreen";
 		}
 		return "gradientBlue";

@@ -30,10 +30,10 @@
 		(mouseenter)="changeSVGColor(true, terr.id, terr.owner)"
 		(mouseleave)="changeSVGColor(false, terr.id, terr.owner)">
 	<div style="padding-top: 0px; margin-top: -6px; max-width: 60px; white-space: nowrap;" *ngIf="terr.nation<99"><span
-			class="boardBlack">{{terr.displayUnitCount}}</span><img *ngIf="terr.piece>0"
+			class="boardBlack">{{terr.displayUnitCount}}</span>&nbsp;<img *ngIf="terr.piece>0"
 			src="{{ngUnitSrc(terr.piece, terr.owner)}}" title="{{terr.pieceName}}"
 			style="max-height: 18px; max-width: 24px;"></div>
-	<div style="padding-top: 0px; margin-top: -6px;" *ngIf="terr.nation==99 && terr.totalUnitCount>0">
+	<div style="padding-top: 0px; margin-top: -6px; white-space: nowrap;" *ngIf="terr.nation==99 && terr.totalUnitCount>0">
 		<span class="boardBlack" style="background-color: blue;">{{terr.displayUnitCount}}</span>
 		<img
 			*ngIf="terr.piece>0" src="{{ngUnitSrc(terr.piece, terr.owner)}}" title="{{terr.pieceName}}"

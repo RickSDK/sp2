@@ -42,10 +42,7 @@
                 <div class="btn-group" *ngIf="gameId>1">
                     <button (click)="changeFilter(0)" type="button" class="btn btn-default roundButton"
                         [ngClass]="ngClassSegment(filterNation,0)">All</button>
-                    <button *ngIf="0" (click)="changeFilter(-1)" type="button" class="btn btn-default roundButton"
-                        [ngClass]="ngClassSegment(filterNation,-1)">Allies
-                    </button>
-                    <button *ngFor="let player of alivePlayers" [ngClass]="ngClassSegment(filterNation, player.nation)"
+                    <button *ngFor="let player of gameObj.players" [ngClass]="ngClassSegment(filterNation, player.nation)"
                         (click)="changeFilter(player.nation)" type="button" class="btn btn-success roundButton"><img
                             src="assets/graphics/images/flag{{player.nation}}.gif" height=25>
                     </button>

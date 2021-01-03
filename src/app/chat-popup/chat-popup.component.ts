@@ -32,6 +32,7 @@ export class ChatPopupComponent extends BaseComponent implements OnInit {
   public bugFlg = false;
   public filterNation: number = 0;
   public allMessages: any;
+  public yourNation = 0;
 
   constructor() { super(); }
 
@@ -49,6 +50,8 @@ export class ChatPopupComponent extends BaseComponent implements OnInit {
       }
       this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);
       this.yourPlayer = yourPlayer;
+      if (this.yourPlayer && this.yourPlayer.nation)
+        this.yourNation = this.yourPlayer.nation;
 
       var alivePlayers = [];
       gameObj.players.forEach(player => {
@@ -71,7 +74,7 @@ export class ChatPopupComponent extends BaseComponent implements OnInit {
   filterChatMessages() {
     var messages = [];
     this.allMessages.forEach(msg => {
-      if (this.filterNation == 0 || this.filterNation == msg.nation)
+      if (this.filterNation == 0 || this.filterNation == msg.nation || msg.nation == this.yourNation)
         messages.push(msg);
     });
     this.chatMessages = messages;

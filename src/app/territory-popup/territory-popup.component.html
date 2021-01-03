@@ -251,8 +251,16 @@
 				</div>
 				<!--end The Battlefield-->
 
+				<div *ngIf="ableToTakeThisTurn && currentPlayer.status != 'Attack' && optionType != 'production'" style="background-color: #cfc;">
+					<div><b><i class="fa fa-exclamation-triangle"></i> Currently in Purchase Phase. </b></div>
+					<div style="color: gray; font-size: 12px;">Press 'Purchase Complete' to move to the next phase of your turn.</div>
+					<button (click)="closeModal('#territoryPopup')" type="button"
+								class="btn btn-primary roundButton glowButton"> Close
+					</button>
+				</div>
+
 				<app-terr-buttons
-					*ngIf="ableToTakeThisTurn && currentPlayer.status!='Purchase' && optionType != 'battle'"
+					*ngIf="ableToTakeThisTurn && currentPlayer.status == 'Attack' && optionType != 'battle'"
 					[selectedTerritory]="selectedTerritory" [currentPlayer]="currentPlayer"
 					[superpowersData]="superpowersData" [gameObj]="gameObj" [user]="user" [optionType]="optionType"
 					[ableToTakeThisTurn]="ableToTakeThisTurn" [hostileMessage]="hostileMessage"

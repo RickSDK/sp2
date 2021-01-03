@@ -21,6 +21,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 		return;
 	}
 
+	var isPurchasePhase = (yourPlayer && yourPlayer.nation == currentPlayer.nation && yourPlayer.nation == terr.owner && currentPlayer.status == 'Purchase');
 	var unitCount = 0;
 	var highestPiece = 0;
 	var adCount = 0;
@@ -311,12 +312,10 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	terr.strandedCargo = strandedCargo;
 	if (strandedCargo.length > 0)
 		fixCargoOnTerr(strandedCargo, terr, gameObj);
-	var flag = flagOfOwner(terr.owner, terr, showDetailsFlg, totalUnitCount, terr.defeatedByNation, terr.nuked, terr.attackedByNation);
+	var flag = flagOfOwner(terr, showDetailsFlg, totalUnitCount, isPurchasePhase);
+
+	//var flag = flagOfOwner(terr.owner, terr, showDetailsFlg, totalUnitCount, terr.defeatedByNation, terr.nuked, terr.attackedByNation);
 	terr.flag = flag;
-	//	if (gameObj.historyMode) {
-	//		terr.flag = flagOfOwner(terr.histOwner, terr, false, totalUnitCount, terr.histDefeatedByNation, terr.histNuked, terr.attackedByNation);
-	//		return;
-	//	}
 
 	var userName = 'Neutral';
 	if (terr.owner > 0) {
@@ -399,13 +398,13 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 		terr.title += '\n' + superBSStats;
 
 
-	if(cargoTypeUnits>0 && cargoSpace>0) {
+	if (cargoTypeUnits > 0 && cargoSpace > 0) {
 		doubleCheckCargoForTerr(terr, gameObj);
 	}
 }
 function doubleCheckCargoForTerr(terr, gameObj) {
 	terr.units.forEach(function (unit) {
-		if(unit.subType == 'fighter' && !unit.cargoOf) {
+		if (unit.subType == 'fighter' && !unit.cargoOf) {
 			console.log('fix fighter!', unit);
 			findTransportForThisCargo(unit, terr, gameObj);
 		}
@@ -1807,7 +1806,13 @@ function isUnitAirDefense(unit) {
 	return (unit.piece == 13 || unit.piece == 37 || unit.piece == 39 || unit.piece == 40 || unit.piece == 9);
 }
 
-function flagOfOwner(own, terr, showDetailsFlg, unitCount, defeatedByNation, nuked, attackedByNation) {
+function flagOfOwner(terr, showDetailsFlg, unitCount, isPurchasePhase) {
+	//(own, terr, showDetailsFlg, unitCount, defeatedByNation, nuked, attackedByNation) {
+	var own = terr.owner;
+	var defeatedByNation = terr.defeatedByNation;
+	var nuked = terr.nuked;
+	var attackedByNation = terr.attackedByNation;
+
 	var flag = 'flag' + own + '.png';
 
 	if (terr.capital || terr.nation == 99)
@@ -1821,7 +1826,7 @@ function flagOfOwner(own, terr, showDetailsFlg, unitCount, defeatedByNation, nuk
 	if (own == 0 && terr.nation > 0 && terr.nation < 99) {
 		flag = 'flagn' + terr.nation + '.png';
 
-		if(terr.capital)
+		if (terr.capital)
 			flag = 'flagn' + terr.nation + '.gif';
 	}
 	if (defeatedByNation > 0 || attackedByNation > 0) {
@@ -1842,6 +1847,10 @@ function flagOfOwner(own, terr, showDetailsFlg, unitCount, defeatedByNation, nuk
 		if (0 && terr.nation < 99 && terr.owner > 0 && !terr.capital && terr.owner == terr.nation)
 			f.style.opacity = '.5'
 	}
+	if (isPurchasePhase && terr.factoryCount) {
+		flag = 'flagBuy.png';
+	}
+
 	return flag;
 }
 function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPlayer, user) {

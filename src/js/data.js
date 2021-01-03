@@ -199,7 +199,7 @@ function getGameTerritories() {
 	terrs.push({ id: x++, name: 'Taimyr', x: 967, y: 98, nation: 3, owner: 0, type: 0, water: 0, borders: '13+20+19', land: [13, 19, 20] });
 	terrs.push({ id: x++, name: 'Novosibirsk', x: 945, y: 209, nation: 3, owner: 0, type: 0, water: 0, borders: '13+18+20+64+29+17', land: [13, 17, 29, 64, 20, 18] });
 	terrs.push({ id: x++, name: 'Siberia', x: 1055, y: 101, nation: 3, owner: 0, type: 0, water: 0, borders: '18+19+64+24+23+22', land: [18, 19, 64, 24, 23, 22] });
-	terrs.push({ id: x++, name: 'Japan', x: 1187, y: 271, nation: 4, owner: 0, type: 0, capital: true, water: 141, land: [24], enemyWater: 137, enemyZone: 32, enemyWater2: 139, enemyZone2: 26, borders: '24+141+142' });
+	terrs.push({ id: x++, name: 'Japan', x: 1187, y: 261, nation: 4, owner: 0, type: 0, capital: true, water: 141, land: [24], enemyWater: 137, enemyZone: 32, enemyWater2: 139, enemyZone2: 26, borders: '24+141+142' });
 	terrs.push({ id: x++, name: 'Far East', x: 1166, y: 73, nation: 4, owner: 0, type: 0, water: 0, borders: '20+23+144+5', land: [20, 23, 5] });
 	terrs.push({ id: x++, name: 'Okhotsk', x: 1126, y: 211, nation: 4, owner: 0, type: 0, water: 0, borders: '22+20+24+141', land: [22, 20, 24] });
 	terrs.push({ id: x++, name: 'Korea', x: 1091, y: 258, nation: 4, owner: 0, type: 0, water: 0, borders: '20+23+141+21+25+30+64', land: [20, 23, 64, 30, 25, 21] });
@@ -319,7 +319,7 @@ function getGameTerritories() {
 	terrs.push({ id: x++, name: 'South China Sea', x: 1099, y: 369, nation: 99, owner: 0, type: 0, borders: '131+137+139+31+25+141' });
 	terrs.push({ id: x++, name: 'Taiwan Waters', x: 1167, y: 381, nation: 99, owner: 0, type: 0, borders: '141+140+136+138+26+137+142' });
 	terrs.push({ id: x++, name: 'Marshall Waters', x: 1256, y: 392, nation: 99, owner: 0, type: 0, borders: '27+143+142+139+136+83' });
-	terrs.push({ id: x++, name: 'Sea of Japan', x: 1142, y: 290, nation: 99, owner: 0, type: 0, capital: true, homeBase: 21, enemyWater: 137, enemyZone: 32, enemyWater2: 139, enemyZone2: 26, borders: '23+24+21+144+142+139+138' });
+	terrs.push({ id: x++, name: 'Sea of Japan', x: 1142, y: 300, nation: 99, owner: 0, type: 0, capital: true, homeBase: 21, enemyWater: 137, enemyZone: 32, enemyWater2: 139, enemyZone2: 26, borders: '23+24+21+144+142+139+138' });
 	terrs.push({ id: x++, name: 'E Japan Waters', x: 1200, y: 330, nation: 99, owner: 0, type: 0, borders: '21+141+143+140+139+144' });
 	terrs.push({ id: x++, name: 'Guam Waters', x: 1250, y: 262, nation: 99, owner: 0, type: 0, borders: '65+142+140+144+81' });
 	terrs.push({ id: x++, name: 'Bering Sea', x: 1245, y: 169, nation: 99, owner: 0, type: 0, borders: '22+141+142+143+79' });

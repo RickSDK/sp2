@@ -1,3 +1,4 @@
+console.log('+++++loading audio files');
 var clickSound = new Audio('assets/sounds/click.mp3');
 clickSound.preload = 'auto';
 var clinkSound = new Audio('assets/sounds/clink.mp3');
@@ -16,6 +17,40 @@ var nineMmSound = new Audio('assets/sounds/9mm.mp3');
 nineMmSound.preload = 'auto';
 var dripSound = new Audio('assets/sounds/drip.mp3');
 dripSound.preload = 'auto';
+var clearThroat = new Audio('assets/sounds/clearThroat.mp3');
+clearThroat.preload = 'auto';
+var vehicles = new Audio('assets/sounds/vehicles.mp3');
+vehicles.preload = 'auto';
+var bomb2 = new Audio('assets/sounds/bomb2.mp3');
+bomb2.preload = 'auto';
+var fighter = new Audio('assets/sounds/fighter.mp3');
+fighter.preload = 'auto';
+var marching = new Audio('assets/sounds/marching.wav');
+marching.preload = 'auto';
+var bomb4 = new Audio('assets/sounds/bomb4.mp3');
+bomb4.preload = 'auto';
+var yes = new Audio('assets/sounds/yes.mp3');
+yes.preload = 'auto';
+var tornado = new Audio('assets/sounds/tornado.mp3');
+tornado.preload = 'auto';
+var bell = new Audio('assets/sounds/bell.mp3');
+bell.preload = 'auto';
+var bombers = new Audio('assets/sounds/bombers.mp3');
+bombers.preload = 'auto';
+var Scream = new Audio('assets/sounds/Scream.mp3');
+Scream.preload = 'auto';
+var torture = new Audio('assets/sounds/torture.mp3');
+torture.preload = 'auto';
+var foghorn = new Audio('assets/sounds/foghorn.wav');
+foghorn.preload = 'auto';
+var tada = new Audio('assets/sounds/tada.mp3');
+tada.preload = 'auto';
+var gun = new Audio('assets/sounds/gun.mp3');
+gun.preload = 'auto';
+var shotgun = new Audio('assets/sounds/shotgun.mp3');
+shotgun.preload = 'auto';
+var warning = new Audio('assets/sounds/warning.mp3');
+warning.preload = 'auto';
 
 var voiceOverAudio = new Audio('assets/voice/bt01welcome.mp3');
 
@@ -23,48 +58,119 @@ function playClick() {
 	if (!isSoundOn()) {
 		return;
 	}
+
 	clickSound.play();
 }
 function playSound(fileName) {
 	if (!isSoundOn()) {
 		return;
 	}
-	if(fileName == 'clink.wav') {
+	if (fileName == 'clink.wav') {
 		clinkSound.play();
 		return;
 	}
-	if(fileName == 'open') {
+	if (fileName == 'gun.mp3') {
+		gun.play();
+		return;
+	}
+	if (fileName == 'shotgun.mp3') {
+		shotgun.play();
+		return;
+	}
+	if (fileName == 'warning.mp3') {
+		warning.play();
+		return;
+	}
+	if (fileName == 'tada.mp3') {
+		tada.play();
+		return;
+	}
+	if (fileName == 'bombers.mp3') {
+		bombers.play();
+		return;
+	}
+	if (fileName == 'torture.mp3') {
+		torture.play();
+		return;
+	}
+	if (fileName == 'Scream.mp3') {
+		Scream.play();
+		return;
+	}
+	if (fileName == 'open') {
 		openModalSound.play();
 		return;
-	}	
-	if(fileName == 'close') {
+	}
+	if (fileName == 'close') {
 		closeModalSound.play();
 		return;
 	}
-	if(fileName == 'zap.mp3') {
+	if (fileName == 'zap.mp3') {
 		zapSound.play();
 		return;
 	}
-	if(fileName == 'Swoosh.mp3') {
+	if (fileName == 'Swoosh.mp3') {
 		swooshSound.play();
 		return;
 	}
-	if(fileName == 'AirHorn.mp3') {
+	if (fileName == 'AirHorn.mp3') {
 		airHornSound.play();
 		return;
 	}
-	if(fileName == '9mm.mp3') {
+	if (fileName == '9mm.mp3') {
 		nineMmSound.play();
 		return;
-	}	
-	if(fileName == 'drip.mp3') {
+	}
+	if (fileName == 'drip.mp3') {
 		dripSound.play();
 		return;
 	}
+	if (fileName == 'clearThroat.mp3') {
+		clearThroat.play();
+		return;
+	}
+	if (fileName == 'vehicles.mp3') {
+		vehicles.play();
+		return;
+	}
+	if (fileName == 'bomb2.mp3') {
+		bomb2.play();
+		return;
+	}
+	if (fileName == 'fighter.mp3') {
+		fighter.play();
+		return;
+	}
+	if (fileName == 'marching.wav') {
+		marching.play();
+		return;
+	}
+	if (fileName == 'bomb4.mp3') {
+		bomb4.play();
+		return;
+	}
+	if (fileName == 'yes.mp3') {
+		yes.play();
+		return;
+	}
+	if (fileName == 'tornado.mp3') {
+		tornado.play();
+		return;
+	}
+	if (fileName == 'bell.mp3') {
+		bell.play();
+		return;
+	}
+	if (fileName == 'foghorn.wav') {
+		foghorn.play();
+		return;
+	}
 	if (fileName && fileName.length > 0) {
-		console.log('playing sound: ', fileName);
-		var audio = new Audio('assets/sounds/' + fileName);
-		audio.play();
+		console.log('>>>>>>> playing sound: ', fileName);
+		setTimeout(() => {
+			var audio = new Audio('assets/sounds/' + fileName);
+			audio.play();
+		}, 100);
 	} else {
 		console.log('illegal sound!!!')
 	}
@@ -258,9 +364,11 @@ function playVoiceClip(fileName) {
 		return;
 	}
 	if (fileName.length > 0) {
-		voiceOverAudio.pause();
-		voiceOverAudio = new Audio('assets/voice/' + fileName);
-		voiceOverAudio.play();
+		setTimeout(() => {
+			voiceOverAudio.pause();
+			voiceOverAudio = new Audio('assets/voice/' + fileName);
+			voiceOverAudio.play();
+		}, 100);
 	}
 }
 
