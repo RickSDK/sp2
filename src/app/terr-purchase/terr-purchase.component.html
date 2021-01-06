@@ -26,7 +26,7 @@
 
     
     <!---------technology--------->
-    <div *ngIf="selectedTerritory.factoryCount>0 && user.rank>0"
+    <div *ngIf="selectedTerritory.factoryCount>0 && (user.rank>2 || gameObj.currentCampaign >= 6)"
         style="background-color: #cdf; border: 1px solid black; border-radius: 5px;">
         <div class="darkBlueBg" style="font-size: 10px;"><i class="fa fa-cogs"></i> Technology</div>
         <table class="spTable" style="color: black;">

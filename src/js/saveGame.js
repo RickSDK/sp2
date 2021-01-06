@@ -73,8 +73,8 @@ function saveGame(gameObj, user, currentPlayer, sendEmailFlg, endOfTurn, prevPla
 		nextUpdateNation = currentPlayer.nation;
 	}
 	console.log('++++++++saveGame++++++++++');
-	console.log('currentPlayer', currentPlayer);
-	console.log('prevPlayer', prevPlayer);
+	//console.log('currentPlayer', currentPlayer);
+	//console.log('prevPlayer', prevPlayer);
 
 	if (gameObj.multiPlayerFlg) {
 		//		setInnerHTMLFromElement('statusOkButton', 'Wait');

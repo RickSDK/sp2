@@ -449,7 +449,7 @@ function refreshBoard(terrs) {
 		e.style.left = (terr.x - 20).toString() + 'px';
 		e.style.top = (terr.y + 80).toString() + 'px'; //25
 		var f = document.getElementById('flag' + terr.id);
-		f.src = 'assets/graphics/images/' + (terr.flag || 'flag1.gif');
+		f.src = 'assets/graphics/images/' + (terr.flag || 'flag10.gif');
 		if (terr.nation == 99 && terr.owner == 0) {
 			if (isMobile())
 				f.style.opacity = .3; // see also flagOfOwner in app.js
@@ -811,6 +811,7 @@ function resetPlayerUnits(player, gameObj) {
 	var sbcFlg = false;
 	var stratBombButton = false;
 	var sbsExists = false;
+	player.nukes = false;
 	gameObj.units.forEach(function (unit) {
 		if (unit.owner == player.nation && unit.mv > 0 && !unit.dead) {
 			unit.dice = [];
@@ -831,6 +832,8 @@ function resetPlayerUnits(player, gameObj) {
 				generalFlg = true;
 				unit.startTerr = unit.terr;
 			}
+			if (unit.piece == 14 || unit.piece == 52)
+				player.nukes = true;
 			if (unit.type == 2)
 				unit.startTerr = unit.terr;
 			if (unit.piece == 11)
@@ -1855,9 +1858,23 @@ function flagOfOwner(terr, showDetailsFlg, unitCount, isPurchasePhase) {
 }
 function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPlayer, user) {
 	figureOutTeams(gameObj);
+
+	if (gameObj.currentCampaign == 5) {
+		var greenland = gameObj.territories[58];
+		if (greenland.owner == 2) {
+			gameObj.winningTeamFlg = true;
+			gameObj.currentSituation = 'You Win!';
+		} else {
+			gameObj.winningTeamFlg = false;
+			gameObj.currentSituation = 'You Lose! You need to take over Greenland on turn 1 to win!';
+		}
+		gameObj.gameOver = true;
+		return;
+	}
 	var victoryMet = false;
 
-	var maxCapitals = 6;
+	var capitalsWin = gameObj.capitalsWin || 6; //maxCapitals = 6;
+
 	var maxIncome = 0;
 	var winnningPlayer = 'Unknown';
 	var liveHumanPlayerCount = 0;
@@ -1876,12 +1893,32 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 		uploadCompletedGameStats(gameObj, '', superpowersData, yourPlayer, user);
 		return;
 	}
+	if (gameObj.currentCampaign == 3) {
+		if (gameObj.players[0].income < 20) {
+			gameObj.gameOver = true;
+			gameObj.winningTeamFlg = false;
+			gameObj.currentSituation = 'You Lose!';
+			return;
+		}
+		if (gameObj.players[1].income < 20 || gameObj.round > 10) {
+			gameObj.gameOver = true;
+			gameObj.winningTeamFlg = true;
+			gameObj.currentSituation = 'You win!';
+			return;
+		}
+	}
+	if (gameObj.currentCampaign == 4 && gameObj.round >= 4) {
+		gameObj.gameOver = true;
+		gameObj.winningTeamFlg = true;
+		gameObj.currentSituation = 'You win!';
+		return;
+	}
 
-	var maxCapitalsHeld;
+	var maxCapitalsHeld = 0;
 	var winningTeam = 0;
 	var leadingTeam = 0;
 	gameObj.teams.forEach(function (team) {
-		if (team.capitals.length >= maxCapitals) {
+		if (team.capitals.length >= capitalsWin) {
 			maxCapitalsHeld = team.capitals.length;
 			victoryMet = true;
 			winningTeam = team.name;
@@ -1893,8 +1930,19 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 			leadingTeam = team.name;
 		}
 	});
+
 	gameObj.winningTeamFlg = (yourPlayer && yourPlayer.team == winningTeam);
 	var winningTeamList = playersOfTeam(winningTeam, gameObj, superpowersData);
+
+	//console.log('checkVictoryConditions', gameObj.currentCampaign, maxCapitalsHeld, winningTeam);
+	if (maxCapitalsHeld > 1 && (gameObj.currentCampaign == 1 || gameObj.currentCampaign == 2 || gameObj.currentCampaign == 3 || gameObj.currentCampaign == 4 || gameObj.currentCampaign == 5)) {
+		gameObj.gameOver = true;
+		if (winningTeam == '1')
+			gameObj.currentSituation = 'You win!';
+		else
+			gameObj.currentSituation = 'You lose! Try again.';
+		return;
+	}
 	if (gameObj.gameOver) {
 		var msg = 'Victory!  Game won by ' + winningTeamList.join(', ');
 		if (winningTeamList.length == 0)
@@ -2042,10 +2090,11 @@ function customMilitaryReport1(obj, gameObj, line1) {
 		line1 += ' As of right now you don\'t control any capitals so you are in danger of losing this game.';
 	} else {
 		var capitals = (obj.teamCapitals == 1) ? 'just 1 capital' : obj.teamCapitals + ' capitals';
+		var capitalsWin = gameObj.capitalsWin || 6;
 		if (gameObj.allowAlliances)
-			line1 += ' As of this turn your team is controlling ' + capitals + '. The goal is to control at least 6.';
+			line1 += ' As of this turn your team is controlling ' + capitals + '. The goal is to control at least '+capitalsWin+'.';
 		else
-			line1 += ' As of this turn you are controlling ' + capitals + '. The goal is to control at least 6.';
+			line1 += ' As of this turn you are controlling ' + capitals + '. The goal is to control at least '+capitalsWin+'.';
 	}
 
 	militaryAdvisorPopup(line1, voiceOverId);

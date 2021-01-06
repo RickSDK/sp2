@@ -171,9 +171,9 @@ function arrayOfPieces(units) {
 function startBattle(terr, player, gameObj, superpowersData, battle) {
     var cost = costToAttack(terr, player);
     if (cost > 0 && gameObj.round < gameObj.attack) {
-        showAlertPopup('Whoa can\'t attack this turn!', 1);
+        //showAlertPopup('Whoa can\'t attack this turn!', 1);
         console.log('bad attack!!', terr.name);
-        return;
+        //return;
     }
     if (!battle.cruiseFlg && !battle.stratBombFlg) {
         battle.attackUnits.forEach(unit => {
@@ -1394,6 +1394,27 @@ function hostileActObj(type, terr, gameObj, player) {
                 allowFlg = false;
             }
         }
+        if(gameObj.currentCampaign==3) {
+            if(type == 'attack') {
+                message = 'Only Strategic Bombings allowed in this campaign.';
+                allowFlg = false;
+            }
+            if(type == 'bomb') {
+                message = '';
+                allowFlg = true;
+            }
+        }
+        if(gameObj.currentCampaign==4) {
+            if(type == 'attack') {
+                message = 'Only Nuclear attacks allowed in this campaign.';
+                allowFlg = false;
+            }
+            if(type == 'nuke') {
+                message = '';
+                allowFlg = true;
+            }
+        }
+
     }
     return { message: message, allowFlg: allowFlg }
 }

@@ -51,6 +51,8 @@ var shotgun = new Audio('assets/sounds/shotgun.mp3');
 shotgun.preload = 'auto';
 var warning = new Audio('assets/sounds/warning.mp3');
 warning.preload = 'auto';
+var error = new Audio('assets/sounds/error.mp3');
+error.preload = 'auto';
 
 var voiceOverAudio = new Audio('assets/voice/bt01welcome.mp3');
 
@@ -71,6 +73,10 @@ function playSound(fileName) {
 	}
 	if (fileName == 'gun.mp3') {
 		gun.play();
+		return;
+	}
+	if (fileName == 'error.mp3') {
+		error.play();
 		return;
 	}
 	if (fileName == 'shotgun.mp3') {

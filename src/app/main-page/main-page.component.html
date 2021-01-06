@@ -11,8 +11,7 @@
 			<div class="container-fluid" style="text-align: center;" *ngIf="!showVideoPlayerFlg">
 				<div class="row">
 					<div class="col-sm-4" style="padding: 0;">
-
-						<img (click)="singlePlayerGame(startGamePopup)" class="shadowed main-page-item"
+						<img (mousedown)="singlePlayerGame()" class="shadowed main-page-item"
 							src="assets/graphics/buttons/singleButton.png" title="Single Player">
 
 						<div *ngIf="singleGameId>0"
@@ -125,10 +124,13 @@
 	</div>
 	<div style="padding: 5px;" *ngIf="user">
 		<img src="assets/graphics/advisors/leader.png" height=170>
-		<div *ngIf="user.rank < 2">
-			Welcome newbie! Want to take over the world? Yes, of course you do! Press Single Player to get started!
+		<div *ngIf="user.rank == 0">
+			Welcome newbie! Want to take over the world? Yes, of course you do! Watch the intro videos and then press 'Single Player' to get started!
 		</div>
-		<div *ngIf="user.rank==2">Nice work! Now you are ready for multi-player!</div>
+		<div *ngIf="user.rank == 1">
+			Nice work! Press 'Single Player' to continue with your training!
+		</div>
+		<div *ngIf="user.rank == 2">Congratulations! You can now continue with your training, or try multi-player!</div>
 		<div *ngIf="user.gamesTurn>0">It's your turn in {{user.gamesTurn}} of the multi-player games!</div>
 		<div *ngIf="user.newGameCount>0">New multiplayer game has started!</div>
 		<div *ngIf="user.endGameCount>0">One of your multi-player Games has ended!</div>

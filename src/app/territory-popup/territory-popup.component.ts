@@ -99,8 +99,8 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     $("#territoryPopup").modal();
 
     $('#territoryPopup').on('hidden.bs.modal', function () {
-      if (user.rank < 2 && currentPlayer.status == 'Purchase' && gameObj.round < 5) {
-        if (currentPlayer.money >= 20) {
+      if (gameObj.currentCampaign == 1 && currentPlayer.status == 'Purchase' && gameObj.round < 5) {
+        if (currentPlayer.money >= 5) {
           playVoiceClip('bt07Germany.mp3');
           highlightTerritoryWithArrow(7, gameObj);
         }
@@ -108,7 +108,6 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
           highlightCompleteTurnButton(true);
           playVoiceClip('bt08PurchComplete.mp3');
         }
-
       }
       if (user.rank < 2 && currentPlayer.status == 'Attack') {
         //          var ter = gameObj.territories[61];
@@ -149,9 +148,12 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     if (terr.nation == 99)
       terr.facFlg = checkWaterForFactory(terr, currentPlayer.nation, gameObj);
 
-    if (user.rank < 2) {
-      if (user.rank < 2 && gameObj.round == 1 && currentPlayer.status == 'Purchase' && terr.id==7) {
+    if (gameObj.currentCampaign == 1 || gameObj.currentCampaign == 2) {
+      if (user.rank < 2 && gameObj.round == 1 && currentPlayer.status == 'Purchase' && terr.id == 7) {
         showAlertPopup('Check out your available coins. Press "Buy" buttons below to purchase units. For now, just get 4 tanks.')
+      }
+      if (gameObj.round == 1 && currentPlayer.status == 'Purchase' && terr.id == 7 && gameObj.currentCampaign == 3) {
+        showAlertPopup('Buy Air Defense for all your factories. Up to 2 per territory. Click the "Air" tab below to see your Air Defense units.')
       }
       if (user.rank < 2 && gameObj.round == 2 && currentPlayer.status == 'Purchase' && terr.id == 7) {
         showAlertPopup('Purchase an Economic Center. This will boost your income by 5 coins/turn! Also get 3 more tanks. By the way, you can only have 1 economic center per territory.')
@@ -175,9 +177,21 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       if (user.rank < 2 && gameObj.round == 5 && currentPlayer.status == 'Attack' && terr.id == 17) {
         showAlertPopup('If you are able to control all territories belonging to a superpower (Brown ones for Russia) you will gain additional 10 coins/turn.');
       }
-
     }
-    
+    if (gameObj.currentCampaign == 3 && gameObj.round == 1 && currentPlayer.status == 'Purchase' && terr.id == 7) {
+      showAlertPopup('For this campaign, just buy bombers and air defense. Click on the "Air" tab. You can also buy factories and economic centers to build your economy.');
+    }
+
+    if (gameObj.currentCampaign == 4 && gameObj.round == 1 && currentPlayer.status == 'Purchase' && terr.id == 7) {
+      showAlertPopup('For this campaign, just buy nukes and air defense. Click on the "Air" tab.');
+    }
+    if (gameObj.currentCampaign == 5 && gameObj.round == 1 && currentPlayer.status == 'Purchase' && terr.id == 110) {
+      showAlertPopup('Because you have a factory in Germany, you can buy ships in any adjacent sea zone. For this campaign, buy extra transports to carry units to Greenland.');
+    }
+    if (gameObj.currentCampaign == 6 && gameObj.round == 1 && currentPlayer.status == 'Purchase' && terr.id == 7) {
+      showAlertPopup('Let\'s try purchasing Technology. Buy 2 by clicking on the "Research" button twice.');
+    }
+
     if (ableToTakeThisTurn && currentPlayer.status == 'Purchase' && terr.facFlg) {
       if (this.selectedTerritory.nation == 99)
         this.changeProdType(2);
@@ -441,7 +455,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     if (this.autoCompleteFlg) {
       if (this.displayBattle.militaryObj.battleInProgress)
         this.beginNextRoundOfBattle();
-      else if(!this.displayBattle.allowGeneralRetreat)
+      else if (!this.displayBattle.allowGeneralRetreat)
         this.closeModal('#territoryPopup');
     }
   }

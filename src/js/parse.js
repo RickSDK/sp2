@@ -2,6 +2,7 @@ function userObjFromUser() {
 	var spFlg = localStorage.spFlg || '';
 	if (spFlg != 'Y') {
 		localStorage.rank = 0;
+		localStorage.campaignCompleted = 0;
 		localStorage.userName = 'Guest';
 		localStorage.spFlg = 'Y'; //make sure no one grandfathers in
 	}
@@ -13,6 +14,7 @@ function userObjFromUser() {
 		console.log('creating new user');
 		userObj.userName = localStorage.userName || 'Guest';
 		userObj.rank = numberVal(localStorage.rank);
+		userObj.campaignCompleted = numberVal(localStorage.campaignCompleted);
 		userObj.code = '';
 		userObj.password = '******';
 		userObj.userGraphic = '';

@@ -150,10 +150,10 @@
 								<div *ngIf="displayBattle.allowGeneralRetreat">
 									<div class="borderClass">
 										<div><img src="assets/graphics/units/piece10u.png" height=40> General Can Withdraw</div>
-										<button (click)="withdrawGeneralButtonClicked()" id="generalWithdrawButton"
+										<button (mousedown)="withdrawGeneralButtonClicked()" id="generalWithdrawButton"
 											type="button" class="btn btn-success roundButton tall2"><i
 												class="fa fa-arrow-left"></i> Withdraw</button>
-										<button (click)="closeModal('#territoryPopup')" type="button"
+										<button (mousedown)="closeModal('#territoryPopup')" type="button"
 											class="btn btn-danger roundButton tall2"><i class="fa fa-arrow-down"></i>
 											Stay</button>
 										<div *ngIf="user.rank <= 2" style="font-size: 12px;">Press 'Stay' to keep your
@@ -162,7 +162,7 @@
 
 								</div>
 								<div *ngIf="!displayBattle.allowGeneralRetreat">
-									<button (click)="closeModal('#territoryPopup')" type="button"
+									<button (mousedown)="closeModal('#territoryPopup')" type="button"
 										class="btn btn-primary roundButton tall">OK</button>
 								</div>
 
@@ -203,37 +203,37 @@
 						</table>
 						<div *ngIf="displayBattle.round>0">Battle Round: <span
 								class="bgHighlight">{{displayBattle.round}}</span></div>
-						<button *ngIf="displayBattle.round==0" (click)="closeModal('#territoryPopup')" type="button"
+						<button *ngIf="displayBattle.round==0" (mousedown)="closeModal('#territoryPopup')" type="button"
 							class="btn btn-secondary roundButton"><i class="fa fa-times"></i> Cancel</button>
-						<button *ngIf="displayBattle.round==0" (click)="addMoreButtonClicked()" type="button"
+						<button *ngIf="displayBattle.round==0" (mousedown)="addMoreButtonClicked()" type="button"
 							class="btn btn-primary roundButton"><i class="fa fa-plus"></i> Add More</button>
 
-						<button *ngIf="displayBattle.phase==3" (click)="removeCasualties()" type="button"
+						<button *ngIf="displayBattle.phase==3" (mousedown)="removeCasualties()" type="button"
 							class="btn btn-primary roundButton"><i class="fa fa-heartbeat"></i> Remove
 							Casualties</button>
 						<button *ngIf="displayBattle.round>0 && displayBattle.allowRetreat" id="retreatButton"
-							(click)="retreatButtonPressed()" type="button" class="btn btn-primary roundButton"><i
+							(mousedown)="retreatButtonPressed()" type="button" class="btn btn-primary roundButton"><i
 								class="fa fa-flag"></i> Retreat!</button>
 						<button *ngIf="displayBattle.round>0 && displayBattle.militaryObj.includesGeneral"
-							(click)="pullSelectTroopsMidBattle(1)" type="button" class="btn btn-warning roundButton"><i
+							(mousedown)="pullSelectTroopsMidBattle(1)" type="button" class="btn btn-warning roundButton"><i
 								class="fa fa-arrow-left"></i> Pull General</button>
 						<button *ngIf="displayBattle.round>0 && displayBattle.militaryObj.airunits>0"
-							id="pullPlanesButton" (click)="pullSelectTroopsMidBattle(2)" type="button"
+							id="pullPlanesButton" (mousedown)="pullSelectTroopsMidBattle(2)" type="button"
 							class="btn btn-warning roundButton"><i class="fa fa-arrow-left"></i> Pull
 							Planes</button>
 						<button *ngIf="displayBattle.round>0 && displayBattle.militaryObj.bomberCount>0"
-							id="pullBombersButton" (click)="pullSelectTroopsMidBattle(3)" type="button"
+							id="pullBombersButton" (mousedown)="pullSelectTroopsMidBattle(3)" type="button"
 							class="btn btn-warning roundButton"><i class="fa fa-arrow-left"></i> Pull
 							Bombers</button>
 
 						<button [disabled]="!displayBattle.militaryObj.allowAttackFlg" id="fightButton"
-							(click)="fightButtonPressed()" type="button" [ngClass]="fightButtonClass()"
+						(mousedown)="fightButtonPressed()" type="button" [ngClass]="fightButtonClass()"
 							style="height: 60px; width: 100px;"><i class="fa fa-crosshairs"></i> Fight!</button>
 
 						<span>
 							<div class="squaredOne" style="display: inline-block; padding: 0; margin: 1px;">
 								<input [checked]="autoCompleteFlg" [disabled]="displayBattle.defendingUnits.length == 0"
-									(click)="autoCompletePressed()" type="checkbox" value="None" id="finalAttackBox"
+								(click)="autoCompletePressed()" type="checkbox" value="None" id="finalAttackBox"
 									name="check" />
 								<label for="finalAttackBox"></label>
 							</div> <span style="font-size: 10px;">Auto</span>
@@ -254,7 +254,7 @@
 				<div *ngIf="ableToTakeThisTurn && currentPlayer.status != 'Attack' && optionType != 'production'" style="background-color: #cfc;">
 					<div><b><i class="fa fa-exclamation-triangle"></i> Currently in Purchase Phase. </b></div>
 					<div style="color: gray; font-size: 12px;">Press 'Purchase Complete' to move to the next phase of your turn.</div>
-					<button (click)="closeModal('#territoryPopup')" type="button"
+					<button (mousedown)="closeModal('#territoryPopup')" type="button"
 								class="btn btn-primary roundButton glowButton"> Close
 					</button>
 				</div>
@@ -279,13 +279,13 @@
 					<div *ngIf="1 || !loadingFlg" style="background-color: #ccc; color: black;">
 						<div
 							*ngIf="(optionType=='movement' || optionType=='loadUnits') && selectedTerritory.nation==99 && selectedTerritory.unitCount>0">
-							<button *ngIf="optionType=='movement'" (click)="buttonClicked('loadUnits')" type="button"
+							<button *ngIf="optionType=='movement'" (mousedown)="buttonClicked('loadUnits')" type="button"
 								class="btn btn-success roundButton"><i class="fa fa-ship"></i> Custom Load
 								Options</button>
-							<button *ngIf="optionType=='loadUnits'" (click)="buttonClicked('movement')" type="button"
+							<button *ngIf="optionType=='loadUnits'" (mousedown)="buttonClicked('movement')" type="button"
 								class="btn btn-success roundButton"><i class="fa fa-ship"></i> Auto Load</button>
 
-							<button (click)="infoFlg = !infoFlg" type="button" class="btn btn-secondary roundButton"><i
+							<button (mousedown)="infoFlg = !infoFlg" type="button" class="btn btn-secondary roundButton"><i
 									class="fa fa-info-circle"></i> Info</button>
 							<div *ngIf="infoFlg" class="borderClass2">
 								<div>Cargo Limits</div>
@@ -329,7 +329,7 @@
 						</div>
 
 						<div *ngIf="optionType=='loadPlanes'" class="borderClass">Select units to load as paratroopers.
-							<button (click)="infoFlg = !infoFlg" type="button" class="btn ptp-gray roundButton"
+							<button (mousedown)="infoFlg = !infoFlg" type="button" class="btn ptp-gray roundButton"
 								style=""><i class="fa fa-info-circle"></i>Info</button>
 							<div *ngIf="infoFlg">
 								<img src="assets/graphics/units/piece7u.png" height="20">
@@ -386,17 +386,17 @@
 									type="button" class="btn btn-primary tight roundButton"><i
 										class="fa fa-fast-backward"></i></button>
 								<button [disabled]="selectedUnitTerr.count==0"
-									(click)="checkboxAmountOfUnit(selectedUnitTerr.count-1, terr)" type="button"
+								(mousedown)="checkboxAmountOfUnit(selectedUnitTerr.count-1, terr)" type="button"
 									class="btn btn-primary tight roundButton"><i class="fa fa-backward"></i></button>
 								<img src="{{ngUnitSrc(selectedUnitTerr.piece, 1)}}"
 									style="max-height: 30px; max-width: 40px;">
 								<span class="bgHighlight">{{selectedUnitTerr.count}} <font color=gray>/
 										{{selectedUnitTerr.max}}</font></span>
 								<button [disabled]="selectedUnitTerr.count==selectedUnitTerr.max"
-									(click)="checkboxAmountOfUnit(selectedUnitTerr.count+1, terr)" type="button"
+								(mousedown)="checkboxAmountOfUnit(selectedUnitTerr.count+1, terr)" type="button"
 									class="btn btn-primary tight roundButton"><i class="fa fa-forward"></i></button>
 								<button [disabled]="selectedUnitTerr.count==selectedUnitTerr.max"
-									(click)="checkboxAmountOfUnit(selectedUnitTerr.max, terr)" type="button"
+								(mousedown)="checkboxAmountOfUnit(selectedUnitTerr.max, terr)" type="button"
 									class="btn btn-primary tight roundButton"><i
 										class="fa fa-fast-forward"></i></button>
 							</div>
@@ -406,7 +406,7 @@
 							style="border: 1px solid red; padding: 5px;">
 							<div style="color: #700;"><b><i class="fa fa-exclamation-triangle"></i>
 									None of your units can reach {{selectedTerritory.name}}!</b>
-								<button (click)="infoFlg=!infoFlg" type="button"
+								<button (mousedown)="infoFlg=!infoFlg" type="button"
 									class="btn btn-secondary roundButton"><i class="fa fa-info-circle"></i>
 									Help</button>
 								<div *ngIf="infoFlg" class="borderClass3"
@@ -427,11 +427,11 @@
 						</div>
 						<div *ngIf="battleAnalysisObj">
 							<button *ngIf="optionType=='attack'" [disabled]="totalUnitsThatCanMove==0"
-								(click)="autoButtonPressed()" type="button" class="btn btn-success roundButton">
+								(mousedown)="autoButtonPressed()" type="button" class="btn btn-success roundButton">
 								Auto</button>
-							<button *ngIf="totalUnitsThatCanMove>0" (click)="selectAllButtonChecked()" type="button"
+							<button *ngIf="totalUnitsThatCanMove>0" (mousedown)="selectAllButtonChecked()" type="button"
 								[disabled]="totalUnitsThatCanMove==0" class="btn btn-success roundButton"> All</button>
-							<button (click)="moveTroopsButtonPressed()" [disabled]="battleAnalysisObj.numAttUnits==0"
+							<button (mousedown)="moveTroopsButtonPressed()" [disabled]="battleAnalysisObj.numAttUnits==0"
 								type="button" class="btn btn-success roundButton"
 								style="min-width: 120px; height: 50px;"><i class="fa fa-arrow-right"></i> Go</button>
 
@@ -445,7 +445,7 @@
 
 					</div>
 
-					<button (click)="showMoreMovementOptions()" *ngIf="showMoreTerrFlg" type="button"
+					<button (mousedown)="showMoreMovementOptions()" *ngIf="showMoreTerrFlg" type="button"
 						class="btn btn-success roundButton" style="min-width: 120px; height: 50px;"><i
 							class="fa fa-plus"></i> Show more territories</button>
 
@@ -489,13 +489,13 @@
 			<!--modal-body-->
 
 			<div class="modal-header" style="background-color: #337ab7;  border: 0">
-				<button (click)="closeModal('#territoryPopup')" type="button"
+				<button (mousedown)="closeModal('#territoryPopup')" type="button"
 					class="btn btn-secondary roundButton" style="height: 60px;">Close</button>
-				<button *ngIf="adminModeFlg" (click)="adminAllowMovePressed()" type="button"
+				<button *ngIf="adminModeFlg" (mousedown)="adminAllowMovePressed()" type="button"
 					class="btn btn-secondary roundButton" title="allow all units here to move">Unfeeze Units</button>
-				<button *ngIf="adminModeFlg" (click)="moveHerosPressed()" type="button"
+				<button *ngIf="adminModeFlg" (mousedown)="moveHerosPressed()" type="button"
 					class="btn btn-secondary roundButton">Move Heros</button>
-				<button *ngIf="0 && ableToTakeThisTurn && optionType=='production'" (click)="completePurchaseButtonClicked()"
+				<button *ngIf="0 && ableToTakeThisTurn && optionType=='production'" (mousedown)="completePurchaseButtonClicked()"
 					type="button" class="btn btn-success roundButton">Purchase Complete</button>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>

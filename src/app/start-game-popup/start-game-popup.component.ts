@@ -19,6 +19,7 @@ export class StartGamePopupComponent extends BaseComponent implements OnInit {
   public gameType: any;
   public fogIdx = 0;
   public difficultyIdx = 1;
+  public campaignId = 1;
   public gameTypeObj: any;
   public numPlayers = 4;
   public gameTypes = [];
@@ -39,6 +40,7 @@ export class StartGamePopupComponent extends BaseComponent implements OnInit {
     this.difficultyIdx = 1;
     this.yourNation = 2;
     this.segmentIdx = 0;
+    this.campaignId = localStorage.currentCampaign || 0;
     $("#startGamePopup").modal();
   }
   startGame() {

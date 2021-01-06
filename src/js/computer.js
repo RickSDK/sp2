@@ -1,8 +1,12 @@
 function purchaseCPUUnits(player, gameObj, superpowersData, rank) {
-    if (gameObj.round <= 18 && player.cpu)
-        purchaseTechnology(0, player, gameObj, superpowersData);
-    if (gameObj.round == 10 && player.cpu)
-        purchaseTechnology(19, player, gameObj, superpowersData);
+    console.log('purchaseCPUUnits!!!');
+
+    if (gameObj.currentCampaign == 0 || gameObj.currentCampaign >= 6) {
+        if (gameObj.round <= 18 && player.cpu)
+            purchaseTechnology(0, player, gameObj, superpowersData);
+        if (gameObj.round == 10 && player.cpu)
+            purchaseTechnology(19, player, gameObj, superpowersData);
+    }
 
     var factoryTerritories = [];
     var waterwayTerritories = [];
@@ -60,7 +64,10 @@ function purchaseCPUUnits(player, gameObj, superpowersData, rank) {
         if (difficultyNum == 1)
             player.money += 10;
     }
-
+    if (gameObj.currentCampaign == 3)
+        addUniToQueue(7, 1, superpowersData, player, gameObj, terr1);
+    if (gameObj.currentCampaign == 4)
+        addUniToQueue(14, 1, superpowersData, player, gameObj, terr1);
 
     var placedInf = numberVal(player.placedInf);
     if (placedInf < 3) {
@@ -95,7 +102,6 @@ function purchaseCPUUnits(player, gameObj, superpowersData, rank) {
         addUniToQueue(7, 1, superpowersData, player, gameObj, terr1);
     }
     if (num == 7 || player.money >= 45 && rank > 2) {
-        console.log('xxx just bought nuke!');
         addUniToQueue(14, 1, superpowersData, player, gameObj, terr1);
     }
     if (player.money >= 10) {
@@ -202,6 +208,9 @@ function doCpuDiplomacyRespond(player, gameObj, superpowersData) {
     player.news = [];
 }
 function doCpuDiplomacyOffer(player, gameObj, superpowersData) {
+    if (gameObj.currentCampaign >= 1 && gameObj.currentCampaign <= 6)
+        return; // no diplomacy!!
+
     var num = Math.floor((Math.random() * gameObj.players.length));
     var player2 = gameObj.players[num];
     var status = player.treaties[player2.nation - 1];
@@ -460,6 +469,8 @@ function okToAttackReason(player, terr, gameObj) {
 }
 function isAtWarWith(player, terr, gameObj) {
     //use in place of okToAttack
+    if (gameObj.currentCampaign >= 1 && gameObj.currentCampaign <= 5)
+        return true;
     var status = treatyStatus(player, terr.owner);
     return (status == 0 && gameObj.round > 5);
 }

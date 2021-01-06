@@ -154,6 +154,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public hidePlayersPanelFlag = false;
 	public spritePieceId = 2;
 	public fightersStrandedFlg = false;
+	public showAllianceMessageFlg = false;
 	public spriteShipId = 4;
 	public currentPlayerNation = 1;
 	public technologyPurchases = [];
@@ -253,7 +254,18 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				console.log('+++ new single player....', startingNation);
 				var type = (localStorage.gameType == 1) ? 'freeforall' : 'diplomacy';
 				var numPlayers = 4;
-				var name = (this.user.rank < 2) ? 'Basic Training' : 'Single Player Game';
+				var name = 'Single Player Game';
+				var currentCampaign = localStorage.currentCampaign || 0;
+				var capitalsWin = 6;
+
+				if (currentCampaign > 0) {
+					name = this.superpowersData.campaigns[currentCampaign - 1].name;
+					type = this.superpowersData.campaigns[currentCampaign - 1].type;
+					numPlayers = this.superpowersData.campaigns[currentCampaign - 1].numPlayers;
+					capitalsWin = this.superpowersData.campaigns[currentCampaign - 1].capitalsWin;
+					if (currentCampaign >= 8)
+						startingNation = Math.round(currentCampaign) - 3;
+				}
 
 				var pObj = {};
 				if (localStorage.customGame == 'Y') {
@@ -261,8 +273,13 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					//					numPlayers = localStorage.customNumPlayers;
 					//					pObj = JSON.parse(localStorage.customGamePlayers);
 				}
-				this.gameObj = createNewGameSimple(type, numPlayers, name, startingNation, pObj, this.user);
+				this.gameObj = createNewGameSimple(type, numPlayers, name, startingNation, pObj, this.user, currentCampaign);
 				this.gameObj.difficultyNum = localStorage.difficultyNum || 1;
+				this.gameObj.capitalsWin = capitalsWin;
+				if (currentCampaign >= 8)
+					this.gameObj.fogOfWar = true;
+				if (currentCampaign >= 9)
+					this.gameObj.hardFog = true;
 				saveGame(this.gameObj, this.user, this.gameObj.players[0]);
 				localStorage.currentGameId = this.gameObj.id;
 			}
@@ -377,19 +394,18 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		//var player2 = this.gameObj.players[6];
 		//player2.treaties=[0,3,3,0,0,0,4,3];
 
-		var terrId = 74;
+		var terrId = 69;
 		var terr = this.gameObj.territories[terrId - 1];
 		//	terr.owner = 4;
-		//this.addUnitToTerr(terr, 14, true, true, true);
-		//this.addUnitToTerr(terr, 14, true, true, true);
+		//this.addUnitToTerr(terr, 6, true, true, true);
+
 
 
 		if (0) {
 			var x = 0;
 			terr.units.forEach(unit => {
-				if (unit.piece == 23 && x++ < 4) {
-					console.log('xxxhey', unit);
-					unit.terr = 136;
+				if (unit.piece == 6 || unit.piece == 48) {
+					unit.dead = true;
 				}
 			});
 		}
@@ -503,7 +519,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.currentPlayer.cpuFlg = this.currentPlayer.cpu;
 		this.currentPlayer.cruiseFlg = this.currentPlayer.tech[7];
 
-		console.log('===[' + this.superpowersData.superpowers[this.currentPlayer.nation] + ']===');
+		console.log('=========[' + this.superpowersData.superpowers[this.currentPlayer.nation] + ']=========');
 		if (!this.currentPlayer.news)
 			this.currentPlayer.news = [];
 		if (!this.currentPlayer.botRequests)
@@ -749,21 +765,28 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.currentPlayer.mainBaseID = findMainBase(this.gameObj, this.currentPlayer);
 	}
 	displayMilitaryAdvisorMessage() {
-		if (this.user.rank < 2 && this.gameObj.round == 1) {
+		if (!this.gameObj.multiPlayerFlg && this.gameObj.round == 1 && this.gameObj.currentCampaign <= 6) {
 			if (this.currentPlayer.status == 'Purchase') {
 				displayFixedPopup('introPopup');
-				playVoiceClip('bt01welcome.mp3');
-				playIntroSequence();
+				if (this.gameObj.currentCampaign == 0) {
+					playVoiceClip('bt01welcome.mp3');
+					playIntroSequence();
+				}
+				if (this.gameObj.currentCampaign > 0) {
+					playVoiceClip('welcome.mp3');
+				}
+
 				this.cdr.detectChanges();
 			} else {
-				this.forceUserToClickTerritory(62);
-				militaryAdvisorPopup('Begin the conquest! It\'s time to expand your empire. Click on Ukraine to invade.');
-				playVoiceClip('bt09Ukraine.mp3');
+				var msg = 'Begin the conquest!';
+				if (this.gameObj.currentCampaign > 0)
+					msg = this.superpowersData.campaigns[this.gameObj.currentCampaign - 1].mission;
+				militaryAdvisorPopup(msg);
 			}
 			return;
 		}
 		if (this.gameObj.round == 1 && this.currentPlayer.placedInf < 3) {
-			militaryAdvisorPopup('New Game! You are starting as ' + this.superpowersData.superpowers[this.yourPlayer.nation] + '. First place 3 infantry by clicking on your territories.', 21); //23
+			militaryAdvisorPopup('New Game! You are starting as ' + this.superpowersData.superpowers[this.yourPlayer.nation] + '. First place 3 infantry by clicking on ANY of your territories.', 21); //23
 			return false;
 		}
 		var defaultLine = 'Round ' + this.gameObj.round + '. Purchase new units and then press "Purchase Complete".';
@@ -773,6 +796,25 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.currentPlayer.status == 'Purchase')
 			defaultLine = 'Round ' + this.gameObj.round + '. Conduct attacks, then press "Complete Turn" button at the top to end your turn.';
 
+		if (this.gameObj.currentCampaign == 3) {
+			playVoiceClip('round' + this.gameObj.round + '.mp3');
+			if (this.gameObj.round == 2)
+				militaryAdvisorPopup('Note, you can restore a bombed out factory simply by purchasing a new one.');
+			else
+				militaryAdvisorPopup('Build your economy, plus buy bombers to devistate your opponent. For this campaign you are trying to get your opponent\'s income under 20 coins.');
+			//militaryAdvisorPopup(this.superpowersData.campaigns[this.gameObj.currentCampaign-1].roundIntro[this.gameObj.round - 1]);
+			return;
+		}
+		if (this.gameObj.currentCampaign == 4) {
+			playVoiceClip('round' + this.gameObj.round + '.mp3');
+			militaryAdvisorPopup('Spend 4 rounds nuking your enemy. Read up on nukes on the "Units" tab.');
+			return;
+		}
+		if (this.gameObj.currentCampaign == 5) {
+			playVoiceClip('round' + this.gameObj.round + '.mp3');
+			militaryAdvisorPopup('Let\'s try an amphibious landing of Greenland. Buy another transport to make the landing successful.');
+			return;
+		}
 		if (this.gameObj.round <= 6) {
 			playVoiceClip('round' + this.gameObj.round + '.mp3');
 			militaryAdvisorPopup(this.advisorFirst6RoundsMessage[this.gameObj.round - 1]);
@@ -786,6 +828,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 	}
 	forceUserToClickTerritory(terrId: number) {
+		console.log('xxx forceUserToClickTerritory', terrId);
 		this.forcedClickNation = terrId;
 		highlightTerritoryWithArrow(terrId, this.gameObj);
 		var terr = this.gameObj.territories[terrId - 1];
@@ -793,16 +836,26 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.changeSVGColor(true, terrId, terr.owner);
 	}
 	introContinuePressed() {
-		this.newPlayerHelpText = 'Click on Germany';
-		closePopup('introPopup');
-		playVoiceClip('bt02EU.mp3');
 		this.playGameButtonPressed();
-		this.forcedClickNation = 7;
-		this.currentPlayer.placedInf = 3;
-		setTimeout(() => {
-			playVoiceClip('bt07Germany.mp3');
-			highlightCapital(2);
-		}, 2500);
+		closePopup('introPopup');
+
+		console.log('introContinuePressed', this.gameObj.currentCampaign);
+		if (this.gameObj.currentCampaign < 7)
+			this.currentPlayer.placedInf = 3;
+
+		if ((this.gameObj.currentCampaign >= 1 && this.gameObj.currentCampaign < 5) || this.gameObj.currentCampaign == 6) {
+			this.newPlayerHelpText = 'Click on Germany';
+			playVoiceClip('bt02EU.mp3');
+			this.forcedClickNation = 7;
+			setTimeout(() => {
+				playVoiceClip('bt07Germany.mp3');
+				highlightCapital(2);
+			}, 4500);
+		}
+		if (this.gameObj.currentCampaign == 5) {
+			this.forceUserToClickTerritory(110);
+		}
+
 	}
 	playGameButtonPressed() {
 		closePopup('advisorPopup');
@@ -817,6 +870,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	initializePlayer() {
 		//playVoiceClip('nation' + this.currentPlayer.nation + '.mp3');
 		refreshAllTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
+		this.showAllianceMessageFlg = (this.gameObj.currentCampaign == 7 && this.gameObj.round == 1);
 		this.showControls = !this.currentPlayer.cpu;
 		if (!this.currentPlayer.cpu)
 			this.cdr.reattach();
@@ -829,9 +883,13 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		if (this.currentPlayer.status == 'Waiting' || this.currentPlayer.status == 'Purchase')
 			this.initializePlayerForPurchase();
+
 		if (this.currentPlayer.status == 'Attack')
 			this.initializePlayerForAttack();
 		this.cdr.detectChanges();
+	}
+	dismissAllianceMessage() {
+		this.showAllianceMessageFlg = false;
 	}
 	skipPlayerPressed() {
 		this.playClick();
@@ -883,11 +941,11 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (player.cpu)
 			this.computerGo();
 		else {
-			if (this.user.rank < 2 && this.gameObj.round <= 2) {
+			if ((this.gameObj.currentCampaign == 1 || this.gameObj.currentCampaign == 2) && this.gameObj.round <= 2) {
 				this.forceUserToClickTerritory(7);
 				this.newPlayerHelpText = 'Purchase units then press "Purchase Complete". Click on Germany.';
 			}
-			if (this.user.rank < 2 && this.gameObj.round == 3) {
+			if ((this.gameObj.currentCampaign == 1 || this.gameObj.currentCampaign == 2) && this.gameObj.round == 3) {
 				this.forceUserToClickTerritory(62);
 				this.newPlayerHelpText = 'Build a new factory in Ukraine. Click on Ukraine.';
 			}
@@ -911,11 +969,18 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.currentPlayer.cpuFlg)
 			this.computerGo();
 		else {
-			if (this.user.rank < 2) {
+			if (!this.gameObj.currentCampaign || this.gameObj.currentCampaign >= 7) {
+				playVoiceClip('beginConquest.mp3');
+				return
+			}
+			if (this.gameObj.currentCampaign == 1 || this.gameObj.currentCampaign == 2 || this.gameObj.currentCampaign == 6) {
 				if (this.gameObj.round == 1) {
 					this.forceUserToClickTerritory(62);
 					playVoiceClip('bt09Ukraine.mp3');
-					this.showAlertPopup('It\'s time to start World War III! Your first mission is to take over the Russia! This will boost your income by 10 coins per turn. You will need to fight your way to the capital, starting with Ukraine.');
+					if (this.gameObj.currentCampaign == 1 || this.gameObj.currentCampaign == 2)
+						this.showAlertPopup('Begin the exercise! Your mission is to take over the Russian capital! You will need to fight your way there, starting with Ukraine.');
+					else
+						this.showAlertPopup('It\'s time to start World War III! Your first mission is to take over the Russian capital! This will boost your income by 10 coins per turn. You will need to fight your way there, starting with Ukraine.');
 					this.newPlayerHelpText = 'Make an attack!. Click on Ukraine.';
 				}
 				if (this.gameObj.round == 2) {
@@ -930,15 +995,40 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				}
 				if (this.gameObj.round == 4) {
 					this.forceUserToClickTerritory(13);
-					this.showAlertPopup('Your goal is to take over 6 capitals. See if you have enough forces to attack Russia.');
+					if (this.gameObj.currentCampaign == 1 || this.gameObj.currentCampaign == 2)
+						this.showAlertPopup('Your goal is to take Russia! See if you have enough forces to attack.');
+					else
+						this.showAlertPopup('Your goal is to take over ' + this.gameObj.capitalsWin + ' capitals. See if you have enough forces to attack Russia.');
 					this.newPlayerHelpText = 'Your goal is to take over 6 capitals. See if you have enough forces to attack Russia.';
 				}
 				if (this.gameObj.round == 5) {
 					this.forceUserToClickTerritory(17);
 				}
-
-			} else
-				playVoiceClip('beginConquest.mp3');
+			} // 1 or 2
+			if (this.gameObj.currentCampaign == 3) {
+				if (this.gameObj.round == 1) {
+					this.showAlertPopup('Try to strategically bomb the factory in Karelia. If you hit, the burned out factory causes the player to lose 5 coins/turn.');
+					this.forceUserToClickTerritory(14);
+				}
+				if (this.gameObj.round == 2) {
+					this.showAlertPopup('Find another factory to try to bomb. Notice if the factory has a plus (+) sign on it, it means it has air defense.');
+				}
+				if (this.gameObj.round == 3) {
+					this.showAlertPopup('Note each bomber can destroy 1 factory, so split up your bombers and attack each factory with one bomber.');
+				}
+			}
+			if (this.gameObj.currentCampaign == 4) {
+				if (this.gameObj.round == 1) {
+					this.showAlertPopup('Teach Russia a lesson! Try nuking Karelia.');
+					this.forceUserToClickTerritory(14);
+				}
+			}
+			if (this.gameObj.currentCampaign == 5) {
+				if (this.gameObj.round == 1) {
+					this.showAlertPopup('Let\'s do an amphibious landing on Greenland. Start by loading your transport with 4 infantry and both heros.');
+					this.forceUserToClickTerritory(110);
+				}
+			}
 		}
 	}
 	cpuSpeedFlgChanged() {
@@ -956,7 +1046,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	computerGo() {
 		if (this.gameObj.gameOver)
 			return;
-		this.warAudio.play();
+		if (!localStorage.soundBox)
+			this.warAudio.play();
 
 		this.currentPlayer.cpuFlg = true;
 		this.showControls = false;
@@ -972,8 +1063,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}, delay);
 	}
 	computerStarting() {
-
-		if (this.currentPlayer.status == 'Waiting') {
+		if (this.currentPlayer.status == 'Waiting' || this.currentPlayer.status == 'Purchase') {
 			this.computerPurchase();
 		} else {
 			this.computerAttack();
@@ -996,41 +1086,48 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	computerAttack() {
 		declareWarIfNeeded(this.gameObj, this.currentPlayer, this.superpowersData);
 
-		if (this.currentPlayer.primaryTargetId > 0)
-			this.allUnitsAttack(this.currentPlayer.primaryTargetId);
-		else {
-			var obj = findAmphibiousAttacks(this.gameObj, this.currentPlayer);
-			if (this.gameObj.round != 6 && obj && obj.attackUnits.length > 0) {
-				this.doThisBattle(obj);
-				if (obj && obj.ampFlg) {
-					this.doThisBattle({ attackUnits: obj.ampAttUnits, defUnits: obj.ampDefUnits, t1: obj.ampAttTerr.id, t2: obj.ampDefTerr.id, id: 2, terr: obj.ampDefTerr, attTerr: obj.ampAttTerr });
-				}
-				refreshTerritory(obj.ampAttTerr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
-				refreshTerritory(obj.ampDefTerr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
-			}
-		}
-
-		this.attemptToAttackACapital(this.currentPlayer, this.gameObj);
-
-		if (this.gameObj.round > 6 && this.user.rank > 1 && this.currentPlayer.tech[3])
-			this.attemptCPUToNuke();
-
-		if (this.gameObj.round > 6 && this.currentPlayer.tech[8])
-			this.attemptCPUToCruise();
-
-		if (this.gameObj.round > 6 && this.user.rank > 1)
+		if (this.gameObj.currentCampaign == 3) {
 			this.attemptCPUStrategicBomb();
+		} else if (this.gameObj.currentCampaign == 4) {
+			this.attemptCPUToNuke();
+		} else {
 
-		if (this.currentPlayer.primaryTargetId != this.currentPlayer.mainBaseID) {
-			var obj = findMainBaseTarget(this.gameObj, this.currentPlayer);
-			this.doThisBattle(obj);
+			if (this.currentPlayer.primaryTargetId > 0)
+				this.allUnitsAttack(this.currentPlayer.primaryTargetId);
+			else {
+				var obj = findAmphibiousAttacks(this.gameObj, this.currentPlayer);
+				if (this.gameObj.round != 6 && obj && obj.attackUnits.length > 0) {
+					this.doThisBattle(obj);
+					if (obj && obj.ampFlg) {
+						this.doThisBattle({ attackUnits: obj.ampAttUnits, defUnits: obj.ampDefUnits, t1: obj.ampAttTerr.id, t2: obj.ampDefTerr.id, id: 2, terr: obj.ampDefTerr, attTerr: obj.ampAttTerr });
+					}
+					refreshTerritory(obj.ampAttTerr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
+					refreshTerritory(obj.ampDefTerr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
+				}
+			}
+
+			this.attemptToAttackACapital(this.currentPlayer, this.gameObj);
+
+			if (this.gameObj.round > 6 && this.currentPlayer.tech[3])
+				this.attemptCPUToNuke();
+
+			if (this.gameObj.round > 6 && this.currentPlayer.tech[8])
+				this.attemptCPUToCruise();
+
+			if (this.gameObj.round > 6)
+				this.attemptCPUStrategicBomb();
+
+			if (this.currentPlayer.primaryTargetId != this.currentPlayer.mainBaseID) {
+				var obj = findMainBaseTarget(this.gameObj, this.currentPlayer);
+				this.doThisBattle(obj);
+			}
+			if (this.currentPlayer.secondaryTargetId > 0)
+				this.attemptToAttack(this.currentPlayer.secondaryTargetId);
+
+			this.attackFromAllTerritories();
+
+			this.advanceMainBase();
 		}
-		if (this.currentPlayer.secondaryTargetId > 0)
-			this.attemptToAttack(this.currentPlayer.secondaryTargetId);
-
-		this.attackFromAllTerritories();
-
-		this.advanceMainBase();
 
 		this.cdr.detectChanges();
 		var delay = (this.hiSpeedFlg) ? 100 : 3000;
@@ -1080,7 +1177,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		keys.forEach(idStr => {
 			var id = numberVal(idStr) - 1;
 			var terr = this.gameObj.territories[id];
-			var range = 3;
+			var range = 4;
 			var target = this.findStratBombOfTerr(terr, this.currentPlayer, range, null, this.gameObj);
 			if (target) {
 				nukeTargets.push({ t1: terr, t2: target });
@@ -1391,6 +1488,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 	}
 	completingPurchases() {
+		console.log('completingPurchases', this.currentPlayer.status);
+
 		this.playerSetToAttackAndRefresh();
 		this.hideActionButton = !this.hideActionButton;
 		this.logPurchases(this.currentPlayer);
@@ -1499,9 +1598,13 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.bonusFactoryFlg = (terr.owner == 0 && terr.capital && terr.nation < 99);
 		hideArrow();
 		if (currentPlayer.status == 'Purchase') {
-			this.btPopupMessage = (this.gameObj.round == 1) ? 'Check out your available coins. Press "Buy" buttons below purchase units.' : 'Click on Germany.';
-			if (this.gameObj.round == 3)
-				this.btPopupMessage = 'Purchase a factory!';
+			this.btPopupMessage = 'Click on Germany.';
+			if (gameObj.currentCampaign < 2) {
+				if (this.gameObj.round == 1)
+					this.btPopupMessage = 'Check out your available coins. Press "Buy" buttons below purchase units.';
+			}
+
+
 			changeClass('completeTurnButton', 'glowButton');
 		}
 
@@ -1615,8 +1718,11 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			//this.showAlertPopup('Congratulations! Your first win! Click "Complete Turn" at the top to continue.');
 			highlightCompleteTurnButton(true);
 		}
-		if (battleObj.terr == 13 && this.user.rank < 2 && battleObj.militaryObj.wonFlg) {
-			this.showAlertPopup('Congratulations! You have taken over your second capital! This boosts your income by 10 coins per turn. Also you can now purchase units directly on Russia! Control 6 capitals to win the game.');
+		if (battleObj.terr == 13 && (this.gameObj.currentCampaign == 1 || this.gameObj.currentCampaign == 2) && battleObj.militaryObj.wonFlg) {
+			this.showAlertPopup('Congratulations! You have completed your mission and taken over your second capital! This boosts your income by 10 coins per turn. Also capitals come with a free factory. Press "Complete Turn" to end this campaign.');
+		}
+		if (battleObj.terr == 13 && this.gameObj.currentCampaign == 6 && battleObj.militaryObj.wonFlg) {
+			this.showAlertPopup('Congratulations! You now have 2 capitals and your income is boosted by 10 coins per turn. Take over one more capital to win this campaign.');
 		}
 		if (this.forcedClickNation > 0) {
 			console.log('cleared!!');
@@ -1699,6 +1805,16 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	moveSpriteBetweenTerrs(obj: any) {
 		// {t1: t1, t2: t2, id: id}
+		if (this.gameObj.currentCampaign == 5) {
+			if (obj.t2 == 110) {
+				this.forceUserToClickTerritory(107);
+				this.showAlertPopup('Good job! Now click on Labrador Sea to move your tranport there.')
+			}
+			if (obj.t2 == 107) {
+				this.forceUserToClickTerritory(59);
+				this.showAlertPopup('Perfect! Now click on Greenland to invade!')
+			}
+		}
 		var terr = this.gameObj.territories[obj.t1 - 1];
 		var t2 = this.gameObj.territories[obj.t2 - 1];
 		var spriteObj = { top1: terr.y, left1: terr.x, top2: t2.y, left2: t2.x, name: 'sprite' };
@@ -1931,7 +2047,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			showAlertPopup('Place your 3 infantry first.', 1);
 			return;
 		}
-		if (this.user.rank < 2 && this.gameObj.round <= 6 && this.currentPlayer.money >= 5 && this.currentPlayer.status == 'Purchase') {
+		if (this.gameObj.currentCampaign == 1 && this.gameObj.round <= 6 && this.currentPlayer.money >= 5 && this.currentPlayer.status == 'Purchase') {
 			showAlertPopup('Spend all of your money. Click on Germany to purchase units.', 1);
 			this.forceUserToClickTerritory(7);
 			return;
@@ -2057,16 +2173,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			showAlertPopup('New Carrier placed. You can load fighters onto it or press "Complete Turn".', 1);
 			return;
 		}
-		if (!this.currentPlayer.cpu && this.user.rank == 0 && this.gameObj.round >= 6) {
-			let rank = numberVal(localStorage.rank);
-			if (rank == 0) {
-				localStorage.rank = 1;
-				this.user.rank = 1;
-				saveUserObj(this.user);
-				this.user = userObjFromUser();
-				promoteSuperpowersUser(this.user);
-			}
-		}
 		this.uploadMultiplayerFlg = this.gameObj.multiPlayerFlg;
 		if (this.gameObj.multiPlayerFlg) {
 			startSpinner('Saving...', '150px', 'spinnerOKButton');
@@ -2104,14 +2210,34 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			saveGame(this.gameObj, this.user, this.currentPlayer, false, true, prevPlayer, 0);
 			if (!this.gameObj.multiPlayerFlg) {
 				addTestScore(this.gameObj);
-				if (this.gameObj.winningTeamFlg && this.user.rank < 2) {
-					localStorage.rank = 2;
-					this.user.rank = 2;
-					saveUserObj(this.user);
-					this.user = userObjFromUser();
-					promoteSuperpowersUser(this.user);
-					computerAnnouncement(this.user, 'New player ' + this.user.userName + ' just completed Single Player');
+				if (this.gameObj.winningTeamFlg && this.gameObj.currentCampaign > 0) {
+					var campaignId = localStorage.campaignId || 1;
+					var currentRank = localStorage.rank || 0;
+					var newRank = currentRank;
+					if (this.gameObj.currentCampaign >= campaignId) {
+						var newCampaignId: number = numberVal(this.gameObj.currentCampaign);
+						newCampaignId++;
+						localStorage.campaignId = newCampaignId.toString();
+					}
+
+					if (currentRank == 0 && this.gameObj.currentCampaign == 1) {
+						newRank++;
+					}
+					if (currentRank == 1 && this.gameObj.currentCampaign == 8) {
+						newRank++;
+					}
+					if (newRank > currentRank) {
+						localStorage.rank = newRank;
+						this.user.rank = newRank;
+						saveUserObj(this.user);
+						this.user = userObjFromUser();
+						promoteSuperpowersUser(this.user);
+						computerAnnouncement(this.user, 'New player ' + this.user.userName + ' just completed ' + this.gameObj.name);
+					}
 				}
+				if (this.gameObj.currentCampaign > 0)
+					this.showAlertPopup(this.gameObj.currentSituation);
+
 				clearCurrentGameId();
 			}
 		} else {
@@ -2127,10 +2253,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				this.loadCurrentPlayer();
 			}, 2000);
 		}
-		if (0) {
-			updateProgressBar(100);
-			stopSpinner();
-		}
+
 		this.cdr.detectChanges();
 	}
 	surrenderConfirmButtonPressed() {

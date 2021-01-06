@@ -54,10 +54,16 @@ export class MainPageComponent extends BaseComponent implements OnInit {
 
     if (0) {
       //reset user to new recruit
+      this.user = userObjFromUser();
       localStorage.rank = 0;
       this.user.rank = 0;
+      localStorage.campaignId = '';
+      localStorage.videoIntroWatched = '';
+      localStorage.videoGamePlayWatched = '';
+      localStorage.videoIconWatched = '';
       saveUserObj(this.user);
       this.user = userObjFromUser();
+      this.showAlertPopup('user reset!');
     }
 
     this.user = userObjFromUser();
@@ -134,9 +140,10 @@ export class MainPageComponent extends BaseComponent implements OnInit {
     if (this.currentVideo) {
       this.currentVideo.src = vid.src;
       this.currentVideo.play();
+      /*
       setTimeout(() => {
         this.turnOffVideo();
-      }, vid.seconds * 1000);
+      }, vid.seconds * 1000);*/
     }
   }
 
@@ -209,29 +216,24 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   }
 
   multiplayGameClicked(login: any) {
-    //if (this.user.rank < 2) {
-   //   this.showAlertPopup('You must complete a single player game before playing multiplayer.', 1);
-    //  return;
-   // }
     if (this.user.userId > 0)
       this.router.navigate(['/multiplayer']);
     else
       login.show();
   }
-  singlePlayerGame(startGame: any) {
+  singlePlayerGame() {
     if (this.guestNum == 0) {
-      this.showAlertPopup('Watch the Intro and Gameplay Videos first!', 1);
+      this.showAlertPopup('Whoa! Slow down tiger. You don\'t even know how to play yet. Watch the Intro and Gameplay Videos first.', 1);
       return;
     }
     if (this.guestNum == 1) {
-      this.showAlertPopup('Watch the Gameplay Video first!', 1);
+      this.showAlertPopup('Almost ready! Watch the Gameplay Video first so you have any idea what you are doing.', 1);
       return;
     }
-
     if (this.singleGameId > 0)
       this.router.navigate(['/board']);
     else
-      startGame.show();
+      this.router.navigate(['/campaign']);
   }
   userUpdated($event) {
     this.user = userObjFromUser();

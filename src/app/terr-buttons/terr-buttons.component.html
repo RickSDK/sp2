@@ -7,7 +7,7 @@
             *ngIf="(selectedTerritory.treatyStatus>=3 || (selectedTerritory.nation==99 && selectedTerritory.unitCount==0))">
             <div *ngIf="0" style="font-size: 10px;">-Troop Movement-</div>
 
-            <button (click)="changeOptionType('home')" *ngIf="optionType!='home'" type="button"
+            <button (mousedown)="changeOptionType('home')" *ngIf="optionType!='home'" type="button"
                 class="btn btn-primary roundButton">
                 <i class="fa fa-times"></i> Cancel</button>
            <button [disabled]="optionType=='movement'" (click)="changeOptionType('movement')" type="button"
@@ -41,48 +41,48 @@
             <button (click)="changeOptionType('home')" *ngIf="optionType!='home'" type="button"
                 class="btn btn-primary roundButton">
                 <i class="fa fa-times"></i> Cancel</button>
-            <button (click)="changeOptionType('attack')" id="attackButtonId" [disabled]="optionType=='attack'" type="button"
+            <button (mousedown)="changeOptionType('attack')" id="attackButtonId" [disabled]="optionType=='attack'" type="button"
                 class="btn btn-danger roundButton">
                 <i class="fa fa-crosshairs" style="font-size: 28px;"></i><br>Attack</button>
-            <button *ngIf="currentPlayer.nukes" [disabled]="optionType=='nuke'" (click)="changeOptionType('nuke')"
+            <button *ngIf="currentPlayer.nukes" [disabled]="optionType=='nuke'" (mousedown)="changeOptionType('nuke')"
                 type="button" class="btn btn-danger roundButton"><img src="assets/graphics/misc/nuke.png" height="30"
                     class="shadowedWhite" /><br>Nuke</button>
             <button *ngIf="selectedTerritory.cruiseFlg" [disabled]="optionType=='cruise'"
-                (click)="changeOptionType('cruise')" type="button" class="btn btn-danger roundButton"><img
+            (mousedown)="changeOptionType('cruise')" type="button" class="btn btn-danger roundButton"><img
                     src="assets/graphics/misc/cruiseMissile.png" height="30" class="shadowedWhite" />
                 <br>Cruise Missile</button>
             <button *ngIf="selectedTerritory.factoryCount>0" [disabled]="optionType=='bomb'"
-                (click)="changeOptionType('bomb')" type="button" class="btn btn-danger roundButton">
+                (mousedown)="changeOptionType('bomb')" type="button" class="btn btn-danger roundButton">
                 <i class="fa fa-plane" style="font-size: 28px;"></i>
                 <!--<img src="assets/graphics/units/piece7u.png" height="30" class="shadowedWhite" />-->
                 <br>Strategic Bomb</button>
             <button
                 *ngIf="currentPlayer.allies.length>0 && selectedTerritory.nation<99 && selectedTerritory.treatyStatus != 2"
-                (click)="alliesInfoButtonClicked()" type="button" class="btn btn-warning roundButton">
+                (mousedown)="alliesInfoButtonClicked()" type="button" class="btn btn-warning roundButton">
                 <i class="fa fa-users"></i> Allies</button>
         </div>
         <!---- allies buttons-->
         <div *ngIf="showAlliesButtonsIdx == selectedTerritory.id && selectedTerritory.nation<99" class="borderClass3">
             <div style="font-size: 10px;">-Commands to Allies-</div>
-            <button *ngIf="selectedTerritory.treatyStatus < 3" (click)="secondaryIndex=1" type="button"
+            <button *ngIf="selectedTerritory.treatyStatus < 3" (mousedown)="secondaryIndex=1" type="button"
                 class="btn btn-warning roundButton"><i class="fa fa-bullseye"></i> Target</button>
-            <button *ngIf="selectedTerritory.treatyStatus>2" (click)="secondaryIndex=2" type="button"
+            <button *ngIf="selectedTerritory.treatyStatus>2" (mousedown)="secondaryIndex=2" type="button"
                 class="btn btn-warning roundButton"><i class="fa fa-shield"></i> Fortify</button>
             <button *ngIf="selectedTerritory.treatyStatus==4 && selectedTerritory.owner != selectedTerritory.nation"
-                (click)="secondaryIndex=3" type="button" class="btn btn-warning roundButton"><i
+            (mousedown)="secondaryIndex=3" type="button" class="btn btn-warning roundButton"><i
                     class="fa fa-arrow-right"></i>
                 Transfer To Ally</button>
             <button *ngIf="selectedTerritory.treatyStatus==3 && selectedTerritory.owner != selectedTerritory.nation"
-                (click)="secondaryIndex=4" type="button" class="btn btn-warning roundButton"><i class="fa fa-globe"></i>
+            (mousedown)="secondaryIndex=4" type="button" class="btn btn-warning roundButton"><i class="fa fa-globe"></i>
                 Request Transfer</button>
 
             <!------------------ally seconday buttons----------------------------->
             <div *ngIf="secondaryIndex==3" class="borderClass">
                 <div>Transfer controll of this territory to an ally?</div>
-                <button [disabled]="currentPlayer.allies.length==1" (click)="cycleAllies()" id="" type="button"
+                <button [disabled]="currentPlayer.allies.length==1" (mousedown)="cycleAllies()" id="" type="button"
                     class="btn btn-primary roundButton"><img src="assets/graphics/images/flag{{allyNation}}.gif"
                         height=50></button>
-                <button (click)="tranferConfirmButtonClicked()" type="button" class="btn btn-success roundButton"><i
+                <button (mousedown)="tranferConfirmButtonClicked()" type="button" class="btn btn-success roundButton"><i
                         class="fa fa-check"></i>Transfer!</button>
                 <div style="font-size: 12px;">Note: Allies cannot transfer any of their original territories.</div>
             </div>
@@ -91,7 +91,7 @@
                     Transfer Request Sent!</div>
                 <div *ngIf="selectedTerritory.requestTransfer != currentPlayer.nation">
                     <div>Request that your ally transfer this country to you?</div>
-                    <button (click)="requestTranferConfirmButtonClicked()" type="button"
+                    <button (mousedown)="requestTranferConfirmButtonClicked()" type="button"
                         class="btn btn-success roundButton"><i class="fa fa-check"></i> Give me
                         {{selectedTerritory.name}}!</button>
                     <div style="font-size: 12px;">Note: Allies cannot transfer any of their original territories.</div>
@@ -103,10 +103,10 @@
                     Fortify Request Sent!</div>
                 <div *ngIf="selectedTerritory.requestedHotSpot != allyNation">
                     <div>Request that your ally fortify this country with troops?</div>
-                    <button [disabled]="currentPlayer.allies.length==1" (click)="cycleAllies()" id="" type="button"
+                    <button [disabled]="currentPlayer.allies.length==1" (mousedown)="cycleAllies()" id="" type="button"
                         class="btn btn-primary roundButton"><img src="assets/graphics/images/flag{{allyNation}}.gif"
                             height=50></button>
-                    <button (click)="requestFortifyButtonClicked()" type="button" class="btn btn-success roundButton"><i
+                    <button (mousedown)="requestFortifyButtonClicked()" type="button" class="btn btn-success roundButton"><i
                             class="fa fa-check"></i> Fortify
                         {{selectedTerritory.name}}!</button>
                     <div style="font-size: 12px;">Note: You can only fortify one territory at a time.</div>
@@ -117,10 +117,10 @@
                     Target Request Sent!</div>
                 <div *ngIf="selectedTerritory.requestedTarget != allyNation">
                     <div>Request that your ally target this territory?</div>
-                    <button [disabled]="currentPlayer.allies.length==1" (click)="cycleAllies()" id="" type="button"
+                    <button [disabled]="currentPlayer.allies.length==1" (mousedown)="cycleAllies()" id="" type="button"
                         class="btn btn-primary roundButton"><img src="assets/graphics/images/flag{{allyNation}}.gif"
                             height=50></button>
-                    <button (click)="requestTargetButtonClicked()" type="button" class="btn btn-success roundButton"><i
+                    <button (mousedown)="requestTargetButtonClicked()" type="button" class="btn btn-success roundButton"><i
                             class="fa fa-check"></i> Target
                         {{selectedTerritory.name}}!</button>
                     <div style="font-size: 12px;">Note: You can only target one territory at a time.</div>
@@ -133,7 +133,7 @@
 
 
 
-        <button *ngIf="infoFlg || (optionType=='attack' && totalUnitsThatCanMove>0)" (click)="infoFlg = !infoFlg" id=""
+        <button *ngIf="infoFlg || (optionType=='attack' && totalUnitsThatCanMove>0)" (mousedown)="infoFlg = !infoFlg" id=""
             type="button" class="btn btn-secondary roundButton"><i class="fa fa-info-circle"></i> Info</button>
 
 
