@@ -812,7 +812,18 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 		if (this.gameObj.currentCampaign == 5) {
 			playVoiceClip('round' + this.gameObj.round + '.mp3');
-			militaryAdvisorPopup('Let\'s try an amphibious landing of Greenland. Buy another transport to make the landing successful.');
+			if (this.gameObj.round == 1)
+				militaryAdvisorPopup('Let\'s try an amphibious landing of Greenland. Buy another transport to make the landing successful.');
+			else if (this.gameObj.round == 2)
+				militaryAdvisorPopup('Conduct an amphibious landing on Quebec, Canada. You can use multiple forces from multiple transports to attack all at once.');
+			else
+				militaryAdvisorPopup('Your goal is to take over the United States Capital.');
+
+			return;
+		}
+		if (this.gameObj.currentCampaign == 6) {
+			playVoiceClip('round' + this.gameObj.round + '.mp3');
+			militaryAdvisorPopup('Purchase research until you get Anthrax Warheads. The research you develop will be random. See the Tech tab for details..');
 			return;
 		}
 		if (this.gameObj.round <= 6) {
@@ -828,12 +839,13 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 	}
 	forceUserToClickTerritory(terrId: number) {
-		console.log('xxx forceUserToClickTerritory', terrId);
 		this.forcedClickNation = terrId;
-		highlightTerritoryWithArrow(terrId, this.gameObj);
 		var terr = this.gameObj.territories[terrId - 1];
 		this.btPopupMessage = 'Click on ' + terr.name;
 		this.changeSVGColor(true, terrId, terr.owner);
+		setTimeout(() => {
+			highlightTerritoryWithArrow(terrId, this.gameObj);
+		}, 1000);
 	}
 	introContinuePressed() {
 		this.playGameButtonPressed();
@@ -843,6 +855,20 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.gameObj.currentCampaign < 7)
 			this.currentPlayer.placedInf = 3;
 
+		if (this.gameObj.currentCampaign == 4) {
+			this.btPopupMessage = 'Click on the "Units" button and research Nuclear Missiles under the "Air" units tab.';
+			setTimeout(() => {
+				highlightElementWithArrow('unitsButton');
+			}, 1000);
+			return;
+		}
+		if (this.gameObj.currentCampaign == 6) {
+			this.btPopupMessage = 'Click on the "Tech" tab to see all of the technology possible. Click on the "Info" and "Show Description" buttons to see the details.';
+			setTimeout(() => {
+				highlightElementWithArrow('techButton');
+			}, 1000);
+			return;
+		}
 		if ((this.gameObj.currentCampaign >= 1 && this.gameObj.currentCampaign < 5) || this.gameObj.currentCampaign == 6) {
 			this.newPlayerHelpText = 'Click on Germany';
 			playVoiceClip('bt02EU.mp3');
@@ -949,6 +975,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				this.forceUserToClickTerritory(62);
 				this.newPlayerHelpText = 'Build a new factory in Ukraine. Click on Ukraine.';
 			}
+			if (this.gameObj.currentCampaign == 2 && this.gameObj.round == 5) {
+				this.forceUserToClickTerritory(13);
+			}
+			if (this.gameObj.currentCampaign == 3 && this.gameObj.round == 2) {
+				this.forceUserToClickTerritory(11);
+			}
 		}
 		this.playerSetToPurchaseAndRefresh();
 	}
@@ -971,9 +1003,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		else {
 			if (!this.gameObj.currentCampaign || this.gameObj.currentCampaign >= 7) {
 				playVoiceClip('beginConquest.mp3');
-				return
+				//return
 			}
-			if (this.gameObj.currentCampaign == 1 || this.gameObj.currentCampaign == 2 || this.gameObj.currentCampaign == 6) {
+			if (this.gameObj.currentCampaign == 1 || this.gameObj.currentCampaign == 2) {
 				if (this.gameObj.round == 1) {
 					this.forceUserToClickTerritory(62);
 					playVoiceClip('bt09Ukraine.mp3');
@@ -1011,10 +1043,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					this.forceUserToClickTerritory(14);
 				}
 				if (this.gameObj.round == 2) {
-					this.showAlertPopup('Find another factory to try to bomb. Notice if the factory has a plus (+) sign on it, it means it has air defense.');
+					this.showAlertPopup('Find another factory to try to bomb. Notice if the factory has a plus (+) sign on it, it means it has air defense. Finding a factory with no Air Defense means you have a free chance to attack it.');
 				}
 				if (this.gameObj.round == 3) {
-					this.showAlertPopup('Note each bomber can destroy 1 factory, so split up your bombers and attack each factory with one bomber.');
+					this.showAlertPopup('Note each bomber can destroy 1 factory, so split up your bombers and attack each factory with one bomber. Note your bomber must roll a "4" or lower to hit!');
 				}
 			}
 			if (this.gameObj.currentCampaign == 4) {
@@ -1028,6 +1060,16 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					this.showAlertPopup('Let\'s do an amphibious landing on Greenland. Start by loading your transport with 4 infantry and both heros.');
 					this.forceUserToClickTerritory(110);
 				}
+				if (this.gameObj.round == 2) {
+					this.showAlertPopup('Load up your remaining ground forces onto your new transports.');
+					this.forceUserToClickTerritory(110);
+				}
+			}
+			if (this.gameObj.currentCampaign == 6 && this.gameObj.round == 1) {
+				this.showAlertPopup('The object of this campaign is simply research technology until you reach Antrax Warheads. No attacks are neccessary.');
+			}
+			if (this.gameObj.currentCampaign == 7 && this.gameObj.round == 2) {
+				this.showAlertPopup('View the allies tab to see how the teams are stacking up. Once you are at peace with a player, you can offer an alliance!');
 			}
 		}
 	}
@@ -1634,6 +1676,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.playClick();
 		if (this.gameObj.multiPlayerFlg)
 			this.router.navigate(['/multiplayer']);
+		else if (this.gameObj.currentCampaign > 0 && this.gameObj.currentCampaign < 10)
+			this.router.navigate(['/campaign']);
 		else
 			this.router.navigate(['/']);
 	}
@@ -1709,6 +1753,18 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.battleObj = battleObj;
 		this.newPlayerHelpText = 'Press "Complete Turn" button at the top.';
 		console.log('!!!battleCompletedEmit!!!', battleObj);
+		if (this.gameObj.currentCampaign == 4 && this.gameObj.round == 1) {
+			this.btPopupMessage = 'Click on the "Logs" button to see a full report of damage.';
+			setTimeout(() => {
+				highlightElementWithArrow('logsButton');
+			}, 1000);
+		}
+		if (this.gameObj.currentCampaign == 5 && battleObj.terr == 59 && battleObj.militaryObj.wonFlg) {
+			this.showAlertPopup('Nice Job! On your next turn invade Quebec and set up for an attack on United States.');
+		}
+		if (this.gameObj.currentCampaign == 5 && battleObj.terr == 58 && battleObj.militaryObj.wonFlg) {
+			this.showAlertPopup('Great! You may want to build a factory here next turn so you can build troops to invade USA.');
+		}
 		if (battleObj.terr == 62 && this.user.rank < 2 && battleObj.militaryObj.wonFlg) {
 			this.btPopupMessage = 'Congratulations! Your first win! Click "Complete Turn" at the top to continue.';
 			setTimeout(() => {
@@ -1718,8 +1774,11 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			//this.showAlertPopup('Congratulations! Your first win! Click "Complete Turn" at the top to continue.');
 			highlightCompleteTurnButton(true);
 		}
-		if (battleObj.terr == 13 && (this.gameObj.currentCampaign == 1 || this.gameObj.currentCampaign == 2) && battleObj.militaryObj.wonFlg) {
+		if (battleObj.terr == 13 && this.gameObj.currentCampaign == 1 && battleObj.militaryObj.wonFlg) {
 			this.showAlertPopup('Congratulations! You have completed your mission and taken over your second capital! This boosts your income by 10 coins per turn. Also capitals come with a free factory. Press "Complete Turn" to end this campaign.');
+		}
+		if (battleObj.terr == 13 && this.gameObj.currentCampaign == 2 && battleObj.militaryObj.wonFlg) {
+			this.showAlertPopup('Congratulations! This boosts your income by 10 coins per turn. Now try to occupy the remaining Russian territories to get an additional 10 coin bonus.');
 		}
 		if (battleObj.terr == 13 && this.gameObj.currentCampaign == 6 && battleObj.militaryObj.wonFlg) {
 			this.showAlertPopup('Congratulations! You now have 2 capitals and your income is boosted by 10 coins per turn. Take over one more capital to win this campaign.');
@@ -1806,11 +1865,19 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	moveSpriteBetweenTerrs(obj: any) {
 		// {t1: t1, t2: t2, id: id}
 		if (this.gameObj.currentCampaign == 5) {
-			if (obj.t2 == 110) {
+			if (obj.t2 == 110 && this.gameObj.round==1) {
 				this.forceUserToClickTerritory(107);
 				this.showAlertPopup('Good job! Now click on Labrador Sea to move your tranport there.')
 			}
-			if (obj.t2 == 107) {
+			if (obj.t2 == 110 && this.gameObj.round==2) {
+				this.forceUserToClickTerritory(107);
+				this.showAlertPopup('Now click on Labrador Sea to load your heros and 4 infantry.')
+			}
+			if (obj.t2 == 107 && this.gameObj.round==2) {
+				this.forceUserToClickTerritory(106);
+				this.showAlertPopup('Good! Now click on Quebec Waters to move your tranports there, finally invade Quebec.')
+			}
+			if (obj.t2 == 107 && this.gameObj.round==1) {
 				this.forceUserToClickTerritory(59);
 				this.showAlertPopup('Perfect! Now click on Greenland to invade!')
 			}
@@ -1926,10 +1993,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		amount -= 1;
 		var range = spriteObj.left1 - spriteObj.left2;
 		var left = spriteObj.left2 + range * amount / 100;
-
+	
 		var range2 = spriteObj.top1 - spriteObj.top2;
 		var top = spriteObj.top2 + range2 * amount / 100;
-
+	
 		var e = document.getElementById(spriteObj.name);
 		if (e) {
 			e.style.left = (left - 10).toString() + 'px';
@@ -2224,6 +2291,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 						newRank++;
 					}
 					if (currentRank == 1 && this.gameObj.currentCampaign == 8) {
+						newRank++;
+					}
+					if (currentRank == 2 && this.gameObj.currentCampaign == 10) {
 						newRank++;
 					}
 					if (newRank > currentRank) {

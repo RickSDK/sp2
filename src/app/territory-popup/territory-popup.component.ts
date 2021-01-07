@@ -149,47 +149,59 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       terr.facFlg = checkWaterForFactory(terr, currentPlayer.nation, gameObj);
 
     if (gameObj.currentCampaign == 1 || gameObj.currentCampaign == 2) {
-      if (user.rank < 2 && gameObj.round == 1 && currentPlayer.status == 'Purchase' && terr.id == 7) {
+      if (gameObj.round == 1 && currentPlayer.status == 'Purchase' && terr.id == 7) {
         showAlertPopup('Check out your available coins. Press "Buy" buttons below to purchase units. For now, just get 4 tanks.')
       }
       if (gameObj.round == 1 && currentPlayer.status == 'Purchase' && terr.id == 7 && gameObj.currentCampaign == 3) {
         showAlertPopup('Buy Air Defense for all your factories. Up to 2 per territory. Click the "Air" tab below to see your Air Defense units.')
       }
-      if (user.rank < 2 && gameObj.round == 2 && currentPlayer.status == 'Purchase' && terr.id == 7) {
-        showAlertPopup('Purchase an Economic Center. This will boost your income by 5 coins/turn! Also get 3 more tanks. By the way, you can only have 1 economic center per territory.')
+      if (gameObj.currentCampaign == 1 && gameObj.round == 2 && currentPlayer.status == 'Purchase' && terr.id == 7) {
+        showAlertPopup('Purchase an Economic Center. This will boost your income by 5 coins/turn! Also get one more tank. By the way, you can only have 1 economic center per territory.')
       }
-      if (user.rank < 2 && gameObj.round == 3 && currentPlayer.status == 'Purchase' && terr.id == 62) {
+      if (gameObj.currentCampaign == 2 && gameObj.round == 2 && currentPlayer.status == 'Purchase' && terr.id == 7) {
+        showAlertPopup('All units are now unlocked, but buying an economic center and 3 tanks would be a good move for you in this situation.')
+      }
+      if (gameObj.currentCampaign == 1 && gameObj.round == 3 && currentPlayer.status == 'Purchase' && terr.id == 62) {
         showAlertPopup('Buy a "Factory" here. Starting with your next turn, you will be able to buy new units in Ukraine as well as Germany!')
       }
 
-      if (user.rank < 2 && gameObj.round == 1 && currentPlayer.status == 'Attack' && terr.id == 62) {
+      if (gameObj.round == 1 && currentPlayer.status == 'Attack' && terr.id == 62) {
         showAlertPopup('Click "Attack" and then send all available units into the battle!');
       }
-      if (user.rank < 2 && gameObj.round == 2 && currentPlayer.status == 'Attack' && terr.id == 15) {
+      if (gameObj.round == 2 && currentPlayer.status == 'Attack' && terr.id == 15) {
         showAlertPopup('Let\'s invade! Every time you defeat a territory not controlled by another player, you receive free bonus units. Press "Attack" and remember to send all available units into the battle.');
       }
-      if (user.rank < 2 && gameObj.round == 3 && currentPlayer.status == 'Attack' && terr.id == 14) {
+      if (gameObj.round == 3 && currentPlayer.status == 'Attack' && terr.id == 14) {
         showAlertPopup('Continue pressing your attacks into Russia. Your goal is to get to the capital. Press "Attack" and remember to send all available units into the battle.');
       }
-      if (user.rank < 2 && gameObj.round == 4 && currentPlayer.status == 'Attack' && terr.id == 13) {
+      if (gameObj.round == 4 && currentPlayer.status == 'Attack' && terr.id == 13) {
         showAlertPopup('If you have enough units, take Russia! This will boost your income by 10 coins/turn. If you don\'t have enough units, start moving forces up closer so they can attack next turn.');
       }
-      if (user.rank < 2 && gameObj.round == 5 && currentPlayer.status == 'Attack' && terr.id == 17) {
-        showAlertPopup('If you are able to control all territories belonging to a superpower (Brown ones for Russia) you will gain additional 10 coins/turn.');
+      if (gameObj.round == 5 && currentPlayer.status == 'Attack' && terr.id == 17) {
+        showAlertPopup('If you are able to control all territories belonging to a superpower (Brown ones for Russia) you will gain additional 10 coins/turn. You may also want to split up your forces to attack multiple territories. Just remember to include tanks and infantry with each battle. Tanks are better at attacking, but infantry are cheaper and will be used first as casualties.');
       }
     }
     if (gameObj.currentCampaign == 3 && gameObj.round == 1 && currentPlayer.status == 'Purchase' && terr.id == 7) {
-      showAlertPopup('For this campaign, just buy bombers and air defense. Click on the "Air" tab. You can also buy factories and economic centers to build your economy.');
+      showAlertPopup('For this campaign, first buy air defense. Click on the "Air" tab. You want 2 AA guns units per factory for top protection.');
+    }
+    if (gameObj.currentCampaign == 3 && gameObj.round == 2 && currentPlayer.status == 'Purchase' && terr.id == 7) {
+      showAlertPopup('Get more bombers to wreak havoc on your enemy.');
+    }
+    if (gameObj.currentCampaign == 3 && gameObj.round == 2 && currentPlayer.status == 'Purchase' && terr.id == 11) {
+      showAlertPopup('If your factory is bombed out, buy a new one to restore your income. Also make sure you have 2 AA Guns here.');
     }
 
     if (gameObj.currentCampaign == 4 && gameObj.round == 1 && currentPlayer.status == 'Purchase' && terr.id == 7) {
       showAlertPopup('For this campaign, just buy nukes and air defense. Click on the "Air" tab.');
     }
     if (gameObj.currentCampaign == 5 && gameObj.round == 1 && currentPlayer.status == 'Purchase' && terr.id == 110) {
-      showAlertPopup('Because you have a factory in Germany, you can buy ships in any adjacent sea zone. For this campaign, buy extra transports to carry units to Greenland.');
+      showAlertPopup('Because you have a factory in Germany, you can buy ships in any adjacent sea zone. For this campaign, buy extra transports to begin your invasion of United States.');
     }
     if (gameObj.currentCampaign == 6 && gameObj.round == 1 && currentPlayer.status == 'Purchase' && terr.id == 7) {
       showAlertPopup('Let\'s try purchasing Technology. Buy 2 by clicking on the "Research" button twice.');
+    }
+    if (gameObj.currentCampaign == 6 && gameObj.round == 2 && currentPlayer.status == 'Purchase' && terr.id == 7) {
+      showAlertPopup('Buy Anti-balistics and Railway this turn. These are 2 unique technologies that you can purchase outright.');
     }
 
     if (ableToTakeThisTurn && currentPlayer.status == 'Purchase' && terr.facFlg) {

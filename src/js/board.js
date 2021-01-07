@@ -623,7 +623,7 @@ function scrubGameObj(gameObj, gUnits) {
 	});
 	gameObj.gamePoints = gamePointsForType(gameObj.type, gameObj.mmFlg);
 	gameObj.icon = ngClassGameTypeMain(gameObj.type);
-	gameObj.desc = gameDescForType(gameObj.type);
+	//gameObj.desc = gameDescForType(gameObj.type);
 	if (gameObj.gameOver)
 		gameObj.fogOfWar = false;
 	if (!gameObj.unitPurchases)
@@ -1859,18 +1859,6 @@ function flagOfOwner(terr, showDetailsFlg, unitCount, isPurchasePhase) {
 function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPlayer, user) {
 	figureOutTeams(gameObj);
 
-	if (gameObj.currentCampaign == 5) {
-		var greenland = gameObj.territories[58];
-		if (greenland.owner == 2) {
-			gameObj.winningTeamFlg = true;
-			gameObj.currentSituation = 'You Win!';
-		} else {
-			gameObj.winningTeamFlg = false;
-			gameObj.currentSituation = 'You Lose! You need to take over Greenland on turn 1 to win!';
-		}
-		gameObj.gameOver = true;
-		return;
-	}
 	var victoryMet = false;
 
 	var capitalsWin = gameObj.capitalsWin || 6; //maxCapitals = 6;
@@ -1913,6 +1901,12 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 		gameObj.currentSituation = 'You win!';
 		return;
 	}
+	if (gameObj.currentCampaign == 6 && gameObj.players[0].tech[5]) {
+		gameObj.gameOver = true;
+		gameObj.winningTeamFlg = true;
+		gameObj.currentSituation = 'You win!';
+		return;
+	}
 
 	var maxCapitalsHeld = 0;
 	var winningTeam = 0;
@@ -1933,9 +1927,16 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 
 	gameObj.winningTeamFlg = (yourPlayer && yourPlayer.team == winningTeam);
 	var winningTeamList = playersOfTeam(winningTeam, gameObj, superpowersData);
+	if(gameObj.currentCampaign == 2) {
+		if(gameObj.players[0].sp>1) {
+			gameObj.gameOver = true;
+			gameObj.winningTeamFlg = true;
+			gameObj.currentSituation = 'You win!';
+			return;
+		}
+	}
 
-	//console.log('checkVictoryConditions', gameObj.currentCampaign, maxCapitalsHeld, winningTeam);
-	if (maxCapitalsHeld > 1 && (gameObj.currentCampaign == 1 || gameObj.currentCampaign == 2 || gameObj.currentCampaign == 3 || gameObj.currentCampaign == 4 || gameObj.currentCampaign == 5)) {
+	if (maxCapitalsHeld > 1 && (gameObj.currentCampaign == 1 || gameObj.currentCampaign == 3 || gameObj.currentCampaign == 4 || gameObj.currentCampaign == 5)) {
 		gameObj.gameOver = true;
 		if (winningTeam == '1')
 			gameObj.currentSituation = 'You win!';

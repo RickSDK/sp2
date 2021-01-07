@@ -39,7 +39,6 @@ export class VideoPopupComponent implements OnInit {
         this.turnOffVideo();
       }, vid.seconds * 1000);
     }
-
   }
   playDemoVideo() {
     this.showVideoPlayerFlg = true;

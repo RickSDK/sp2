@@ -9,7 +9,7 @@
             </div>
             <div class="modal-body" style="padding: 0; text-align: center;">
                 <img src="assets/graphics/images/map.png" width="100%">
-                <div *ngIf="user.rank < 3">
+                <div *ngIf="campaignId > 0">
                     <div style="font-size: 16px; font-weight: 700;">Welcome {{superpowersData.ranks[user.rank].name}}!
                     </div>
 
@@ -21,7 +21,7 @@
                         <div style="font-size: 11px;">{{superpowersData.campaigns[campaignId-1].desc}}</div>    
                     </div>
                 </div>
-                <div *ngIf="user.rank >= 3">
+                <div *ngIf="campaignId == 0">
                     <div style="border: 1px solid black; margin: 3px; background-color: #ddd;">
                         <div class="btn-group">
                             <button (click)="segmentIdx=0" type="button" class="btn btn-default roundButton"

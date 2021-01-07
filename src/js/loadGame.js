@@ -77,6 +77,21 @@ function createNewGame(id, type, numPlayers, name, attack, pieces, startingNatio
 	gameObj.multiPlayerFlg = false;
 	gameObj.typeName = gameTypeNameForType(gameObj.type);
 	gameObj.desc = gameDescForType(gameObj.type);
+	if (currentCampaign > 0) {
+		var descriptions = [
+			'Objective: Take over the Russian capital.',
+			'Objective: Conquer all of the Russian territories.',
+			'Objective: Bomb the russian economy to drop below 20 coins / turn.',
+			'No Objective. Simply wage nuclear war for 4 rounds to test out the unit.',
+			'Objective: Take over the United States capital.',
+			'Objective: Research Technology until you earn Anthrax Warheads.',
+			'Objective: Form an alliance and control 4 capitals between you.',
+			'Objective: Control 5 capitals as a team to win.',
+			'Objective: Control 6 capitals as a team to win.',
+			'Objective: You must Control 6 capitals by yourself to win.',
+		]
+		gameObj.desc = descriptions[currentCampaign - 1];
+	}
 	gameObj.factories = [];
 	gameObj.battles = [];
 	gameObj.logs = [];
@@ -234,9 +249,14 @@ function loadPlayersFromObj(pObj, userName) {
 }
 function loadPlayers(numPlayers, startingNation, rank, user, currentCampaign) {
 	var players = [];
-	if (currentCampaign == 1 || currentCampaign == 2) {
+	if (currentCampaign == 1) {
 		players.push({ id: 1, turn: 1, team: 1, nation: 2, generalFlg: true, leaderFlg: true, kills: 0, losses: 0, kd: 0, preferedTeam: 1, userName: userName, userId: 1, alive: true, income: 30, money: 20, unitCount: 10, sp: 1, cap: 1, status: 'Purchase', treaties: [1, 1, 1, 1, 1, 1, 1, 1], offers: [], tech: [], battleship: [], cpu: false, placedInf: 0 });
 		players.push({ id: 2, turn: 2, team: 2, nation: 4, generalFlg: true, leaderFlg: true, kills: 0, losses: 0, kd: 0, preferedTeam: 2, userName: 'CPU1', userId: 2, alive: true, income: 30, money: 20, unitCount: 10, sp: 1, cap: 1, status: 'Purchase', treaties: [1, 1, 1, 1, 1, 1, 1, 1], offers: [], tech: [], battleship: [], cpu: true, placedInf: 0 });
+		return players;
+	}
+	if (currentCampaign == 2) {
+		players.push({ id: 1, turn: 1, team: 1, nation: 2, generalFlg: true, leaderFlg: true, kills: 0, losses: 0, kd: 0, preferedTeam: 1, userName: userName, userId: 1, alive: true, income: 30, money: 20, unitCount: 10, sp: 1, cap: 1, status: 'Purchase', treaties: [1, 1, 1, 1, 1, 1, 1, 1], offers: [], tech: [], battleship: [], cpu: false, placedInf: 0 });
+		players.push({ id: 2, turn: 2, team: 2, nation: 7, generalFlg: true, leaderFlg: true, kills: 0, losses: 0, kd: 0, preferedTeam: 2, userName: 'CPU1', userId: 2, alive: true, income: 30, money: 20, unitCount: 10, sp: 1, cap: 1, status: 'Purchase', treaties: [1, 1, 1, 1, 1, 1, 1, 1], offers: [], tech: [], battleship: [], cpu: true, placedInf: 0 });
 		return players;
 	}
 	if (currentCampaign == 3 || currentCampaign == 4) {
@@ -246,7 +266,7 @@ function loadPlayers(numPlayers, startingNation, rank, user, currentCampaign) {
 	}
 	if (currentCampaign == 5) {
 		players.push({ id: 1, turn: 1, team: 1, nation: 2, generalFlg: true, leaderFlg: true, kills: 0, losses: 0, kd: 0, preferedTeam: 1, userName: userName, userId: 1, alive: true, income: 30, money: 20, unitCount: 10, sp: 1, cap: 1, status: 'Purchase', treaties: [1, 1, 1, 1, 1, 1, 1, 1], offers: [], tech: [], battleship: [], cpu: false, placedInf: 0 });
-		players.push({ id: 2, turn: 2, team: 2, nation: 1, generalFlg: true, leaderFlg: true, kills: 0, losses: 0, kd: 0, preferedTeam: 2, userName: 'CPU1', userId: 2, alive: true, income: 30, money: 20, unitCount: 10, sp: 1, cap: 1, status: 'Purchase', treaties: [1, 1, 1, 1, 1, 1, 1, 1], offers: [], tech: [], battleship: [], cpu: true, placedInf: 0 });
+		players.push({ id: 2, turn: 2, team: 2, nation: 4, generalFlg: true, leaderFlg: true, kills: 0, losses: 0, kd: 0, preferedTeam: 2, userName: 'CPU1', userId: 2, alive: true, income: 30, money: 20, unitCount: 10, sp: 1, cap: 1, status: 'Purchase', treaties: [1, 1, 1, 1, 1, 1, 1, 1], offers: [], tech: [], battleship: [], cpu: true, placedInf: 0 });
 		return players;
 	}
 	var humanTurn = Math.floor((Math.random() * numPlayers));
@@ -369,9 +389,6 @@ function loadUnits(x, pieces, id, terrs, currentCampaign) {
 		for (i = 0; i < terrs.length; i++) {
 			var terr = terrs[i];
 			if (terr.nation < 99 && terr.owner == 0) {
-				units.push(unitOfId(id++, x, 2, terr.id, pieces));
-				units.push(unitOfId(id++, x, 2, terr.id, pieces));
-				units.push(unitOfId(id++, x, 2, terr.id, pieces));
 				if (terr.capital) {
 					units.push(unitOfId(id++, x, 6, terr.id, pieces));
 					units.push(unitOfId(id++, x, 6, terr.id, pieces));
@@ -382,6 +399,15 @@ function loadUnits(x, pieces, id, terrs, currentCampaign) {
 					units.push(unitOfId(id++, x, 2, terr.id, pieces));
 					units.push(unitOfId(id++, x, 2, terr.id, pieces));
 					units.push(unitOfId(id++, x, 2, terr.id, pieces));
+					units.push(unitOfId(id++, x, 2, terr.id, pieces));
+					units.push(unitOfId(id++, x, 2, terr.id, pieces));
+					units.push(unitOfId(id++, x, 2, terr.id, pieces));
+				} else {
+					var numInf = Math.floor((Math.random() * 3)) + 2;
+					for (var infDefender = 0; infDefender < numInf; infDefender++) {
+						units.push(unitOfId(id++, x, 2, terr.id, pieces));
+
+					}
 				}
 			}
 		}
@@ -393,24 +419,27 @@ function loadUnits(x, pieces, id, terrs, currentCampaign) {
 			units.push(unitOfId(id++, x, 3, capId, pieces));
 			units.push(unitOfId(id++, x, 3, capId, pieces));
 			units.push(unitOfId(id++, x, 3, capId, pieces));
+			units.push(unitOfId(id++, x, 3, capId, pieces));
 			units.push(unitOfId(id++, x, 2, capId, pieces));
 			units.push(unitOfId(id++, x, 2, capId, pieces));
 		} else {
 			units.push(unitOfId(id++, x, 11, capId, pieces));
 			units.push(unitOfId(id++, x, 10, capId, pieces));
+			units.push(unitOfId(id++, x, 6, capId, pieces));
+		}
+		if(!currentCampaign || currentCampaign==0 || currentCampaign>4) {
+			units.push(unitOfId(id++, x, 4, watersId, pieces));
+			units.push(unitOfId(id++, x, 5, watersId, pieces));
 		}
 		if (currentCampaign == 3) {
 			units.push(unitOfId(id++, x, 7, capId, pieces));
 			units.push(unitOfId(id++, x, 7, capId, pieces));
 		}
-		units.push(unitOfId(id++, x, 6, capId, pieces));
 		units.push(unitOfId(id++, x, 2, capId, pieces));
 		units.push(unitOfId(id++, x, 2, capId, pieces));
 		units.push(unitOfId(id++, x, 2, capId, pieces));
 		units.push(unitOfId(id++, x, 3, capId, pieces));
 		units.push(unitOfId(id++, x, 3, capId, pieces));
-		units.push(unitOfId(id++, x, 4, watersId, pieces));
-		units.push(unitOfId(id++, x, 5, watersId, pieces));
 	}
 
 	return units;

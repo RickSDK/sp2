@@ -222,14 +222,6 @@ export class MainPageComponent extends BaseComponent implements OnInit {
       login.show();
   }
   singlePlayerGame() {
-    if (this.guestNum == 0) {
-      this.showAlertPopup('Whoa! Slow down tiger. You don\'t even know how to play yet. Watch the Intro and Gameplay Videos first.', 1);
-      return;
-    }
-    if (this.guestNum == 1) {
-      this.showAlertPopup('Almost ready! Watch the Gameplay Video first so you have any idea what you are doing.', 1);
-      return;
-    }
     if (this.singleGameId > 0)
       this.router.navigate(['/board']);
     else

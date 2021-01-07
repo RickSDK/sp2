@@ -32,6 +32,7 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
   public battleshipCost = 0;
   public brokeFlg = false;
   public superBCForm: any;
+  public factoriesInQueue = 0;
 
   constructor() { super(); }
 
@@ -42,6 +43,7 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
     this.segmentIdx = (terr.nation < 99) ? 0 : 2;
     this.changeProdType(this.segmentIdx, terr);
     this.facBombedFlg = terr.facBombed;
+    this.factoriesInQueue = this.numFactoriesInQueue(terr);
   }
 
   addUniToQueue(piece: number, count: number) {
@@ -55,6 +57,10 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
       this.showAlertPopup(' For this training, we are only going to buy tanks, factories and economic centers.', 1);
       return;
     }
+    if(this.gameObj.currentCampaign == 3 && piece != 13 && this.gameObj.round==1) {
+      this.showAlertPopup(' Only buy AA Guns this round. Click each of your factories and buy 1 AA Gun per factory. Press the "Air" tab.', 1);
+      return;
+    }
     if(this.gameObj.currentCampaign == 3 && piece != 13 && piece != 7 && piece != 15 && piece != 19) {
       this.showAlertPopup(' For this training, we are only going to buy Air Defense, Bombers, Factories and Economic Centers. Click the "Air" tab.', 1);
       return;
@@ -63,12 +69,16 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
       this.showAlertPopup(' For this training, we are only going to buy Air Defense and Nukes. Click the "Air" tab.', 1);
       return;
     }
-    if(this.gameObj.currentCampaign == 5 && piece != 4) {
-      this.showAlertPopup('For this training, we are only going to buy Transports. Click on the North Sea zome and buy a transport.', 1);
+    if(this.gameObj.currentCampaign == 5 && this.gameObj.round==1 && piece != 4) {
+      this.showAlertPopup('For this training, we are only going to buy Transports. Click on the North Sea zome and buy transports.', 1);
       return;
     }
     if(this.gameObj.currentCampaign == 6 && this.gameObj.round==1 && piece != 18) {
       this.showAlertPopup('Try purchasing Technology. Press the "Research" button.', 1);
+      return;
+    }
+    if(this.gameObj.currentCampaign == 6 && this.gameObj.round==2 && piece != 16 && piece != 17) {
+      this.showAlertPopup('Buy Anti-Balistics and Railway this turn. Then press the "Purchase Complete" button.', 1);
       return;
     }
     if (this.adminModeFlg) {
@@ -82,7 +92,6 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
     if (this.selectedTerritory.nation == 99 && isUnitFighterUnit(piece)) {
       var carrierSpace = this.selectedTerritory.carrierSpace + this.numCarriersInQueue(this.selectedTerritory) * 2;
       var carrierCargo = this.selectedTerritory.carrierCargo + this.numFightersInQueue(this.selectedTerritory);
-      console.log('xxx', carrierSpace, carrierCargo, count);
       if (carrierSpace < carrierCargo + count) {
         this.showAlertPopup('no room for this fighter!', 1);
         return;
@@ -105,6 +114,14 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
         this.allowFactoryFlg = false;
     }
     addUniToQueue(piece, count, this.superpowersData, this.currentPlayer, this.gameObj, this.selectedTerritory);
+  }
+  numFactoriesInQueue(terr: any) {
+    var num = 0;
+    this.gameObj.unitPurchases.forEach(unitPurch => {
+      if ((unitPurch.piece == 15 || unitPurch.piece == 19) && unitPurch.terr == terr.id)
+        num++;
+    });
+    return num;
   }
   numFightersInQueue(terr: any) {
     var num = 0;
@@ -129,6 +146,7 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
     var units = this.superpowersData.units;
     var money = this.currentPlayer.money;
     this.facBombedFlg = this.selectedTerritory.facBombed;
+    this.factoriesInQueue = 0;
 
     for (var x = 0; x < this.gameObj.unitPurchases.length; x++) {
       var purchUnit = this.gameObj.unitPurchases[x];

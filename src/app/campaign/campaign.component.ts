@@ -3,6 +3,7 @@ import { BaseComponent } from '../base/base.component';
 import { Router } from '@angular/router';
 
 declare var userObjFromUser: any;
+declare var saveUserObj: any;
 
 @Component({
   selector: 'app-campaign',
@@ -22,6 +23,23 @@ export class CampaignComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.user = userObjFromUser();
     this.showCampaignsFlg = this.user.rank <= 2;
+    this.paintMainScreen();
+  }
+  enterUsernamePressed() {
+    var userName = this.databaseSafeValueOfInput('userName');
+    if (!userName.length || userName.length == 0) {
+      this.showAlertPopup('Value is blank!', 1);
+      return;
+    }
+    if (userName == 'Guest') {
+      this.showAlertPopup('userName cannot be Guest!', 1);
+      return;
+    }
+
+    localStorage.userName = userName;
+    this.user.userName = userName;
+    saveUserObj(this.user);
+    this.user = userObjFromUser();
     this.paintMainScreen();
   }
   ngClassCampButton(campaign: any) {
@@ -64,7 +82,6 @@ export class CampaignComponent extends BaseComponent implements OnInit {
     this.superpowersData.campaigns.forEach(campaign => {
       campaign.lock = (campaign.id > this.campaignId);
     });
-    console.log(localStorage.campaignId, this.user);
   }
 
 }

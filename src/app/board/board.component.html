@@ -109,21 +109,21 @@
 		<button id="unitsButton" (mousedown)="unitsPopup.show()" type="button" class="btn btn-primary tight roundButton"
 			style="line-height: 14px;"><i class="fa fa-fighter-jet"></i><br><span
 				style="font-size: 10px;">Units</span></button>
-		<button *ngIf="!gameObj.currentCampaign || gameObj.currentCampaign > 5" (mousedown)="techPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button"
+		<button id="techButton" *ngIf="!gameObj.currentCampaign || gameObj.currentCampaign == 0 || gameObj.currentCampaign > 5" (mousedown)="techPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button"
 			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-cogs"></i><br><span
 				style="font-size: 10px;">Tech</span></button>
-		<button *ngIf="!gameObj.currentCampaign || gameObj.currentCampaign > 6" id="alliesButton"
+		<button *ngIf="!gameObj.currentCampaign || gameObj.currentCampaign == 0 || gameObj.currentCampaign > 6" id="alliesButton"
 			(mousedown)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 1)" type="button"
 			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-users"></i><br><span
 				style="font-size: 10px;">Allies</span></button>
-		<button (mousedown)="logsPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, yourPlayer)" type="button"
+		<button id="logsButton" (mousedown)="logsPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, yourPlayer)" type="button"
 			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-list-ol"></i><br><span
 				style="font-size: 10px;">Logs</span></button>
 		<button *ngIf="gameObj.multiPlayerFlg" id="chatButton"
 			(mousedown)="chatPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, yourPlayer)" type="button"
 			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i
 				class="fa fa-commenting"></i><br><span style="font-size: 10px;">Chat</span></button>
-		<button *ngIf="!gameObj.currentCampaign || gameObj.currentCampaign > 6" (mousedown)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 2)"
+		<button *ngIf="!gameObj.currentCampaign || gameObj.currentCampaign == 0 || gameObj.currentCampaign > 6" (mousedown)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 2)"
 			type="button" class="btn btn-primary tight roundButton" style="line-height: 14px;"><i
 				class="fa fa-line-chart"></i><br><span style="font-size: 10px;">Stats</span></button>
 		<button id="" (mousedown)="audioPopup.show()" type="button" class="btn btn-primary tight roundButton"
@@ -314,7 +314,7 @@
 				<div><img src="assets/graphics/units/piece13u.png" height="30"> <b>Air Defense:</b> Air defense units protect against nukes by reducing the amount of damage.</div>
 			</div>
 			<div *ngIf="gameObj.currentCampaign==5">
-				<div><img src="assets/graphics/units/piece4u.png" height="30"> <b>Transport:</b> Attempt an amphibious landing on Greenland. Read up on transports on the units tab.</div>
+				<div><img src="assets/graphics/units/piece4u.png" height="30"> <b>Transport:</b> Attempt an amphibious landings and take over the USA capital! Read up on transports on the units tab.</div>
 			</div>
 			<div *ngIf="gameObj.currentCampaign==6">
 				<div><img src="assets/graphics/units/piece18u.png" height="30"> <b>Technology:</b> Technologies are now available for purchase, which can help turn the tide of the war. See the "Tech" tab for details.</div>
