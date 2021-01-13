@@ -8,7 +8,7 @@ function purchaseCPUUnits(player, gameObj, superpowersData, rank) {
         });
     }
 
-    if (gameObj.currentCampaign == 0 || gameObj.currentCampaign >= 6) {
+    if (!gameObj.currentCampaign || gameObj.currentCampaign == 0 || gameObj.currentCampaign >= 6) {
         if (gameObj.round <= 18 && player.cpu)
             purchaseTechnology(0, player, gameObj, superpowersData);
         if (gameObj.round == 10 && player.cpu)

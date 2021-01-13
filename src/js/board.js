@@ -1901,7 +1901,7 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 		if (gameObj.players[0].income < 20) {
 			gameObj.gameOver = true;
 			gameObj.winningTeamFlg = false;
-			gameObj.currentSituation = 'You Lose!';
+			gameObj.currentSituation = 'You Lose! Sorry, try again. Click "Exit" at the top.';
 			return;
 		}
 		if (gameObj.players[1].income < 20 || gameObj.round > 10) {
@@ -1959,7 +1959,7 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 		if (winningTeam == '1')
 			gameObj.currentSituation = winMessage;
 		else
-			gameObj.currentSituation = 'You lose! Try again.';
+			gameObj.currentSituation = 'You lose! Sorry, try again. Click "Exit" at the top.';
 		return;
 	}
 	if (gameObj.gameOver) {

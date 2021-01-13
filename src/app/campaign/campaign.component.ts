@@ -22,7 +22,7 @@ export class CampaignComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.user = userObjFromUser();
-    this.showCampaignsFlg = this.user.rank <= 2;
+    this.showCampaignsFlg = this.user.rank < 2;
     this.paintMainScreen();
   }
   enterUsernamePressed() {

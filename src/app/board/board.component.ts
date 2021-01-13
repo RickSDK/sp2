@@ -819,7 +819,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 		if (this.gameObj.currentCampaign == 4) {
 			playVoiceClip('round' + this.gameObj.round + '.mp3');
-			militaryAdvisorPopup('Spend 4 rounds nuking your enemy. Read up on nukes on the "Units" tab.');
+			if (this.gameObj.round <= 2)
+				militaryAdvisorPopup('This campaign is very simple. Just spend 4 rounds nuking your enemy. Review "Logs" and "Units" tabs to fully understand how the damage works.');
+			else
+				militaryAdvisorPopup('Keep practicing your nukes. Campaign automatically ends after round 4.');
 			return;
 		}
 		if (this.gameObj.currentCampaign == 5) {
@@ -986,11 +989,20 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				this.forceUserToClickTerritory(15);
 				this.newPlayerHelpText = 'Build a new factory in Chechnya. Click on Chechnya.';
 			}
+			if ((this.gameObj.currentCampaign == 1 || this.gameObj.currentCampaign == 2) && this.gameObj.round == 4) {
+				this.forceUserToClickTerritory(15);
+			}
 			if (this.gameObj.currentCampaign == 2 && this.gameObj.round == 5) {
 				this.forceUserToClickTerritory(13);
 			}
 			if (this.gameObj.currentCampaign == 3 && this.gameObj.round == 2) {
 				this.forceUserToClickTerritory(11);
+			}
+			if (this.gameObj.currentCampaign == 5 && this.gameObj.round == 3) {
+				this.forceUserToClickTerritory(58);
+			}
+			if (this.gameObj.currentCampaign == 5 && this.gameObj.round == 4) {
+				this.forceUserToClickTerritory(58);
 			}
 		}
 		this.playerSetToPurchaseAndRefresh();
@@ -1027,10 +1039,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				if (this.gameObj.round == 1) {
 					this.forceUserToClickTerritory(62);
 					playVoiceClip('bt09Ukraine.mp3');
-					if (this.gameObj.currentCampaign == 1 || this.gameObj.currentCampaign == 2)
+					if (this.gameObj.currentCampaign == 1)
 						this.showAlertPopup('Begin the exercise! Your mission is to take over the Russian capital! You will need to fight your way there, starting with Ukraine.');
 					else
-						this.showAlertPopup('It\'s time to start World War III! Your first mission is to take over the Russian capital! This will boost your income by 10 coins per turn. You will need to fight your way there, starting with Ukraine.');
+						this.showAlertPopup('Your mission is to conquer all of Russia! This will boost your income by 20 coins per turn. Start by taking over Ukraine.');
 					this.newPlayerHelpText = 'Make an attack!. Click on Ukraine.';
 				}
 				if (this.gameObj.round == 2) {
@@ -1046,7 +1058,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				if (this.gameObj.round == 4) {
 					this.forceUserToClickTerritory(13);
 					if (this.gameObj.currentCampaign == 1 || this.gameObj.currentCampaign == 2)
-						this.showAlertPopup('Your goal is to take Russia! See if you have enough forces to attack.');
+						this.showAlertPopup('Your want to take Russia! See if you have enough forces to attack.');
 					else
 						this.showAlertPopup('Your goal is to take over ' + this.gameObj.capitalsWin + ' capitals. See if you have enough forces to attack Russia.');
 					this.newPlayerHelpText = 'Your goal is to take over 6 capitals. See if you have enough forces to attack Russia.';
@@ -1066,11 +1078,17 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				if (this.gameObj.round == 3) {
 					this.showAlertPopup('Note each bomber can destroy 1 factory, so split up your bombers and attack each factory with one bomber. Note your bomber must roll a "4" or lower to hit!');
 				}
+				if (this.gameObj.round == 4) {
+					this.showAlertPopup('Note if an enemy territory has an economic center on it, you can bomb it twice in one turn. So send 2 bombers to those targets! Otherwise only send one bomber to each factory.');
+				}
 			}
 			if (this.gameObj.currentCampaign == 4) {
 				if (this.gameObj.round == 1) {
 					this.showAlertPopup('Teach Russia a lesson! Try nuking Karelia.');
 					this.forceUserToClickTerritory(14);
+				}
+				if (this.gameObj.round == 2) {
+					this.showAlertPopup('Find another good target to nuke.');
 				}
 			}
 			if (this.gameObj.currentCampaign == 5) {
@@ -1081,6 +1099,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				if (this.gameObj.round == 2) {
 					this.showAlertPopup('Load up your remaining ground forces onto your new transports.');
 					this.forceUserToClickTerritory(110);
+				}
+				if (this.gameObj.round == 3) {
+					this.showAlertPopup('You don\'t have enough forces to attack the capital yet. Take over Central USA to help build up your forces.');
+					this.forceUserToClickTerritory(2);
 				}
 			}
 			if (this.gameObj.currentCampaign == 6 && this.gameObj.round == 1) {
@@ -1786,6 +1808,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.gameObj.currentCampaign == 5 && battleObj.terr == 58 && battleObj.militaryObj.wonFlg) {
 			this.showAlertPopup('Great! You may want to build a factory here next turn so you can build troops to invade USA.');
 		}
+		if (this.gameObj.currentCampaign == 5 && battleObj.terr == 1 && battleObj.militaryObj.wonFlg) {
+			this.showAlertPopup('Nice work! Press "Complete Turn" to end this campaign.');
+		}
 		if (battleObj.terr == 62 && this.user.rank < 2 && battleObj.militaryObj.wonFlg) {
 			this.btPopupMessage = 'Congratulations! Your first win! 3 bonus units were placed on Ukraine for winning! Click "Complete Turn" at the top to continue.';
 			setTimeout(() => {
@@ -1890,17 +1915,21 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				this.forceUserToClickTerritory(107);
 				this.showAlertPopup('Good job! Now click on Labrador Sea to move your tranport there.')
 			}
+			if (obj.t2 == 107 && this.gameObj.round == 1) {
+				this.forceUserToClickTerritory(59);
+				this.showAlertPopup('Perfect! Now click on Greenland to invade!')
+			}
 			if (obj.t2 == 110 && this.gameObj.round == 2) {
 				this.forceUserToClickTerritory(107);
 				this.showAlertPopup('Now click on Labrador Sea to load your heros and 4 infantry.')
 			}
 			if (obj.t2 == 107 && this.gameObj.round == 2) {
 				this.forceUserToClickTerritory(106);
-				this.showAlertPopup('Good! Now click on Quebec Waters to move your tranports there, finally invade Quebec.')
+				this.showAlertPopup('Good! Now move all your transports to Quebec Waters.')
 			}
-			if (obj.t2 == 107 && this.gameObj.round == 1) {
-				this.forceUserToClickTerritory(59);
-				this.showAlertPopup('Perfect! Now click on Greenland to invade!')
+			if (obj.t2 == 106) {
+				this.forceUserToClickTerritory(58);
+				this.showAlertPopup('Perfect! Now click on Quebec to invade!')
 			}
 		}
 		var terr = this.gameObj.territories[obj.t1 - 1];

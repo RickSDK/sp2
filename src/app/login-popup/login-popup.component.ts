@@ -66,7 +66,7 @@ export class LoginPopupComponent extends BaseComponent implements OnInit {
     localStorage.password = this.password;
 
     const url = this.getHostname() + "/spApiText.php";
-    const postData = this.getPostDataFromObj({ Username: this.userName, Password: this.password, action: 'login' });
+    const postData = this.getPostDataFromObj({ Username: this.userName, Password: this.password, action: 'login', rank: this.user.rank });
 
     fetch(url, postData).then((resp) => resp.text())
       .then((data) => {
@@ -123,7 +123,7 @@ export class LoginPopupComponent extends BaseComponent implements OnInit {
     localStorage.userName = firstName;
     localStorage.password = password1;
 
-    var obj = { Username: firstName, email: emailField2, Password: password1, action: 'createAccount', avatar: this.user.avatar, appName: 'v4' };
+    var obj = { Username: firstName, email: emailField2, Password: password1, action: 'createAccount', avatar: this.user.avatar, appName: 'v4', rank: this.user.rank };
     console.log(obj);
 
     var url = this.getHostname() + "/spApiText.php";

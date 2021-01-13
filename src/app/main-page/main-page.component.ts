@@ -83,8 +83,7 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   }
   paintMainScreen() {
     this.user = userObjFromUser();
-    console.log('', this.user);
-    if (this.user.rank && this.user.rank > 0 && this.superpowersData) {
+    if (this.superpowersData && this.superpowersData.ranks) {
       this.yourRankName = this.superpowersData.ranks[this.user.rank].name;
       this.yourNextRankName = this.superpowersData.ranks[this.user.rank + 1].name;
       this.yourNextRankDesc = this.superpowersData.ranks[this.user.rank].name;
@@ -118,7 +117,6 @@ export class MainPageComponent extends BaseComponent implements OnInit {
     if (this.guestNum == 1)
       this.showAlertPopup('Watch the Gameplay Video and then complete a Single Player game.');
 
-    console.log('guestNum', this.guestNum);
 
 
   }

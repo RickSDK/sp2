@@ -476,7 +476,7 @@ function strategicBombBattle(player, targetTerr, attackUnits, gameObj, superpowe
     rollAttackDice(battle, gameObj, true);
 
     var hits = battle.attHits;
-    for (var x = 0; x < battle.defTargets.length; x++)
+    for (var x = 0; x < battle.defHits; x++)
         battle.attCasualties.push(7);
 
     if (battle.defHits > 0)
@@ -568,7 +568,6 @@ function rollAAGuns(battle, selectedTerritory, gameObj, stratBombFlg) {
         if (diceRoll <= hitScore) {
             unit.dice.push('diceh' + diceRoll + '.png');
             battle.defHits++;
-            console.log('targetId!!!', unit.targetId);
             if (unit.targetId && unit.targetId > 0)
                 destoryPlane(battle, unit.targetId);
             else
@@ -1141,7 +1140,7 @@ function wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, ti
     if (displayBattle.militaryObj.wonFlg) {
         selectedTerritory.defeatedByNation = currentPlayer.nation;
         selectedTerritory.defeatedByRound = gameObj.round;
-    
+
         illuminateThisTerritory(selectedTerritory, gameObj);
         if (selectedTerritory.nation == 99)
             squareUpAllCargo(displayBattle.attackUnits, gameObj);

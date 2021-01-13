@@ -43,10 +43,10 @@ function saveUserObj(userObj) {
 }
 function logOutUser() {
 	localStorage.userName = '';
-	if (localStorage.rank > 2)
-		localStorage.rank = 2;
+	localStorage.rank = 0;
 	localStorage.password = '';
 	localStorage.userObj = '';
+	localStorage.campaignId = '';
 }
 function parseServerDataIntoUserObj(data) {
 	var userObj = userObjFromUser();

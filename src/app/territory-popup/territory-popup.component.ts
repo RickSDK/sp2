@@ -159,10 +159,10 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
         showAlertPopup('Purchase an Economic Center. This will boost your income by 5 coins/turn! Also get one more tank. By the way, you can only have 1 economic center per territory.')
       }
       if (gameObj.currentCampaign == 2 && gameObj.round == 2 && currentPlayer.status == 'Purchase' && terr.id == 7) {
-        showAlertPopup('All units are now unlocked, but buying an economic center and 3 tanks would be a good move for you in this situation.')
+        showAlertPopup('All ground units are now unlocked, but buying an economic center and 3 tanks would be a good move for you in this situation.')
       }
-      if (gameObj.currentCampaign == 1 && gameObj.round == 3 && currentPlayer.status == 'Purchase' && terr.id == 15) {
-        showAlertPopup('Buy a "Factory" here. Starting with your next turn, you will be able to buy new units in Chechnya as well as Germany!')
+      if (gameObj.round == 3 && currentPlayer.status == 'Purchase' && terr.id == 15) {
+        showAlertPopup('Buy a Factory here. Starting with your next turn, you will be able to buy new units in Chechnya as well as Germany!')
       }
 
       if (gameObj.round == 1 && currentPlayer.status == 'Attack' && terr.id == 62) {
@@ -172,7 +172,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
         showAlertPopup('Let\'s invade! Every time you defeat a territory not controlled by another player, you receive free bonus units. Press "Attack" and remember to send all available units into the battle.');
       }
       if (gameObj.round == 3 && currentPlayer.status == 'Attack' && terr.id == 14) {
-        showAlertPopup('Continue pressing your attacks into Russia. Your goal is to get to the capital. Press "Attack" and remember to send all available units into the battle.');
+        showAlertPopup('Press "Attack" and remember to send all available units into the battle.');
       }
       if (gameObj.round == 4 && currentPlayer.status == 'Attack' && terr.id == 13) {
         showAlertPopup('If you have enough units, take Russia! This will boost your income by 10 coins/turn. If you don\'t have enough units, start moving forces up closer so they can attack next turn.');
@@ -188,7 +188,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       showAlertPopup('Get more bombers to wreak havoc on your enemy.');
     }
     if (gameObj.currentCampaign == 3 && gameObj.round == 2 && currentPlayer.status == 'Purchase' && terr.id == 11) {
-      showAlertPopup('If your factory is bombed out, buy a new one to restore your income. Also make sure you have 2 AA Guns here.');
+      showAlertPopup('If your factory is bombed out, buy a new one to restore your income. Note the factory does not actually get restored until the end of your turn.');
     }
 
     if (gameObj.currentCampaign == 4 && gameObj.round == 1 && currentPlayer.status == 'Purchase' && terr.id == 7) {

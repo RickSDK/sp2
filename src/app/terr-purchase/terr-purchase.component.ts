@@ -57,6 +57,10 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
       this.showAlertPopup(' For this training, we are only going to buy tanks, factories and economic centers.', 1);
       return;
     }
+    if(this.gameObj.currentCampaign == 2 && piece > 3 && piece != 15 && piece != 19) {
+      this.showAlertPopup(' For this training, we are only going to buy ground units, factories and economic centers.', 1);
+      return;
+    }
     if(this.gameObj.currentCampaign == 3 && piece != 13 && this.gameObj.round==1) {
       this.showAlertPopup(' Only buy AA Guns this round. Click each of your factories and buy 1 AA Gun per factory. Press the "Air" tab.', 1);
       return;
