@@ -135,7 +135,7 @@ function distanceBetweenTerrs(terr1, terr2, max, land, air, sea, allyHash, terri
     if (air >= max)
         return { land: maxLand, air: maxAir, sea: maxSea };
 
-    if (land > 1 && (terr1.defeatedByNation > 0 || terr1.attackedByNation > 0))
+    if (land > 1 && (terr1.defeatedByNation > 0)) // || terr1.attackedByNation > 0
         land = 9;
 
     //		console.log('here', terr1.id, terr2.id, land);
@@ -298,8 +298,8 @@ function moveTheseUnitsToThisTerritory(units, selectedTerritory, gameObj) {
         if ((unit.type == 1 || unit.type == 2) && selectedTerritory.nation == 99)
             findTransportForThisCargo(unit, selectedTerritory, gameObj);
 
- //       if (unit.piece == 8 && unit.cargo.length == 0)
-  //          seeIfCargoShouldBeThere(unit, gameObj);
+        //       if (unit.piece == 8 && unit.cargo.length == 0)
+        //          seeIfCargoShouldBeThere(unit, gameObj);
 
         if (unit.cargo && unit.cargo.length > 0)
             moveCargoWithThisUnit(unit, gameObj, terr1Id);
@@ -311,7 +311,7 @@ function moveTheseUnitsToThisTerritory(units, selectedTerritory, gameObj) {
 function seeIfCargoShouldBeThere(carrier, gameObj) {
     return;
     gameObj.units.forEach(fighter => {
-        if (fighter.subType=='fighter' && fighter.nation == carrier.nation)
+        if (fighter.subType == 'fighter' && fighter.nation == carrier.nation)
             console.log('fighter!!', fighter)
     });
 }

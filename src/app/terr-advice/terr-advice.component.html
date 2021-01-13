@@ -40,7 +40,7 @@
                                 class="btn btn-success roundButton"><i class="fa fa-flag"></i> Offer
                                 Alliance</button>
 
-                            <button *ngIf="selectedTerritory.treatyStatus > 0" style="font-size: 12px;"
+                            <button *ngIf="selectedTerritory.treatyStatus > 0 && (selectedTerritory.treatyStatus < 3 || gameObj.type != 'ww2')" style="font-size: 12px;"
                                 (click)="declareWar()" type="button" class="btn btn-danger roundButton"><i
                                     class="fa fa-bell"></i>
                                 Declare War!</button>

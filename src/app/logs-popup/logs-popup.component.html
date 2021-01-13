@@ -35,7 +35,7 @@
                 <section style="background-color: #007;" *ngIf="segmentIdx==1">
                     <button *ngFor="let player of gameObj.players" (click)="filterLogsForNation(player.nation)"
                         type="button" [ngClass]="ngClassSegment(player.nation,logNation)"><img
-                            src="assets/graphics/images/flag{{player.nation}}.gif" height="30"></button>
+                            src="{{spFlagOfNation(player.nation, gameObj.type)}}" height="30"></button>
                 </section>
                 <section style="background-color: #007;" *ngIf="segmentIdx==2">
                     <div style="color: white;">Use notes to remind yourself of strategy points. No one else can read
@@ -52,7 +52,7 @@
                     <tr *ngFor="let log of displayLogs" [ngStyle]="ngStyleLogs(log.nation)">
                         <!--*ngIf="ngShowLog(log)" -->
                         <td align=center>{{log.round}}</td>
-                        <td align=center><img src="assets/graphics/images/flag{{log.nation}}.gif" height=30></td>
+                        <td align=center><img src="{{spFlagOfNation(log.nation, gameObj.type)}}" height=30></td>
                         <td align="center" style="font-size: 11px; font-weight: 750;">
                             <i class="fa fa-star" *ngIf="log.type=='Battle'"></i>
                             <i class="fa fa-flask" *ngIf="log.type=='Technology'"></i>
@@ -61,7 +61,7 @@
 
 
                             <div *ngIf="log.enemy>0"><img
-                                    src="assets/graphics/images/flag{{log.enemy}}.gif" height=20></div>
+                                    src="{{spFlagOfNation(log.enemy, gameObj.type)}}" height=20></div>
                             <img *ngIf="log.type=='Nuke Attack!'" src="assets/graphics/misc/nuke.png" height=40>
                             <img *ngIf="log.type=='EMP Attack!'" src="assets/graphics/units/piece52u.png" height=40>
                             <img *ngIf="log.type=='Strategic Bombing'" src="assets/graphics/misc/stealth.png" height=40
@@ -70,7 +70,7 @@
                                 ng-style="ngStyleLogType(log.type)">{{log.type}}</div>
                         </td>
                         <td>
-                            <img *ngIf="log.o>0" src="assets/graphics/images/flag{{log.o}}.gif" height=20>
+                            <img *ngIf="log.o>0" src="{{spFlagOfNation(log.o, gameObj.type)}}" height=20>
 
                             <div *ngIf="log.dr && log.dr.lostUnits+log.dr.enemyUnits>0" style="font-size: 12px;">
                                 <div style="font-size: 10px; color: #444;"><b>-Damage Report-</b></div>
@@ -107,7 +107,7 @@
 
 
 
-                                    <img src="assets/graphics/images/flag{{log.nation}}.gif" height="20"> <span
+                                    <img src="{{spFlagOfNation(log.nation, gameObj.type)}}" height="20"> <span
                                         *ngFor="let unit of log.attackingUnits"><img src="{{ngUnitSrc(unit.piece)}}"
                                             height=15 title="{{superpowersData.units[unit.piece].name}}"></span>
                                     <div *ngIf="log.attackingCas.length==0">
@@ -121,7 +121,7 @@
                                                 title="{{superpowersData.units[unit.piece].name}}"></span></div>
                                     <hr style="padding: 0px; margin: 0px;">
 
-                                    <img src="assets/graphics/images/flag{{log.enemy}}.gif" height="20"> <span
+                                    <img src="{{spFlagOfNation(log.enemy, gameObj.type)}}" height="20"> <span
                                         *ngFor="let unit of log.defendingUnits"><img src="{{ngUnitSrc(unit.piece)}}"
                                             height=15 title="{{superpowersData.units[unit.piece].name}}"></span>
                                     <div *ngIf="log.defendingCas.length==0">

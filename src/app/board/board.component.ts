@@ -252,8 +252,18 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					return;
 				}
 				console.log('+++ new single player....', startingNation);
-				var type = (localStorage.gameType == 1) ? 'freeforall' : 'diplomacy';
-				var numPlayers = 4;
+				var type = localStorage.gameTypeName;
+				if (type == 'ww2') {
+					if (startingNation == 11)
+						startingNation = 1;
+					if (startingNation == 12)
+						startingNation = 3;
+					if (startingNation == 13)
+						startingNation = 2;
+					if (startingNation == 14)
+						startingNation = 4;
+				}
+				var numPlayers = localStorage.numPlayers;
 				var name = 'Single Player Game';
 				var currentCampaign = localStorage.currentCampaign || 0;
 				var capitalsWin = 6;
@@ -273,7 +283,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					//					numPlayers = localStorage.customNumPlayers;
 					//					pObj = JSON.parse(localStorage.customGamePlayers);
 				}
+				console.log('+++ createNewGameSimple1', startingNation);
 				this.gameObj = createNewGameSimple(type, numPlayers, name, startingNation, pObj, this.user, currentCampaign);
+				console.log('+++ createNewGameSimple2', startingNation);
 				this.gameObj.difficultyNum = localStorage.difficultyNum || 1;
 				this.gameObj.capitalsWin = capitalsWin;
 				if (currentCampaign >= 8)
@@ -394,7 +406,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		//var player2 = this.gameObj.players[6];
 		//player2.treaties=[0,3,3,0,0,0,4,3];
 
-		var terrId = 69;
+		var terrId = 73;
 		var terr = this.gameObj.territories[terrId - 1];
 		//	terr.owner = 4;
 		//this.addUnitToTerr(terr, 6, true, true, true);
@@ -404,8 +416,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (0) {
 			var x = 0;
 			terr.units.forEach(unit => {
-				if (unit.piece == 6 || unit.piece == 48) {
-					unit.dead = true;
+				if (unit.terr == terrId && (unit.piece == 2 || unit.piece == 3)) {
+					unit.terr = 50;
 				}
 			});
 		}
@@ -765,7 +777,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.currentPlayer.mainBaseID = findMainBase(this.gameObj, this.currentPlayer);
 	}
 	displayMilitaryAdvisorMessage() {
-		if (!this.gameObj.multiPlayerFlg && this.gameObj.round == 1 && this.gameObj.currentCampaign <= 6) {
+		if (!this.gameObj.multiPlayerFlg && this.gameObj.round == 1 && this.gameObj.currentCampaign <= 6 && this.gameObj.currentCampaign >= 1) {
 			if (this.currentPlayer.status == 'Purchase') {
 				displayFixedPopup('introPopup');
 				if (this.gameObj.currentCampaign == 0) {
@@ -851,8 +863,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.playGameButtonPressed();
 		closePopup('introPopup');
 
-		console.log('introContinuePressed', this.gameObj.currentCampaign);
-		if (this.gameObj.currentCampaign < 7)
+		if (this.gameObj.currentCampaign > 0 && this.gameObj.currentCampaign < 7)
 			this.currentPlayer.placedInf = 3;
 
 		if (this.gameObj.currentCampaign == 4) {
@@ -972,8 +983,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				this.newPlayerHelpText = 'Purchase units then press "Purchase Complete". Click on Germany.';
 			}
 			if ((this.gameObj.currentCampaign == 1 || this.gameObj.currentCampaign == 2) && this.gameObj.round == 3) {
-				this.forceUserToClickTerritory(62);
-				this.newPlayerHelpText = 'Build a new factory in Ukraine. Click on Ukraine.';
+				this.forceUserToClickTerritory(15);
+				this.newPlayerHelpText = 'Build a new factory in Chechnya. Click on Chechnya.';
 			}
 			if (this.gameObj.currentCampaign == 2 && this.gameObj.round == 5) {
 				this.forceUserToClickTerritory(13);
@@ -1004,6 +1015,13 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			if (!this.gameObj.currentCampaign || this.gameObj.currentCampaign >= 7) {
 				playVoiceClip('beginConquest.mp3');
 				//return
+			}
+			if (this.gameObj.currentCampaign == 7 && this.gameObj.round == 1) {
+				this.forceUserToClickTerritory(62);
+				this.showAlertPopup('This campaign is a full blown game! Take over capitals, make allies and win the game by controlling 4 capitals. Start by taking Ukraine.');
+			}
+			if (this.gameObj.currentCampaign == 8 && this.gameObj.round == 1) {
+				this.showAlertPopup('This campaign is a full blown game! Take over capitals, make allies and win the game by controlling 4 capitals. Good luck!');
 			}
 			if (this.gameObj.currentCampaign == 1 || this.gameObj.currentCampaign == 2) {
 				if (this.gameObj.round == 1) {
@@ -1066,7 +1084,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				}
 			}
 			if (this.gameObj.currentCampaign == 6 && this.gameObj.round == 1) {
-				this.showAlertPopup('The object of this campaign is simply research technology until you reach Antrax Warheads. No attacks are neccessary.');
+				this.showAlertPopup('Good job. You have randomly gained two technologies! The object of this campaign is simply research technology until you gain "Antrax Warheads". No attacks are neccessary. Click "OK" to see which technologies your scientists came up with.');
 			}
 			if (this.gameObj.currentCampaign == 7 && this.gameObj.round == 2) {
 				this.showAlertPopup('View the allies tab to see how the teams are stacking up. Once you are at peace with a player, you can offer an alliance!');
@@ -1150,14 +1168,17 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 			this.attemptToAttackACapital(this.currentPlayer, this.gameObj);
 
-			if (this.gameObj.round > 6 && this.currentPlayer.tech[3])
-				this.attemptCPUToNuke();
+			if (this.gameObj.currentCampaign != 7 && this.gameObj.currentCampaign != 8 && this.gameObj.currentCampaign != 9) {
+				if (this.gameObj.round > 6 && this.currentPlayer.tech[3])
+					this.attemptCPUToNuke();
 
-			if (this.gameObj.round > 6 && this.currentPlayer.tech[8])
-				this.attemptCPUToCruise();
+				if (this.gameObj.round > 6 && this.currentPlayer.tech[8])
+					this.attemptCPUToCruise();
 
-			if (this.gameObj.round > 6)
-				this.attemptCPUStrategicBomb();
+				if (this.gameObj.round > 6)
+					this.attemptCPUStrategicBomb();
+
+			}
 
 			if (this.currentPlayer.primaryTargetId != this.currentPlayer.mainBaseID) {
 				var obj = findMainBaseTarget(this.gameObj, this.currentPlayer);
@@ -1766,7 +1787,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.showAlertPopup('Great! You may want to build a factory here next turn so you can build troops to invade USA.');
 		}
 		if (battleObj.terr == 62 && this.user.rank < 2 && battleObj.militaryObj.wonFlg) {
-			this.btPopupMessage = 'Congratulations! Your first win! Click "Complete Turn" at the top to continue.';
+			this.btPopupMessage = 'Congratulations! Your first win! 3 bonus units were placed on Ukraine for winning! Click "Complete Turn" at the top to continue.';
 			setTimeout(() => {
 				highlightElementWithArrow('completeTurnButton');
 			}, 1000);
@@ -1865,19 +1886,19 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	moveSpriteBetweenTerrs(obj: any) {
 		// {t1: t1, t2: t2, id: id}
 		if (this.gameObj.currentCampaign == 5) {
-			if (obj.t2 == 110 && this.gameObj.round==1) {
+			if (obj.t2 == 110 && this.gameObj.round == 1) {
 				this.forceUserToClickTerritory(107);
 				this.showAlertPopup('Good job! Now click on Labrador Sea to move your tranport there.')
 			}
-			if (obj.t2 == 110 && this.gameObj.round==2) {
+			if (obj.t2 == 110 && this.gameObj.round == 2) {
 				this.forceUserToClickTerritory(107);
 				this.showAlertPopup('Now click on Labrador Sea to load your heros and 4 infantry.')
 			}
-			if (obj.t2 == 107 && this.gameObj.round==2) {
+			if (obj.t2 == 107 && this.gameObj.round == 2) {
 				this.forceUserToClickTerritory(106);
 				this.showAlertPopup('Good! Now click on Quebec Waters to move your tranports there, finally invade Quebec.')
 			}
-			if (obj.t2 == 107 && this.gameObj.round==1) {
+			if (obj.t2 == 107 && this.gameObj.round == 1) {
 				this.forceUserToClickTerritory(59);
 				this.showAlertPopup('Perfect! Now click on Greenland to invade!')
 			}
@@ -2279,7 +2300,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				addTestScore(this.gameObj);
 				if (this.gameObj.winningTeamFlg && this.gameObj.currentCampaign > 0) {
 					var campaignId = localStorage.campaignId || 1;
-					var currentRank = localStorage.rank || 0;
+					var currentRank = this.user.rank || 0;
 					var newRank = currentRank;
 					if (this.gameObj.currentCampaign >= campaignId) {
 						var newCampaignId: number = numberVal(this.gameObj.currentCampaign);
@@ -2288,13 +2309,13 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					}
 
 					if (currentRank == 0 && this.gameObj.currentCampaign == 1) {
-						newRank++;
+						newRank = 1;
 					}
 					if (currentRank == 1 && this.gameObj.currentCampaign == 8) {
-						newRank++;
+						newRank = 2;
 					}
-					if (currentRank == 2 && this.gameObj.currentCampaign == 10) {
-						newRank++;
+					if (currentRank <= 2 && this.gameObj.currentCampaign == 10) {
+						newRank = 3;
 					}
 					if (newRank > currentRank) {
 						localStorage.rank = newRank;

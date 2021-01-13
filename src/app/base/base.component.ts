@@ -115,7 +115,12 @@ export class BaseComponent implements OnInit {
     else
       return 'shadowed flagCapital';
   }
-
+  spFlagOfNation(nation: number, type: string) {
+    if (type == 'ww2' && nation <= 4) {
+      return 'assets/graphics/images/flag' + (nation + 10).toString() + '.gif';
+    } else
+      return 'assets/graphics/images/flag' + nation + '.gif';
+  }
 
   //-----views---
   initView(gameObj: any, ableToTakeThisTurn: any, currentPlayer: any, user: any) {
@@ -130,10 +135,10 @@ export class BaseComponent implements OnInit {
     this.segmentIdx = 0;
     playClick();
     //playSound('open');
-//    $(id).on('hidden.bs.modal', function () {
- //     playClick();
-      //playSound('close', 0, false);
-  //  });
+    //    $(id).on('hidden.bs.modal', function () {
+    //     playClick();
+    //playSound('close', 0, false);
+    //  });
     $(id).modal();
   }
   closeModal(id: string) {

@@ -8,11 +8,11 @@
             style="text-align: center;">
             <div class="blueBgWhite">Team {{team.name}}</div>
             <div style="font-size: 10px;">-Players-</div>
-            <span *ngFor="let nation of team.teamPlayers"><img src="assets/graphics/images/flag{{nation}}.gif"
+            <span *ngFor="let nation of team.teamPlayers"><img src="{{spFlagOfNation(nation, gameObj.type)}}"
                     height=30></span>
             <hr style="margin: 3px;">
             <div style="font-size: 10px;">-Capitals-</div>
-            <img *ngFor="let nation of team.capitals" src="assets/graphics/images/flag{{nation}}.gif" height=20>
+            <img *ngFor="let nation of team.capitals" src="{{spFlagOfNation(nation, gameObj.type)}}" height=20>
             <div *ngIf="team.capitals.length==0">None</div>
             <hr style="margin: 3px;">
             <div style="font-size: 10px;">-Income-</div>
@@ -36,13 +36,13 @@
                 title="Computer Player"></i>
             {{player.userName}}</div>
         <div  [ngStyle]="ngStyleLogs(player.nation)" style="text-align: center;">
-            <img src="assets/graphics/images/flag{{player.nation}}.gif" height=35
+            <img src="{{spFlagOfNation(player.nation, gameObj.type)}}" height=35
                 title="{{superpowersData.superpowers[player.nation]}}">
             <div style="font-size: 10px;">-Income-</div>
             <div *ngIf="player.alive" style="font-size: 20px; color: #007;"><b>{{player.income}}</b></div>
             <div *ngIf="!player.alive"><img src="assets/graphics/misc/skull.png" height=25 title="Eliminated"></div>
             <div style="font-size: 10px;">-Capitals-</div>
-            <img *ngFor="let nation of player.capitals" src="assets/graphics/images/flag{{nation}}.gif" height=20>
+            <img *ngFor="let nation of player.capitals" src="{{spFlagOfNation(nation, gameObj.type)}}" height=20>
             <div *ngIf="player.capitals.length==0">None</div>
             <hr style="margin: 2px;">
             <div>

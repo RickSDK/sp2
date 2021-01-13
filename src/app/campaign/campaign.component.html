@@ -9,10 +9,10 @@
                 <div *ngIf="user.userName == 'Guest'" class="borderClass3">
                     <div style="padding: 20px;">
                         <div>Welcome to Superpowers! First step, let's get a name:</div>
-                        <div><input type="text" id="userName" name="userName" maxlength="15" placeholder="User Name"
-                                >
-                        <button (mousedown)="enterUsernamePressed()" type="button"
-                                class="btn btn-primary tall roundButton glowButton">Continue</button></div>
+                        <div><input type="text" id="userName" name="userName" maxlength="15" placeholder="User Name">
+                            <button (mousedown)="enterUsernamePressed()" type="button"
+                                class="btn btn-primary tall roundButton glowButton">Continue</button>
+                        </div>
                     </div>
                 </div>
                 <div *ngIf="user.userName != 'Guest'">
@@ -42,23 +42,25 @@
                     </div>
                     <div *ngIf="showCampaignsFlg">
                         <div>
-                            <button *ngIf="0" routerLink="/" type="button" class="btn btn-secondary roundButton"><i
-                                    class="fa fa-home"></i>
-                                Home
-                            </button>
-                            <div class="borderClass3" *ngIf="superpowersData && campaignId <= 8">
+                             <div class="borderClass3" *ngIf="superpowersData">
                                 <div style="padding: 10px; text-align: left;">
-                                    <p *ngIf="user.rank == 0">Welcome <b>{{superpowersData.ranks[user.rank].name}}
+                                    <p *ngIf="!user.rank || user.rank == 0">Welcome <b>{{superpowersData.ranks[user.rank].name}}
                                             {{user.userName}}</b>!
                                         Working through these short
                                         campaign tutorials will teach you everything you need to conquer the world. Good
                                         luck!</p>
-                                    <p *ngIf="user.rank > 0">Nice job <b>{{superpowersData.ranks[user.rank].name}}
+                                    <p *ngIf="user.rank == 1">Nice job <b>{{superpowersData.ranks[user.rank].name}}
                                             {{user.userName}}</b>! Once
                                         you complete all the way through Campaign #8 you will be able to play
                                         multi-player
                                         online games.
                                         Good luck!</p>
+                                    <p *ngIf="user.rank > 1">Welcome <b>{{superpowersData.ranks[user.rank].name}}
+                                            {{user.userName}}</b>!
+                                        These short
+                                        campaign tutorials are meant to teach new players everything they need to
+                                        conquer the world.
+                                    </p>
                                 </div>
                             </div>
                         </div>

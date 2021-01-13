@@ -60,11 +60,11 @@
                 <button *ngIf="selectedTerritory.treatyStatus>2" (mousedown)="secondaryIndex=2" type="button"
                     class="btn btn-warning roundButton"><i class="fa fa-shield"></i> Fortify</button>
                 <button *ngIf="selectedTerritory.treatyStatus==4 && selectedTerritory.owner != selectedTerritory.nation"
-                    (mousedown)="secondaryIndex=3" type="button" class="btn btn-warning roundButton"><i
+                    (mousedown)="changeSecondaryIndex(3)" type="button" class="btn btn-warning roundButton"><i
                         class="fa fa-arrow-right"></i>
                     Transfer To Ally</button>
                 <button *ngIf="selectedTerritory.treatyStatus==3 && selectedTerritory.owner != selectedTerritory.nation"
-                    (mousedown)="secondaryIndex=4" type="button" class="btn btn-warning roundButton"><i
+                    (mousedown)="changeSecondaryIndex(4)" type="button" class="btn btn-warning roundButton"><i
                         class="fa fa-globe"></i>
                     Request Transfer</button>
 

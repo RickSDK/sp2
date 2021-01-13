@@ -14,31 +14,45 @@
                     </div>
 
                     <div *ngIf="campaignId>0">
-                        <div style="font-size: 14px; font-weight: 700;">Campaign #{{superpowersData.campaigns[campaignId-1].id}}</div>
-                        <img src="assets/graphics/units/piece{{superpowersData.campaigns[campaignId-1].unit}}u.png" style="max-height: 120px; max-width: 200px;">
+                        <div style="font-size: 14px; font-weight: 700;">Campaign
+                            #{{superpowersData.campaigns[campaignId-1].id}}</div>
+                        <img src="assets/graphics/units/piece{{superpowersData.campaigns[campaignId-1].unit}}u.png"
+                            style="max-height: 120px; max-width: 200px;">
                         <div style="font-size: 24px; font-weight: 700;">
                             {{superpowersData.campaigns[campaignId-1].name}}</div>
-                        <div style="font-size: 11px;">{{superpowersData.campaigns[campaignId-1].desc}}</div>    
+                        <div style="font-size: 11px;">{{superpowersData.campaigns[campaignId-1].desc}}</div>
                     </div>
                 </div>
                 <div *ngIf="campaignId == 0">
                     <div style="border: 1px solid black; margin: 3px; background-color: #ddd;">
                         <div class="btn-group">
-                            <button (click)="segmentIdx=0" type="button" class="btn btn-default roundButton"
-                                [ngClass]="ngClassSegment(segmentIdx,0)"><i class="fa fa-handshake-o"></i> Diplomacy</button>
-                            <button (click)="segmentIdx=1" type="button" class="btn btn-default roundButton"
-                                [ngClass]="ngClassSegment(segmentIdx,1)"><i class="fa fa-user"></i> Free-For-All</button>
-                         </div>
+                            <button (mousedown)="changeSegmentIdx(0)" type="button" class="btn btn-default roundButton"
+                                [ngClass]="ngClassSegment(segmentIdx,0)"><i class="fa fa-handshake-o"></i>
+                                Diplomacy</button>
+                            <button (mousedown)="changeSegmentIdx(1)" type="button" class="btn btn-default roundButton"
+                                [ngClass]="ngClassSegment(segmentIdx,1)"><i class="fa fa-user"></i>
+                                Free-For-All</button>
+                            <button (mousedown)="changeSegmentIdx(2)" type="button" class="btn btn-default roundButton"
+                                [ngClass]="ngClassSegment(segmentIdx,2)"><i class="fa fa-star-o"></i> WW2</button>
+                        </div>
                         <div class="borderClass2">
                             <div *ngIf="segmentIdx==0">
                                 <b><i class="fa fa-handshake-o"></i> Diplomacy</b>: You can make alliances to form a 2v2
-                                matchup.</div>
+                                matchup.
+                            </div>
                             <div *ngIf="segmentIdx==1">
                                 <b><i class="fa fa-user"></i> Free-For-All</b>: You are on your own. First player to
                                 control 6 capitals wins the game.
                             </div>
+                            <div *ngIf="segmentIdx==2">
+                                <b><i class="fa fa-star"></i> World-War-II</b>: United States & Russia vs Nazi Germany & japan.
+                            </div>
                         </div>
-                        <div># Players: <span class="darkBlueBg" style="padding: 3px; font-size: 18px; font-weight: 700;">4</span></div>
+
+                        <div># Players:
+                            <button (mousedown)="changeNumPlayers()" type="button"
+                                class="btn btn-primary roundButton">{{numPlayers}}</button>
+                        </div>
                     </div>
                     <!--<div *ngIf="segmentIdx==2">
                             <div><b><i ng-class="ngClassGameType(gameType.type)"></i> {{gameTypeObj.name}}:</b>
@@ -98,16 +112,21 @@
                             <button (click)="fogIdx=0" type="button" class="btn btn-default roundButton"
                                 [ngClass]="ngClassSegment(fogIdx,0)"><i class="fa fa-sun-o"></i><br> Standard</button>
                             <button (click)="fogIdx=1" type="button" class="btn btn-default roundButton"
-                                [ngClass]="ngClassSegment(fogIdx,1)"><i class="fa fa-moon-o"></i><br> Fog-of-War</button>
+                                [ngClass]="ngClassSegment(fogIdx,1)"><i class="fa fa-moon-o"></i><br>
+                                Fog-of-War</button>
                             <button (click)="fogIdx=2" type="button" class="btn btn-default roundButton"
-                                [ngClass]="ngClassSegment(fogIdx,2)"><i class="fa fa-cloud"></i><br> Hardcore Fog</button>
+                                [ngClass]="ngClassSegment(fogIdx,2)"><i class="fa fa-cloud"></i><br> Hardcore
+                                Fog</button>
                         </div>
                         <div class="borderClass2">
-                            <div *ngIf="fogIdx==0"><b><i class="fa fa-sun-o"></i> Standard:</b> All units are visible to all players.</div>
-                            <div *ngIf="fogIdx==1"><b><i class="fa fa-moon-o"></i> Fog:</b> You get approximate unit counts for each territory but not specific
+                            <div *ngIf="fogIdx==0"><b><i class="fa fa-sun-o"></i> Standard:</b> All units are visible to
+                                all players.</div>
+                            <div *ngIf="fogIdx==1"><b><i class="fa fa-moon-o"></i> Fog:</b> You get approximate unit
+                                counts for each territory but not specific
                                 units.
                             </div>
-                            <div *ngIf="fogIdx==2"><b><i class="fa fa-cloud"></i> Hardcore:</b> Total fog blackout for all territories unless you have a unit that
+                            <div *ngIf="fogIdx==2"><b><i class="fa fa-cloud"></i> Hardcore:</b> Total fog blackout for
+                                all territories unless you have a unit that
                                 borders it.</div>
                         </div>
                     </div>
@@ -148,7 +167,8 @@
                 <div><button (click)="startGame()" type="button" class="btn btn-danger roundButton tall glowRed">Start
                         Game!</button></div>
 
-                <div *ngIf="user.rank > 2" style="font-size: 10px;">Note single player games are just for fun. Stats are not saved and do not
+                <div *ngIf="user.rank > 2" style="font-size: 10px;">Note single player games are just for fun. Stats are
+                    not saved and do not
                     affect your multi-player record or standings. You can surrender at any time without penalty.</div>
 
 

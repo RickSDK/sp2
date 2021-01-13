@@ -312,14 +312,15 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	terr.strandedCargo = strandedCargo;
 	if (strandedCargo.length > 0)
 		fixCargoOnTerr(strandedCargo, terr, gameObj);
-	var flag = flagOfOwner(terr, showDetailsFlg, totalUnitCount, isPurchasePhase);
+	var flag = flagOfOwner(terr, showDetailsFlg, totalUnitCount, isPurchasePhase, gameObj.type);
 
-	//var flag = flagOfOwner(terr.owner, terr, showDetailsFlg, totalUnitCount, terr.defeatedByNation, terr.nuked, terr.attackedByNation);
 	terr.flag = flag;
 
 	var userName = 'Neutral';
 	if (terr.owner > 0) {
 		var player = playerOfNation(terr.owner, gameObj);
+		if (!player)
+			return;
 		if (!gameObj.multiPlayerFlg && !player.cpu && gameObj.currentNation == terr.owner) {
 			status = 3; // all humans can see
 		}
@@ -1809,21 +1810,22 @@ function isUnitAirDefense(unit) {
 	return (unit.piece == 13 || unit.piece == 37 || unit.piece == 39 || unit.piece == 40 || unit.piece == 9);
 }
 
-function flagOfOwner(terr, showDetailsFlg, unitCount, isPurchasePhase) {
+function flagOfOwner(terr, showDetailsFlg, unitCount, isPurchasePhase, type) {
 	//(own, terr, showDetailsFlg, unitCount, defeatedByNation, nuked, attackedByNation) {
 	var own = terr.owner;
 	var defeatedByNation = terr.defeatedByNation;
 	var nuked = terr.nuked;
 	var attackedByNation = terr.attackedByNation;
+	var ownBase = (type == 'ww2') ? own + 10 : own;
 
-	var flag = 'flag' + own + '.png';
+	var flag = 'flag' + ownBase + '.png';
 
 	if (terr.capital || terr.nation == 99)
-		flag = 'flag' + own + '.gif';
+		flag = 'flag' + ownBase + '.gif';
 
-	if (terr.generalFlg && showDetailsFlg)
+	if (terr.generalFlg && showDetailsFlg && type != 'ww2')
 		flag = 'flagg' + own + '.gif';
-	if (terr.leaderFlg && showDetailsFlg)
+	if (terr.leaderFlg && showDetailsFlg && type != 'ww2')
 		flag = 'flagl' + own + '.gif';
 
 	if (own == 0 && terr.nation > 0 && terr.nation < 99) {
@@ -1850,9 +1852,6 @@ function flagOfOwner(terr, showDetailsFlg, unitCount, isPurchasePhase) {
 		if (0 && terr.nation < 99 && terr.owner > 0 && !terr.capital && terr.owner == terr.nation)
 			f.style.opacity = '.5'
 	}
-	if (isPurchasePhase && terr.factoryCount) {
-		flag = 'flagBuy.png';
-	}
 
 	return flag;
 }
@@ -1866,6 +1865,23 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 	var maxIncome = 0;
 	var winnningPlayer = 'Unknown';
 	var liveHumanPlayerCount = 0;
+	var winMessage = 'You Win!';
+	if (gameObj.currentCampaign > 0) {
+		var messages = [
+			'You Win!',
+			'You Win! Now all ground units will be unlocked for the next campaign. Click "Exit" button above.',
+			'You Win! Next we will look at another form of attack. Strategic Bombing runs. Click "Exit" button above.',
+			'You Win! Are you ready for nukes? Click "Exit" button above to start your next campaign.',
+			'You Win! You are now ready for ships and sea battles. Click "Exit" button above.',
+			'You Win! The next thing to look at is technology. Click "Exit" button above.',
+			'You Win! You are now ready for diplomacy. Click "Exit" button above.',
+			'You Win! Now that you understand the game, let\'s introduce fog-of-war. Click "Exit" button above.',
+			'You Win! You can now play multiplayer games! Or continue your training.',
+			'You Win! The final campaign is the hardest yet. Free for all! Click "Exit" button above.',
+			'You Win! You have completed the entire campaign! Try out Multi-Player or Single-Player game modes. Click "Exit" button above.',
+		];
+		winMessage = messages[gameObj.currentCampaign];
+	}
 	gameObj.players.forEach(function (player) {
 		player.wonFlg = false;
 		if (player.alive && !player.cpu)
@@ -1891,21 +1907,23 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 		if (gameObj.players[1].income < 20 || gameObj.round > 10) {
 			gameObj.gameOver = true;
 			gameObj.winningTeamFlg = true;
-			gameObj.currentSituation = 'You win!';
+			gameObj.currentSituation = winMessage;
 			return;
 		}
 	}
 	if (gameObj.currentCampaign == 4 && gameObj.round >= 4) {
 		gameObj.gameOver = true;
 		gameObj.winningTeamFlg = true;
-		gameObj.currentSituation = 'You win!';
+		gameObj.currentSituation = winMessage;
 		return;
 	}
-	if (gameObj.currentCampaign == 6 && gameObj.players[0].tech[5]) {
-		gameObj.gameOver = true;
-		gameObj.winningTeamFlg = true;
-		gameObj.currentSituation = 'You win!';
-		return;
+	if (gameObj.currentCampaign == 6) {
+		if (gameObj.players[0].tech[5] || gameObj.round >= 10) {
+			gameObj.gameOver = true;
+			gameObj.winningTeamFlg = true;
+			gameObj.currentSituation = winMessage;
+			return;
+		}
 	}
 
 	var maxCapitalsHeld = 0;
@@ -1927,11 +1945,11 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 
 	gameObj.winningTeamFlg = (yourPlayer && yourPlayer.team == winningTeam);
 	var winningTeamList = playersOfTeam(winningTeam, gameObj, superpowersData);
-	if(gameObj.currentCampaign == 2) {
-		if(gameObj.players[0].sp>1) {
+	if (gameObj.currentCampaign == 2) {
+		if (gameObj.players[0].sp > 1) {
 			gameObj.gameOver = true;
 			gameObj.winningTeamFlg = true;
-			gameObj.currentSituation = 'You win!';
+			gameObj.currentSituation = winMessage;
 			return;
 		}
 	}
@@ -1939,7 +1957,7 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 	if (maxCapitalsHeld > 1 && (gameObj.currentCampaign == 1 || gameObj.currentCampaign == 3 || gameObj.currentCampaign == 4 || gameObj.currentCampaign == 5)) {
 		gameObj.gameOver = true;
 		if (winningTeam == '1')
-			gameObj.currentSituation = 'You win!';
+			gameObj.currentSituation = winMessage;
 		else
 			gameObj.currentSituation = 'You lose! Try again.';
 		return;
@@ -1948,6 +1966,10 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 		var msg = 'Victory!  Game won by ' + winningTeamList.join(', ');
 		if (winningTeamList.length == 0)
 			msg = 'Game Lost';
+
+		if (gameObj.currentCampaign > 0)
+			msg = winMessage;
+
 		gameObj.currentSituation = msg;
 		return;
 	}
@@ -1956,6 +1978,13 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 		gameObj.currentSituation = winnningPlayer + ' is winning!';
 	else
 		gameObj.currentSituation = 'Team #' + leadingTeam + ' of ' + leadingTeamList.join(' & ') + ' is winning!';
+
+	if (gameObj.type == 'ww2') {
+		if (leadingTeam == 1)
+			gameObj.currentSituation = 'Axis is winning!';
+		else
+			gameObj.currentSituation = 'Allies are winning!';
+	}
 	var victoryRound = numberVal(gameObj.victoryRound);
 	if (victoryMet) {
 		var msg = 'Victory Conditions met! ' + winnningPlayer + ' controls ' + maxCapitalsHeld + ' capitals. Game will end in round ' + victoryRound + ' if they are held.';
@@ -1972,6 +2001,8 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 			if (victoryRound < gameObj.round || (victoryRound == gameObj.round && gameObj.nation == currentPlayer.nation && currentPlayer.status == 'Waiting')) {
 				var msg = 'Game won by ' + winningTeamList.join(', ');
 				gameObj.currentSituation = msg;
+				if (gameObj.currentCampaign > 0)
+					gameObj.currentSituation = winMessage;
 				logItem(gameObj, currentPlayer, 'Game Over!', msg);
 				displayFixedPopup('gameOverPopup');
 				setInnerHTMLFromElement('winningTeam', msg);
@@ -2093,9 +2124,9 @@ function customMilitaryReport1(obj, gameObj, line1) {
 		var capitals = (obj.teamCapitals == 1) ? 'just 1 capital' : obj.teamCapitals + ' capitals';
 		var capitalsWin = gameObj.capitalsWin || 6;
 		if (gameObj.allowAlliances)
-			line1 += ' As of this turn your team is controlling ' + capitals + '. The goal is to control at least '+capitalsWin+'.';
+			line1 += ' As of this turn your team is controlling ' + capitals + '. The goal is to control at least ' + capitalsWin + '.';
 		else
-			line1 += ' As of this turn you are controlling ' + capitals + '. The goal is to control at least '+capitalsWin+'.';
+			line1 += ' As of this turn you are controlling ' + capitals + '. The goal is to control at least ' + capitalsWin + '.';
 	}
 
 	militaryAdvisorPopup(line1, voiceOverId);

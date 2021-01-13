@@ -5,7 +5,7 @@
 <div *ngIf="descFlg" style="color: gray; font-size: 12px;">{{tech.desc}}</div>
 <div *ngIf="gameObj">
      <span *ngFor="let player of gameObj.players">
-         <img *ngIf="player.tech[tech.id-1]" src="assets/graphics/images/flag{{player.nation}}.gif" height="20">
+         <img *ngIf="player.tech[tech.id-1]" src="{{spFlagOfNation(player.nation, gameObj.type)}}" height="20">
      </span>
 </div>
 

@@ -100,39 +100,39 @@
                 <td align=center>
                     <i class="fa fa-trophy" style="font-size: 20px; color: blue;"
                         *ngIf="gameObj.gameOver && player.wonFlg" title="Victory!"></i>
-                    <img src="assets/graphics/images/flag{{player.nation}}.gif" height=30>
+                    <img src="{{spFlagOfNation(player.nation, gameObj.type)}}" height=30>
                     <div style="font-size: 10px;"><i *ngIf="player.cpu" class="fa fa-android"></i>
                         {{player.userName}} <span *ngIf="!player.alive">(dead)</span></div>
                 </td>
                 <td ng-style="ngStyleAllies(player, 'red')">
-                    <img *ngIf="player.treaties[0]==0" src="assets/graphics/images/flag1.gif" height=25>
-                    <img *ngIf="player.treaties[1]==0" src="assets/graphics/images/flag2.gif" height=25>
-                    <img *ngIf="player.treaties[2]==0" src="assets/graphics/images/flag3.gif" height=25>
-                    <img *ngIf="player.treaties[3]==0" src="assets/graphics/images/flag4.gif" height=25>
-                    <img *ngIf="player.treaties[4]==0" src="assets/graphics/images/flag5.gif" height=25>
-                    <img *ngIf="player.treaties[5]==0" src="assets/graphics/images/flag6.gif" height=25>
-                    <img *ngIf="player.treaties[6]==0" src="assets/graphics/images/flag7.gif" height=25>
-                    <img *ngIf="player.treaties[7]==0" src="assets/graphics/images/flag8.gif" height=25>
+                    <img *ngIf="player.treaties[0]==0" src="{{spFlagOfNation(1, gameObj.type)}}" height=25>
+                    <img *ngIf="player.treaties[1]==0" src="{{spFlagOfNation(2, gameObj.type)}}" height=25>
+                    <img *ngIf="player.treaties[2]==0" src="{{spFlagOfNation(3, gameObj.type)}}" height=25>
+                    <img *ngIf="player.treaties[3]==0" src="{{spFlagOfNation(4, gameObj.type)}}" height=25>
+                    <img *ngIf="player.treaties[4]==0" src="{{spFlagOfNation(5, gameObj.type)}}" height=25>
+                    <img *ngIf="player.treaties[5]==0" src="{{spFlagOfNation(6, gameObj.type)}}" height=25>
+                    <img *ngIf="player.treaties[6]==0" src="{{spFlagOfNation(7, gameObj.type)}}" height=25>
+                    <img *ngIf="player.treaties[7]==0" src="{{spFlagOfNation(8, gameObj.type)}}" height=25>
                 </td>
                 <td ng-style="ngStyleAllies(player, 'yellow')">
-                    <img *ngIf="player.treaties[0]==2" src="assets/graphics/images/flag1.gif" height=25>
-                    <img *ngIf="player.treaties[1]==2" src="assets/graphics/images/flag2.gif" height=25>
-                    <img *ngIf="player.treaties[2]==2" src="assets/graphics/images/flag3.gif" height=25>
-                    <img *ngIf="player.treaties[3]==2" src="assets/graphics/images/flag4.gif" height=25>
-                    <img *ngIf="player.treaties[4]==2" src="assets/graphics/images/flag5.gif" height=25>
-                    <img *ngIf="player.treaties[5]==2" src="assets/graphics/images/flag6.gif" height=25>
-                    <img *ngIf="player.treaties[6]==2" src="assets/graphics/images/flag7.gif" height=25>
-                    <img *ngIf="player.treaties[7]==2" src="assets/graphics/images/flag8.gif" height=25>
+                    <img *ngIf="player.treaties[0]==2" src="{{spFlagOfNation(1, gameObj.type)}}" height=25>
+                    <img *ngIf="player.treaties[1]==2" src="{{spFlagOfNation(2, gameObj.type)}}" height=25>
+                    <img *ngIf="player.treaties[2]==2" src="{{spFlagOfNation(3, gameObj.type)}}" height=25>
+                    <img *ngIf="player.treaties[3]==2" src="{{spFlagOfNation(4, gameObj.type)}}" height=25>
+                    <img *ngIf="player.treaties[4]==2" src="{{spFlagOfNation(5, gameObj.type)}}" height=25>
+                    <img *ngIf="player.treaties[5]==2" src="{{spFlagOfNation(6, gameObj.type)}}" height=25>
+                    <img *ngIf="player.treaties[6]==2" src="{{spFlagOfNation(7, gameObj.type)}}" height=25>
+                    <img *ngIf="player.treaties[7]==2" src="{{spFlagOfNation(8, gameObj.type)}}" height=25>
                 </td>
                 <td *ngIf="gameObj.maxAllies>0" ng-style="ngStyleAllies(player, '#00FF00')">
-                    <img *ngIf="player.treaties[0]==3" src="assets/graphics/images/flag1.gif" height=25>
-                    <img *ngIf="player.treaties[1]==3" src="assets/graphics/images/flag2.gif" height=25>
-                    <img *ngIf="player.treaties[2]==3" src="assets/graphics/images/flag3.gif" height=25>
-                    <img *ngIf="player.treaties[3]==3" src="assets/graphics/images/flag4.gif" height=25>
-                    <img *ngIf="player.treaties[4]==3" src="assets/graphics/images/flag5.gif" height=25>
-                    <img *ngIf="player.treaties[5]==3" src="assets/graphics/images/flag6.gif" height=25>
-                    <img *ngIf="player.treaties[6]==3" src="assets/graphics/images/flag7.gif" height=25>
-                    <img *ngIf="player.treaties[7]==3" src="assets/graphics/images/flag8.gif" height=25>
+                    <img *ngIf="player.treaties[0]==3" src="{{spFlagOfNation(1, gameObj.type)}}" height=25>
+                    <img *ngIf="player.treaties[1]==3" src="{{spFlagOfNation(2, gameObj.type)}}" height=25>
+                    <img *ngIf="player.treaties[2]==3" src="{{spFlagOfNation(3, gameObj.type)}}" height=25>
+                    <img *ngIf="player.treaties[3]==3" src="{{spFlagOfNation(4, gameObj.type)}}" height=25>
+                    <img *ngIf="player.treaties[4]==3" src="{{spFlagOfNation(5, gameObj.type)}}" height=25>
+                    <img *ngIf="player.treaties[5]==3" src="{{spFlagOfNation(6, gameObj.type)}}" height=25>
+                    <img *ngIf="player.treaties[6]==3" src="{{spFlagOfNation(7, gameObj.type)}}" height=25>
+                    <img *ngIf="player.treaties[7]==3" src="{{spFlagOfNation(8, gameObj.type)}}" height=25>
                 </td>
                 <td *ngIf="ableToTakeThisTurn && currentPlayer" ng-style="ngStyleAllies(player, 'white')">
                     <div *ngIf="currentPlayer.diplomacyFlg && currentPlayer.treatyOfferedNation==player.nation">
@@ -170,11 +170,11 @@
                 <td *ngIf="gameObj.maxAllies>0" align=center> {{team.name}}</td>
                 <td>
                     <span *ngFor="let player of gameObj.players">
-                        <img *ngIf="player.team==team.name" src="assets/graphics/images/flag{{player.nation}}.gif"
+                        <img *ngIf="player.team==team.name" src="{{spFlagOfNation(player.nation, gameObj.type)}}"
                             height=25>
                     </span>
                 </td>
-                <td> <img *ngFor="let nation of team.capitals" src="assets/graphics/images/flag{{nation}}.gif"
+                <td> <img *ngFor="let nation of team.capitals" src="{{spFlagOfNation(nation, gameObj.type)}}"
                         height=18></td>
                 <td> {{team.income}} </td>
             </tr>

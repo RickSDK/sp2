@@ -161,8 +161,8 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       if (gameObj.currentCampaign == 2 && gameObj.round == 2 && currentPlayer.status == 'Purchase' && terr.id == 7) {
         showAlertPopup('All units are now unlocked, but buying an economic center and 3 tanks would be a good move for you in this situation.')
       }
-      if (gameObj.currentCampaign == 1 && gameObj.round == 3 && currentPlayer.status == 'Purchase' && terr.id == 62) {
-        showAlertPopup('Buy a "Factory" here. Starting with your next turn, you will be able to buy new units in Ukraine as well as Germany!')
+      if (gameObj.currentCampaign == 1 && gameObj.round == 3 && currentPlayer.status == 'Purchase' && terr.id == 15) {
+        showAlertPopup('Buy a "Factory" here. Starting with your next turn, you will be able to buy new units in Chechnya as well as Germany!')
       }
 
       if (gameObj.round == 1 && currentPlayer.status == 'Attack' && terr.id == 62) {
@@ -201,7 +201,10 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       showAlertPopup('Let\'s try purchasing Technology. Buy 2 by clicking on the "Research" button twice.');
     }
     if (gameObj.currentCampaign == 6 && gameObj.round == 2 && currentPlayer.status == 'Purchase' && terr.id == 7) {
-      showAlertPopup('Buy Anti-balistics and Railway this turn. These are 2 unique technologies that you can purchase outright.');
+      showAlertPopup('Buy Anti-balistics and Railway this turn. These are 2 unique technologies that you can purchase outright. Look for those buttons just to the left of the "Research" button.');
+    }
+    if (gameObj.currentCampaign == 6 && gameObj.round == 3 && currentPlayer.status == 'Purchase' && terr.id == 7) {
+      showAlertPopup('Keep buying research until you get "Anthrax Warheads".');
     }
 
     if (ableToTakeThisTurn && currentPlayer.status == 'Purchase' && terr.facFlg) {

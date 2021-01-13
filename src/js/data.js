@@ -14,16 +14,18 @@ function getCampaigns() {
 	return [
 		{ id: 1, name: 'Basic Training', capitalsWin: 2, lock: false, currentFlg: true, unit: 3, type: 'freeforall', numPlayers: 2, desc: 'Learn the basic elements of the game as you attempt to take over Russia. Winning this unlocks Campaign #2.', mission: 'Begin the conquest! It\'s time to expand your empire. Click on Ukraine to invade.' },
 		{ id: 2, name: 'Heros!', capitalsWin: 3, lock: true, currentFlg: false, unit: 10, type: 'freeforall', numPlayers: 2, desc: 'With additional ground units unlocked, take over all Russian territories.', mission: 'Begin the conquest! It\'s time to expand your empire. Click on Ukraine to invade.' },
-		{ id: 3, name: 'Bombers', capitalsWin: 2, lock: true, currentFlg: false, unit: 7, type: 'freeforall', numPlayers: 2, desc: 'Learn the art of strategic bombings and Air Defense.', mission: 'Your mission is to bomb Russia\'s economy and protect your own. The first player to reduce his enemy\'s income to under 20 coins wins!',
-		roundIntro: ['First Round message', 'Second Round message'] },
+		{
+			id: 3, name: 'Bombers', capitalsWin: 2, lock: true, currentFlg: false, unit: 7, type: 'freeforall', numPlayers: 2, desc: 'Learn the art of strategic bombings and Air Defense.', mission: 'Your mission is to bomb Russia\'s economy and protect your own. The first player to reduce his enemy\'s income to under 20 coins wins!',
+			roundIntro: ['First Round message', 'Second Round message']
+		},
 		{ id: 4, name: 'Nuke Campaign', capitalsWin: 2, lock: true, currentFlg: false, unit: 14, type: 'freeforall', numPlayers: 2, desc: 'Global Thermal Nuclear War!', mission: 'This campaign is simple. Spend 4 rounds buying and nuking your enemy. Read up on nukes so you know how they work.' },
 		{ id: 5, name: 'Ship Campaign', capitalsWin: 2, lock: true, currentFlg: false, unit: 12, type: 'freeforall', numPlayers: 2, desc: 'Learn to load, move and attack with ships.', mission: 'In this campaign you will learn how to load troops onto a transport, move accross the ocean and mount an amphibious assault.' },
 		{ id: 6, name: 'Tech War', capitalsWin: 3, lock: true, currentFlg: false, unit: 18, type: 'freeforall', numPlayers: 3, desc: 'Technology unlocked. Build up your technology as fast as possible.', mission: 'We now introduce you to technology, which can be a game changer. Read the technology tab for details. No attacks needed in this campaign.' },
-		{ id: 7, name: 'Diplomacy Game', capitalsWin: 4, lock: true, currentFlg: false, unit: 1, type: 'diplomacy', numPlayers: 4, desc: 'Learn diplomacy as you try to conquer the world in a 4-player game.', mission: 'Diplomacy is king! Read up of diplomacy under the "Allies" tab. You can team up with one other player and the first team to control 4 capitals wins this game.' },
-		{ id: 8, name: 'Fog of War', capitalsWin: 5, lock: true, currentFlg: false, unit: 5, type: 'diplomacy', numPlayers: 4, desc: 'Things get interesting as fog of war makes war much tougher.', mission: 'Things now get harder with Fog of War. Enemy troops counts will be masked. First team to control 5 capitals wins the game.' },
-		{ id: 9, name: 'Hard Fog', capitalsWin: 6, lock: true, currentFlg: false, unit: 6, type: 'diplomacy', numPlayers: 6, desc: 'You thought fog of war was tough, wait until you play with hard fog.', mission: 'Hard fog has even more information hidden from you. Team up and control 6 capitals to win the game.' },
+		{ id: 7, name: 'Diplomacy Game', capitalsWin: 4, lock: true, currentFlg: false, unit: 88, type: 'diplomacy', numPlayers: 4, desc: 'Learn diplomacy as you try to conquer the world in a 4-player game.', mission: 'Diplomacy is king! Read up of diplomacy under the "Allies" tab. You can team up with one other player and the first team to control 4 capitals wins this game.' },
+		{ id: 8, name: 'Fog of War', capitalsWin: 4, lock: true, currentFlg: false, unit: 5, type: 'diplomacy', numPlayers: 4, desc: 'Things get interesting as fog-of-war makes fighting much tougher.', mission: 'Things now get harder with Fog of War. Enemy troops counts will be masked. First team to control 4 capitals wins the game.' },
+		{ id: 9, name: 'Hard Fog', capitalsWin: 5, lock: true, currentFlg: false, unit: 6, type: 'diplomacy', numPlayers: 6, desc: 'You thought fog of war was tough, wait until you play with hard fog.', mission: 'Hard fog has even more information hidden from you. Team up and control 5 capitals to win the game.' },
 		{ id: 10, name: 'Free-For-All', capitalsWin: 6, lock: true, currentFlg: false, unit: 2, type: 'freeforall', numPlayers: 5, desc: 'It\'s you against the world in a free for all game with hard fog.', mission: 'This will be your hardest callenge yet! Hard fog and no teams. It is you against the world. First player to control 6 capitals wins the game.' },
-	  ]
+	]
 }
 function populateUnits() {
 	// type 1=ground, 2=air, 3=water, 4=chopper (land,air & water)
@@ -418,12 +420,12 @@ function leagueNames() {
 }
 function getGameTypes(limitedFlg, num) {
 	if (limitedFlg)
-		return ['diplomacy', 'locked', 'firefight', 'hungerGames', 'freeforall'];
+		return ['diplomacy', 'locked', 'firefight', 'hungerGames', 'freeforall', 'ww2'];
 	else {
 		if (num == 1)
 			return ['diplomacy', 'firefight', 'hungerGames'];
 		if (num == 2)
-			return ['locked', 'autobalance', 'barbarian', 'battlebots', 'co-op'];
+			return ['locked', 'autobalance', 'barbarian', 'battlebots', 'co-op', 'ww2'];
 		if (num == 3)
 			return ['freeforall', 'ffa-5', 'ffa-6', 'ffa-7'];
 
@@ -440,13 +442,13 @@ function getGameTypesObj(limitedFlg, num) {
 	return obj;
 }
 function allowAlliancesForType(type) {
-	if (type == 'freeforall' || type == 'basicTraining' || type == 'locked' || type == 'autobalance' || type == 'ffa-5' || type == 'ffa-6' || type == 'ffa-7')
+	if (type == 'freeforall' || type == 'basicTraining' || type == 'locked' || type == 'ww2' || type == 'autobalance' || type == 'ffa-5' || type == 'ffa-6' || type == 'ffa-7')
 		return false;
 	else
 		return true;
 }
 function maxAlliesForType(type, numPlayers) {
-	if (type == 'hungerGames')
+	if (type == 'hungerGames' || type == 'ww2')
 		return 1;
 	if (type == 'co-op')
 		return 5;
@@ -465,6 +467,8 @@ function maxAlliesForType(type, numPlayers) {
 function gameTypeNameForType(type) {
 	if (type == 'diplomacy')
 		return 'Diplomacy';
+	if (type == 'ww2')
+		return 'World War II';
 	if (type == 'firefight')
 		return 'Fire-Fight';
 	if (type == 'locked')
@@ -492,6 +496,8 @@ function gameTypeNameForType(type) {
 	return type;
 }
 function ngClassGameTypeMain(gameType) {
+	if (gameType == 'ww2')
+		return 'fa fa-star-o';
 	if (gameType == 'hungerGames')
 		return 'fa fa-cutlery';
 	if (gameType == 'diplomacy')
@@ -519,6 +525,8 @@ function ngClassGameTypeMain(gameType) {
 	return 'fa fa-check';
 }
 function numPlayersPerType(gameType) {
+	if (gameType == 'ww2')
+		return { min: '4', max: '4' };
 	if (gameType == 'hungerGames')
 		return { min: '8', max: '8' };
 	if (gameType == 'diplomacy')
@@ -580,9 +588,12 @@ function pointsForType(type, winFlg) {
 		return (winFlg) ? 6 : -1;
 	if (type == 'ffa-7')
 		return (winFlg) ? 7 : -1;
-	return type;
+
+	return (winFlg) ? 2 : -2;;
 }
 function gameTypeForName(type) {
+	if (type == 'World War II')
+		return 'ww2';
 	if (type == 'Diplomacy')
 		return 'diplomacy';
 	if (type == 'Fire-Fight')
@@ -612,6 +623,8 @@ function gameTypeForName(type) {
 	return type;
 }
 function gameDescForType(type) {
+	if (type == 'ww2')
+		return "Superpowers map with USA & Russia vs Europe & Japan. No nukes. Starting nations are mixed up a bit and Germany & Russia start with extra troops but lower income due to no completed superpower";
 	if (type == 'basicTraining')
 		return "Conquer the capitals of Russia and Indo-China before Japan does.";
 	if (type == 'diplomacy')

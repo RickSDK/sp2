@@ -216,16 +216,25 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   }
 
   multiplayGameClicked(login: any) {
-    if (this.user.userId > 0)
+    if (this.user.userId > 0 && this.user.rank >= 2)
       this.router.navigate(['/multiplayer']);
     else
       login.show();
   }
   singlePlayerGame() {
     if (this.singleGameId > 0)
-      this.router.navigate(['/board']);
+      this.displaySPPopup('continueGamePopup');
     else
       this.router.navigate(['/campaign']);
+  }
+  startSPGame(option: number) {
+    this.closePopup('continueGamePopup');
+    if (option == 1)
+      this.router.navigate(['/board']);
+    else {
+      localStorage.currentGameId = '';
+      this.router.navigate(['/campaign']);
+    }
   }
   userUpdated($event) {
     this.user = userObjFromUser();

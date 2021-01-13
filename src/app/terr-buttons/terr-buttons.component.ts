@@ -45,6 +45,19 @@ export class TerrButtonsComponent extends BaseComponent implements OnInit {
     this.showAlliesButtonsFlg = false;
     this.secondaryIndex = 0;
     this.showAlliesButtonsIdx = 0;
+
+  }
+  changeSecondaryIndex(num: number) {
+    if(this.selectedTerritory.attackedRound == this.gameObj.round) {
+      this.showAlertPopup('Sorry, newly conquered territories cannot be transferred.', 1);
+      return;
+    }
+    this.secondaryIndex = num;
+    if (this.currentPlayer.allies.length > 0) {
+      this.allyIndex = 0;
+      this.allyNation = this.currentPlayer.allies[0];
+      this.showAlliesButtonsFlg = !this.showAlliesButtonsFlg;
+    }
   }
   changeOptionType(type: string) {
     playClick();

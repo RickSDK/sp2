@@ -63,8 +63,12 @@ export class CampaignComponent extends BaseComponent implements OnInit {
       startGame.show();
   }
   singlePlayerGame(startGame: any) {
-    if (this.user.rank < 2) {
+    if (!this.user.rank || this.user.rank < 1) {
       this.showAlertPopup('Whoa! Complete the Campaign before playing a standard single player game.', 1);
+      return;
+    }
+    if (this.user.rank == 1) {
+      this.showAlertPopup('You must be Private 1st Class to unlock this option. Complete Campaign #8 get promoted.', 1);
       return;
     }
     localStorage.currentCampaign = 0;
@@ -76,7 +80,9 @@ export class CampaignComponent extends BaseComponent implements OnInit {
   paintMainScreen() {
     this.user = userObjFromUser();
     this.campaignId = localStorage.campaignId || 1;
-    if (this.user.rank > 3)
+    if (this.user.rank < 1)
+      this.campaignId = 1;
+    if (this.user.rank >= 3)
       this.campaignId = 11; // unlock all
 
     this.superpowersData.campaigns.forEach(campaign => {

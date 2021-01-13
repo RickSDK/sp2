@@ -30,7 +30,7 @@
             <tr *ngFor="let player of gameObj.players" [ngStyle]="ngStyleLogs(player.nation, !player.alive)"
                 title="{{player.userName}} ({{player.id}})" class="borderRow">
                 <td class="centerText">
-                    <img src="assets/graphics/images/flag{{player.nation}}.gif" height=40
+                    <img src="{{spFlagOfNation(player.nation, gameObj.type)}}" height=40
                         title="{{superpowersData.superpowers[player.nation]}}">
                     <i class="fa fa-shield" *ngIf="gameObj.round == gameObj.attack && player.defenseFlg"
                         title="player has lost a territory"></i>
@@ -71,7 +71,7 @@
             <tr *ngFor="let player of unitPlayers" [ngStyle]="ngStyleLogs(player.nation, !player.alive)"
                 class="borderRow">
                 <td class="centerText">
-                    <img src="assets/graphics/images/flag{{player.nation}}.gif" height=40
+                    <img src="{{spFlagOfNation(player.nation, gameObj.type)}}" height=40
                         title="{{superpowersData.superpowers[player.nation]}}">
                 </td>
                 <td class="centerText">
@@ -121,7 +121,7 @@
             <tr *ngFor="let player of incomePlayers" [ngStyle]="ngStyleLogs(player.nation, !player.alive)"
                 class="borderRow">
                 <td>
-                    <img src="assets/graphics/images/flag{{player.nation}}.gif" height="40"
+                    <img src="{{spFlagOfNation(player.nation, gameObj.type)}}" height="40"
                         title="{{superpowersData.superpowers[player.nation]}}">
                 </td>
                 <td class="hidden-xxs">
@@ -157,7 +157,7 @@
             <tr *ngFor="let player of gameObj.players" [ngStyle]="ngStyleLogs(player.nation, !player.alive)"
                 class="borderRow" style="font-size: 12px;">
                 <td>
-                    <img src="assets/graphics/images/flag{{player.nation}}.gif" height="40"
+                    <img src="{{spFlagOfNation(player.nation, gameObj.type)}}" height="40"
                         title="{{superpowersData.superpowers[player.nation]}}">
                 </td>
                 <td class="hidden-xxs">

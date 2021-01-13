@@ -118,6 +118,13 @@
 </div>
 
 <!-------popups------------------>
+<div class="popupScreenNoPad" style="width: 280px; z-index: 5;" id="continueGamePopup">
+	<img src="assets/graphics/advisors/leader.png" height=170>
+	<div style="font-size: 24px;">Game in Progress!</div>
+	<div>You have a single player game in progress.</div>
+	<button (mousedown)="startSPGame(1)" type="button" class="btn btn-secondary roundButton tall glowButton">Continue</button>
+	<button (mousedown)="startSPGame(2)" type="button" class="btn btn-primary roundButton">Start New Game</button>
+</div>
 <div class="popupScreenNoPad" style="width: 280px; z-index: 5;" id="initPopup" onClick="closePopup('initPopup')">
 	<div style="background-color: #337ab7; color: white; text-align: center;">Superpowers Game Master
 		<button type="button" class="btn btn-secondary roundButton"><i class="fa fa-times"></i></button>

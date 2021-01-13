@@ -1,14 +1,10 @@
-<img src="assets/graphics/images/map.png" style="margin-top: 100px; z-index: -10">
-<div *ngIf="0" style="font-size: 10px;">Superpowers</div>
-<div style="display: inline-block; border: 1px solid gray; width: 100%;">
+<img src="assets/graphics/images/map.png" style="margin-top: 100px; z-index: -10; box-shadow: 10px 10px 15px #000;">
+
+<div style="display: inline-block; width: 100%; max-width: 1200px;">
 	<div style="text-align: center; font-size: 12px; color: gray;">Google Ads</div>
 	<ins class="adsbygoogle" style="display:block;" data-ad-client="ca-pub-2626924352662007" data-ad-slot="3410873039"
 		data-ad-format="auto" data-full-width-responsive="true"></ins>
 </div>
-
-<!--<div *ngIf="0" style="margin-top: 100px; position: absolute; z-index: -10;">
-	<img id="map" src="assets/graphics/images/map.png">
-</div>-->
 
 <div *ngIf="isDesktopFlg">
 	<svg *ngFor="let svg of svgs" [attr.x]="svg.left" [attr.y]="svg.top" [attr.width]="svg.width"
@@ -50,15 +46,15 @@
 <img onClick="closePopup('target')" src="assets/graphics/images/target.png" id="target" class="targetSign off">
 
 <!---top bar--->
-<section *ngIf="currentPlayer" [class]="ngClassGradient()"
-	style="z-index: 201; text-align: center; position: fixed; width: 100%; top: 0px; height: 44px; box-shadow: 2px 2px 3px #000; max-height: 44px; line-height: 1.5em; overflow: hidden;">
+<section *ngIf="gameObj" [class]="ngClassGradient()"
+	style="z-index: 201; text-align: center; background-color: #08c; position: fixed; width: 100%; top: 0px; height: 44px; box-shadow: 2px 2px 3px #000; max-height: 44px; line-height: 1.5em; overflow: hidden;">
 	<span class="hidden-xxs" style="float: left; color: white; font-size: 12px; padding: 10px;">Version
 		{{spVersion}} &nbsp;<i class="fa fa-mobile" *ngIf="!isDesktopFlg"></i> <i class="fa fa-desktop"
 			*ngIf="isDesktopFlg"></i></span>
 	<button (mousedown)="exitButtonPressed()" type="button" class="btn btn-secondary roundButton"><i
 			class="fa fa-arrow-left"></i>
 		Exit</button>
-	<button *ngIf="ableToTakeThisTurn && gameObj.actionButtonMessage.length>0 && !hideActionButton"
+	<button *ngIf="ableToTakeThisTurn && gameObj.actionButtonMessage && gameObj.actionButtonMessage.length>0 && !hideActionButton"
 		(mousedown)="completeTurnButtonPressed()" id="completeTurnButton" type="button"
 		class="btn btn-success roundButton">{{gameObj.actionButtonMessage}}</button>
 	<button *ngIf="ableToTakeThisTurn && hideActionButton" (mousedown)="redoPurchase()" type="button"
@@ -68,9 +64,9 @@
 	<span *ngIf="this.gameObj.gameOver" style="font-size: 20px; font-weight: 700;">
 		Game Over!
 	</span>
-	<span *ngIf="!this.gameObj.gameOver">
+	<span *ngIf="currentPlayer && !this.gameObj.gameOver">
 		<img (mousedown)="scrollToNation(currentPlayer.nation)"
-			src="assets/graphics/images/flag{{currentPlayer.nation || 1}}.gif" height=42
+			src="{{spFlagOfNation(currentPlayer.nation, gameObj.type)}}" height=42
 			title="{{superpowersData.superpowers[gameObj.currentNation]}}" style="cursor: pointer;">
 		<span style="background-color: #777; color: white; border: 1px solid black;">{{currentPlayer.userName}}</span>
 		<span style="background-color: #ccc; color: black; font-size: 14px; padding: 3px;">
@@ -82,7 +78,7 @@
 </section>
 <!---gray bar--->
 <div [style.background-color]="adminModeFlg?'red':'gray'"
-	style="z-index: 201; opacity: .75; background-color: gray; text-align: center;  position: fixed; top: 45px; width: 100%; height: 55px;">
+	style="z-index: 201; background-color: gray; text-align: center; box-shadow: 2px 2px 5px #000; position: fixed; top: 45px; width: 100%; height: 55px;">
 	<span *ngIf="!showControls" style="color: white; font-size: 20px;">
 		&nbsp;
 		<span *ngIf="loadingFlg"><i class="fa fa-spinner fa-spin"></i> Loading...</span>
@@ -166,7 +162,7 @@
 					style="font-size: 10px; color: green;"></i>
 				<i *ngIf="player.nation==yourNation && player.nation!=currentPlayer.nation" class="fa fa-hand-o-right"
 					style="font-size: 10px; color: green;"></i>
-				<img src="assets/graphics/images/flag{{player.nation}}.gif" height=30>
+				<img src="{{spFlagOfNation(player.nation, gameObj.type)}}" height=30>
 				<img *ngIf="player.nukes" src="assets/graphics/units/piece14.gif" height=15
 					style="margin-left: -4px; margin-right: -6px;">
 				<span style="font-size: 10px; font-weight: 700;">{{player.income}}</span>

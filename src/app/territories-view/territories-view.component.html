@@ -1,6 +1,6 @@
 
 <div style="text-align: center;">
-<img *ngFor="let player of gameObj.players" src="assets/graphics/images/flag{{player.nation}}.gif" height="50" 
+<img *ngFor="let player of gameObj.players" src="{{spFlagOfNation(player.nation, gameObj.type)}}" height="50" 
 class="shadowed" (click)="selectPlayer(player)" style="cursor: pointer;" [ngClass]="ngClassClickableFlag(selectedPlayer.nation, player.nation)">
 </div>
 

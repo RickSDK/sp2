@@ -855,7 +855,7 @@ function unitCannotBeHealed(battle, unit) {
     return true;
 }
 function markRemainerAsDead(units, targetHash, gameObj, battle) {
-    if(battle && battle.generalUnit)
+    if (battle && battle.generalUnit)
         units.sort(function (a, b) { return a.cas - b.cas; });
 
     units.forEach(unit => {
@@ -1139,6 +1139,9 @@ function wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, ti
     gameObj.units = units;
 
     if (displayBattle.militaryObj.wonFlg) {
+        selectedTerritory.defeatedByNation = currentPlayer.nation;
+        selectedTerritory.defeatedByRound = gameObj.round;
+    
         illuminateThisTerritory(selectedTerritory, gameObj);
         if (selectedTerritory.nation == 99)
             squareUpAllCargo(displayBattle.attackUnits, gameObj);
@@ -1162,8 +1165,6 @@ function wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, ti
         if (displayBattle.militaryObj.wonFlg) {
             if (gameObj.round == gameObj.attack && selectedTerritory.nation < 99 && selectedTerritory.defeatedByRound != gameObj.round)
                 p2.defenseFlg = true;
-            selectedTerritory.defeatedByNation = currentPlayer.nation;
-            selectedTerritory.defeatedByRound = gameObj.round;
         }
         addIncomeForPlayer(p2, gameObj);
         p2.kills += losses;
@@ -1326,6 +1327,9 @@ function populateHostileMessage(type, terr, gameObj, player) {
 function hostileActObj(type, terr, gameObj, player) {
     var message = '';
     var allowFlg = true;
+    if (0)
+        return { message: '', allowFlg: true } // admin
+
     var hostileType = (type == 'attack' || type == 'nuke' || type == 'cruise' || type == 'bomb');
 
     if (terr.defeatedByNation == player.nation && terr.defeatedByRound == gameObj.round) {
@@ -1394,22 +1398,22 @@ function hostileActObj(type, terr, gameObj, player) {
                 allowFlg = false;
             }
         }
-        if(gameObj.currentCampaign==3) {
-            if(type == 'attack') {
+        if (gameObj.currentCampaign == 3) {
+            if (type == 'attack') {
                 message = 'Only Strategic Bombings allowed in this campaign.';
                 allowFlg = false;
             }
-            if(type == 'bomb') {
+            if (type == 'bomb') {
                 message = '';
                 allowFlg = true;
             }
         }
-        if(gameObj.currentCampaign==4) {
-            if(type == 'attack') {
+        if (gameObj.currentCampaign == 4) {
+            if (type == 'attack') {
                 message = 'Only Nuclear attacks allowed in this campaign.';
                 allowFlg = false;
             }
-            if(type == 'nuke') {
+            if (type == 'nuke') {
                 message = '';
                 allowFlg = true;
             }

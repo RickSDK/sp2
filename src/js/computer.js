@@ -1,5 +1,12 @@
 function purchaseCPUUnits(player, gameObj, superpowersData, rank) {
-    console.log('purchaseCPUUnits!!!');
+    if (gameObj.type == 'ww2' && gameObj.round == 5) {
+        var nation = 0;
+        player.treaties.forEach(treaty => {
+            nation++;
+            if (treaty == 1 || treaty == 2)
+                declareWarOnNation(nation, gameObj, player, superpowersData);
+        });
+    }
 
     if (gameObj.currentCampaign == 0 || gameObj.currentCampaign >= 6) {
         if (gameObj.round <= 18 && player.cpu)
@@ -101,7 +108,7 @@ function purchaseCPUUnits(player, gameObj, superpowersData, rank) {
     if (num == 6) {
         addUniToQueue(7, 1, superpowersData, player, gameObj, terr1);
     }
-    if (num == 7 || player.money >= 45 && rank > 2) {
+    if (num == 7 || player.money >= 45 && rank > 2 && gameObj.type != 'ww2') {
         addUniToQueue(14, 1, superpowersData, player, gameObj, terr1);
     }
     if (player.money >= 10) {

@@ -5,17 +5,14 @@
         <tr>
             <td>
                 <div class="tableHeader">Income</div>
-                <div><span class="money2">{{currentPlayer.income}}</span> Coins/Turn</div>
-                <div class="smallText">Conquer capitals to boost income</div>
+                <div><span class="money2">{{currentPlayer.income}}</span> </div>
+                <div class="smallText">(per turn)</div>
             </td>
+
             <td>
-                <img src="assets/graphics/images/coin.png" height=40
-                title="coins">
-            </td>
-            <td>
-                <div class="tableHeader">Coins Available</div>
-                <div> <span class="money2" id="playerMoneyElementId">{{currentPlayer.money}}</span> Coins</div>
-                <div class="smallText">Spend coins below</div>
+                <div class="tableHeader">Coins</div>
+                <div> <span class="money2" id="playerMoneyElementId">{{currentPlayer.money}}</span> </div>
+                <div class="smallText">(available)</div>
             </td>
         </tr>
     </table>
@@ -26,7 +23,7 @@
 
     
     <!---------technology--------->
-    <div *ngIf="selectedTerritory.factoryCount>0 && (user.rank>2 || gameObj.currentCampaign >= 6)"
+    <div *ngIf="selectedTerritory.factoryCount>0 && (user.rank>=2 || gameObj.currentCampaign >= 6)"
         style="background-color: #cdf; border: 1px solid black; border-radius: 5px;">
         <div class="darkBlueBg" style="font-size: 10px;"><i class="fa fa-cogs"></i> Technology</div>
         <table class="spTable" style="color: black;">
@@ -186,7 +183,7 @@
                         class="btn btn-primary roundButton">buy</button>
                 </td>
             </tr>
-        </table>factoriesInQueue {{factoriesInQueue}}
+        </table>
         <div *ngIf="factoriesInQueue==0 && currentPlayer.money >= 15 && facBombedFlg && segmentIdx==0"><img src="assets/graphics/units/piece103.gif" height=20
                 title="Repair bombed factory"> <i class="fa fa-arrow-right"></i>
             <img src="assets/graphics/units/piece15.gif" height=20 title="Repair bombed factory">
@@ -194,7 +191,7 @@
                 class="btn btn-primary roundButton">buy</button>
         </div>
         <div style="padding: 10px;">
-            <img src="assets/graphics/images/coin.png" height=30 title="coins"> Coins: <span
+            <img src="assets/graphics/images/coin.png" height=30 title="coins">&nbsp;<span
                 class="money">{{currentPlayer.money}}</span>
         </div>
     </div>

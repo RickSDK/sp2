@@ -97,13 +97,13 @@ h3 {
 .sp-group {
 	min-width: 80px; 
 }
+//	background: url('assets/graphics/misc/compass.png') 1400px 200px no-repeat, url('assets/graphics/backgrounds/metal5.jpg') 0 0 repeat scroll;
 
 body {
-	background-color: rgb(51, 122, 183);;
-	background-repeat: no-repeat;
-  	background-attachment: fixed;
+	background: url('assets/graphics/backgrounds/metal2.jpg') 0 0 no-repeat scroll;
+	background-size: cover;
   	height: 100%; margin: 0px; padding: 0px;
-   }
+}
 .mainPage {
 	color: #2d3c49;
 	font-family: "arial", arial, sans-serif;
