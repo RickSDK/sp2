@@ -56,7 +56,6 @@ function createNewGameSimple(type, numPlayers, name, startingNation, pObj, user,
 function createNewGame(id, type, numPlayers, name, attack, pieces, startingNation, fogOfWar, rank, customGame, pObj, hardFog, turboFlg, user, currentCampaign) {
 	// this is for single player games
 	var gameObj = new Object;
-	console.log('xxxrank', rank);
 	gameObj.name = name;
 	gameObj.id = id;
 	gameObj.round = 1;

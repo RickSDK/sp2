@@ -3,8 +3,8 @@
 <div style="display: table; position: absolute; left: 0; top: 0; height: 100%; width: 100%;">
     <div style="display: table-cell; vertical-align: middle; text-align: center;">
         <div style="max-width: 800px; display: block; margin-left: auto; margin-right: auto; text-align: center;">
-            <div class="grayBox">
-                <img routerLink="/" id="spLogo" src="assets/graphics/images/superpowers.png"
+            <div>
+                <img routerLink="/" id="spLogo2" src="assets/graphics/images/superpowers.png"
                     style="width: 100%; cursor: pointer;">
                 <div *ngIf="user.userName == 'Guest'" class="borderClass3">
                     <div style="padding: 20px;">
@@ -15,67 +15,71 @@
                         </div>
                     </div>
                 </div>
-                <div *ngIf="user.userName != 'Guest'">
-                    <div class="container-fluid" *ngIf="!showVideoPlayerFlg && !showCampaignsFlg">
+                <div *ngIf="user.userName != 'Guest' && !showCampaignsFlg">
+                    <div class="container-fluid">
                         <div class="row">
                             <div class="col-sm-4" style="padding: 0;">
-                                <button (mousedown)="showCampaignsFlg = !showCampaignsFlg" type="button"
-                                    class="btn btn-primary roundButton">
-                                    <div><i class="fa fa-flag" style="font-size: 48px;"></i></div>
-                                    Campaign
-                                </button>
+
+                                <img (mousedown)="showCampaignsFlg = !showCampaignsFlg" class="shadowed main-page-item"
+                                    src="assets/graphics/buttons/campaign.png" title="Campaigns">
+
                             </div>
                             <div class="col-sm-4" style="padding: 0;">
                                 <button routerLink="/" type="button" class="btn btn-secondary roundButton"><i
                                         class="fa fa-home"></i>
                                     Home
                                 </button>
+                                <a routerLink="/info"><button type="button"
+                                    class="btn btn-primary roundButton main-page-item"><i class="fa fa-book"></i>
+                                    Rules </button></a>
                             </div>
                             <div class="col-sm-4" style="padding: 0;">
-                                <button (mousedown)="singlePlayerGame(startGamePopup)" type="button"
-                                    class="btn btn-primary roundButton">
-                                    <div><i class="fa fa-user" style="font-size: 48px;"></i></div>
-                                    <i class="fa fa-lock" *ngIf="this.user.rank < 2"></i> Single Player
-                                </button>
+
+                                <img (mousedown)="singlePlayerGame(startGamePopup)" class="shadowed main-page-item"
+                                    src="assets/graphics/buttons/customGame.png" title="Single-Player Game">
+
+
                             </div>
                         </div>
-                    </div>
-                    <div *ngIf="showCampaignsFlg">
-                        <div>
-                             <div class="borderClass3" *ngIf="superpowersData">
-                                <div style="padding: 10px; text-align: left;">
-                                    <p *ngIf="!user.rank || user.rank == 0">Welcome <b>{{superpowersData.ranks[user.rank].name}}
-                                            {{user.userName}}</b>!
-                                        Working through these short
-                                        campaign tutorials will teach you everything you need to conquer the world. Good
-                                        luck!</p>
-                                    <p *ngIf="user.rank == 1">Nice job <b>{{superpowersData.ranks[user.rank].name}}
-                                            {{user.userName}}</b>! Once
-                                        you complete all the way through Campaign #8 you will be able to play
-                                        multi-player
-                                        online games.
-                                        Good luck!</p>
-                                    <p *ngIf="user.rank > 1">Welcome <b>{{superpowersData.ranks[user.rank].name}}
-                                            {{user.userName}}</b>!
-                                        These short
-                                        campaign tutorials are meant to teach new players everything they need to
-                                        conquer the world.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <button *ngFor="let campaign of superpowersData.campaigns"
-                            (mousedown)="selectCampaign(campaign, startGamePopup)" type="button"
-                            [ngClass]="ngClassCampButton(campaign)" style="width: 250px;">
-                            <div style="font-size: 14px; font-weight: 700;">Campaign #{{campaign.id}}</div>
-                            <img src="assets/graphics/units/piece{{campaign.unit}}u.png" height="60">
-                            <div style="font-size: 24px; font-weight: 700;"><i class="fa fa-lock"
-                                    *ngIf="campaign.lock"></i>
-                                {{campaign.name}}</div>
-                            <div style="font-size: 11px;">{{campaign.desc}}</div>
-                        </button>
                     </div>
                 </div>
+                <div *ngIf="showCampaignsFlg">
+                    <div>
+                        <div class="borderClass3" *ngIf="superpowersData">
+                            <div style="padding: 10px; text-align: left;">
+                                <p *ngIf="!user.rank || user.rank == 0">Welcome
+                                    <b>{{superpowersData.ranks[user.rank].name}}
+                                        {{user.userName}}</b>!
+                                    Working through these short
+                                    campaign tutorials will teach you everything you need to conquer the world. Good
+                                    luck!
+                                </p>
+                                <p *ngIf="user.rank == 1">Nice job <b>{{superpowersData.ranks[user.rank].name}}
+                                        {{user.userName}}</b>! Once
+                                    you complete all the way through Campaign #8 you will be able to play
+                                    multi-player
+                                    online games.
+                                    Good luck!</p>
+                                <p *ngIf="user.rank > 1">Welcome <b>{{superpowersData.ranks[user.rank].name}}
+                                        {{user.userName}}</b>!
+                                    These short
+                                    campaign tutorials are meant to teach new players everything they need to
+                                    conquer the world.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <button *ngFor="let campaign of superpowersData.campaigns"
+                        (mousedown)="selectCampaign(campaign, startGamePopup)" type="button"
+                        [ngClass]="ngClassCampButton(campaign)" style="width: 250px;">
+                        <div style="font-size: 14px; font-weight: 700;">Campaign #{{campaign.id}}</div>
+                        <img src="assets/graphics/units/piece{{campaign.unit}}u.png" height="60">
+                        <div style="font-size: 24px; font-weight: 700;"><i class="fa fa-lock" *ngIf="campaign.lock"></i>
+                            {{campaign.name}}</div>
+                        <div style="font-size: 11px;">{{campaign.desc}}</div>
+                    </button>
+                </div>
+
             </div>
         </div>
     </div>

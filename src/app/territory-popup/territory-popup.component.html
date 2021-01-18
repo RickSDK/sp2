@@ -253,6 +253,7 @@
 
 				<div *ngIf="ableToTakeThisTurn && currentPlayer.status == 'Purchase' && optionType != 'production'" style="background-color: #cfc;">
 					<div><b><i class="fa fa-exclamation-triangle"></i> Currently in Purchase Phase. </b></div>
+					<img src="assets/graphics/images/flagBuy.png" height="50">
 					<div style="color: gray; font-size: 12px;">Press 'Purchase Complete' to move to the next phase of your turn.</div>
 					<button (mousedown)="closeModal('#territoryPopup')" type="button"
 								class="btn btn-primary roundButton glowButton"> Close

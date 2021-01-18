@@ -62,8 +62,8 @@ function purchaseCPUUnits(player, gameObj, superpowersData, rank) {
         if (gameObj.round >= 100)
             player.money += 350; // keep players from dragging feet
 
-        if (rank < 2 && player.money >= 25)
-            player.money -= 15;
+        if (rank <= 3 && player.money >= 30)
+            player.money -= 10;
 
         var difficultyNum = numberVal(gameObj.difficultyNum);
         if (difficultyNum == -1)
@@ -71,7 +71,7 @@ function purchaseCPUUnits(player, gameObj, superpowersData, rank) {
         if (difficultyNum == 1)
             player.money += 10;
     }
-    if (gameObj.currentCampaign == 3)
+    if (gameObj.currentCampaign == 3 && gameObj.round <= 2)
         addUniToQueue(7, 1, superpowersData, player, gameObj, terr1);
     if (gameObj.currentCampaign == 4)
         addUniToQueue(14, 1, superpowersData, player, gameObj, terr1);
@@ -785,7 +785,9 @@ function getAmphibiousAttackObj(player, homeBase, enemyWaterTerr, enemyLandTerr,
     });
     homeBase.units.forEach(function (unit) {
         if (isUnitOkToAttack(unit, player.nation) && (unit.piece == 2 || unit.piece == 3)) {
-            if (cargoSpace - unit.cargoUnits >= 0) {
+            if (unit.cargoUnits < 10)
+                unit.cargoUnits = 10;
+            if (cargoSpace >= unit.cargoUnits) {
                 attackUnits.push(unit);
                 //               pieceId = unit.piece;
                 cargoSpace -= unit.cargoUnits;

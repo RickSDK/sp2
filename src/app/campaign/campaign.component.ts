@@ -22,7 +22,7 @@ export class CampaignComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.user = userObjFromUser();
-    this.showCampaignsFlg = this.user.rank < 2;
+    this.showCampaignsFlg = false;
     this.paintMainScreen();
   }
   enterUsernamePressed() {
@@ -55,7 +55,6 @@ export class CampaignComponent extends BaseComponent implements OnInit {
       this.showAlertPopup('Sorry, this Campaign is locked. Complete the previous campaign first.', 1);
       return;
     }
-    console.log(campaign);
     localStorage.currentCampaign = campaign.id;
     if (this.singleGameId > 0)
       this.router.navigate(['/board']);
@@ -64,7 +63,7 @@ export class CampaignComponent extends BaseComponent implements OnInit {
   }
   singlePlayerGame(startGame: any) {
     if (!this.user.rank || this.user.rank < 1) {
-      this.showAlertPopup('Whoa! Complete the Campaign before playing a standard single player game.', 1);
+      this.showAlertPopup('Whoa! You have no idea what you are doing yet! Complete the Campaign before playing a standard single player game.', 1);
       return;
     }
     if (this.user.rank == 1) {
@@ -80,14 +79,37 @@ export class CampaignComponent extends BaseComponent implements OnInit {
   paintMainScreen() {
     this.user = userObjFromUser();
     this.campaignId = localStorage.campaignId || 1;
+    console.log('campaignId', this.campaignId, this.user.rank);
+    if (this.campaignId > 1 && this.campaignId <= 8)
+      this.showCampaignsFlg = true;
+
     if (this.user.rank < 1)
       this.campaignId = 1;
     if (this.user.rank >= 3)
       this.campaignId = 11; // unlock all
 
+    if (this.campaignId > 1 && this.user.rank < 1) {
+      this.fixUserToRank(1);
+    }
+    if (this.campaignId > 8 && this.user.rank < 2) {
+      this.fixUserToRank(2);
+    }
+    if (this.campaignId > 10 && this.user.rank < 3) {
+      this.fixUserToRank(3);
+    }
+
     this.superpowersData.campaigns.forEach(campaign => {
       campaign.lock = (campaign.id > this.campaignId);
     });
+  }
+  fixUserToRank(rank: number) {
+    this.showAlertPopup('Whoa! out of sync!');
+    localStorage.rank = rank;
+    this.user.rank = rank;
+    saveUserObj(this.user);
+    this.user = userObjFromUser();
+    console.log('xxx', this.user);
+
   }
 
 }

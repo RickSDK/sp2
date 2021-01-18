@@ -275,6 +275,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					capitalsWin = this.superpowersData.campaigns[currentCampaign - 1].capitalsWin;
 					if (currentCampaign >= 8)
 						startingNation = Math.round(currentCampaign) - 3;
+					if (currentCampaign == 9)
+						startingNation = 1; //usa
 				}
 
 				var pObj = {};
@@ -406,9 +408,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		//var player2 = this.gameObj.players[6];
 		//player2.treaties=[0,3,3,0,0,0,4,3];
 
-		var terrId = 73;
+		var terrId = 36;
 		var terr = this.gameObj.territories[terrId - 1];
-		//	terr.owner = 4;
+		//terr.owner = 5;
 		//this.addUnitToTerr(terr, 6, true, true, true);
 
 
@@ -425,9 +427,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		if (0) {
 			setTimeout(() => {
-				this.addUnitToTerr(terr, 30, true, true, true);
-				this.addUnitToTerr(terr, 30, true, true, true);
-				this.addUnitToTerr(terr, 30, true, true, true);
+				this.addUnitToTerr(terr, 3, true, true, true);
+				this.addUnitToTerr(terr, 3, true, true, true);
+				this.addUnitToTerr(terr, 3, true, true, true);
 				//this.addUnitToTerr(terr, 11, true, true, true);
 			}, 1000);
 		}
@@ -501,7 +503,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				this.adminFixBoard();
 			}, 1000);
 		}
-
 		this.haltPurchaseFlg = false; //cpu only!
 		this.haltCombatActionFlg = false;
 		this.haltActionFlg = false;
@@ -648,11 +649,11 @@ export class BoardComponent extends BaseComponent implements OnInit {
 						var playerIsAwol = false;
 						if (hours > 24) {
 							var numAllies = numberHumanAllies(player, gameObj);
-							if (hours > 30 && obj.rank <= 8) {
+							if (hours > 48 && obj.rank <= 8) {
 								if (gameObj.type == 'battlebots' || gameObj.type == 'freeforall' || gameObj.round <= 2) {
 									playerIsAwol = true;
 								}
-								if (hours > 40 && gameObj.round <= 4)
+								if (hours > 48 && gameObj.round <= 4)
 									playerIsAwol = true;
 								if (hours > 60 && gameObj.round <= 6)
 									playerIsAwol = true;
@@ -660,9 +661,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 							if (hours >= 60 && numAllies == 0) {
 								playerIsAwol = true;
 							}
-							if (hours >= 80) {
-								playerIsAwol = true;
-							}
+							//if (hours >= 80) {
+							//	playerIsAwol = true;
+							//}
 							if (secondsLeftInTimer > 43200)
 								secondsLeftInTimer = 43000; // allow for account sit
 
@@ -1058,7 +1059,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				if (this.gameObj.round == 4) {
 					this.forceUserToClickTerritory(13);
 					if (this.gameObj.currentCampaign == 1 || this.gameObj.currentCampaign == 2)
-						this.showAlertPopup('Your want to take Russia! See if you have enough forces to attack.');
+						this.showAlertPopup('You want to take Russia! See if you have enough forces to attack.');
 					else
 						this.showAlertPopup('Your goal is to take over ' + this.gameObj.capitalsWin + ' capitals. See if you have enough forces to attack Russia.');
 					this.newPlayerHelpText = 'Your goal is to take over 6 capitals. See if you have enough forces to attack Russia.';
@@ -1625,8 +1626,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					unit.terr = terr.id;
 				}
 			});
-			refreshTerritory(this.selectedTerritory, this.gameObj, this.currentPlayer, this.superpowersData, (this.ableToTakeThisTurn) ? this.currentPlayer : this.yourPlayer);
-			refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, (this.ableToTakeThisTurn) ? this.currentPlayer : this.yourPlayer);
+			refreshTerritory(this.selectedTerritory, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
+			//refreshTerritory(this.selectedTerritory, this.gameObj, this.currentPlayer, this.superpowersData, (this.ableToTakeThisTurn) ? this.currentPlayer : this.yourPlayer);
+			//refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, (this.ableToTakeThisTurn) ? this.currentPlayer : this.yourPlayer);
 
 			this.showAlertPopup('Fighters moved.');
 			return;
@@ -1694,7 +1696,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 
 
-		refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, (this.ableToTakeThisTurn) ? this.currentPlayer : this.yourPlayer);
+		refreshTerritory(terr, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 		displayLeaderAndAdvisorInfo(terr, currentPlayer, this.yourPlayer, user, gameObj, this.superpowersData.superpowers, 'home');
 		//		terr.units = unitsForTerr(terr, gameObj.units);
 		terr.displayQueue = getDisplayQueueFromQueue(terr, this.gameObj);
@@ -2017,6 +2019,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 	}
 	moveSprite(amount: number, spriteObj: any) {
+		if (this.isMobileFlg && this.currentPlayer.cpu)
+			amount = 1; // no animation on mobile
 		amount -= 1;
 		var range = spriteObj.left1 - spriteObj.left2;
 		var left = spriteObj.left2 + range * amount / 100;
@@ -2198,6 +2202,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.currentPlayer.status = 'Place Units';
 		this.carrierAddedFlg = false;
 		var numAddedUnitsToAdd = this.addUnitsToBoard();
+		if (numAddedUnitsToAdd < 20)
+			numAddedUnitsToAdd = 20;
 		this.cdr.detectChanges();
 		setTimeout(() => {
 			this.endTurn();
@@ -2337,13 +2343,11 @@ export class BoardComponent extends BaseComponent implements OnInit {
 						localStorage.campaignId = newCampaignId.toString();
 					}
 
-					if (currentRank == 0 && this.gameObj.currentCampaign == 1) {
+					if (currentRank == 0) {
 						newRank = 1;
-					}
-					if (currentRank == 1 && this.gameObj.currentCampaign == 8) {
+					} else if (currentRank == 1 && this.gameObj.currentCampaign >= 8) {
 						newRank = 2;
-					}
-					if (currentRank <= 2 && this.gameObj.currentCampaign == 10) {
+					} else if (currentRank <= 2 && this.gameObj.currentCampaign >= 10) {
 						newRank = 3;
 					}
 					if (newRank > currentRank) {
@@ -2356,7 +2360,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					}
 				}
 				if (this.gameObj.currentCampaign > 0)
-					this.showAlertPopup(this.gameObj.currentSituation);
+					this.displayFixedPopup('endCampaignPopup');
+
+				//this.showAlertPopup(this.gameObj.currentSituation);
 
 				clearCurrentGameId();
 			}

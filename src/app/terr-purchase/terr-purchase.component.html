@@ -23,7 +23,7 @@
 
     
     <!---------technology--------->
-    <div *ngIf="selectedTerritory.factoryCount>0 && (user.rank>=2 || gameObj.currentCampaign >= 6)"
+    <div *ngIf="selectedTerritory.factoryCount>0 && (!gameObj.currentCampaign || gameObj.currentCampaign == 0 || gameObj.currentCampaign >= 6)"
         style="background-color: #cdf; border: 1px solid black; border-radius: 5px;">
         <div class="darkBlueBg" style="font-size: 10px;"><i class="fa fa-cogs"></i> Technology</div>
         <table class="spTable" style="color: black;">
@@ -191,8 +191,8 @@
                 class="btn btn-primary roundButton">buy</button>
         </div>
         <div style="padding: 10px;">
-            <img src="assets/graphics/images/coin.png" height=30 title="coins">&nbsp;<span
-                class="money">{{currentPlayer.money}}</span>
+            Coins:&nbsp;<span
+                class="money" style="font-size: 26px;">{{currentPlayer.money}}</span>
         </div>
     </div>
 </div>

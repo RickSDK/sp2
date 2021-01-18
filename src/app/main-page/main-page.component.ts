@@ -48,7 +48,7 @@ export class MainPageComponent extends BaseComponent implements OnInit {
 
     setTimeout(() => {
       flexSprite();
-      (this.adsbygoogle = (window as any).adsbygoogle || []).push({});
+      //(this.adsbygoogle = (window as any).adsbygoogle || []).push({});
     }, 1000);
 
 
@@ -74,12 +74,14 @@ export class MainPageComponent extends BaseComponent implements OnInit {
       if (this.user.rank < 2)
         this.displaySPPopup('initPopup');
     }
+
     this.paintMainScreen();
 
     // flexSprite();
     this.singleGameId = localStorage.currentGameId;
     this.showHomeButtonFlg = localStorage.showHomeButtonFlg != 'Y';
     //getIPInfo(localStorage.userName, localStorage.password);
+
   }
   paintMainScreen() {
     this.user = userObjFromUser();
@@ -168,7 +170,7 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   }
   getUserData() {
     const url = getHostname() + "/spApiText.php";
-    const postData = this.getPostDataFromObj({ user_login: this.user.userName, code: this.user.code, action: 'getUserData' });
+    const postData = this.getPostDataFromObj({ user_login: this.user.userName, code: this.user.code, action: 'getUserData', rank: this.user.rank });
     fetch(url, postData).then((resp) => resp.text())
       .then((data) => {
         if (this.verifyServerResponse(data)) {

@@ -19,7 +19,7 @@
 							<b>Game in Progress!</b>
 						</div>
 
-						<button *ngIf="0" (click)="multiplayGameClicked(loginPopup)" type="button"
+						<button *ngIf="0" (mousedown)="multiplayGameClicked(loginPopup)" type="button"
 							class="btn btn-primary circleButton"
 							style="width: 180px; height: 180px; background-size: cover; background-image: url('assets/graphics/buttons/multiplayer.png'); background-position: center; background-size: cover;">
 						</button>
@@ -51,23 +51,23 @@
 									</div>
 								</div>
 							</div>
-							<div *ngIf="user.userId == 0" class="whiteLink" (click)="multiplayGameClicked(loginPopup)">Existing User Login</div>
+							<div *ngIf="user.userId == 0" class="whiteLink" (mousedown)="multiplayGameClicked(loginPopup)">Existing User Login</div>
 							<div>
 								<a routerLink="/info"><button type="button"
 										class="btn btn-primary roundButton main-page-item"><i class="fa fa-book"></i>
 										Rules </button></a>
 							</div>
-							<button *ngIf="guestNum >= 0" (click)="playVideo(1)" type="button"
+							<button *ngIf="guestNum ==0" (mousedown)="playVideo(1)" type="button"
 								class="btn btn-secondary roundButton" style="height: 60px;"><i class="fa fa-film"></i>
 								Intro
 								Video</button>
-							<button *ngIf="guestNum==1" (click)="playVideo(2)" type="button"
+							<button *ngIf="guestNum==1" (mousedown)="playVideo(2)" type="button"
 								class="btn btn-secondary roundButton glowButton"><i class="fa fa-film"></i> Gameplay
 								Video</button>
-							<button *ngIf="guestNum==2" (click)="playVideo(2)" type="button"
+							<button *ngIf="guestNum==2" (mousedown)="playVideo(2)" type="button"
 								class="btn btn-secondary roundButton"><i class="fa fa-film"></i> Gameplay
 								Video</button>
-							<button *ngIf="guestNum==3" (click)="playVideo(3)" type="button"
+							<button *ngIf="guestNum==3" (mousedown)="playVideo(3)" type="button"
 								class="btn btn-secondary roundButton glowButton"><i class="fa fa-film"></i> Homescreen
 								Icon
 								Video</button>
@@ -78,7 +78,7 @@
 					</div>
 					<div class="col-sm-4" style="padding: 0;">
 
-						<img (click)="multiplayGameClicked(loginPopup)" class="shadowed main-page-item"
+						<img (mousedown)="multiplayGameClicked(loginPopup)" class="shadowed main-page-item"
 							src="assets/graphics/buttons/multiButton.png" title="Multi-Player Games">
 
 						<div *ngIf="user && user.gamesTurn > 0"
@@ -90,7 +90,7 @@
 				</div>
 			</div>
 
-			<div style="display: inline-block; border: 1px solid gray; width: 100%; max-width: 400px;">
+			<div *ngIf="0" style="display: inline-block; border: 1px solid gray; width: 100%; max-width: 400px;">
 				<div style="text-align: center; font-size: 12px; color: gray;">Google Ads</div>
 				<ins class="adsbygoogle" style="display:block;" data-ad-client="ca-pub-2626924352662007"
 					data-ad-slot="3410873039" data-ad-format="auto" data-full-width-responsive="true"></ins>
@@ -108,11 +108,11 @@
 		<source src="http://www.superpowersgame.com/superpowers480.mov" type="video/mp4">
 	</video>
 	<div>
-		<button (click)="turnOffVideo()" type="button" class="btn btn-secondary roundButton"><i class="fa fa-times"></i>
+		<button (mousedown)="turnOffVideo()" type="button" class="btn btn-secondary roundButton"><i class="fa fa-times"></i>
 			Cancel
 		</button>
 	</div>
-	<button (click)="turnOffVideo()" type="button" class="btn btn-secondary roundButton"
+	<button (mousedown)="turnOffVideo()" type="button" class="btn btn-secondary roundButton"
 		style="z-index: 1000; position: fixed; top: 0; left: 0;"><i class="fa fa-times"></i>
 	</button>
 </div>

@@ -32,7 +32,7 @@
                             <div style="color: #337ab7;" ng-show="gameType.type=='co-op'">No points for co-op</div>
                             <span *ngFor="let game of gameTypes">
                                 <span class="borderClass2" [style.background-color]="game==gameType?'orange':'white'"
-                                    style="margin: 1px; cursor: pointer;" (click)="loadType(game)"><i
+                                    style="margin: 1px; cursor: pointer;" (mousedown)="loadType(game)"><i
                                         [ngClass]="ngClassGameType(game.type)"></i>{{game.name}}</span>
                             </span>
                         </div>

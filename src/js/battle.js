@@ -135,7 +135,6 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
     var def = arrayOfPieces(displayBattle.defendingUnits);
     displayBattle.battleDetails = att + '|' + def;
     addAAGunesToBattle(displayBattle, selectedTerritory);
-    //   getBattleAnalysis(displayBattle, selectedTerritory, attackPlayer, gameObj)
     return displayBattle;
 
 }
@@ -237,7 +236,7 @@ function isUnitOkToMove(unit, nation) {
     else
         return false;
 }
-function getBattleAnalysis(battle, selectedTerritory, player, gameObj) {
+function getBattleAnalysis(battle, selectedTerritory, player, gameObj, optionType) {
     var militaryMessage = '';
     var expectedHits = 0;
     var expectedLosses = 0;
@@ -311,7 +310,9 @@ function getBattleAnalysis(battle, selectedTerritory, player, gameObj) {
             bomberCount++;
         if (unit.piece == 52)
             numNukes += 3;
-        numAttUnits++;
+        
+        if(optionType == 'movement' || unit.piece != 13)
+            numAttUnits++;
 
         if (unit.piece == 35)
             specOpsCount++;
@@ -1147,7 +1148,7 @@ function wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, ti
     }
 
     moveTerr.forEach(function (terr) {
-        refreshTerritory(terr, gameObj, currentPlayer, superpowersData, null);
+        refreshTerritory(terr, gameObj, currentPlayer, superpowersData, currentPlayer.cpu?null:currentPlayer);
     });
 
     var hits = displayBattle.defCasualties.length;
@@ -1178,7 +1179,7 @@ function wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, ti
     if (weaponType.length > 0)
         msg = selectedTerritory.name + weaponType + hits + ' casualties.';
     if (weaponType == 'bomb')
-        msg = selectedTerritory.name + ' bombed. ' + hits + ' factories destroyed, ' + losses + ' bombers shot down.';
+        msg = selectedTerritory.name + ' bombed. Factories destroyed: ' + hits + ', bombers Shot down: '+ losses;
     if (displayBattle.round == 0)
         displayBattle.round = 1
     var medicHealedCount = displayBattle.attSoldiersHealed + displayBattle.defSoldiersHealed;

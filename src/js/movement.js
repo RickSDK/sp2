@@ -827,7 +827,7 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
         defendingUnits.push(unit);
     });
 
-    var obj = getBattleAnalysis({ attackUnits: units, defendingUnits: defendingUnits, cruiseFlg: (optionType == 'cruise') }, selectedTerritory, player, gameObj);
+    var obj = getBattleAnalysis({ attackUnits: units, defendingUnits: defendingUnits, cruiseFlg: (optionType == 'cruise') }, selectedTerritory, player, gameObj, optionType);
     if (optionType == 'cruise')
         obj.expectedLosses = 0;
     if (optionType == 'nuke')

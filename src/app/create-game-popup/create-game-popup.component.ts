@@ -68,6 +68,7 @@ export class CreateGamePopupComponent extends BaseComponent implements OnInit {
   }
   loadType(gameType) {
     this.gameType = gameType;
+    this.checkNumberOfPlayers();
   }
   changeNumPlayers() {
     this.playClick();

@@ -85,7 +85,7 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
       this.showAlertPopup('Buy Anti-Balistics and Railway this turn. Look for the buttons next to the "Research" button. Then press the "Purchase Complete" button.', 1);
       return;
     }
-    if(this.gameObj.currentCampaign == 6 && piece != 18 && piece != 16 && piece != 17) {
+    if(0 && this.gameObj.currentCampaign == 6 && piece != 18 && piece != 16 && piece != 17) {
       this.showAlertPopup('For this campaign we are just buying Research. No attacks needed.', 1);
       return;
     }

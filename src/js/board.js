@@ -1,6 +1,6 @@
 
 function refreshAllTerritories(gameObj, currentPlayer, superpowersData, yourPlayer) {
-	console.log('refreshAllTerritories');
+	console.log('refreshAllTerritories', yourPlayer);
 	gameObj.territories.forEach(function (terr) {
 		refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPlayer);
 	});
@@ -398,7 +398,6 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	if (superBC)
 		terr.title += '\n' + superBSStats;
 
-
 	if (cargoTypeUnits > 0 && cargoSpace > 0) {
 		doubleCheckCargoForTerr(terr, gameObj);
 	}
@@ -406,7 +405,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 function doubleCheckCargoForTerr(terr, gameObj) {
 	terr.units.forEach(function (unit) {
 		if (unit.subType == 'fighter' && !unit.cargoOf) {
-			console.log('fix fighter!', unit);
+			console.log('fix fighter!', unit.terr);
 			findTransportForThisCargo(unit, terr, gameObj);
 		}
 	});
@@ -1870,11 +1869,11 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 		var messages = [
 			'You Win!',
 			'You Win! Now all ground units will be unlocked for the next campaign. Click "Exit" button above.',
-			'You Win! Next we will look at another form of attack. Strategic Bombing runs. Click "Exit" button above.',
-			'You Win! Are you ready for nukes? Click "Exit" button above to start your next campaign.',
-			'You Win! You are now ready for ships and sea battles. Click "Exit" button above.',
-			'You Win! The next thing to look at is technology. Click "Exit" button above.',
-			'You Win! You are now ready for diplomacy. Click "Exit" button above.',
+			'You Win! You have now unlocked planes and Strategic Bombing runs! Click "Exit" button above.',
+			'You Win! You have now unlocked nukes! Click "Exit" button above to start your next campaign.',
+			'You Win! You have now unlocked ships and sea battles. Click "Exit" button above.',
+			'You Win! You have now unlocked Research & Technology! Click "Exit" button above.',
+			'You Win! You have now unlocked diplomacy! Click "Exit" button above.',
 			'You Win! Now that you understand the game, let\'s introduce fog-of-war. Click "Exit" button above.',
 			'You Win! You can now play multiplayer games! Or continue your training.',
 			'You Win! The final campaign is the hardest yet. Free for all! Click "Exit" button above.',

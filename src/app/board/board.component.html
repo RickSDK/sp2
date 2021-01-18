@@ -542,6 +542,12 @@
 	<p>
 </div>
 
+<div id="endCampaignPopup" class="popupScreen2">
+	<div style="font-size: 20px;">Campaign Completed!</div>
+	<img src="assets/graphics/misc/trophy.png" width="75">
+	<div>{{gameObj.currentSituation}}</div>
+	<button onClick="closePopup('endCampaignPopup')" type="button" class="btn btn-primary roundButton tall">Ok!</button>
+</div>
 
 <div id="undoMovesPopup" class="popupScreen2">
 	<div class="title">-Undo Moves-</div>
@@ -560,7 +566,7 @@
 	<div *ngIf="!showAllianceMessageFlg">
 		<button onClick="closePopup('diplomacyWarningPopup')" type="button"
 			class="btn btn-secondary roundButton">Cancel</button>
-		<button *ngIf="currentPlayer && !currentPlayer.diplomacyFlg && (gameObj.currentCampaign == 0 || gameObj.currentCampaign >=7)"
+		<button *ngIf="currentPlayer && !currentPlayer.diplomacyFlg && (!gameObj.currentCampaign || gameObj.currentCampaign == 0 || gameObj.currentCampaign >=7)"
 			(mousedown)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 1)" type="button"
 			class="btn btn-warning roundButton">Diplomacy</button>
 		<button (mousedown)="placeUnitsAndEndTurn()" type="button" class="btn btn-success roundButton tall2"><i

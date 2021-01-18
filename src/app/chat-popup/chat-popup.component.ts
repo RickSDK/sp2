@@ -109,7 +109,7 @@ export class ChatPopupComponent extends BaseComponent implements OnInit {
     var message2 = this.databaseSafeValueOfInput("msgArea");
     var message = message1 || message2;
     var bugFlg = (this.bugFlg) ? 'Y' : '';
-    if (message.length == 0) {
+    if (!message || message.length == 0) {
       this.showAlertPopup('no message', 1);
       return;
     }
