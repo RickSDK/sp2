@@ -49,7 +49,7 @@ declare var computerAnnouncement: any;
 declare var moveTheseUnitsToThisTerritory: any;
 declare var isMusicOn: any;
 declare var getDateFromString: any;
-declare var fixSeaCargo: any;
+declare var resetAllPlayerDistanceObjects: any;
 declare var saveUserObj: any;
 //---board.js
 declare var displayLeaderAndAdvisorInfo: any;
@@ -408,7 +408,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		//var player2 = this.gameObj.players[6];
 		//player2.treaties=[0,3,3,0,0,0,4,3];
 
-		var terrId = 36;
+		var terrId = 25;
 		var terr = this.gameObj.territories[terrId - 1];
 		//terr.owner = 5;
 		//this.addUnitToTerr(terr, 6, true, true, true);
@@ -418,18 +418,22 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (0) {
 			var x = 0;
 			terr.units.forEach(unit => {
-				if (unit.terr == terrId && (unit.piece == 2 || unit.piece == 3)) {
-					unit.terr = 50;
+				if (unit.terr == terrId && (unit.piece == 2 || unit.piece == 15)) {
+					unit.owner = 5;
 				}
 			});
 		}
+		terr.owner = 5;
 
 
 		if (0) {
 			setTimeout(() => {
-				this.addUnitToTerr(terr, 3, true, true, true);
-				this.addUnitToTerr(terr, 3, true, true, true);
-				this.addUnitToTerr(terr, 3, true, true, true);
+				this.addUnitToTerr(terr, 1, true, true, true);
+				this.addUnitToTerr(terr, 1, true, true, true);
+				this.addUnitToTerr(terr, 1, true, true, true);
+				this.addUnitToTerr(terr, 2, true, true, true);
+				this.addUnitToTerr(terr, 2, true, true, true);
+				//this.addUnitToTerr(terr, 3, true, true, true);
 				//this.addUnitToTerr(terr, 11, true, true, true);
 			}, 1000);
 		}
@@ -1018,6 +1022,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		refreshAllPlayerTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 	}
 	initializePlayerForAttack() {
+		var numFactories = cleanUpTerritories(this.currentPlayer, this.gameObj); //<------------------ clean territories
+		resetAllPlayerDistanceObjects(this.gameObj, this.currentPlayer);
 		this.newPlayerHelpText = 'Make an attack, or move units or press "End Turn"';
 
 		this.gameObj.actionButtonMessage = 'Complete Turn';
@@ -1107,7 +1113,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				}
 			}
 			if (this.gameObj.currentCampaign == 6 && this.gameObj.round == 1) {
-				this.showAlertPopup('Good job. You have randomly gained two technologies! The object of this campaign is simply research technology until you gain "Antrax Warheads". No attacks are neccessary. Click "OK" to see which technologies your scientists came up with.');
+				this.showAlertPopup('Good job. Your units now have increased movement. You also have additional protection against nukes. Click "End Turn" to see how Research works. . No attacks are neccessary in this campaign. ');
+			}
+			if (this.gameObj.currentCampaign == 6 && this.gameObj.round == 2) {
+				this.showAlertPopup('Good job. You have randomly gained three technologies! The object of this campaign is simply research technology until you gain "Antrax Warheads". No attacks are neccessary. Click "OK" to see which technologies your scientists came up with.');
 			}
 			if (this.gameObj.currentCampaign == 7 && this.gameObj.round == 2) {
 				this.showAlertPopup('View the allies tab to see how the teams are stacking up. Once you are at peace with a player, you can offer an alliance!');
@@ -1795,6 +1804,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		};
 	}
 	battleCompletedEmit(battleObj: any) {
+		resetAllPlayerDistanceObjects(this.gameObj, this.currentPlayer);
 		this.battleObj = battleObj;
 		this.newPlayerHelpText = 'Press "Complete Turn" button at the top.';
 		console.log('!!!battleCompletedEmit!!!', battleObj);

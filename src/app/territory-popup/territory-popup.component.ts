@@ -198,10 +198,10 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       showAlertPopup('Because you have a factory in Germany, you can buy ships in any adjacent sea zone. For this campaign, buy extra transports to begin your invasion of United States.');
     }
     if (gameObj.currentCampaign == 6 && gameObj.round == 1 && currentPlayer.status == 'Purchase' && terr.id == 7) {
-      showAlertPopup('Let\'s try purchasing Technology. Buy 2 by clicking on the "Research" button twice.');
+      showAlertPopup('Buy Anti-balistics and Railway this turn. These are 2 unique technologies that you can purchase outright. Look for those buttons just to the left of the "Research" button.');
     }
     if (gameObj.currentCampaign == 6 && gameObj.round == 2 && currentPlayer.status == 'Purchase' && terr.id == 7) {
-      showAlertPopup('Buy Anti-balistics and Railway this turn. These are 2 unique technologies that you can purchase outright. Look for those buttons just to the left of the "Research" button.');
+      showAlertPopup('Let\'s try purchasing Technology. Buy 3 by clicking on the "Research" button 3 times.');
     }
     if (gameObj.currentCampaign == 6 && gameObj.round == 3 && currentPlayer.status == 'Purchase' && terr.id == 7) {
       showAlertPopup('Keep buying research until you get "Anthrax Warheads".');

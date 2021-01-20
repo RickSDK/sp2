@@ -108,8 +108,10 @@ function purchaseCPUUnits(player, gameObj, superpowersData, rank) {
     if (num == 6) {
         addUniToQueue(7, 1, superpowersData, player, gameObj, terr1);
     }
-    if (num == 7 || player.money >= 45 && rank > 2 && gameObj.type != 'ww2') {
-        addUniToQueue(14, 1, superpowersData, player, gameObj, terr1);
+    if(gameObj.type != 'ww2' && rank > 2) {
+        if (num == 7 || player.money >= 45) {
+            addUniToQueue(14, 1, superpowersData, player, gameObj, terr1);
+        }    
     }
     if (player.money >= 10) {
         var infCount = parseInt(player.money / 6);

@@ -34,6 +34,10 @@
 			style="max-height: 22px; max-width: 45px;">
 
 	</div>
+	<img *ngIf="terr.showGeneralFlg" src="assets/graphics/units/piece10u.png" height="25" style="position: absolute; top: 0; left: 0; z-index: 2; pointer-events: none;">
+	<img *ngIf="terr.showLeaderFlg" src="{{ngUnitSrc(11, terr.owner)}}" height="25" style="position: absolute; top: 0; left: 15px; z-index: 2; pointer-events: none;">
+	<img *ngIf="terr.nuked" src="assets/graphics/images/nuke3.png" height="25" style="position: absolute; top: 0; left: -10px; z-index: 2; pointer-events: none;">
+	<img *ngIf="terr.defeatedByNation > 0" src="assets/graphics/images/attack.png" height="25" style="position: absolute; top: 0; left: -10px; z-index: 3; pointer-events: none;">
 </div>
 
 <!---nation labels--->

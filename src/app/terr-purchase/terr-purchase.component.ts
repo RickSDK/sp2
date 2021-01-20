@@ -69,7 +69,7 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
       this.showAlertPopup(' For this training, we are only going to buy Air Defense, Bombers, Factories and Economic Centers. Click the "Air" tab.', 1);
       return;
     }
-    if(this.gameObj.currentCampaign == 4 && piece != 13 && piece != 14 && piece != 15 && piece != 19) {
+    if(this.gameObj.currentCampaign == 4 && piece != 13 && piece != 14) {
       this.showAlertPopup(' For this training, we are only going to buy Air Defense and Nukes. Click the "Air" tab.', 1);
       return;
     }
@@ -77,15 +77,11 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
       this.showAlertPopup('For this training, we are only going to buy Transports. Click on the North Sea zome and buy transports.', 1);
       return;
     }
-    if(this.gameObj.currentCampaign == 6 && this.gameObj.round==1 && piece != 18) {
-      this.showAlertPopup('Try purchasing Technology. Press the "Research" button.', 1);
-      return;
-    }
-    if(this.gameObj.currentCampaign == 6 && this.gameObj.round==2 && piece != 16 && piece != 17) {
+    if(this.gameObj.currentCampaign == 6 && this.gameObj.round==1 && piece != 16 && piece != 17) {
       this.showAlertPopup('Buy Anti-Balistics and Railway this turn. Look for the buttons next to the "Research" button. Then press the "Purchase Complete" button.', 1);
       return;
     }
-    if(0 && this.gameObj.currentCampaign == 6 && piece != 18 && piece != 16 && piece != 17) {
+    if(this.gameObj.currentCampaign == 6 && piece != 18 && piece != 16 && piece != 17) {
       this.showAlertPopup('For this campaign we are just buying Research. No attacks needed.', 1);
       return;
     }

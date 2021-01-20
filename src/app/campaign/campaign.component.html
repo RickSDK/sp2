@@ -15,7 +15,7 @@
                         </div>
                     </div>
                 </div>
-                <div *ngIf="user.userName != 'Guest' && !showCampaignsFlg">
+                <div *ngIf="user.userName != 'Guest'">
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-sm-4" style="padding: 0;">
@@ -25,6 +25,7 @@
 
                             </div>
                             <div class="col-sm-4" style="padding: 0;">
+                                <div style="color: white; font-size: 24px; font-weight: 800; text-shadow: 2px 2px black;">Single Player</div>
                                 <button routerLink="/" type="button" class="btn btn-secondary roundButton"><i
                                         class="fa fa-home"></i>
                                     Home

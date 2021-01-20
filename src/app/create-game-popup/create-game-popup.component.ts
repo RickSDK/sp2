@@ -55,8 +55,13 @@ export class CreateGamePopupComponent extends BaseComponent implements OnInit {
   changeNation() {
     this.playClick();
     this.selectedNation++;
-    if (this.selectedNation > 8)
-      this.selectedNation = 1;
+    if (this.gameType.type == 'ww2') {
+      if (this.selectedNation > 14)
+        this.selectedNation = 11;
+    } else {
+      if (this.selectedNation > 8)
+        this.selectedNation = 1;
+    }
   }
   changeType() {
     this.playClick();
@@ -79,6 +84,10 @@ export class CreateGamePopupComponent extends BaseComponent implements OnInit {
 
   }
   checkNumberOfPlayers() {
+    if (this.gameType.type == 'ww2')
+      this.selectedNation = 11;
+    else
+      this.selectedNation = 1;
     var numPlayersForGame = numPlayersPerType(this.gameType.type);
     if (this.numberPlayers > numPlayersForGame.max)
       this.numberPlayers = numPlayersForGame.max;

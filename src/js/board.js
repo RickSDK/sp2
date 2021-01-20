@@ -312,6 +312,10 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	terr.strandedCargo = strandedCargo;
 	if (strandedCargo.length > 0)
 		fixCargoOnTerr(strandedCargo, terr, gameObj);
+
+	if (terr.nation == 99 && terr.owner > 0 && terr.unitCount == 0)
+		terr.owner = 0; //waters have no owners;
+
 	var flag = flagOfOwner(terr, showDetailsFlg, totalUnitCount, isPurchasePhase, gameObj.type);
 
 	terr.flag = flag;
@@ -908,22 +912,27 @@ function cleanUpTerritories(player, gameObj) {
 	var biggestForce = 0;
 	var mainBase = 0;
 	var territories = [];
+
 	gameObj.territories.forEach(function (terr) {
-		if (terr.attackedByNation == player.nation)
-			terr.attackedByNation = 0;
-		if (terr.defeatedByNation == player.nation) {
-			terr.defeatedByNation = 0;
-			terr.defeatedByRound = 0;
+		if (player.status == 'Attack' || player.cpu) {
+			if (terr.attackedByNation == player.nation)
+				terr.attackedByNation = 0;
+			if (terr.defeatedByNation == player.nation) {
+				terr.defeatedByNation = 0;
+				terr.defeatedByRound = 0;
+			}
 		}
 		if (terr.owner == 0 && terr.nuked)
 			terr.nuked = false;
 		if (terr.owner == player.nation) {
-			if (terr.attackedByNation > 0)
-				terr.attackedByNation = 0; // needed in case planes attack
-			if (terr.nuked)
-				terr.nuked = false;
-			if (terr.bombed)
-				terr.bombed = false;
+			if (player.status == 'Attack' || player.cpu) {
+				if (terr.attackedByNation > 0)
+					terr.attackedByNation = 0; // needed in case planes attack
+				if (terr.nuked)
+					terr.nuked = false;
+				if (terr.bombed)
+					terr.bombed = false;
+			}
 			//			refreshTerritory(terr);
 			numFactories += terr.factoryCount;
 			if (terr.attStrength > biggestForce && terr.id < 79) {
@@ -1822,10 +1831,13 @@ function flagOfOwner(terr, showDetailsFlg, unitCount, isPurchasePhase, type) {
 	if (terr.capital || terr.nation == 99)
 		flag = 'flag' + ownBase + '.gif';
 
-	if (terr.generalFlg && showDetailsFlg && type != 'ww2')
-		flag = 'flagg' + own + '.gif';
-	if (terr.leaderFlg && showDetailsFlg && type != 'ww2')
-		flag = 'flagl' + own + '.gif';
+//	if (terr.generalFlg && showDetailsFlg && type != 'ww2')
+//		flag = 'flagg' + own + '.gif';
+	terr.showGeneralFlg =  (terr.generalFlg && showDetailsFlg);
+	terr.showLeaderFlg = (terr.leaderFlg && showDetailsFlg && terr.piece != 11);
+
+//	if (terr.leaderFlg && showDetailsFlg && type != 'ww2')
+//		flag = 'flagl' + own + '.gif';
 
 	if (own == 0 && terr.nation > 0 && terr.nation < 99) {
 		flag = 'flagn' + terr.nation + '.png';
@@ -1833,13 +1845,13 @@ function flagOfOwner(terr, showDetailsFlg, unitCount, isPurchasePhase, type) {
 		if (terr.capital)
 			flag = 'flagn' + terr.nation + '.gif';
 	}
-	if (defeatedByNation > 0 || attackedByNation > 0) {
-		flag = 'flag_ex' + own + '.gif';
-	}
-	if (nuked && own > 0)
-		flag = 'flag_nuke' + own + '.gif';
+	//if (defeatedByNation > 0 || attackedByNation > 0) {
+	//	flag = 'flag_ex' + own + '.gif';
+	//}
+	//if (nuked && own > 0)
+	//	flag = 'flag_nuke' + own + '.gif';
 
-	if (terr.nation == 99 && unitCount == 0)
+	if (terr.nation == 99 && terr.owner == 0)
 		flag = 'flag99.gif';
 	var f = document.getElementById('flag' + terr.id);
 	if (f) {

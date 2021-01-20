@@ -193,6 +193,9 @@ function loadPlayers2(playersObj, type) {
 	for (var x = 0; x < playersObj.length; x++) {
 		var player = playersObj[x];
 		var cpuFlg = (player.name == 'Computer');
+		if (player.nation > 10) {
+			player.nation -= 10; // ww2
+		}
 		var nation = parseInt(player.nation);
 		var treatieslist = [1, 1, 1, 1, 1, 1, 1, 1];
 		if (type == 'locked' || type == 'autobalance' || type == 'battlebots') {
@@ -211,6 +214,15 @@ function loadPlayers2(playersObj, type) {
 			treatieslist = [1, 3, 1, 3, 1, 1, 1, 1];
 		if (type == 'barbarian' && player.nation == 4)
 			treatieslist = [1, 3, 3, 1, 1, 1, 1, 1];
+
+		if (type == 'ww2' && player.nation == 1)
+			treatieslist = [1, 1, 3, 1, 1, 1, 1, 1];
+		if (type == 'ww2' && player.nation == 2)
+			treatieslist = [1, 1, 1, 3, 1, 1, 1, 1];
+		if (type == 'ww2' && player.nation == 3)
+			treatieslist = [3, 1, 1, 1, 1, 1, 1, 1];
+		if (type == 'ww2' && player.nation == 4)
+			treatieslist = [1, 3, 1, 1, 1, 1, 1, 1];
 
 		if (type == 'co-op') {
 			if (cpuFlg)
@@ -482,11 +494,11 @@ function loadUnits(x, pieces, id, terrs, currentCampaign, type) {
 		} else {
 			units.push(unitOfId(id++, x, 11, capId, pieces));
 			units.push(unitOfId(id++, x, 10, capId, pieces));
-			if(currentCampaign == 2) {
+			if (currentCampaign == 2) {
 				units.push(unitOfId(id++, x, 2, capId, pieces));
 				units.push(unitOfId(id++, x, 2, capId, pieces));
 				units.push(unitOfId(id++, x, 2, capId, pieces));
-			} else 
+			} else
 				units.push(unitOfId(id++, x, 6, capId, pieces));
 		}
 		if (!currentCampaign || currentCampaign == 0 || currentCampaign > 4) {
@@ -503,14 +515,14 @@ function loadUnits(x, pieces, id, terrs, currentCampaign, type) {
 		units.push(unitOfId(id++, x, 3, capId, pieces));
 		units.push(unitOfId(id++, x, 3, capId, pieces));
 		if (type == 'ww2') {
-			if((x == 2 || x == 3)) {
+			if ((x == 2 || x == 3)) {
 				units.push(unitOfId(id++, x, 2, capId, pieces));
 				units.push(unitOfId(id++, x, 2, capId, pieces));
 				units.push(unitOfId(id++, x, 2, capId, pieces));
 				units.push(unitOfId(id++, x, 2, capId, pieces));
 				units.push(unitOfId(id++, x, 2, capId, pieces));
 				units.push(unitOfId(id++, x, 3, capId, pieces));
-				units.push(unitOfId(id++, x, 3, capId, pieces));	
+				units.push(unitOfId(id++, x, 3, capId, pieces));
 			}
 			if (x == 4)
 				units.push(unitOfId(id++, x, 15, 28, pieces)); //fac on indo-china

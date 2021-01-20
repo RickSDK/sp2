@@ -1,7 +1,10 @@
 
 function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
-    //console.log('cm', distObj, optionType);
-    // if this function returns true, a checkbox will show up
+    if (0 && unit.piece == 49 && toTerr.id == 131) {
+        console.log('cm', unit.piece, unit.terr, distObj, optionType);
+        //return true;    // if this function returns true, a checkbox will show up
+    }
+
     if (unit.owner != currentPlayer.nation)
         return false;
 
@@ -102,7 +105,157 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
 
     return false;
 }
+function clearAllDistanceObjects(gameObj) {
+    gameObj.territories.forEach(terr => {
+        terr.distanceHash = {};
+    });
+
+}
+function isTerrOwned(terr, nation) {
+    if (terr.owner == nation)
+        return true;
+    return terr.treatyStatus >= 3;
+
+}
+function resetAllPlayerDistanceObjects(gameObj, currentPlayer) {
+    clearAllDistanceObjects(gameObj);
+    var panamaOwned = isTerrOwned(gameObj.territories[51], currentPlayer.nation);
+    var egyptOwned = isTerrOwned(gameObj.territories[39], currentPlayer.nation);
+    var syriaOwned = isTerrOwned(gameObj.territories[36], currentPlayer.nation);
+    currentPlayer.territories.forEach(terr => {
+        var distanceHash = {};
+        var borders = terr.borders.split('+');
+        borders.forEach(terrId => {
+            var sea = 9;
+            if (terrId >= 79)
+                sea = seaDistanceForCannals(1, terr.id, terr.id, terrId, panamaOwned, egyptOwned, syriaOwned);
+
+            distanceHash[terrId] = { land: 1, air: 1, sea: sea };
+        });
+        terr.distanceHash = distanceHash;
+    });
+}
+function findTheDistanceBetweenTwoTerrs(terr1, terr2, max, land, air, sea, allyHash, territories) {
+    if (terr1.id == terr2.id) {
+        //same territory
+        return;
+    }
+    if (terr1.distanceHash && terr1.distanceHash[terr2.id]) {
+        terr1.distObj = terr1.distanceHash[terr2.id];
+        //console.log('got it!', terr1.name, terr2.name, terr1.distObj);
+    } else {
+        terr1.distObj = find1SpaceAway(terr1, terr2, max, land, air, sea, allyHash, territories);
+        terr1.distanceHash[terr2.id] = terr1.distObj;
+        //console.log('needed it!', terr1.name, terr2.name, max, terr1.distObj);
+    }
+}
+function find1SpaceAway(terr1, terr2, max, land, air, sea, allyHash, territories) {
+    //console.log('find1SpaceAway', terr1.name, terr2.name);
+    var borders = terr1.borders.split('+');
+    var land = 9;
+    var air = 9;
+    var sea = 9;
+    borders.forEach(terrId => {
+        if (terrId == terr2.id) {
+            air = 1;
+            if (terrId < 79)
+                land = 1;
+            if (terrId >= 79) {
+                sea = seaDistanceForCannals(1, terr1.id, terr2.id, terrId, territories[51].treatyStatus >= 3, territories[39].treatyStatus >= 3, territories[36].treatyStatus >= 3);
+            }
+        }
+    });
+    if (air == 1 || max == 1) {
+        return { land: land, air: air, sea: sea };
+    } else
+        return find2SpacesAway(terr1, terr2, max, land, air, sea, allyHash, territories);
+}
+function find2SpacesAway(terr1, terr2, max, land, air, sea, allyHash, territories) {
+    //console.log('find2SpacesAway', terr1.name, terr2.name, max);
+    var land = 9;
+    var air = 9;
+    var sea = 9;
+    var reachableLandTerrHash = {}
+    var reachableSeaTerrHash = {}
+    var reachableAirTerrHash = {}
+    var borders = terr1.borders.split('+');
+    borders.forEach(terrId => {
+        var nextTerr = territories[terrId - 1];
+        var borders2 = nextTerr.borders.split('+');
+        if (air > 2 || sea > 2 || air > 2) {
+
+            var middleBlocked = (nextTerr.unitCount > 0 && isTerritoryBlocked(terr1.owner, nextTerr, allyHash));
+            //console.log('xxx', nextTerr.name, middleBlocked);
+
+            borders2.forEach(tid => {
+                reachableAirTerrHash[tid] = true;
+                if (!middleBlocked && tid < 79 && nextTerr.id < 79)
+                    reachableLandTerrHash[tid] = true;
+                if (!middleBlocked && tid >= 79 && nextTerr.id >= 79)
+                    reachableSeaTerrHash[tid] = true;
+
+                if (tid == terr2.id) {
+                    air = 2;
+                    if (!middleBlocked && tid < 79 && nextTerr.id < 79) {
+                        land = 2;
+                    }
+                    if (!middleBlocked && tid >= 79 && nextTerr.id >= 79) {
+                        sea = seaDistanceForCannals(2, terr1.id, terrId, tid, territories[51].treatyStatus >= 3, territories[39].treatyStatus >= 3, territories[36].treatyStatus >= 3);
+                    }
+                }
+            });
+        }
+
+    });
+    if (air == 2 || max == 2)
+        return { land: land, air: air, sea: sea };
+    else
+        return find3SpacesAway(terr1, terr2, max, 0, 0, 0, allyHash, territories, reachableLandTerrHash, reachableAirTerrHash, reachableSeaTerrHash);
+}
+function find3SpacesAway(terr1, terr2, max, land, air, sea, allyHash, territories, reachableLandTerrHash, reachableAirTerrHash, reachableSeaTerrHash) {
+    //console.log('find3SpacesAway', terr1.name, terr2.name, max);
+    var land = 9;
+    var air = 9;
+    var sea = 9;
+
+    var borders = terr2.borders.split('+');
+    borders.forEach(terrId => {
+        var nextTerr = territories[terrId - 1];
+        var middleBlocked = (nextTerr.unitCount > 0 && isTerritoryBlocked(terr1.owner, nextTerr, allyHash));
+        if (reachableAirTerrHash[nextTerr.id])
+            air = 3;
+        if (reachableLandTerrHash[nextTerr.id] && !middleBlocked && terrId < 79 && nextTerr.id < 79)
+            land = 3;
+        if (reachableSeaTerrHash[nextTerr.id] && !middleBlocked && terrId >= 79 && nextTerr.id >= 79)
+            sea = seaDistanceForCannals(3, terr1.id, terr2.id, terrId, territories[51].treatyStatus >= 3, territories[39].treatyStatus >= 3, territories[36].treatyStatus >= 3);
+
+    });
+    //console.log('find3SpacesAway', land, air, sea);
+    if (air == 3 || max == 3)
+        return { land: land, air: air, sea: sea };
+    else
+        return distanceBetweenTerrs(terr1, terr2, max, 0, 0, 0, allyHash, territories);
+}
+function seaDistanceForCannals(sea, t1Id, t2Id, t3Id, panamaOwnedFlg, egyptOwnedFlg, syriaOwnedFlg) {
+    if (sea > 3)
+        return sea
+    if ((t1Id == 99 || t2Id == 99 || t3Id == 99) && (t1Id == 86 || t2Id == 86 || t3Id == 86)) {
+        //panama
+        if (!panamaOwnedFlg)
+            sea = 9;
+    }
+    if ((t1Id == 115 || t2Id == 115 || t3Id == 115) && (t1Id == 118 || t2Id == 118 || t3Id == 118)) {
+        //suez cannal
+        if (!egyptOwnedFlg && !syriaOwnedFlg)
+            sea = 9;
+    }
+    if (sea > 3) {
+        console.log('cannal blocked!!');
+    }
+    return sea;
+}
 function distanceBetweenTerrs(terr1, terr2, max, land, air, sea, allyHash, territories) {
+    //console.log('======>distanceBetweenTerrs', terr1.name, terr2.name, land, air, sea);
     if (terr1.id == terr2.id)
         return { land: land, air: air, sea: sea };
 
@@ -158,8 +311,11 @@ function distanceBetweenTerrs(terr1, terr2, max, land, air, sea, allyHash, terri
         }
         if (terr.nation == 99) {
             nextLand = 9;
-            if (isTerritoryBlocked(terr1.owner, terr, allyHash))
+            if (terr1.unitCount > 0 && isTerritoryBlocked(terr1.owner, terr, allyHash)) {
                 nextSea = 9;
+                if (terr1.id == 125)
+                    console.log('isTerritoryBlocked', terr1.name, terr1.owner, terr.name, terr.owner, terr.unitCount);
+            }
         }
 
         var obj = distanceBetweenTerrs(terr, terr2, max, nextLand, air, nextSea, allyHash, territories);
@@ -173,6 +329,8 @@ function distanceBetweenTerrs(terr1, terr2, max, land, air, sea, allyHash, terri
     return { land: maxLand, air: maxAir, sea: maxSea };
 }
 function isTerritoryBlocked(fromNation, terr, allyHash) {
+    if (terr.defeatedByNation > 0)
+        return true;
     if (terr.owner == fromNation || terr.unitCount == 0 || fromNation == 0)
         return false;
     if (allyHash[fromNation] == true)
@@ -466,6 +624,7 @@ function expectedHitsFromStrength(strength) {
         return (strength / 6).toFixed(1);
 }
 function showUnits1TerritoryAway(optionType, gameObj, currentPlayer, totalMoveTerrs, selectedTerritory) {
+    //return;
     var borders = selectedTerritory.borders.split('+');
     var moveTerr = [];
     var allyHash = {};
@@ -476,7 +635,8 @@ function showUnits1TerritoryAway(optionType, gameObj, currentPlayer, totalMoveTe
     borders.forEach(border => {
         var tid = parseInt(border);
         var terr = gameObj.territories[tid - 1];
-        terr.distObj = distanceBetweenTerrs(terr, selectedTerritory, 2, 0, 0, 0, allyHash, gameObj.territories);
+        //terr.distObj = distanceBetweenTerrs(terr, selectedTerritory, 2, 0, 0, 0, allyHash, gameObj.territories);
+        findTheDistanceBetweenTwoTerrs(terr, selectedTerritory, 1, 0, 0, 0, allyHash, gameObj.territories);
         var moveUnits = 0;
         terr.units.forEach(function (unit) {
             unit.allowMovementFlg = false;
@@ -485,24 +645,39 @@ function showUnits1TerritoryAway(optionType, gameObj, currentPlayer, totalMoveTe
                 unit.allowMovementFlg = true;
             }
         });
+        terr.movableUnitCount = moveUnits;
         if (moveUnits > 0)
             moveTerr.push(terr);
 
     });
     return moveTerr;
 }
+function maxDistForTerr(optionType, terr, currentPlayer) {
+    var maxDist = 8;
+    if (!currentPlayer.tech[15])
+        maxDist = 6;
+
+    if (optionType == 'nuke')
+        maxDist = 6;
+    if (optionType == 'attack' || optionType == 'bomb') {
+        maxDist = 5;
+        if (!currentPlayer.tech[15])
+            maxDist = 3;
+        if (maxDist > 3 && terr.bomberCount == 0)
+            maxDist = 3;
+    }
+    if (optionType == 'cruise')
+        maxDist = 1;
+
+
+    return maxDist;
+}
 function showUnitsForMovementBG2(optionType, gameObj, currentPlayer, totalMoveTerrs, selectedTerritory) {
     if (optionType == 'loadPlanes' || optionType == 'loadChoppers')
         totalMoveTerrs = [selectedTerritory];
     var moveTerr = [];
     var totalUnitsThatCanMove = 0;
-    var maxDist = 8;
-    if (optionType == 'nuke')
-        maxDist = 6;
-    if (optionType == 'attack' || optionType == 'bomb')
-        maxDist = 5;
-    if (optionType == 'cruise')
-        maxDist = 2;
+
 
     var allyHash = {};
     currentPlayer.allies.forEach(function (ally) {
@@ -510,8 +685,9 @@ function showUnitsForMovementBG2(optionType, gameObj, currentPlayer, totalMoveTe
     });
     for (var x = 0; x < totalMoveTerrs.length; x++) {
         var terr = totalMoveTerrs[x];
-        terr.distObj = distanceBetweenTerrs(terr, selectedTerritory, maxDist, 0, 0, 0, allyHash, gameObj.territories);
-        //console.log(terr.name, terr.distObj);
+        var maxDist = maxDistForTerr(optionType, terr, currentPlayer);
+        //terr.distObj = distanceBetweenTerrs(terr, selectedTerritory, maxDist, 0, 0, 0, allyHash, gameObj.territories);
+        findTheDistanceBetweenTwoTerrs(terr, selectedTerritory, maxDist, 0, 0, 0, allyHash, gameObj.territories);
         var moveUnits = 0;
         terr.units.forEach(function (unit) {
             unit.allowMovementFlg = false;

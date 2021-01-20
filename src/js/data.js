@@ -429,7 +429,7 @@ function getGameTypes(limitedFlg, num) {
 		if (num == 3)
 			return ['freeforall', 'ffa-5', 'ffa-6', 'ffa-7'];
 
-		return ['diplomacy', 'autobalance', 'firefight', 'battlebots', 'barbarian', 'hungerGames', 'freeforall', 'ffa-5', 'ffa-6', 'ffa-7', 'co-op'];
+		return ['diplomacy', 'autobalance', 'firefight', 'battlebots', 'barbarian', 'hungerGames', 'freeforall', 'ffa-5', 'ffa-6', 'ffa-7', 'co-op']; //, 'ww2'
 	}
 }
 function getGameTypesObj(limitedFlg, num) {
