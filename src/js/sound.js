@@ -1,6 +1,23 @@
 console.log('+++++loading audio files');
 var clickSound = new Audio('assets/sounds/click.mp3');
 clickSound.preload = 'auto';
+var clinkSound;
+var openModalSound;
+var closeModalSound;
+var zapSound;
+var swooshSound;
+var airHornSound;
+var nineMmSound;
+var dripSound;
+var clearThroat;
+var vehicles;
+var bomb2;
+var fighter;
+var marching;
+var bomb4;
+/*
+var clickSound = new Audio('assets/sounds/click.mp3');
+clickSound.preload = 'auto';
 var clinkSound = new Audio('assets/sounds/clink.mp3');
 clinkSound.preload = 'auto';
 var openModalSound = new Audio('assets/sounds/open.mp3');
@@ -55,6 +72,81 @@ var error = new Audio('assets/sounds/error.mp3');
 error.preload = 'auto';
 
 var voiceOverAudio = new Audio('assets/voice/bt01welcome.mp3');
+*/
+var yes;
+var tornado;
+var bell;
+var bombers;
+var Scream;
+var torture;
+var foghorn;
+var tada;
+var gun;
+var shotgun;
+var warning;
+var error;
+var voiceOverAudio;
+
+function preloadAllAudio() {
+	console.log('+++++preloadAllAudio');
+	clickSound = new Audio('assets/sounds/click.mp3');
+	clickSound.preload = 'auto';
+	clinkSound = new Audio('assets/sounds/clink.mp3');
+	clinkSound.preload = 'auto';
+	openModalSound = new Audio('assets/sounds/open.mp3');
+	openModalSound.preload = 'auto';
+	closeModalSound = new Audio('assets/sounds/open.mp3');
+	closeModalSound.preload = 'auto';
+	zapSound = new Audio('assets/sounds/zap.mp3');
+	zapSound.preload = 'auto';
+	swooshSound = new Audio('assets/sounds/Swoosh.mp3');
+	swooshSound.preload = 'auto';
+	airHornSound = new Audio('assets/sounds/AirHorn.mp3');
+	airHornSound.preload = 'auto';
+	nineMmSound = new Audio('assets/sounds/9mm.mp3');
+	nineMmSound.preload = 'auto';
+	dripSound = new Audio('assets/sounds/drip.mp3');
+	dripSound.preload = 'auto';
+	clearThroat = new Audio('assets/sounds/clearThroat.mp3');
+	clearThroat.preload = 'auto';
+	vehicles = new Audio('assets/sounds/vehicles.mp3');
+	vehicles.preload = 'auto';
+	bomb2 = new Audio('assets/sounds/bomb2.mp3');
+	bomb2.preload = 'auto';
+	fighter = new Audio('assets/sounds/fighter.mp3');
+	fighter.preload = 'auto';
+	marching = new Audio('assets/sounds/marching.wav');
+	marching.preload = 'auto';
+	bomb4 = new Audio('assets/sounds/bomb4.mp3');
+	bomb4.preload = 'auto';
+	yes = new Audio('assets/sounds/yes.mp3');
+	yes.preload = 'auto';
+	tornado = new Audio('assets/sounds/tornado.mp3');
+	tornado.preload = 'auto';
+	bell = new Audio('assets/sounds/bell.mp3');
+	bell.preload = 'auto';
+	bombers = new Audio('assets/sounds/bombers.mp3');
+	bombers.preload = 'auto';
+	Scream = new Audio('assets/sounds/Scream.mp3');
+	Scream.preload = 'auto';
+	torture = new Audio('assets/sounds/torture.mp3');
+	torture.preload = 'auto';
+	foghorn = new Audio('assets/sounds/foghorn.wav');
+	foghorn.preload = 'auto';
+	tada = new Audio('assets/sounds/tada.mp3');
+	tada.preload = 'auto';
+	gun = new Audio('assets/sounds/gun.mp3');
+	gun.preload = 'auto';
+	shotgun = new Audio('assets/sounds/shotgun.mp3');
+	shotgun.preload = 'auto';
+	warning = new Audio('assets/sounds/warning.mp3');
+	warning.preload = 'auto';
+	error = new Audio('assets/sounds/error.mp3');
+	error.preload = 'auto';
+
+	voiceOverAudio = new Audio('assets/voice/bt01welcome.mp3');
+	voiceOverAudio.preload = 'auto';
+}
 
 function playClick() {
 	if (!isSoundOn()) {

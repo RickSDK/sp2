@@ -52,6 +52,10 @@ export class TerrButtonsComponent extends BaseComponent implements OnInit {
       this.showAlertPopup('Sorry, newly conquered territories cannot be transferred.', 1);
       return;
     }
+    if(this.selectedTerritory.facBombed) {
+      this.showAlertPopup('Sorry, bombed out factories cannot be transferred.', 1);
+      return;
+    }
     this.secondaryIndex = num;
     if (this.currentPlayer.allies.length > 0) {
       this.allyIndex = 0;

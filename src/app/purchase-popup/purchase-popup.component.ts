@@ -8,12 +8,14 @@ declare var $: any;
   styleUrls: ['./purchase-popup.component.scss']
 })
 export class PurchasePopupComponent implements OnInit {
+  public showPageFlg = false;
 
   constructor() { }
 
   ngOnInit(): void {
   }
   show() {
+    this.showPageFlg = true;
     $("#purchasePopup").modal();
   }
 

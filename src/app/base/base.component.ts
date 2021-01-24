@@ -36,6 +36,7 @@ export class BaseComponent implements OnInit {
   public unitDetailFlg = false;
   public loadingFlg = false;
   public appVersion: string;
+  public showPageFlg = false;
 
   constructor() {
     this.superpowersData = getSuperpowersData();

@@ -5,6 +5,7 @@ declare var convertStringToDate: any;
 declare var $: any;
 declare var dateComponentFromDateStamp: any;
 declare var getDateObjFromJSDate: any;
+declare var decodeForumPost: any;
 
 @Component({
   selector: 'app-forum-popup',
@@ -150,6 +151,7 @@ export class ForumPopupComponent extends BaseComponent implements OnInit {
       this.showAlertPopup('Message is blank!', 1);
       return;
     }
+    console.log('messageBody', messageBody);
     var forumPost = 0;
     var messageTitle = '';
     var category = this.selectedTopic.category;
@@ -198,8 +200,9 @@ function forumObjFromLine(line, lastForumLogin) {
   var body = '';
   if (c.length > 7) {
     var regex = /(<([^>]+)>)/ig
-    body = c[8].replace(regex, "");
+    body = decodeForumPost(c[8].replace(regex, ""));
   }
+  console.log('body', body);
   if (c.length > 5) {
     var dateStamp = convertStringToDate(c[6]);
     var dateStampText = dateComponentFromDateStamp(c[6], true, true);

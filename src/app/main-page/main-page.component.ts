@@ -161,7 +161,6 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   emailEntered(login: any) {
     console.log(this.email);
     //this.emailEnteredFlg = true;
-    this.playClick();
     login.show(this.email);
   }
   disolveSplash(className: string) {

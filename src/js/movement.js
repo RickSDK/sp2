@@ -405,6 +405,41 @@ function moveSelectedUnits(moveTerr, selectedTerritory, gameObj, optionType) {
     else
         return moveTheseUnitsToThisTerritory(units, selectedTerritory, gameObj);
 }
+function doubleCheckFighterCargo(terr, gameObj) {
+    var emptyTransportHash = {};
+    terr.units.forEach(function (unit) {
+        if (unit.piece == 8) {
+            if (unit.cargo && unit.cargo.length > 2) {
+                unit.cargo = [];
+                emptyTransportHash[unit.id] = true;
+                console.log('xxx too much cargo!!!', unit.id);
+            }
+            if (!unit.cargo || unit.cargo.length == 0)
+                emptyTransportHash[unit.id] = true;
+            //loadThisUnitOntoThisTransport(unit, transport);
+        }
+    });
+    var fightserNeedLoading = [];
+    terr.units.forEach(function (unit) {
+        if (unit.subType == 'fighter') {
+            if(emptyTransportHash[unit.cargoOf]) {
+                console.log('removing!!!');
+                unit.cargoOf = 0;
+            }
+            if (unit.cargoOf > 0) {
+                var carrier = findUnitOfId(unit.cargoOf, gameObj);
+                if (!carrier || carrier.terr != terr.id) {
+                    fightserNeedLoading.push(unit);
+                }
+            } else {
+                fightserNeedLoading.push(unit);
+            }
+        }
+    });
+    fightserNeedLoading.forEach(function (fighter) {
+        findTransportForThisCargo(fighter, terr, gameObj);
+    });
+}
 function loadTheseUnitsOntoSelectedTransport(units, selectedTerritory, gameObj) {
     var piece = 2;
     var terr1Id = 1;
@@ -503,7 +538,7 @@ function moveCargoWithThisUnit(unit, gameObj, terr1Id) {
     }
 }
 function findTransportForThisCargo(unit, terr, gameObj) {
-    console.log('findTransportForThisCargo', unit);
+    //console.log('findTransportForThisCargo', terr.id, unit);
     if (unit.type == 1)
         unit.movesLeft = 2;
     if (unit.cargoUnits == 0)
@@ -543,17 +578,28 @@ function findTransportForThisCargo(unit, terr, gameObj) {
     }
     if (unit.subType == 'fighter') {
         // load fighter (search all units)
-        //console.log('xxx loadThisUnitOntoThisTransport xxx');
-        for (var u = 0; u < gameObj.units.length; u++) {
-            var transport = gameObj.units[u];
-            if (transport.piece == 8 && unit.terr == terr.id && transport.owner == unit.owner) {
-                if (transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits) {
-                    loadThisUnitOntoThisTransport(unit, transport);
-                    return;
-                }
+        //console.log('xxx loadThisUnitOntoThisTransport xxx', terr.id);
+        var stillLooking = true;
+        terr.units.forEach(carrier => {
+            if (stillLooking && carrier.piece == 8 && unit.owner == carrier.owner && carrier.cargoSpace >= carrier.cargoUnits + unit.cargoUnits) {
+                loadThisUnitOntoThisTransport(unit, carrier);
+                stillLooking = false;
             }
-        }
+        });
+        return;
+        /*
+       for (var u = 0; u < gameObj.units.length; u++) {
+           var transport = gameObj.units[u];
+           if (transport.piece == 8 && unit.terr == terr.id && transport.owner == unit.owner) {
+               console.log('how about this guy??', transport.terr, transport.cargoSpace, transport.cargoUnits, unit.cargoUnits)
+               if (transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits) {
+                   loadThisUnitOntoThisTransport(unit, transport);
+                   return;
+               }
+           }
+       }*/
     }
+    /*
     for (var u = 0; u < terr.units.length; u++) {
         // load fighter
         var transport = terr.units[u];
@@ -561,7 +607,7 @@ function findTransportForThisCargo(unit, terr, gameObj) {
             loadThisUnitOntoThisTransport(unit, transport);
             return;
         }
-    }
+    }*/
 
     console.log('no transport found!!!', unit, terr.units.length);
     //unit.terr = unit.prevTerr;

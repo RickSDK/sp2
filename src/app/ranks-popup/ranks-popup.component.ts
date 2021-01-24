@@ -18,15 +18,16 @@ export class RanksPopupComponent extends BaseComponent implements OnInit {
   constructor() { super(); }
 
   ngOnInit(): void {
-    this.user = userObjFromUser();
-    this.changeSegment(0);
+    this.showPageFlg = false;
   }
   show() {
+    this.showPageFlg = true;
     $("#ranksPopup").modal();
-  }
+    this.user = userObjFromUser();
+    this.changeSegment(0);
+ }
   changeSegment(num: number) {
     this.segmentIdx = num;
-    playClick();
     var ranks = [];
     if (num == 0) {
       ranks.push(this.superpowersData.ranks[0]);

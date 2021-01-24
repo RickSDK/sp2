@@ -7,7 +7,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" *ngIf="displayUser" style="text-align: center;">
+            <div class="modal-body" *ngIf="displayUser && showPageFlg" style="text-align: center;">
 
 
                 <div style="text-align: center;">
@@ -223,7 +223,7 @@
                     class="btn btn-secondary roundButton">
                     <i class="fa fa-sign-out"></i> Logout
                 </button>
-                <button (click)="openRanksModal()" type="button" class="btn btn-secondary roundButton">
+                <button (click)="openRanksModal(ranksPopup)" type="button" class="btn btn-secondary roundButton">
                     <i class="fa fa-star"></i> Ranks
                 </button>
                 <button (click)="closeModal('#userPopup')" type="button" class="btn btn-secondary roundButton">

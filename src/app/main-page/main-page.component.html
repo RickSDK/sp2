@@ -173,17 +173,9 @@
 	</div>
 </div>
 
-<app-rules-popup #rulesPopup></app-rules-popup>
 <app-login-popup #loginPopup (messageEvent)="userUpdated($event)"></app-login-popup>
 <app-user-popup #userPopup [user]="user" (messageEvent)="userUpdated($event)"></app-user-popup>
-<app-scoreboard-popup #scoreboardPopup></app-scoreboard-popup>
-<app-start-game-popup #startGamePopup></app-start-game-popup>
-<app-home-screen-popup #homeScreenPopup></app-home-screen-popup>
 
 
 
-<!--<span *ngIf="owner_flg"><a href="#!userStats"><button type="button" class="btn btn-primary roundButton"><i class="fa fa-user"></i> User Stats</button></a> </span>-->
-<!--<span *ngIf="showInstallButton && user.rank<5"><button type="button" class="btn ptp-gray roundButton"><i class="fa fa-map-pin"></i> Install/Setup</button></span>-->
-<!--<a href="#!forum" *ngIf="0"><button type="button" class="btn btn-primary roundButton"><i class="fa fa-comment"></i> Forum <span *ngIf="forumCount>0">({{forumCount}})</span></button></a>-->
-<!--<a href="https://itunes.apple.com/us/app/superpowers-game/id539807409?ls=1&mt=8" *ngIf="user.rank==0"><img src="graphics/misc/iosAppStore.png" width=150></a>
-			<a href="https://play.google.com/store/apps/details?id=com.superpowersgame" *ngIf="user.rank==0"><img src="graphics/misc/googlePlay.png" width=150></a>	-->
+

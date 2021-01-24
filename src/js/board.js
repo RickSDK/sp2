@@ -1833,7 +1833,7 @@ function flagOfOwner(terr, showDetailsFlg, unitCount, isPurchasePhase, type) {
 
 //	if (terr.generalFlg && showDetailsFlg && type != 'ww2')
 //		flag = 'flagg' + own + '.gif';
-	terr.showGeneralFlg =  (terr.generalFlg && showDetailsFlg);
+	terr.showGeneralFlg =  (terr.generalFlg && showDetailsFlg && terr.piece != 10);
 	terr.showLeaderFlg = (terr.leaderFlg && showDetailsFlg && terr.piece != 11);
 
 //	if (terr.leaderFlg && showDetailsFlg && type != 'ww2')
@@ -1855,7 +1855,7 @@ function flagOfOwner(terr, showDetailsFlg, unitCount, isPurchasePhase, type) {
 		flag = 'flag99.gif';
 	var f = document.getElementById('flag' + terr.id);
 	if (f) {
-		if (terr.nation == 99 && unitCount == 0) {
+		if (flag == 'flag99.gif') {
 			f.style.opacity = '.2'; // see also refreshBoard in script.js
 		} else
 			f.style.opacity = '1';

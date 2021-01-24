@@ -29,6 +29,8 @@ export class InfoComponent extends BaseComponent implements OnInit {
   constructor() { super(); }
 
   ngOnInit(): void {
+    console.log('ngOnInit');
+    this.showPageFlg = true;
   }
 
 }

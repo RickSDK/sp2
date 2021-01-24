@@ -66,9 +66,10 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
   constructor(private router: Router) { super(); }
 
   ngOnInit(): void {
-    // this.user = userObjFromUser();
+    this.showPageFlg = false;
   }
   show(displayUser: any) {
+    this.showPageFlg = true;
     this.displayUser = displayUser;
     if (!displayUser.rank && displayUser.userId>0) {
       this.displayUser.rank = 2;
@@ -250,9 +251,9 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
     this.gameScores = gameScores;
     localStorage.setItem("gameScores", JSON.stringify(gameScores));
   }
-  openRanksModal() {
+  openRanksModal(modal) {
     this.closeModal('#userPopup');
-    $('#ranksPopup').modal();
+    modal.show();
   }
   changeImage(image) {
     this.user.avatar = image;
@@ -268,7 +269,6 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
     this.updateUserProfile();
   }
   updateUserProfile() {
-    playClick();
     saveUserObj(this.user);
     this.editUserImageFlg = false;
     this.editUseNameFlg = false;
@@ -288,7 +288,6 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
       //     this.openRanksModal();
       return;
     }
-    playClick();
     if (this.user.userId == 0)
       this.editUseNameFlg = !this.editUseNameFlg;
     else

@@ -10,6 +10,7 @@ declare var loadSVGs: any;
 declare var refreshBoard: any;
 declare var refreshTerritory: any;
 declare var isMobile: any;
+declare var doubleCheckFighterCargo: any;
 declare var numberVal: any;
 declare var hideArrow: any;
 declare var startSpinner: any;
@@ -121,6 +122,7 @@ declare var landTheCruiseBattle: any;
 declare var strategicBombBattle: any;
 declare var loadMultiPlayerGame: any;
 declare var spVersion: any;
+declare var preloadAllAudio: any;
 
 @Component({
 	selector: 'app-board',
@@ -204,6 +206,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
+		preloadAllAudio();
 		this.hostname = getHostname();
 		this.user = userObjFromUser();
 		this.svgs = loadSVGs();
@@ -213,7 +216,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.gameMusic.loop = false;
 		this.gameMusic.preload = 'auto';
 		this.endGameMusic.loop = false;
-		this.endGameMusic.preload = 'auto';
+		//this.endGameMusic.preload = 'auto';
 
 		this.gameObj = { territories: [] };
 		//this.cdr.detach();
@@ -408,7 +411,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		//var player2 = this.gameObj.players[6];
 		//player2.treaties=[0,3,3,0,0,0,4,3];
 
-		var terrId = 25;
+		var terrId = 16;
 		var terr = this.gameObj.territories[terrId - 1];
 		//terr.owner = 5;
 		//this.addUnitToTerr(terr, 6, true, true, true);
@@ -418,12 +421,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (0) {
 			var x = 0;
 			terr.units.forEach(unit => {
-				if (unit.terr == terrId && (unit.piece == 2 || unit.piece == 15)) {
-					unit.owner = 5;
+				if (unit.terr == terrId && (unit.piece == 6 && unit.owner == 1)) {
+					unit.terr = 61;
 				}
 			});
 		}
-		terr.owner = 5;
+		//terr.owner = 3;
 
 
 		if (0) {
@@ -1183,7 +1186,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		} else if (this.gameObj.currentCampaign == 4) {
 			this.attemptCPUToNuke();
 		} else {
-
 			if (this.currentPlayer.primaryTargetId > 0)
 				this.allUnitsAttack(this.currentPlayer.primaryTargetId);
 			else {
@@ -1583,8 +1585,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 	}
 	completingPurchases() {
-		console.log('completingPurchases', this.currentPlayer.status);
-
 		this.playerSetToAttackAndRefresh();
 		this.hideActionButton = !this.hideActionButton;
 		this.logPurchases(this.currentPlayer);
@@ -1643,7 +1643,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			return;
 
 		}
+		if (terr.carrierSpace > 0)
+			doubleCheckFighterCargo(terr, gameObj);
+
 		if (this.ableToTakeThisTurn) {
+			if (terr.carrierSpace > 0)
+				doubleCheckFighterCargo(terr, gameObj);
 
 			if (this.strandedAAGuns.length > 0) {
 				moveTheseUnitsToThisTerritory(this.strandedAAGuns, terr, gameObj);

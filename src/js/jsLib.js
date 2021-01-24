@@ -348,9 +348,16 @@ function floatVal(num) {
 }
 function databaseSafe(line) {
 	line = line.replace(/\|/g, '');
-	line = line.replace(/<br>/g, '');
+	line = line.replace(/<br><br>/g, '[p]');
+	line = line.replace(/<br>/g, '[nl]');
+	line = line.replace(/\n\n/g, '[p]');
+	line = line.replace(/\n/g, '[nl]');
 	line = line.replace(/<a>/g, '');
 	line = line.replace(/<xx>/g, '');
 	return line.replace(/`/g, '');
 }
-
+function decodeForumPost(line) {
+	line = line.replace(/\[nl\]/g, '<br>');
+	  line = line.replace(/\[p\]/g, '<br>&nbsp;<br>');
+	return line;
+  }

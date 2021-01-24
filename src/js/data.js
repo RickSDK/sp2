@@ -347,9 +347,9 @@ function getAllRanks() {
 	var x = 0;
 	return [
 		{ id: x++, name: 'New Recruit', desc: 'New Recruit' }
-		, { id: x++, name: 'Private', desc: 'Complete 6 rounds of a Single Player game.' }
-		, { id: x++, name: 'Private 1st Class', desc: 'Win Single Player Game' }
-		, { id: x++, name: 'Corporal', desc: 'Win a multiplayer game' }
+		, { id: x++, name: 'Private', desc: 'Complete Campaign #1' }
+		, { id: x++, name: 'Private 1st Class', desc: 'Complete Campaign #8' }
+		, { id: x++, name: 'Corporal', desc: 'Complete Campaign #10 -OR- Win a multiplayer game' }
 		, { id: x++, name: 'Sergeant', desc: 'Win a 1v1 game with someone ranked Corporal or higher' }
 		, { id: x++, name: 'Staff Sergeant', desc: 'Reach 120 points, then host and win a game as a Sergeant' }
 		, { id: x++, name: 'Master Sergeant', desc: 'Reach 130 points as a Staff Sergeant and win a game' }

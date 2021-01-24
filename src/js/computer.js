@@ -108,10 +108,10 @@ function purchaseCPUUnits(player, gameObj, superpowersData, rank) {
     if (num == 6) {
         addUniToQueue(7, 1, superpowersData, player, gameObj, terr1);
     }
-    if(gameObj.type != 'ww2' && rank > 2) {
+    if (gameObj.type != 'ww2' && rank > 2) {
         if (num == 7 || player.money >= 45) {
             addUniToQueue(14, 1, superpowersData, player, gameObj, terr1);
-        }    
+        }
     }
     if (player.money >= 10) {
         var infCount = parseInt(player.money / 6);
@@ -615,13 +615,19 @@ function stageAttackBetweenTerritories(terr1, terr2, currentPlayer, limit = 500)
     var attId = 0;
     var defId = 0
     var pieceId = 2;
+    var groundUnits = 0;
     if (terr1 && terr2) {
         attId = terr1.id;
         defId = terr2.id;
         artCount = 0;
         spotterCount = 0;
+        var leaveInfBehind = terr1.units.length > 5;
         terr1.units.forEach(function (unit) {
             if (isUnitOkToAttack(unit, currentPlayer.nation) && limit > 0) {
+                if (unit.piece == 2 && leaveInfBehind) {
+                    leaveInfBehind = false;
+                    return;
+                }
                 var artFlg = isArtillery(unit);
                 if (artFlg && artCount >= spotterCount)
                     return;
@@ -632,6 +638,8 @@ function stageAttackBetweenTerritories(terr1, terr2, currentPlayer, limit = 500)
                 limit -= unit.att;
                 attackUnits.push(unit);
                 pieceId = unit.piece;
+                if (unit.type == 1)
+                    groundUnits++;
             }
         });
         terr2.units.forEach(function (unit) {
@@ -640,6 +648,8 @@ function stageAttackBetweenTerritories(terr1, terr2, currentPlayer, limit = 500)
             }
         });
     }
+    if (groundUnits <= defUnits.length)
+        attackUnits = [];
     return { attackUnits: attackUnits, defUnits: defUnits, t1: attId, t2: defId, id: pieceId, terr: terr2, attTerr: terr1 };
 
 }

@@ -7,7 +7,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" style="padding: 0; text-align: center;">
+            <div class="modal-body" style="padding: 0; text-align: center;" *ngIf="showPageFlg">
 
 
 
@@ -41,6 +41,8 @@
                     </div>
                 </div>
 
+                <div class="borderClass2">Multiplayer Points: 3 points for a win, 1 point for a loss.</div>
+
                 <table class="spTable">
                     <tr>
                         <th>Rank</th>
@@ -54,7 +56,7 @@
                             <div style="font-size: 10px;">{{rank.name}}</div>
                         </td>
                         <td style="text-align: left;">
-                            <b>{{rank.name}}</b>: {{rank.desc}}</td>
+                            {{rank.desc}}</td>
                     </tr>
                 </table>
 
