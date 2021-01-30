@@ -213,6 +213,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		this.warAudio.loop = false;
 		this.warAudio.preload = 'auto';
+		this.warAudio.volume = 0.4;
 		this.gameMusic.loop = false;
 		this.gameMusic.preload = 'auto';
 		this.endGameMusic.loop = false;
@@ -233,7 +234,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	initBoard() {
 		this.gameMusic.loop = true;
-		this.gameMusic.volume = 0.5;
+		this.gameMusic.volume = 0.3;
 		var currentGameId = numberVal(localStorage.currentGameId);
 		this.loadingFlg = true;
 		startSpinner('Loading Game', '100px');
@@ -816,6 +817,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.currentPlayer.status == 'Purchase')
 			defaultLine = 'Round ' + this.gameObj.round + '. Conduct attacks, then press "Complete Turn" button at the top to end your turn.';
 
+		if (this.gameObj.currentCampaign == 2) {
+			playVoiceClip('round' + this.gameObj.round + '.mp3');
+			militaryAdvisorPopup('Your goal this campaign is to take over all the Russian territories, which are the ones colored brown.');
+			return;
+		}
+
 		if (this.gameObj.currentCampaign == 3) {
 			playVoiceClip('round' + this.gameObj.round + '.mp3');
 			if (this.gameObj.round == 2)
@@ -1000,7 +1007,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			if ((this.gameObj.currentCampaign == 1 || this.gameObj.currentCampaign == 2) && this.gameObj.round == 4) {
 				this.forceUserToClickTerritory(15);
 			}
-			if (this.gameObj.currentCampaign == 2 && this.gameObj.round == 5) {
+			if (this.gameObj.currentCampaign == 2 && this.gameObj.round >= 5) {
 				this.forceUserToClickTerritory(13);
 			}
 			if (this.gameObj.currentCampaign == 3 && this.gameObj.round == 2) {
@@ -1017,7 +1024,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	playerSetToPurchaseAndRefresh() {
 		this.currentPlayer.status = 'Purchase';
-		this.gameObj.actionButtonMessage = 'Purchase Complete';
+		this.gameObj.actionButtonMessage = '';
 		refreshAllPlayerTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 	}
 	playerSetToAttackAndRefresh() {
@@ -1029,12 +1036,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		resetAllPlayerDistanceObjects(this.gameObj, this.currentPlayer);
 		this.newPlayerHelpText = 'Make an attack, or move units or press "End Turn"';
 
-		this.gameObj.actionButtonMessage = 'Complete Turn';
+		this.gameObj.actionButtonMessage = '';
 		this.hideActionButton = !this.currentPlayer.battleFlg;
 		if (this.currentPlayer.cpuFlg)
 			this.computerGo();
 		else {
-			if (!this.gameObj.currentCampaign || this.gameObj.currentCampaign >= 7) {
+			if (numberVal(this.gameObj.currentCampaign) == 0 || this.gameObj.currentCampaign >= 7) {
 				playVoiceClip('beginConquest.mp3');
 				//return
 			}
@@ -1076,6 +1083,18 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				if (this.gameObj.round == 5) {
 					this.forceUserToClickTerritory(17);
 				}
+				if (this.gameObj.round == 6) {
+					this.forceUserToClickTerritory(16);
+				}
+				if (this.gameObj.round == 7) {
+					this.forceUserToClickTerritory(19);
+				}
+				if (this.gameObj.round == 8) {
+					this.forceUserToClickTerritory(18);
+				}
+				if (this.gameObj.round == 9) {
+					this.forceUserToClickTerritory(20);
+				}
 			} // 1 or 2
 			if (this.gameObj.currentCampaign == 3) {
 				if (this.gameObj.round == 1) {
@@ -1090,6 +1109,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				}
 				if (this.gameObj.round == 4) {
 					this.showAlertPopup('Note if an enemy territory has an economic center on it, you can bomb it twice in one turn. So send 2 bombers to those targets! Otherwise only send one bomber to each factory.');
+				}
+				if (this.gameObj.round >= 5) {
+					this.showAlertPopup('Keep bombing those factories until his income is under 20 coins.');
 				}
 			}
 			if (this.gameObj.currentCampaign == 4) {
@@ -1643,6 +1665,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			return;
 
 		}
+		this.checkMainButton();
 		if (terr.carrierSpace > 0)
 			doubleCheckFighterCargo(terr, gameObj);
 
@@ -1809,6 +1832,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		};
 	}
 	battleCompletedEmit(battleObj: any) {
+		if (this.hideActionButton)
+			this.hideActionButton = false;
+
 		resetAllPlayerDistanceObjects(this.gameObj, this.currentPlayer);
 		this.battleObj = battleObj;
 		this.newPlayerHelpText = 'Press "Complete Turn" button at the top.';
@@ -1828,14 +1854,24 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.gameObj.currentCampaign == 5 && battleObj.terr == 1 && battleObj.militaryObj.wonFlg) {
 			this.showAlertPopup('Nice work! Press "Complete Turn" to end this campaign.');
 		}
-		if (battleObj.terr == 62 && this.user.rank < 2 && battleObj.militaryObj.wonFlg) {
-			this.btPopupMessage = 'Congratulations! Your first win! 3 bonus units were placed on Ukraine for winning! Click "Complete Turn" at the top to continue.';
-			setTimeout(() => {
-				highlightElementWithArrow('completeTurnButton');
-			}, 1000);
-
+		var showFlg = battleObj.militaryObj.wonFlg && this.gameObj.currentCampaign >= 1 && this.gameObj.currentCampaign <= 3;
+		if (this.gameObj.currentCampaign == 3 && this.gameObj.round <= 2)
+			showFlg = true;
+		if (showFlg) {
+			if (battleObj.terr == 62) {
+				this.btPopupMessage = 'Congratulations! Your first win! 3 bonus units were placed on Ukraine for winning! Click "Complete Turn" at the top to continue.';
+				setTimeout(() => {
+					highlightElementWithArrow('completeTurnButton');
+					highlightCompleteTurnButton(true);
+				}, 1000);
+			} else {
+				setTimeout(() => {
+					this.btPopupMessage = 'End Turn';
+					highlightElementWithArrow('completeTurnButton');
+					highlightCompleteTurnButton(true);
+				}, 1000);
+			}
 			//this.showAlertPopup('Congratulations! Your first win! Click "Complete Turn" at the top to continue.');
-			highlightCompleteTurnButton(true);
 		}
 		if (battleObj.terr == 13 && this.gameObj.currentCampaign == 1 && battleObj.militaryObj.wonFlg) {
 			this.showAlertPopup('Congratulations! You have completed your mission and taken over your second capital! This boosts your income by 10 coins per turn. Also capitals come with a free factory. Press "Complete Turn" to end this campaign.');
@@ -1883,6 +1919,15 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			}
 		}
 	}
+	checkMainButton() {
+		if (this.gameObj.actionButtonMessage == '' && this.currentPlayer) {
+			if (this.currentPlayer.status == 'Waiting' || this.currentPlayer.status == 'Purchase')
+				this.gameObj.actionButtonMessage = 'Purchase Complete';
+			if (this.currentPlayer.status == 'Attack' || this.currentPlayer.status == 'Place Units')
+				this.gameObj.actionButtonMessage = 'Complete Turn';
+		}
+		this.cdr.detectChanges();
+	}
 	battleHappened(msg: string) {
 		//emitted from terr-popup
 		this.cdr.detectChanges();
@@ -1890,8 +1935,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.completeTurnButtonPressed();
 			return;
 		}
-		if (this.hideActionButton)
-			this.hideActionButton = false;
 	}
 	withdrawGeneralButtonClicked() {
 		var terr2;
@@ -2401,7 +2444,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		closePopup('surrenderPopup');
 		playClick();
 		logItem(this.gameObj, this.currentPlayer, 'Player Surrendered', 'Player has surrendered.');
-		this.gameObj.actionButtonMessage = ''
+		this.gameObj.actionButtonMessage = '';
 		this.currentPlayer.status = 'Waiting';
 		this.ableToTakeThisTurn = false;
 		playSound('Scream.mp3');

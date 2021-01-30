@@ -13,34 +13,34 @@
         </a>
         <div class="darkBlueBg" style="white-space: nowrap; overflow: hidden;">
             <span class="hidden-xxs" style="color: #aaa; font-size: 12px;">Version {{spVersion}}</span>
-            <button (click)="userPopup.show(user)" type="button" class="btn btn-secondary roundButton">
+            <button (mousedown)="userPopup.show(user)" type="button" class="btn btn-secondary roundButton">
                 <i class="fa fa-user"></i> {{user.userName}}
             </button>
-            <button (click)="mailPopup.show()" type="button" class="btn btn-secondary roundButton">
+            <button (mousedown)="mailPopup.show()" type="button" class="btn btn-secondary roundButton">
                 <i class="fa fa-envelope"></i> Mail <span
                     *ngIf="multiPlayerObj && multiPlayerObj.mailCount>0">({{multiPlayerObj.mailCount}})</span>
             </button>
-            <button (click)="forumPopup.show()" type="button" class="btn btn-secondary roundButton">
+            <button (mousedown)="forumPopup.show()" type="button" class="btn btn-secondary roundButton">
                 <i class="fa fa-commenting"></i> Forum <span
                     *ngIf="multiPlayerObj && multiPlayerObj.forumPosts>0">({{multiPlayerObj.forumPosts}})</span>
             </button>
             <a routerLink="/info"><button type="button" class="btn btn-secondary roundButton">
                     <i class="fa fa-info-circle"></i> Info
                 </button></a>
-            <button (click)="loadGames()" type="button" class="btn btn-secondary roundButton hidden-xxs">
+            <button (mousedown)="loadGames()" type="button" class="btn btn-secondary roundButton hidden-xxs">
                 <i class="fa fa-refresh"></i>
             </button>
         </div>
         <div *ngIf="multiPlayerObj && multiPlayerObj.textFlg != 'Y'" class="darkBlueBg">
-            <button *ngIf="!multiPlayerObj.confirmEmailFlg" (click)="userPopup.show(user)" type="button"
+            <button *ngIf="!multiPlayerObj.confirmEmailFlg" (mousedown)="userPopup.show(user)" type="button"
                 class="btn btn-primary roundButton">
                 <i class="fa fa-envelope"></i> Confirm Email
             </button>
-            <button *ngIf="!multiPlayerObj.textFlg" (click)="userPopup.show(user)" type="button"
+            <button *ngIf="!multiPlayerObj.textFlg" (mousedown)="userPopup.show(user)" type="button"
                 class="btn btn-primary roundButton">
                 <i class="fa fa-mobile"></i> Add Text Notifications
             </button>
-            <button *ngIf="multiPlayerObj.mmPoints == 0" (click)="matchmakerStandingsPopup.show()" type="button"
+            <button *ngIf="multiPlayerObj.mmPoints == 0" (mousedown)="matchmakerStandingsPopup.show()" type="button"
                 class="btn btn-success roundButton">
                 <i class="fa fa-trophy"></i> Join Matchmaking!
             </button>
@@ -51,13 +51,19 @@
 
 
             <div class="mediumBlueBg" style="text-align: center; white-space: nowrap; overflow: hidden;">
-                <button (click)="filterGames(1)" [disabled]="buttonIdx==1" type="button"
+                <button (mousedown)="filterGames(1)" [disabled]="buttonIdx==1" type="button"
                     class="btn btn-success roundButton">
                     <i class="fa fa-arrow-down" style="font-size: 32px;"></i><br>
                     Join Game
                 </button>
 
-                <button (click)="createGamePopup.show()" type="button" class="btn btn-primary roundButton">
+                <button *ngIf="multiPlayerObj.mmPoints == 0" (mousedown)="matchmakerStandingsPopup.show()" [disabled]="buttonIdx==1" type="button"
+                    class="btn btn-success roundButton">
+                    <i class="fa fa-trophy" style="font-size: 32px;"></i><br>
+                    Matchmaking
+                </button>
+
+                <button (mousedown)="createGamePopup.show()" type="button" class="btn btn-primary roundButton">
                     <i class="fa fa-plus" style="font-size: 32px;"></i><br>
                     Create Game
                 </button>
@@ -65,12 +71,12 @@
 
             <div style="background-color: #ccc;">
                 <span style="display: inline-block;">
-                    <button (click)="gameStandingsPopup.show()" type="button" class="btn btn-secondary roundButton">
+                    <button (mousedown)="gameStandingsPopup.show()" type="button" class="btn btn-secondary roundButton">
                         <i class="fa fa-check-circle-o"></i>
                     </button><br>
                     <div style="font-size: 10px; color: gray;">Standings</div>
                 </span>
-                <div class="spCard" style="cursor: pointer; font-size: 12px;" (click)="gameStandingsPopup.show()">
+                <div class="spCard" style="cursor: pointer; font-size: 12px;" (mousedown)="gameStandingsPopup.show()">
                     <div>
                         <div class="spTitle"><i class="fa fa-check-circle-o"></i> Regular Games</div>
                         <table class="spTable">
@@ -90,7 +96,7 @@
                     </div>
                 </div>
                 <div class="spCard" style="cursor: pointer; font-size: 12px; background-color: purple;"
-                    (click)="matchmakerStandingsPopup.show()">
+                    (mousedown)="matchmakerStandingsPopup.show()">
                     <div>
                         <div class="spTitle"><i class="fa fa-trophy"></i> Matchmaking Games</div>
                         <table class="spTable">
@@ -110,7 +116,7 @@
                     </div>
                 </div>
                 <span style="display: inline-block;">
-                    <button (click)="matchmakerStandingsPopup.show()" type="button"
+                    <button (mousedown)="matchmakerStandingsPopup.show()" type="button"
                         class="btn btn-secondary roundButton">
                         <i class="fa fa-trophy"></i>
                     </button><br>
@@ -126,7 +132,7 @@
                             {{multiPlayerObj.chatMsg}}
                         </td>
                         <td>
-                            <button (click)="chatPopup.show(null, null, null, user, null)"
+                            <button (mousedown)="chatPopup.show(null, null, null, user, null)"
                                 style="float: right; padding-right: 8px;" type="button"
                                 class="btn btn-primary roundButton"><i class="fa fa-comment"></i>
                                 Chat</button>
@@ -148,43 +154,43 @@
 
             <div class="mediumBlueBg" style="text-align: center; padding-bottom: 5px;">
                 <div class="btn-group">
-                    <button (click)="filterGames(0)" type="button" class="btn btn-default roundButton segmentButton"
+                    <button (mousedown)="filterGames(0)" type="button" class="btn btn-default roundButton segmentButton"
                         [ngClass]="ngClassSegment(buttonIdx,0)" style="min-width: 60px;">
                         <i class="fa fa-star" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">My Games</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count0}})</div>
                     </button>
-                    <button (click)="filterGames(1)" type="button" class="btn btn-default roundButton segmentButton"
+                    <button (mousedown)="filterGames(1)" type="button" class="btn btn-default roundButton segmentButton"
                         [ngClass]="ngClassSegment(buttonIdx,1)" style="min-width: 60px;">
                         <i class="fa fa-plus" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">Open</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count1}})</div>
                     </button>
-                    <button (click)="filterGames(2)" type="button" class="btn btn-default roundButton segmentButton"
+                    <button (mousedown)="filterGames(2)" type="button" class="btn btn-default roundButton segmentButton"
                         [ngClass]="ngClassSegment(buttonIdx,2)" style="min-width: 60px;">
                         <i class="fa fa-play" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">Playing</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count2}})</div>
                     </button>
-                    <button (click)="filterGames(3)" type="button" class="btn btn-default roundButton segmentButton"
+                    <button (mousedown)="filterGames(3)" type="button" class="btn btn-default roundButton segmentButton"
                         [ngClass]="ngClassSegment(buttonIdx,3)" style="min-width: 60px;">
                         <i class="fa fa-stop" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">Completed</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count3}})</div>
                     </button>
-                    <button (click)="filterGames(4)" type="button" class="btn btn-default roundButton segmentButton"
+                    <button (mousedown)="filterGames(4)" type="button" class="btn btn-default roundButton segmentButton"
                         [ngClass]="ngClassSegment(buttonIdx,4)" style="min-width: 60px;">
                         <i class="fa fa-trophy" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">MatchMaking</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count4}})</div>
                     </button>
-                    <button *ngIf="adminFlg && count5>0" (click)="filterGames(5)" type="button"
+                    <button *ngIf="adminFlg && count5>0" (mousedown)="filterGames(5)" type="button"
                         class="btn btn-warning roundButton  segmentButton hidden-xxs" style="min-width: 60px;">
                         <i class="fa fa-bug" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">Bugs</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count5}})</div>
                     </button>
-                    <button *ngIf="adminFlg && count6>0" (click)="filterGames(6)" type="button"
+                    <button *ngIf="adminFlg && count6>0" (mousedown)="filterGames(6)" type="button"
                         class="btn btn-warning roundButton  segmentButton hidden-xxs" style="min-width: 60px;">
                         <i class="fa fa-clock-o" style="font-size: 26px;"></i>
                         <div style="font-size: 10px;">Stale</div>
@@ -205,7 +211,7 @@
                         play. Each player has up to 24 hours to take their turn. Check back regularly.</div>
                     <div class="borderClass2">
                         <div>Also consider joining Matchmaking.</div>
-                        <button (click)="matchmakerStandingsPopup.show()" type="button"
+                        <button (mousedown)="matchmakerStandingsPopup.show()" type="button"
                             class="btn btn-primary roundButton">
                             <i class="fa fa-trophy"></i> Matching League
                         </button>
@@ -223,7 +229,7 @@
                             <div *ngIf="game.mmFlg"><i class="fa fa-trophy"></i> Matchmaking Game</div>
                         </div>
                         <div class="spCardBody">
-                            <div (click)="selectGame(game)" class="darkBlueBg"
+                            <div (mousedown)="selectGame(game)" class="darkBlueBg"
                                 style="font-size: 24px; font-weight: 700; cursor: pointer;">
                                 <span *ngIf="game.status!='Open'" class="corner-icon"><i
                                         class="fa fa-info-circle"></i></span>
@@ -238,7 +244,8 @@
                                     <td>
                                         <div *ngIf="game.status!='Open'" class="gameCard" style="min-width: 100px;">
                                             <div class="darkBlueBg"><i class="fa fa-h-square"></i> Host</div>
-                                            <div (click)="userPopup.show({userId: game.hostId, userName: game.host})">
+                                            <div
+                                                (mousedown)="userPopup.show({userId: game.hostId, userName: game.host})">
                                                 {{game.host}}</div>
                                             <div>{{game.size}} Players</div>
                                         </div>
@@ -246,7 +253,7 @@
                                     <td>
                                         <div style="font-size: 12px; color: #777;"><i
                                                 class="fa {{ngClassGameType(game.gameType)}}"></i> {{game.type}}</div>
-                                        <button (click)="enterGame(game)" type="button"
+                                        <button (mousedown)="enterGame(game)" type="button"
                                             [ngClass]="ngClassGameButton(game)" class="btn btn-default roundButton"
                                             style="font-size: 26px; white-space: nowrap;">
                                             <i class="fa fa-arrow-right"></i>
@@ -259,19 +266,19 @@
                                         <div *ngIf="game.status == 'Open'">
                                             <button *ngIf="game.host == user.userName"
                                                 [disabled]="game.players.length<2"
-                                                (click)="openGameButtonPressed(game, 'start')" type="button"
+                                                (mousedown)="openGameButtonPressed(game, 'start')" type="button"
                                                 class="btn btn-warning roundButton">
                                                 <i class="fa fa-play"></i> Start Game</button>
                                             <button *ngIf="game.host == user.userName && game.no_stats_flg"
-                                                (click)="openGameButtonPressed(game, 'add_computer')" type="button"
+                                                (mousedown)="openGameButtonPressed(game, 'add_computer')" type="button"
                                                 class="btn btn-warning roundButton">
                                                 <i class="fa fa-android"></i> Add CPU</button>
                                             <button *ngIf="game.host == user.userName || user.userName == 'Rick'"
-                                                (click)="openGameButtonPressed(game, 'cancelGame')" type="button"
+                                                (mousedown)="openGameButtonPressed(game, 'cancelGame')" type="button"
                                                 class="btn btn-danger roundButton">
                                                 <i class="fa fa-trash"></i> Delete Game</button>
                                             <button *ngIf="game.inGame && game.host != user.userName"
-                                                (click)="openGameButtonPressed(game, 'leaveGame')" type="button"
+                                                (mousedown)="openGameButtonPressed(game, 'leaveGame')" type="button"
                                                 class="btn btn-warning roundButton"><i class="fa fa-sign-out"></i>
                                                 Leave</button>
                                         </div>
@@ -281,7 +288,7 @@
                                         <div *ngIf="game.status!='Open'" class="gameCard" style="min-width: 100px;">
                                             <div class="darkBlueBg"><i class="fa fa-clock-o"></i> Timer</div>
                                             <app-sp-time-left [timeLeftStr]="game.timeLeft"></app-sp-time-left>
-                                            <app-player-name (click)="userPopup.show(game.turnObj)"
+                                            <app-player-name (mousedown)="userPopup.show(game.turnObj)"
                                                 [player]="game.turnObj"></app-player-name>
                                             <div *ngIf="game.turnObj.onlineFlg" style="color: gray"><i
                                                     class="fa fa-lightbulb-o" style="color: orange"></i> Online now!
@@ -367,7 +374,7 @@
                                             <tr *ngFor="let player of game.players">
                                                 <td><img src="assets/graphics/images/flag{{player.nation}}.gif"
                                                         height="20"></td>
-                                                <td (click)="userPopup.show(player)">
+                                                <td (mousedown)="userPopup.show(player)">
                                                     <i *ngIf="player.top" class="fa fa-star"></i>
                                                     <i *ngIf="player.turnFlg" class="fa fa-check"></i>
                                                     {{player.userName}}
@@ -377,14 +384,14 @@
                                                     <span
                                                         *ngIf="game.host != user.userName || game.status != 'Open'">{{player.team}}</span>
                                                     <button *ngIf="game.host == user.userName && game.status == 'Open'"
-                                                        (click)="changeTeamOfPlayer(game, player)" type="button"
+                                                        (mousedown)="changeTeamOfPlayer(game, player)" type="button"
                                                         class="btn btn-primary roundButton">{{player.team}}
                                                     </button>
                                                 </td>
                                                 <td style="font-size: 12px; color: gray;">
                                                     <button
                                                         *ngIf="game.host == user.userName && game.status == 'Open' && player.userName != user.userName"
-                                                        (click)="removePlayerFromGame(game, player)" type="button"
+                                                        (mousedown)="removePlayerFromGame(game, player)" type="button"
                                                         class="btn btn-danger roundButton"><i class="fa fa-trash"></i>
                                                     </button>
                                                 </td>
@@ -395,7 +402,7 @@
                                     </div>
                                 </div>
                                 <button *ngIf="game.status == 'Playing' && user.userName == 'Rick' && game.round < 6"
-                                    (click)="openGameButtonPressed(game, 'cancelGame')" type="button"
+                                    (mousedown)="openGameButtonPressed(game, 'cancelGame')" type="button"
                                     class="btn btn-danger roundButton">
                                     <i class="fa fa-trash"></i> Delete Game</button>
                             </div>
@@ -428,20 +435,20 @@
         <div class="mediumBlueBg">{{selectedGame.name}}</div>
         <div *ngIf="0"><input type=text id="passField" name="passField" placeholder="Password" value="" maxlength=20>
         </div>
-        <div *ngIf="selectedGame.gameType=='locked'">Team: <button (click)="changeTeam()" id="" type="button"
+        <div *ngIf="selectedGame.gameType=='locked'">Team: <button (mousedown)="changeTeam()" id="" type="button"
                 class="btn btn-primary roundButton">{{selectedTeam}}</button></div>
         <div *ngIf="!selectedGame.auto_assign_flg">
             <div style="border: 1px solid black;">
                 <div>Nations Available: </div>
                 <img *ngFor="let nation of availableNations" src="assets/graphics/images/flag{{nation}}.gif" height=20>
             </div>
-            <div>Choose one: <button (click)="cycleNationsButtonPressed()" type="button"
+            <div>Choose one: <button (mousedown)="cycleNationsButtonPressed()" type="button"
                     class="btn btn-light roundButton"><img src="assets/graphics/images/flag{{selectedNation}}.gif"
                         height=50></button></div>
         </div>
         <button onClick="closePopup('joinConfirmationPopup')" type="button" class="btn btn-danger roundButton"><i
                 class="fa fa-times"></i> Cancel</button>
-        <button (click)="joinAcceptButtonPressed()" id="" type="button" class="btn btn-primary roundButton tall2"><i
+        <button (mousedown)="joinAcceptButtonPressed()" id="" type="button" class="btn btn-primary roundButton tall2"><i
                 class="fa fa-check"></i> Join Game</button>
         <p>
     </div>
@@ -452,7 +459,7 @@
     <div>{{buttonActionMessage}}</div>
     <button onClick="closePopup('actionConfirmationPopup')" type="button" class="btn btn-danger roundButton"><i
             class="fa fa-times"></i> Cancel</button>
-    <button (click)="confirmButtonPressed()" id="" type="button" class="btn btn-primary roundButton tall2"><i
+    <button (mousedown)="confirmButtonPressed()" id="" type="button" class="btn btn-primary roundButton tall2"><i
             class="fa fa-check"></i> Yes!</button>
 </div>
 

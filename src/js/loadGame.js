@@ -404,8 +404,8 @@ function loadGameUnits(pieces, players, territories, currentCampaign, type) {
 			id++;
 		}
 	}
-	if (currentCampaign == 3) { //bombers
-		units.push(unitOfId(id++, 2, 15, 11, pieces));
+	if (currentCampaign == 3) { //add factories for bombers to hit
+		units.push(unitOfId(id++, 2, 15, 11, pieces)); 
 		units.push(unitOfId(id++, 2, 15, 12, pieces));
 		units.push(unitOfId(id++, 2, 15, 8, pieces));
 
@@ -506,6 +506,7 @@ function loadUnits(x, pieces, id, terrs, currentCampaign, type) {
 			units.push(unitOfId(id++, x, 5, watersId, pieces));
 		}
 		if (currentCampaign == 3) {
+			units.push(unitOfId(id++, x, 7, capId, pieces));
 			units.push(unitOfId(id++, x, 7, capId, pieces));
 			units.push(unitOfId(id++, x, 7, capId, pieces));
 		}

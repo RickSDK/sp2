@@ -31,18 +31,19 @@
                                         <i class="fa fa-info-circle"></i> League Info
                                     </button>
                                 </div>
+                                <div *ngIf="maxGames==0 && !loadingFlg" style="padding: 20px;">
+                                    <div>Join Matchinging now!</div>
+                                    <button (click)="joinLeague()" type="button"
+                                        class="btn btn-success roundButton" style="font-size: 32px;">
+                                        <i class="fa fa-sign-in"></i> Join League
+                                    </button>
+                                </div>
                                 <div *ngIf="infoFlg" class="borderClass3">
                                     <div><i class="fa fa-hand-o-right"></i> Games start automatically</div>
-                                    <div><i class="fa fa-hand-o-right"></i> Players are random</div>
+                                    <div><i class="fa fa-hand-o-right"></i> Play against people at your own skill level</div>
                                     <div><i class="fa fa-hand-o-right"></i> Settings are random</div>
                                     <div><i class="fa fa-hand-o-right"></i> Can be in up to 5 games at once</div>
                                     <div><i class="fa fa-hand-o-right"></i> Earn 1 EMP for every 5 games</div>
-                                </div>
-                                <div>
-                                    <button *ngIf="maxGames==0 && !loadingFlg" (click)="joinLeague()" type="button"
-                                        class="btn btn-success roundButton" style="font-size: 26px;">
-                                        <i class="fa fa-sign-in"></i> Join League
-                                    </button>
                                 </div>
                             </div>
                         </div>

@@ -57,13 +57,14 @@
 			*ngIf="isDesktopFlg"></i></span>
 	<button (mousedown)="exitButtonPressed()" type="button" class="btn btn-secondary roundButton"><i
 			class="fa fa-arrow-left"></i>
-		Exit</button>
+		Exit</button> 
+	<span *ngIf="currentPlayer && gameObj.actionButtonMessage==''">{{currentPlayer.status}}</span>
 	<button *ngIf="ableToTakeThisTurn && gameObj.actionButtonMessage && gameObj.actionButtonMessage.length>0 && !hideActionButton"
 		(mousedown)="completeTurnButtonPressed()" id="completeTurnButton" type="button"
 		class="btn btn-success roundButton">{{gameObj.actionButtonMessage}}</button>
 	<button *ngIf="ableToTakeThisTurn && hideActionButton" (mousedown)="redoPurchase()" type="button"
 		class="btn btn-success roundButton"><i class="fa fa-refresh"></i> Redo</button>
-	<button *ngIf="ableToTakeThisTurn && hideActionButton" (mousedown)="completeTurnButtonPressed()" type="button"
+	<button *ngIf="gameObj.actionButtonMessage == 'Complete Turn' && ableToTakeThisTurn && hideActionButton" (mousedown)="completeTurnButtonPressed()" type="button"
 		class="btn btn-success roundButton"><i class="fa fa-arrow-right"></i> End Turn</button>
 	<span *ngIf="this.gameObj.gameOver" style="font-size: 20px; font-weight: 700;">
 		Game Over!
@@ -73,10 +74,9 @@
 			src="{{spFlagOfNation(currentPlayer.nation, gameObj.type)}}" height=42
 			title="{{superpowersData.superpowers[gameObj.currentNation]}}" style="cursor: pointer;">
 		<span style="background-color: #777; color: white; border: 1px solid black;">{{currentPlayer.userName}}</span>
-		<span style="background-color: #ccc; color: black; font-size: 14px; padding: 3px;">
-			<span *ngIf="currentPlayer.status == 'Purchase'"><img src="assets/graphics/images/coin.png" height=30
+		<span *ngIf="currentPlayer.status == 'Purchase'" style="background-color: #ccc; color: black; font-size: 14px; padding: 3px;">
+			<span><img src="assets/graphics/images/coin.png" height=30
 					title="coins">{{currentPlayer.money}} </span>
-			<span *ngIf="currentPlayer.status != 'Purchase'"> {{currentPlayer.status}}</span>
 		</span>
 	</span>
 </section>

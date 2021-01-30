@@ -62,7 +62,7 @@ export class TerrPurchaseComponent extends BaseComponent implements OnInit {
       return;
     }
     if(this.gameObj.currentCampaign == 3 && piece != 13 && this.gameObj.round==1) {
-      this.showAlertPopup(' Only buy AA Guns this round. Click each of your factories and buy 1 AA Gun per factory. Press the "Air" tab.', 1);
+      this.showAlertPopup(' Only buy Anti-Aircraft Guns this round. Click each of your factories and buy 1 Anti-Aircraft Gun per factory. Press the "Air" tab.', 1);
       return;
     }
     if(this.gameObj.currentCampaign == 3 && piece != 13 && piece != 7 && piece != 15 && piece != 19) {

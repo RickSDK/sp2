@@ -1,5 +1,5 @@
 function getHostname() {
-	return 'http://www.superpowersgame.com/scripts';
+	return 'https://www.superpowersgame.com/scripts';
 }
 function getSuperpowersData() {
 	var obj = {};

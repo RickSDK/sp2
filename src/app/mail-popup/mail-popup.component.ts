@@ -118,21 +118,7 @@ export class MailPopupComponent extends BaseComponent implements OnInit {
       });
 
     this.closeModal('#mailPopup');
-    /*
-        var url = this.getHostname() + "/spSendMail.php";
-        var postData = this.getPostDataFromObj({ userId: this.user.userId, code: this.user.code, title: messageTitle, message: messageBody, action: 'send', row_id: row_id, to: to, urgent: urgent });
-        console.log('postData', postData);
-    
-        fetch(url, postData).then((resp) => resp.text())
-          .then((data) => {
-            console.log(data);
-            if (this.verifyServerResponse(data)) {
-              this.showAlertPopup('message sent');
-            }
-          })
-          .catch(error => {
-            this.showAlertPopup('Unable to reach server: ' + error, 1);
-          });*/
+
 
   }
   deletePost(message: any) {

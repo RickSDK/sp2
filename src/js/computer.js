@@ -71,8 +71,12 @@ function purchaseCPUUnits(player, gameObj, superpowersData, rank) {
         if (difficultyNum == 1)
             player.money += 10;
     }
-    if (gameObj.currentCampaign == 3 && gameObj.round <= 2)
-        addUniToQueue(7, 1, superpowersData, player, gameObj, terr1);
+    if (gameObj.currentCampaign == 3) {
+        if (gameObj.round <= 2)
+            addUniToQueue(7, 1, superpowersData, player, gameObj, terr1);
+        else
+            return; // no more purchases
+    }
     if (gameObj.currentCampaign == 4)
         addUniToQueue(14, 1, superpowersData, player, gameObj, terr1);
 

@@ -180,9 +180,12 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       if (gameObj.round == 5 && currentPlayer.status == 'Attack' && terr.id == 17) {
         showAlertPopup('If you are able to control all territories belonging to a superpower (Brown ones for Russia) you will gain additional 10 coins/turn. You may also want to split up your forces to attack multiple territories. Just remember to include tanks and infantry with each battle. Tanks are better at attacking, but infantry are cheaper and will be used first as casualties.');
       }
+      if (gameObj.round > 5 && currentPlayer.status == 'Attack' && terr.id >= 16  && terr.id <= 20) {
+        showAlertPopup('Control all the brown territories to end this campaign.');
+      }
     }
     if (gameObj.currentCampaign == 3 && gameObj.round == 1 && currentPlayer.status == 'Purchase' && terr.id == 7) {
-      showAlertPopup('For this campaign, first buy air defense. Click on the "Air" tab. You want 2 AA guns units per factory for top protection.');
+      showAlertPopup('For this campaign, first buy air defense. Click on the "Air" tab. You want 2 Anti-Aircraft guns per factory for best protection.');
     }
     if (gameObj.currentCampaign == 3 && gameObj.round == 2 && currentPlayer.status == 'Purchase' && terr.id == 7) {
       showAlertPopup('Get more bombers to wreak havoc on your enemy.');

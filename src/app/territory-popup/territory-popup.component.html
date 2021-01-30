@@ -256,7 +256,10 @@
 					<img src="assets/graphics/images/flagBuy.png" height="50">
 					<div style="color: gray; font-size: 12px;">Press 'Purchase Complete' to move to the next phase of your turn.</div>
 					<button (mousedown)="closeModal('#territoryPopup')" type="button"
-								class="btn btn-primary roundButton glowButton"> Close
+								class="btn btn-primary roundButton"> Close
+					</button>
+					<button (mousedown)="completePurchaseButtonClicked()" type="button"
+								class="btn btn-success roundButton glowButton"> Purchase Complete
 					</button>
 				</div>
 
@@ -496,8 +499,8 @@
 					class="btn btn-secondary roundButton" title="allow all units here to move">Unfeeze Units</button>
 				<button *ngIf="adminModeFlg" (mousedown)="moveHerosPressed()" type="button"
 					class="btn btn-secondary roundButton">Move Heros</button>
-				<button *ngIf="0 && ableToTakeThisTurn && optionType=='production'" (mousedown)="completePurchaseButtonClicked()"
-					type="button" class="btn btn-success roundButton">Purchase Complete</button>
+				<button *ngIf="ableToTakeThisTurn && optionType=='production'" [disabled]="currentPlayer.money > 5" (mousedown)="completePurchaseButtonClicked()"
+					type="button" class="btn btn-success roundButton" style="height: 60px;">Purchase Complete</button>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
