@@ -2,7 +2,7 @@
 
 <div style="display: table; position: absolute; left: 0; top: 0; height: 100%; width: 100%;">
     <div style="display: table-cell; vertical-align: middle; text-align: center;">
-        <div style="max-width: 800px; display: block; margin-left: auto; margin-right: auto; text-align: center;">
+        <div style="max-width: 800px; display: block; margin-left: auto; margin-right: auto; text-align: center; padding-bottom: 60px;">
             <div>
                 <img routerLink="/" id="spLogo2" src="assets/graphics/images/superpowers.png"
                     style="width: 100%; cursor: pointer;">
@@ -16,25 +16,18 @@
                     </div>
                 </div>
                 <div *ngIf="user.userName != 'Guest' && !showCampaignsFlg">
+                    <div style="color: white; font-size: 24px; font-weight: 800; text-shadow: 2px 2px black;">
+                        Single Player</div>
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-sm-4" style="padding: 0;">
+                            <div class="col-sm-6" style="padding: 0;">
 
                                 <img (mousedown)="showCampaignsFlg = !showCampaignsFlg" class="shadowed main-page-item"
                                     src="assets/graphics/buttons/campaign.png" title="Campaigns">
 
                             </div>
-                            <div class="col-sm-4" style="padding: 0;">
-                                <div style="color: white; font-size: 24px; font-weight: 800; text-shadow: 2px 2px black;">Single Player</div>
-                                <button routerLink="/" type="button" class="btn btn-secondary roundButton"><i
-                                        class="fa fa-home"></i>
-                                    Home
-                                </button>
-                                <a routerLink="/info"><button type="button"
-                                    class="btn btn-primary roundButton main-page-item"><i class="fa fa-book"></i>
-                                    Rules </button></a>
-                            </div>
-                            <div class="col-sm-4" style="padding: 0;">
+
+                            <div class="col-sm-6" style="padding: 0;">
 
                                 <img (mousedown)="singlePlayerGame(startGamePopup)" class="shadowed main-page-item"
                                     src="assets/graphics/buttons/customGame.png" title="Single-Player Game">
@@ -84,6 +77,18 @@
             </div>
         </div>
     </div>
+</div>
+
+<div class="bottom-bar">
+
+
+    <a routerLink="/"><button type="button" class="btn btn-primary roundButton"><i class="fa fa-home"></i>
+            Home </button></a>
+    <a routerLink="/info"><button type="button" class="btn btn-primary roundButton"><i class="fa fa-book"></i>
+            Rules </button></a>
+
+
+
 </div>
 
 <div class="popupScreenNoPad" style="width: 280px; z-index: 5;" id="namePopup" onClick="closePopup('namePopup')">

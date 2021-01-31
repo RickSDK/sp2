@@ -116,11 +116,6 @@ export class MainPageComponent extends BaseComponent implements OnInit {
       if (this.user.rank > 2)
         this.guestNum = 5;
     }
-    if (this.guestNum == 1)
-      this.showAlertPopup('Watch the Gameplay Video and then complete a Single Player game.');
-
-
-
   }
   playVideo(num: number) {
     this.showVideoPlayerFlg = true;

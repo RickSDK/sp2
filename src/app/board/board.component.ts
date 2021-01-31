@@ -1023,8 +1023,13 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.playerSetToPurchaseAndRefresh();
 	}
 	playerSetToPurchaseAndRefresh() {
-		this.currentPlayer.status = 'Purchase';
-		this.gameObj.actionButtonMessage = '';
+		if (this.currentPlayer && this.currentPlayer.offers && this.currentPlayer.offers.length > 0) {
+			this.gameObj.actionButtonMessage = 'Diplomacy';
+			this.currentPlayer.status = 'Diplomacy';
+		} else {
+			this.currentPlayer.status = 'Purchase';
+			this.gameObj.actionButtonMessage = '';	
+		}
 		refreshAllPlayerTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 	}
 	playerSetToAttackAndRefresh() {
@@ -1623,10 +1628,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	checkTreatyOffers(player) {
 		if (this.ableToTakeThisTurn && (player.offers.length > 0 || player.news.length > 0 || player.botRequests.length > 0)) {
-			if (player.offers.length > 0) {
-				this.gameObj.actionButtonMessage = 'Diplomacy';
-				this.currentPlayer.status = 'Diplomacy';
-			}
 			this.diplomacyModal.show(this.gameObj, this.ableToTakeThisTurn, this.currentPlayer, this.yourPlayer);
 			return true;
 		}
@@ -1920,6 +1921,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 	}
 	checkMainButton() {
+		if (this.currentPlayer && this.currentPlayer.offers && this.currentPlayer.offers.length > 0) {
+			this.gameObj.actionButtonMessage = 'Diplomacy';
+			this.currentPlayer.status = 'Diplomacy';
+		}
 		if (this.gameObj.actionButtonMessage == '' && this.currentPlayer) {
 			if (this.currentPlayer.status == 'Waiting' || this.currentPlayer.status == 'Purchase')
 				this.gameObj.actionButtonMessage = 'Purchase Complete';
@@ -2218,7 +2223,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.logItem(this.currentPlayer, 'Redoing Purchases', 'Redo');
 	}
 	completeTurnButtonPressed() {
-		if (this.currentPlayer.offers.length > 0) {
+		if (this.currentPlayer && this.currentPlayer.offers && this.currentPlayer.offers.length > 0) {
 			this.diplomacyModal.show(this.gameObj, this.ableToTakeThisTurn, this.currentPlayer, this.yourPlayer);
 			return;
 		}

@@ -48,6 +48,7 @@ declare var verifyUnitsAreLegal: any;
 declare var packageSelectedUnits: any;
 declare var loadParatroopers: any;
 declare var showUnits1TerritoryAway: any;
+declare var autoLoadButtonPressed: any;
 
 @Component({
   selector: 'app-territory-popup',
@@ -341,6 +342,11 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     this.checkSendButtonStatus(null);
     if (this.optionType == 'attack')
       this.moveTroopsButtonPressed();
+  }
+  autoLoadButtonPressed() {
+    playClick();
+    autoLoadButtonPressed(this.selectedTerritory, this.moveTerr, this.optionType, this.currentPlayer, true);
+    this.checkSendButtonStatus(null);
   }
   moveTroopsButtonPressed() {
     if (this.user.rank < 2 && this.gameObj.round == 1 && this.selectedTerritory.id == 62) {

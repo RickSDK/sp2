@@ -149,7 +149,8 @@
 
 								<div *ngIf="displayBattle.allowGeneralRetreat">
 									<div class="borderClass">
-										<div><img src="assets/graphics/units/piece10u.png" height=40> General Can Withdraw</div>
+										<div><img src="assets/graphics/units/piece10u.png" height=40> General Can
+											Withdraw</div>
 										<button (mousedown)="withdrawGeneralButtonClicked()" id="generalWithdrawButton"
 											type="button" class="btn btn-success roundButton tall2"><i
 												class="fa fa-arrow-left"></i> Withdraw</button>
@@ -215,8 +216,8 @@
 							(mousedown)="retreatButtonPressed()" type="button" class="btn btn-primary roundButton"><i
 								class="fa fa-flag"></i> Retreat!</button>
 						<button *ngIf="displayBattle.round>0 && displayBattle.militaryObj.includesGeneral"
-							(mousedown)="pullSelectTroopsMidBattle(1)" type="button" class="btn btn-warning roundButton"><i
-								class="fa fa-arrow-left"></i> Pull General</button>
+							(mousedown)="pullSelectTroopsMidBattle(1)" type="button"
+							class="btn btn-warning roundButton"><i class="fa fa-arrow-left"></i> Pull General</button>
 						<button *ngIf="displayBattle.round>0 && displayBattle.militaryObj.airunits>0"
 							id="pullPlanesButton" (mousedown)="pullSelectTroopsMidBattle(2)" type="button"
 							class="btn btn-warning roundButton"><i class="fa fa-arrow-left"></i> Pull
@@ -227,13 +228,13 @@
 							Bombers</button>
 
 						<button [disabled]="!displayBattle.militaryObj.allowAttackFlg" id="fightButton"
-						(mousedown)="fightButtonPressed()" type="button" [ngClass]="fightButtonClass()"
+							(mousedown)="fightButtonPressed()" type="button" [ngClass]="fightButtonClass()"
 							style="height: 60px; width: 100px;"><i class="fa fa-crosshairs"></i> Fight!</button>
 
 						<span>
 							<div class="squaredOne" style="display: inline-block; padding: 0; margin: 1px;">
 								<input [checked]="autoCompleteFlg" [disabled]="displayBattle.defendingUnits.length == 0"
-								(click)="autoCompletePressed()" type="checkbox" value="None" id="finalAttackBox"
+									(click)="autoCompletePressed()" type="checkbox" value="None" id="finalAttackBox"
 									name="check" />
 								<label for="finalAttackBox"></label>
 							</div> <span style="font-size: 10px;">Auto</span>
@@ -250,16 +251,23 @@
 
 				</div>
 				<!--end The Battlefield-->
+				<div *ngIf="ableToTakeThisTurn && currentPlayer.status == 'Diplomacy'">
+					<div>You have diplomatic actions to respond to!</div>
+					<img src="assets/graphics/misc/news3.png" height="100">
+					<div>Close this window and click "Diplomacy" at the top of the map.</div>
+				</div>
 
-				<div *ngIf="ableToTakeThisTurn && currentPlayer.status == 'Purchase' && optionType != 'production'" style="background-color: #cfc;">
+				<div *ngIf="ableToTakeThisTurn && currentPlayer.status == 'Purchase' && optionType != 'production'"
+					style="background-color: #cfc;">
 					<div><b><i class="fa fa-exclamation-triangle"></i> Currently in Purchase Phase. </b></div>
 					<img src="assets/graphics/images/flagBuy.png" height="50">
-					<div style="color: gray; font-size: 12px;">Press 'Purchase Complete' to move to the next phase of your turn.</div>
+					<div style="color: gray; font-size: 12px;">Press 'Purchase Complete' to move to the next phase of
+						your turn.</div>
 					<button (mousedown)="closeModal('#territoryPopup')" type="button"
-								class="btn btn-primary roundButton"> Close
+						class="btn btn-primary roundButton"> Close
 					</button>
 					<button (mousedown)="completePurchaseButtonClicked()" type="button"
-								class="btn btn-success roundButton glowButton"> Purchase Complete
+						class="btn btn-success roundButton glowButton"> Purchase Complete
 					</button>
 				</div>
 
@@ -283,14 +291,16 @@
 					<div *ngIf="1 || !loadingFlg" style="background-color: #ccc; color: black;">
 						<div
 							*ngIf="(optionType=='movement' || optionType=='loadUnits') && selectedTerritory.nation==99 && selectedTerritory.unitCount>0">
-							<button *ngIf="optionType=='movement'" (mousedown)="buttonClicked('loadUnits')" type="button"
-								class="btn btn-success roundButton"><i class="fa fa-ship"></i> Custom Load
-								Options</button>
-							<button *ngIf="optionType=='loadUnits'" (mousedown)="buttonClicked('movement')" type="button"
-								class="btn btn-success roundButton"><i class="fa fa-ship"></i> Auto Load</button>
+							<button *ngIf="optionType=='movement'" (mousedown)="buttonClicked('loadUnits')"
+								type="button" class="btn btn-success roundButton"><i class="fa fa-ship"></i> Custom Load
+								Options
+							</button>
+							<button *ngIf="optionType=='loadUnits'" (mousedown)="buttonClicked('movement')"
+								type="button" class="btn btn-success roundButton"><i class="fa fa-ship"></i> Auto
+								Load</button>
 
-							<button (mousedown)="infoFlg = !infoFlg" type="button" class="btn btn-secondary roundButton"><i
-									class="fa fa-info-circle"></i> Info</button>
+							<button (mousedown)="infoFlg = !infoFlg" type="button"
+								class="btn btn-secondary roundButton"><i class="fa fa-info-circle"></i> Info</button>
 							<div *ngIf="infoFlg" class="borderClass2">
 								<div>Cargo Limits</div>
 								<table class="spTable">
@@ -390,17 +400,17 @@
 									type="button" class="btn btn-primary tight roundButton"><i
 										class="fa fa-fast-backward"></i></button>
 								<button [disabled]="selectedUnitTerr.count==0"
-								(mousedown)="checkboxAmountOfUnit(selectedUnitTerr.count-1, terr)" type="button"
+									(mousedown)="checkboxAmountOfUnit(selectedUnitTerr.count-1, terr)" type="button"
 									class="btn btn-primary tight roundButton"><i class="fa fa-backward"></i></button>
 								<img src="{{ngUnitSrc(selectedUnitTerr.piece, 1)}}"
 									style="max-height: 30px; max-width: 40px;">
 								<span class="bgHighlight">{{selectedUnitTerr.count}} <font color=gray>/
 										{{selectedUnitTerr.max}}</font></span>
 								<button [disabled]="selectedUnitTerr.count==selectedUnitTerr.max"
-								(mousedown)="checkboxAmountOfUnit(selectedUnitTerr.count+1, terr)" type="button"
+									(mousedown)="checkboxAmountOfUnit(selectedUnitTerr.count+1, terr)" type="button"
 									class="btn btn-primary tight roundButton"><i class="fa fa-forward"></i></button>
 								<button [disabled]="selectedUnitTerr.count==selectedUnitTerr.max"
-								(mousedown)="checkboxAmountOfUnit(selectedUnitTerr.max, terr)" type="button"
+									(mousedown)="checkboxAmountOfUnit(selectedUnitTerr.max, terr)" type="button"
 									class="btn btn-primary tight roundButton"><i
 										class="fa fa-fast-forward"></i></button>
 							</div>
@@ -430,15 +440,25 @@
 							</div>
 						</div>
 						<div *ngIf="battleAnalysisObj">
+							<button *ngIf="optionType=='movement' && selectedTerritory.nation==99 && battleAnalysisObj.soldierSlotsOpen>0"
+								(mousedown)="autoLoadButtonPressed()" type="button" class="btn btn-success roundButton glowButton">
+								Auto Load Ships</button>
 							<button *ngIf="optionType=='attack'" [disabled]="totalUnitsThatCanMove==0"
 								(mousedown)="autoButtonPressed()" type="button" class="btn btn-success roundButton">
 								Auto</button>
-							<button *ngIf="totalUnitsThatCanMove>0" (mousedown)="selectAllButtonChecked()" type="button"
+							<button *ngIf="totalUnitsThatCanMove>0 && (optionType=='attack' || selectedTerritory.nation<99)" (mousedown)="selectAllButtonChecked()" type="button"
 								[disabled]="totalUnitsThatCanMove==0" class="btn btn-success roundButton"> All</button>
-							<button (mousedown)="moveTroopsButtonPressed()" [disabled]="battleAnalysisObj.numAttUnits==0"
-								type="button" class="btn btn-success roundButton"
-								style="min-width: 120px; height: 50px;"><i class="fa fa-arrow-right"></i> Go</button>
+							<button (mousedown)="moveTroopsButtonPressed()"
+								[disabled]="battleAnalysisObj.numAttUnits==0" type="button"
+								class="btn btn-success roundButton" style="min-width: 120px; height: 50px;"><i
+									class="fa fa-arrow-right"></i> Go</button>
 
+						</div>
+						<div *ngIf="optionType=='movement' && selectedTerritory.nation==99 && (battleAnalysisObj.soldierSlotsOpen>0 || battleAnalysisObj.fighterSlotsOpen>0)" class="borderClass3">
+							<div>Available space on transports</div>
+							<span *ngIf="battleAnalysisObj.soldierSlotsOpen>0"><img src="{{ngUnitSrc(2, 1)}}" height="25">: <span class="bgHighlight">{{battleAnalysisObj.soldierSlotsOpen}}</span> </span>
+							<span *ngIf="battleAnalysisObj.soldierSlotsOpen>0"><img src="{{ngUnitSrc(3, 1)}}" height="25">: <span class="bgHighlight">{{battleAnalysisObj.vehicleSlotsOpen}}</span></span>
+							<span *ngIf="battleAnalysisObj.fighterSlotsOpen>0"><img src="{{ngUnitSrc(6, 1)}}" height="25">: <span class="bgHighlight">{{battleAnalysisObj.fighterSlotsOpen}}</span></span>
 						</div>
 						<div *ngIf="battleAnalysisObj && totalUnitsThatCanMove>0 && (optionType=='attack' || optionType=='cruise' || optionType=='nuke')"
 							style="font-size: 12px;">
@@ -493,14 +513,15 @@
 			<!--modal-body-->
 
 			<div class="modal-header" style="background-color: #337ab7;  border: 0">
-				<button (mousedown)="closeModal('#territoryPopup')" type="button"
-					class="btn btn-secondary roundButton" style="height: 60px;">Close</button>
+				<button (mousedown)="closeModal('#territoryPopup')" type="button" class="btn btn-secondary roundButton"
+					style="height: 60px;">Close</button>
 				<button *ngIf="adminModeFlg" (mousedown)="adminAllowMovePressed()" type="button"
 					class="btn btn-secondary roundButton" title="allow all units here to move">Unfeeze Units</button>
 				<button *ngIf="adminModeFlg" (mousedown)="moveHerosPressed()" type="button"
 					class="btn btn-secondary roundButton">Move Heros</button>
-				<button *ngIf="ableToTakeThisTurn && optionType=='production'" [disabled]="currentPlayer.money > 5" (mousedown)="completePurchaseButtonClicked()"
-					type="button" class="btn btn-success roundButton" style="height: 60px;">Purchase Complete</button>
+				<button *ngIf="ableToTakeThisTurn && optionType=='production'" [disabled]="currentPlayer.money > 5"
+					(mousedown)="completePurchaseButtonClicked()" type="button" class="btn btn-success roundButton"
+					style="height: 60px;">Purchase Complete</button>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>

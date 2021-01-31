@@ -62,12 +62,10 @@ function purchaseCPUUnits(player, gameObj, superpowersData, rank) {
         if (gameObj.round >= 100)
             player.money += 350; // keep players from dragging feet
 
-        if (rank <= 3 && player.money >= 30)
+        var difficultyNum = numberVal(gameObj.difficultyNum);
+        if (difficultyNum == -1 || rank <= 3)
             player.money -= 10;
 
-        var difficultyNum = numberVal(gameObj.difficultyNum);
-        if (difficultyNum == -1)
-            player.money -= 10;
         if (difficultyNum == 1)
             player.money += 10;
     }

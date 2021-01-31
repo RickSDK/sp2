@@ -402,6 +402,17 @@ function cargoSpaceForPiece(piece) {
 		return 22;
 	return 0;
 }
+function realCargoSpaceForPiece(piece) {
+	if (piece.id == 4 || piece.id == 8 || piece.id == 45)
+		return 40;
+	if (piece.id == 49)
+		return 10;
+	if (piece.subType == "ship")
+		return 0;
+	if (piece.subType == "bomber" || piece.id == 50)
+		return 20;
+	return 0;
+}
 function cargoUnitsForUnit(unit) {
 	if (unit.subType == "hero" || unit.subType == "aa")
 		return 1;

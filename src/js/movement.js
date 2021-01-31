@@ -422,7 +422,7 @@ function doubleCheckFighterCargo(terr, gameObj) {
     var fightserNeedLoading = [];
     terr.units.forEach(function (unit) {
         if (unit.subType == 'fighter') {
-            if(emptyTransportHash[unit.cargoOf]) {
+            if (emptyTransportHash[unit.cargoOf]) {
                 console.log('removing!!!');
                 unit.cargoOf = 0;
             }
@@ -815,8 +815,10 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
     var lastSelectedUnit;
     var infParatrooperCount = selectedTerritory.infParatrooperCount;
     var specialUnitHash = {};
-    var selectedUnitCounts = {}
-    var totalUnitCounts = {}
+    var selectedUnitCounts = {};
+    var totalUnitCounts = {};
+    var selectedSoldierCount = 0;
+    var selectedFighterCount = 0;
     for (var x = 0; x < moveTerr.length; x++) {
         var ter = moveTerr[x];
         for (var i = 0; i < ter.units.length; i++) {
@@ -841,7 +843,12 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
                         fighterUnitClicked = e;
                         fightersSelected++;
                     }
-
+                    if (unit.subType == 'soldier')
+                        selectedSoldierCount++;
+                    if (unit.subType == 'vehicle')
+                        selectedSoldierCount += 2;
+                    if (unit.subType == 'fighter')
+                        selectedFighterCount++;
                     if (unit.piece == 8)
                         carriersSelected++;
                     if (u && unit.terr == u.terr) {
@@ -1050,6 +1057,16 @@ function checkSendButtonStatus(u, moveTerr, optionType, selectedTerritory, playe
     });
 
     var obj = getBattleAnalysis({ attackUnits: units, defendingUnits: defendingUnits, cruiseFlg: (optionType == 'cruise') }, selectedTerritory, player, gameObj, optionType);
+    obj.selectedSoldierCount = selectedSoldierCount;
+    obj.selectedFighterCount = selectedFighterCount;
+
+    //   var remaingCargo = selectedTerritory.realCargoSpace - selectedTerritory.cargoUnits - (selectedSoldierCount*10) - (selectedVehicleCount*20);
+    //   obj.soldierSlotsOpen = Math.floor(remaingCargo/10);
+    //   obj.vehicleSlotsOpen = Math.floor(remaingCargo/20);
+
+    obj.soldierSlotsOpen = selectedTerritory.transportSpace - selectedTerritory.transportCargo - selectedSoldierCount;
+    obj.vehicleSlotsOpen = Math.floor((selectedTerritory.transportSpace - selectedTerritory.transportCargo - selectedSoldierCount) / 2);
+    obj.fighterSlotsOpen = selectedTerritory.carrierSpace - selectedTerritory.carrierCargo - selectedFighterCount;
     if (optionType == 'cruise')
         obj.expectedLosses = 0;
     if (optionType == 'nuke')
@@ -1128,7 +1145,28 @@ function autoButtonPressed(selectedTerritory, moveTerr, optionType, player) {
             }
         }
     });
-
+}
+function autoLoadButtonPressed(selectedTerritory, moveTerr, optionType, player) {
+    var checked = true;
+    var cargoSpace = selectedTerritory.cargoSpace;
+    var cargoUnits = selectedTerritory.cargoUnits;
+    moveTerr.forEach(function (terr) {
+        var t1 = document.getElementById('ter' + terr.id);
+        if (t1)
+            t1.checked = checked;
+        for (var x = 0; x < terr.units.length; x++) {
+            var unit = terr.units[x];
+            var e = document.getElementById('unit' + unit.id);
+            if (e && unit.allowMovementFlg && unit.piece != 13) {
+                if (unit.piece != 2 && unit.piece != 10 && unit.piece != 11)
+                    continue;
+                if (unit.piece != 2 || cargoSpace - cargoUnits > 10) {
+                    e.checked = checked;
+                    cargoUnits += 10;
+                }
+            }
+        }
+    });
 }
 function getSelectedUnits(moveTerr, gameObj) {
     var units = [];

@@ -409,10 +409,26 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 function doubleCheckCargoForTerr(terr, gameObj) {
 	terr.units.forEach(function (unit) {
 		if (unit.subType == 'fighter' && !unit.cargoOf) {
-			console.log('fix fighter!', unit.terr);
-			findTransportForThisCargo(unit, terr, gameObj);
+			var carrierID = carrierIdOfFighter(unit, terr, gameObj);
+			console.log('fix fighter!', carrierID);
+			if (carrierID > 0)
+				unit.cargoOf = carrierID;
+			else
+				findTransportForThisCargo(unit, terr, gameObj);
 		}
 	});
+}
+function carrierIdOfFighter(unit, terr, gameObj) {
+	carrierID = 0;
+	terr.units.forEach(function (carrier) {
+		if (carrier.piece == 8 && carrier.cargo && carrier.cargo.length > 0) {
+			carrier.cargo.forEach(function (c) {
+				if (c.id == unit.id)
+					carrierID = c.id;
+			});
+		}
+	});
+	return carrierID;
 }
 function alliesFromTreaties(player) {
 	var allies = [];
@@ -1318,6 +1334,7 @@ function getTerrOfUnitId(id, gameObj) {
 	return terrId;
 }
 function doubleCheckCargoIsOnTransport(unit, transport) {
+	return;
 	var loadedFlg = false;
 	var cargoUnits = 0;
 	transport.cargo.forEach(function (cUnit) {
@@ -1831,13 +1848,13 @@ function flagOfOwner(terr, showDetailsFlg, unitCount, isPurchasePhase, type) {
 	if (terr.capital || terr.nation == 99)
 		flag = 'flag' + ownBase + '.gif';
 
-//	if (terr.generalFlg && showDetailsFlg && type != 'ww2')
-//		flag = 'flagg' + own + '.gif';
-	terr.showGeneralFlg =  (terr.generalFlg && showDetailsFlg && terr.piece != 10);
+	//	if (terr.generalFlg && showDetailsFlg && type != 'ww2')
+	//		flag = 'flagg' + own + '.gif';
+	terr.showGeneralFlg = (terr.generalFlg && showDetailsFlg && terr.piece != 10);
 	terr.showLeaderFlg = (terr.leaderFlg && showDetailsFlg && terr.piece != 11);
 
-//	if (terr.leaderFlg && showDetailsFlg && type != 'ww2')
-//		flag = 'flagl' + own + '.gif';
+	//	if (terr.leaderFlg && showDetailsFlg && type != 'ww2')
+	//		flag = 'flagl' + own + '.gif';
 
 	if (own == 0 && terr.nation > 0 && terr.nation < 99) {
 		flag = 'flagn' + terr.nation + '.png';

@@ -1,5 +1,5 @@
 function spVersion() {
-	return 'v4.87';
+	return 'v4.88';
 }
 function googleAds() {
 	window.onload = function () {
@@ -59,6 +59,7 @@ function unitOfId(id, nation, pieceId, terrId, pieces, allowMovesFlg) {
 		type: unit.type,
 		subType: unit.subType,
 		cargoSpace: cargoSpaceForPiece(unit),
+		realCargoSpace: realCargoSpaceForPiece(unit),
 		cargoUnits: cargoUnitsForUnit(unit),
 		hp: 100
 	};
