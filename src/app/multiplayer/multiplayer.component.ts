@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { Router } from '@angular/router';
 import { UserPopupComponent } from '../user-popup/user-popup.component';
+import { Game } from '../classes/game';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 declare var userObjFromUser: any;
@@ -132,7 +133,8 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
           for (var x = 0; x < games.length; x++) {
             var game = games[x];
             if (game.length > 10) {
-              var gameOb = gameFromLine(game, this.user.userName);
+              var gameOb1 = gameFromLine(game, this.user.userName);
+              var gameOb: Game = new Game(gameOb1);
               if (gameOb.accountSitFlg) {
                 accountSitTotal++;
                 accountSitGameName = gameOb.name;
@@ -275,8 +277,8 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
           return;
         }
         if (game.maxRank > 0 && this.user.rank > game.maxRank) {
-          //         this.showAlertPopup('Sorry, you must be a ' + this.superpowersData.ranks[game.maxRank].name + ' or lower to join this game.', 1);
-          //        return;
+          this.showAlertPopup('Sorry, you must be a ' + this.superpowersData.ranks[game.maxRank].name + ' or lower to join this game.', 1);
+          return;
         }
         this.selectedGame = game;
         this.selectedTeam = 'R';
@@ -291,6 +293,7 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
 
     } else {
       // enter game
+      this.loadingFlg = true;
       localStorage.chatFlg = (game.chatFlg) ? 'Y' : 'N';
       this.router.navigate(['/board'], { queryParams: { 'id': game.gameId } });
     }
@@ -385,6 +388,20 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
     this.buttonActionMessage = 'Remove ' + player.name + ' from this game?';
     this.displayFixedPopup('actionConfirmationPopup');
 
+  }
+  editPlayerPressed(event: any) {
+    //changeTeamOfPlayer
+    //removePlayerFromGame
+    if (event.action == 'removePlayer')
+      this.removePlayerFromGame(event.game, event.player);
+    if (event.action == 'changeTeam')
+      this.changeTeamOfPlayer(event.game, event.player);
+    if (event.action == 'popupUser')
+      this.userPopupComp.show(event.player);
+    console.log(event);
+  }
+  openGamePressed(event: any) {
+    this.openGameButtonPressed(event.game, event.action);
   }
   openGameButtonPressed(game: any, action: string) {
     this.playClick();

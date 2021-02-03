@@ -1,4 +1,4 @@
-<div *ngIf="gameObj && gameObj.allowAlliances && gameObj.multiPlayerFlg && gameObj.top1.length>0 && gameObj.type != 'barbarian'">
+<div *ngIf="gameObj && gameObj.allowAlliances && gameObj.multiPlayerFlg && gameObj.top1 && gameObj.top1.length>0 && gameObj.type != 'barbarian'">
     <div class="borderClass3">
         <div class="darkBlueBg"><i class="fa fa-balance-scale"></i> Team Balancing</div>
         <img src="assets/graphics/images/flag{{gameObj.top1Nation}}.gif" height=15>

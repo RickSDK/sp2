@@ -166,7 +166,10 @@ display: none; position: absolute; font-weight: 900; text-shadow: 2px 2px 3px #f
 display: none; position: absolute; font-weight: 900; text-shadow: 2px 2px 3px #000;
 }
 .bottom-bar {
-	position: fixed; bottom: 0; background-color: #337ab7; color: white; width: 100%; padding: 5px; text-align: center;
+	position: fixed; overflow: hidden; white-space: nowrap; z-index: 100; bottom: 0; background-color: #337ab7; color: white; width: 100%; padding: 5px; text-align: center;
+}
+.top-bar {
+	position: fixed; overflow: hidden; white-space: nowrap; z-index: 100; top: 0; background-color: #337ab7; color: white; width: 100%; padding: 5px; text-align: center;
 }
 
 .circleButton {

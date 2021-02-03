@@ -65,6 +65,7 @@ import { HomeScreenPopupComponent } from './home-screen-popup/home-screen-popup.
 import { GoogleAdsComponent } from './google-ads/google-ads.component';
 import { ProgressBarComponent } from './progress-bar/progress-bar.component';
 import { CampaignComponent } from './campaign/campaign.component';
+import { GameDetailComponent } from './game-detail/game-detail.component';
 
 @NgModule({
   declarations: [
@@ -130,7 +131,8 @@ import { CampaignComponent } from './campaign/campaign.component';
     HomeScreenPopupComponent,
     GoogleAdsComponent,
     ProgressBarComponent,
-    CampaignComponent
+    CampaignComponent,
+    GameDetailComponent
   ],
   imports: [
     BrowserModule,

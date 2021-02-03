@@ -202,27 +202,15 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			.subscribe(params => {
 				this.gameId = params.id;
 			});
-
 	}
 
 	ngOnInit(): void {
-		preloadAllAudio();
+		this.gameObj = { territories: [] };
 		this.hostname = getHostname();
 		this.user = userObjFromUser();
-		this.svgs = loadSVGs();
-
-		this.warAudio.loop = false;
-		this.warAudio.preload = 'auto';
-		this.warAudio.volume = 0.4;
-		this.gameMusic.loop = false;
-		this.gameMusic.preload = 'auto';
-		this.endGameMusic.loop = false;
-		//this.endGameMusic.preload = 'auto';
-
-		this.gameObj = { territories: [] };
-		//this.cdr.detach();
-
-		this.initBoard();
+		setTimeout(() => {
+			this.initBoard();
+		}, 1000);
 
 		setTimeout(() => {
 			(this.adsbygoogle = (window as any).adsbygoogle || []).push({});
@@ -233,6 +221,17 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		return { left: svg.left, top: svg.top }
 	}
 	initBoard() {
+		preloadAllAudio();
+		this.svgs = loadSVGs();
+
+		this.warAudio.loop = false;
+		this.warAudio.preload = 'auto';
+		this.warAudio.volume = 0.4;
+		this.gameMusic.loop = false;
+		this.gameMusic.preload = 'auto';
+		this.endGameMusic.loop = false;
+		this.endGameMusic.preload = 'auto';
+
 		this.gameMusic.loop = true;
 		this.gameMusic.volume = 0.3;
 		var currentGameId = numberVal(localStorage.currentGameId);
@@ -657,6 +656,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 						var playerIsAwol = false;
 						if (hours > 24) {
 							var numAllies = numberHumanAllies(player, gameObj);
+							/*
 							if (hours > 48 && obj.rank <= 8) {
 								if (gameObj.type == 'battlebots' || gameObj.type == 'freeforall' || gameObj.round <= 2) {
 									playerIsAwol = true;
@@ -665,6 +665,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 									playerIsAwol = true;
 								if (hours > 60 && gameObj.round <= 6)
 									playerIsAwol = true;
+							}*/
+							if(hours > 48 && (gameObj.type == 'battlebots' || gameObj.type == 'freeforall')) {
+								playerIsAwol = true;
 							}
 							if (hours >= 60 && numAllies == 0) {
 								playerIsAwol = true;
@@ -1013,12 +1016,16 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			if (this.gameObj.currentCampaign == 3 && this.gameObj.round == 2) {
 				this.forceUserToClickTerritory(11);
 			}
+			if (this.gameObj.currentCampaign == 5 && this.gameObj.round == 2) {
+				this.forceUserToClickTerritory(7);
+			}
 			if (this.gameObj.currentCampaign == 5 && this.gameObj.round == 3) {
 				this.forceUserToClickTerritory(58);
 			}
 			if (this.gameObj.currentCampaign == 5 && this.gameObj.round == 4) {
 				this.forceUserToClickTerritory(58);
 			}
+
 		}
 		this.playerSetToPurchaseAndRefresh();
 	}
@@ -1754,6 +1761,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 	}
 	exitButtonPressed() {
+		this.showControls = false;
+		setTimeout(() => {
+			this.exitTheGame();
+		}, 100);
+	}
+	exitTheGame() {
 		this.gameMusic.pause();
 		this.endGameMusic.pause();
 		this.playClick();

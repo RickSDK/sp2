@@ -1,0 +1,164 @@
+<div class="gameOuter" [ngStyle]="ngStyleGameBg(game)" style="background-image: url('assets/graphics/backgrounds/metal2.jpg');">
+
+    <table width="100%">
+        <tr>
+            <td width="80">
+                <button (mousedown)="enterGame(game)" [ngClass]="ngClassGameButton(game)" type="button"
+                    class="btn btn-default roundButton">
+                    <div><i class="fa fa-arrow-right"></i></div>
+                    <span *ngIf="game.joinGameFlg">Join</span>
+                    <span *ngIf="!game.joinGameFlg">Enter</span>
+                </button>
+            </td>
+            <td width="35">
+                <img *ngIf="game.myNation" src="assets/graphics/images/flag{{game.myNation}}.gif" height="35"
+                    title="Your Nation"><br>
+            </td>
+            <td>
+                <div class="gameName">
+                    <i *ngIf="game.bugFlg" class="fa fa-bug mr-1" style="font-size: 12px; color: #337ab7;"></i>
+                    <i *ngIf="game.chatFlg" class="fa fa-commenting-o mr-1"
+                        style="font-size: 12px; color: #337ab7;"></i>
+                    <i class="fa {{ngClassGameType(game.gameType)}}"></i>
+                    {{game.name}}
+                </div>
+
+                <div style="font-size: 12px;" *ngIf="game.status == 'Open'">
+                    {{game.numPlayers}} / <span class="roundClass">{{game.size}}</span> Players
+                </div>
+                <div style="font-size: 12px;" *ngIf="game.status == 'Complete'">
+                    Game Over
+                </div>
+                <div style="font-size: 12px;" *ngIf="game.status == 'Playing'">
+                    <app-sp-time-left [timeLeftStr]="game.timeLeft"></app-sp-time-left>
+                    &nbsp;&nbsp;<span class="roundClass">{{game.round}}</span>
+                </div>
+                <div *ngIf="game.status == 'Playing'" style="cursor: pointer; overflow: hidden; white-space: nowrap; font-size: 12px;">
+                    <img src="assets/graphics/images/flag{{game.turnObj.nation}}.gif" height="20" title="Current Turn">
+                    <app-player-name (mousedown)="editPlayer(game, game.turnObj, 'popupUser')" [player]="game.turnObj">
+                    </app-player-name>
+                    <span *ngIf="game.turnObj.last_login_time>0"
+                        style="color: gray; font-size: 10px;">&nbsp;({{game.turnObj.last_login_time}} hr ago)</span>
+                    <i *ngIf="game.turnObj.onlineFlg" class="fa fa-circle mr-1" style="color: rgb(5, 150, 5);"
+                        title="Recently Online!"></i>
+                </div>
+            </td>
+
+            <td width="60">
+                <button (mousedown)="game.showDetailsFlg = !game.showDetailsFlg"
+                    [style.background-color]="game.mmFlg?'purple':'#337ab7'" style="color: white;" type="button"
+                    class="btn btn-default roundButton">
+                    <i class="fa fa-trophy" *ngIf="game.mmFlg"></i>
+                    <i class="fa fa-info-circle" *ngIf="!game.mmFlg"></i>
+                </button>
+            </td>
+        </tr>
+    </table>
+    <div *ngIf="game.showDetailsFlg">
+
+        <div *ngIf="game.status == 'Open'">
+            <button *ngIf="game.host == user.userName" [disabled]="game.players.length<2"
+                (mousedown)="openGameButtonPressed(game, 'start')" type="button" class="btn btn-warning roundButton">
+                <i class="fa fa-play"></i> Start Game</button>
+            <button *ngIf="game.host == user.userName && game.no_stats_flg"
+                (mousedown)="openGameButtonPressed(game, 'add_computer')" type="button"
+                class="btn btn-warning roundButton">
+                <i class="fa fa-android"></i> Add CPU</button>
+            <button *ngIf="game.host == user.userName || user.userName == 'Rick'"
+                (mousedown)="openGameButtonPressed(game, 'cancelGame')" type="button"
+                class="btn btn-danger roundButton">
+                <i class="fa fa-trash"></i> Delete Game</button>
+            <button *ngIf="game.inGame && game.host != user.userName"
+                (mousedown)="openGameButtonPressed(game, 'leaveGame')" type="button"
+                class="btn btn-warning roundButton"><i class="fa fa-sign-out"></i>
+                Leave</button>
+        </div>
+
+        <div class="spCard">
+            <div>
+                <div class="spTitle">Game Options</div>
+                <div class="spCardBody" style="font-size: 12px;">
+                    <div style="background-color: #ccc;">{{game.type}}</div>
+                    <div><i class="fa fa-h-square"></i> {{game.host}}</div>
+                    <div>{{game.size}} Players</div>
+                    <div *ngIf="game.mmFlg"><i class="fa fa-trophy"></i> Matchmaking</div>
+                    <div *ngIf="game.autoStart && game.status=='Open'"><i class="fa fa-check"></i> Auto-Start</div>
+                    <div *ngIf="game.autoSkip"><i class="fa fa-check"></i> Auto-Skip</div>
+                    <div *ngIf="game.fogofwar && !game.hardFog"><i class="fa fa-check"></i>
+                        Fog-of-War</div>
+                    <div *ngIf="game.hardFog"><i class="fa fa-check"></i> Hard-Fog</div>
+                    <div *ngIf="game.auto_assign_flg && game.status=='Open'"><i class="fa fa-check"></i> Auto-Nations
+                    </div>
+                    <div *ngIf="game.restrict_units_flg"><i class="fa fa-check"></i> No Spec
+                        Units</div>
+                    <div *ngIf="game.no_stats_flg && !game.mmFlg"><i class="fa fa-check"></i> No
+                        Stats</div>
+                    <div *ngIf="game.minRank>0 && game.minRank== game.maxRank"><i class="fa fa-check"></i>
+                        {{superpowersData.ranks[game.maxRank].name}} only!</div>
+                    <div *ngIf="game.minRank==7"><i class="fa fa-check"></i> No Newbs</div>
+                    <div *ngIf="game.maxRank==13"><i class="fa fa-check"></i> No Generals</div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="game.status=='Playing'" class="gameCard" style="min-width: 100px;">
+            <div class="darkBlueBg"><i class="fa fa-clock-o"></i> Timer</div>
+            <div>
+                <app-sp-time-left [timeLeftStr]="game.timeLeft"></app-sp-time-left>
+            </div>
+            <app-player-name [player]="game.turnObj"></app-player-name>
+            <div *ngIf="game.turnObj.onlineFlg" style="color: gray"><i class="fa fa-lightbulb-o"
+                    style="color: orange"></i> Online now!
+            </div>
+            <div *ngIf="!game.turnObj.onlineFlg" style="font-size: 10px; color: gray;">
+                Last Login:
+                <span style="font-size: 12px; color: green;"><b>{{game.turnObj.last_login_time}}</b></span>
+                hr ago
+            </div>
+            <div style="font-size: 10px; color: gray;">
+                Ave. Response: <span style="font-size: 12px; color: green;"><b>{{game.turnObj.turnSpeed}}</b></span> hrs
+            </div>
+        </div>
+        <div class="spCard">
+            <div>
+                <div class="spTitle">Players in Game</div>
+                <table class="spTable">
+                    <tr>
+                        <th>N</th>
+                        <th>Player</th>
+                        <th>$</th>
+                        <th *ngIf="game.type=='Locked'">T</th>
+                        <th></th>
+                    </tr>
+                    <tr *ngFor="let player of game.players" (mousedown)="editPlayer(game, player, 'popupUser')">
+                        <td><img src="assets/graphics/images/flag{{player.nation}}.gif" height="20"></td>
+                        <td>
+                            <i *ngIf="player.top" class="fa fa-star"></i>
+                            <i *ngIf="player.turnFlg" class="fa fa-check"></i>
+                            {{player.userName}}
+                        </td>
+                        <td style="color: green; font-weight: 700;">{{player.income}}</td>
+                        <td *ngIf="game.type=='Locked'">
+                            <span *ngIf="game.host != user.userName || game.status != 'Open'">{{player.team}}</span>
+                            <button *ngIf="game.host == user.userName && game.status == 'Open'"
+                                (mousedown)="editPlayer(game, player, 'changeTeam')" type="button"
+                                class="btn btn-primary roundButton">{{player.team}}
+                            </button>
+                        </td>
+                        <td style="font-size: 12px; color: gray;">
+                            <button
+                                *ngIf="game.host == user.userName && game.status == 'Open' && player.userName != user.userName"
+                                (mousedown)="editPlayer(game, player, 'removePlayer')" type="button"
+                                class="btn btn-danger roundButton"><i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+                <div class="spTitle" *ngIf="game.status=='Playing'"><i class="fa fa-star"></i>:
+                    Top-2 Player, <i class="fa fa-check"></i>: Turn</div>
+            </div>
+        </div>
+
+
+    </div>
+
+</div>

@@ -140,7 +140,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
 
     });
     this.totalMoveTerrs = moveTerr;
-    console.log('moveTerr', moveTerr);
+    //console.log('moveTerr', moveTerr);
     this.hostileMessage = populateHostileMessage('home', this.selectedTerritory, this.gameObj, this.currentPlayer);
     this.totalUnitsThatCanMove = totalUnitsThatCanMove;
     this.optionType = 'home';
@@ -200,6 +200,21 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     }
     if (gameObj.currentCampaign == 5 && gameObj.round == 1 && currentPlayer.status == 'Purchase' && terr.id == 110) {
       showAlertPopup('Because you have a factory in Germany, you can buy ships in any adjacent sea zone. For this campaign, buy extra transports to begin your invasion of United States.');
+    }
+    if (gameObj.currentCampaign == 5 && gameObj.round == 2 && currentPlayer.status == 'Purchase' && terr.id == 7) {
+      showAlertPopup('Keep in mind you don\'t have to spend all your coins. Consider saving some for your invasion of USA.');
+    }
+    if (gameObj.currentCampaign == 5 && gameObj.round == 3 && currentPlayer.status == 'Purchase' && terr.id == 58) {
+      showAlertPopup('Buy a factory this turn, then purchase additional troops here next turn.');
+    }
+    if (gameObj.currentCampaign == 5 && gameObj.round == 1 && currentPlayer.status == 'Attack' && terr.id == 110) {
+      showAlertPopup('Click "Load Ships" and then "Auto Load Ships" to get your troops onto your transport.');
+    }
+    if (gameObj.currentCampaign == 5 && gameObj.round == 2 && currentPlayer.status == 'Attack' && terr.id == 110) {
+      showAlertPopup('Click "Load Ships" and then "Select All" to get all your troops onto your transports.');
+    }
+    if (gameObj.currentCampaign == 5 && gameObj.round == 2 && currentPlayer.status == 'Attack' && terr.id == 107) {
+      showAlertPopup('Click "Load Ships" and then "Auto Load Ships" to get your troops onto your transport.');
     }
     if (gameObj.currentCampaign == 6 && gameObj.round == 1 && currentPlayer.status == 'Purchase' && terr.id == 7) {
       showAlertPopup('Buy Anti-balistics and Railway this turn. These are 2 unique technologies that you can purchase outright. Look for those buttons just to the left of the "Research" button.');
@@ -546,43 +561,6 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   }
 
   changeProdType(segmentIdx: number) {
-    /*
-    this.segmentIdx = segmentIdx;
-    this.productionDisplayUnits = [];
-    if (this.selectedTerritory.nation < 99 && this.selectedTerritory.factoryCount == 0)
-      return;
-    if (segmentIdx == 0) { //ground
-      this.productionDisplayUnits.push(this.superpowersData.units[1]);
-      this.productionDisplayUnits.push(this.superpowersData.units[2]);
-      this.productionDisplayUnits.push(this.superpowersData.units[3]);
-      this.productionDisplayUnits.push(this.superpowersData.units[19]);
-    }
-    if (segmentIdx == 1) { //air
-      this.productionDisplayUnits.push(this.superpowersData.units[6]);
-      this.productionDisplayUnits.push(this.superpowersData.units[7]);
-      this.productionDisplayUnits.push(this.superpowersData.units[13]);
-      this.productionDisplayUnits.push(this.superpowersData.units[14]);
-    }
-    if (segmentIdx == 2) { //water
-      this.productionDisplayUnits.push(this.superpowersData.units[4]);
-      this.productionDisplayUnits.push(this.superpowersData.units[5]);
-      this.productionDisplayUnits.push(this.superpowersData.units[8]);
-      this.productionDisplayUnits.push(this.superpowersData.units[9]);
-      this.productionDisplayUnits.push(this.superpowersData.units[12]);
-      this.productionDisplayUnits.push(this.superpowersData.units[6]);
-      this.productionDisplayUnits.push(this.superpowersData.units[13]);
-    }
-    if (segmentIdx == 2 || segmentIdx == 3) { //special
-      var num2 = parseInt(this.currentPlayer.nation) + 19;
-      if (this.user.rank >= 4)
-        this.tryThisUnit(num2);
-      if (this.user.rank >= 7)
-        this.tryThisUnit(num2 + 8);
-      if (this.user.rank >= 10)
-        this.tryThisUnit(num2 + 16);
-      if (this.user.rank >= 14)
-        this.tryThisUnit(num2 + 24);
-    }*/
   }
   tryThisUnit(id: number) {
     var unit = this.superpowersData.units[id];
