@@ -34,10 +34,14 @@
 			style="max-height: 22px; max-width: 45px;">
 
 	</div>
-	<img *ngIf="terr.showGeneralFlg" src="assets/graphics/units/piece10u.png" height="25" style="position: absolute; top: 0; left: 0; z-index: 2; pointer-events: none;">
-	<img *ngIf="terr.showLeaderFlg" src="{{ngUnitSrc(11, terr.owner)}}" height="25" style="position: absolute; top: 0; left: 15px; z-index: 2; pointer-events: none;">
-	<img *ngIf="terr.nuked" src="assets/graphics/images/nuke3.png" height="25" style="position: absolute; top: 0; left: -10px; z-index: 2; pointer-events: none;">
-	<img *ngIf="terr.defeatedByNation > 0" src="assets/graphics/images/attack.png" height="25" style="position: absolute; top: 0; left: -10px; z-index: 3; pointer-events: none;">
+	<img *ngIf="terr.showGeneralFlg" src="assets/graphics/units/piece10u.png" height="25"
+		style="position: absolute; top: 0; left: 0; z-index: 2; pointer-events: none;">
+	<img *ngIf="terr.showLeaderFlg" src="{{ngUnitSrc(11, terr.owner)}}" height="25"
+		style="position: absolute; top: 0; left: 15px; z-index: 2; pointer-events: none;">
+	<img *ngIf="terr.nuked" src="assets/graphics/images/nuke3.png" height="25"
+		style="position: absolute; top: 0; left: -10px; z-index: 2; pointer-events: none;">
+	<img *ngIf="terr.defeatedByNation > 0" src="assets/graphics/images/attack.png" height="25"
+		style="position: absolute; top: 0; left: -10px; z-index: 3; pointer-events: none;">
 </div>
 
 <!---nation labels--->
@@ -56,29 +60,31 @@
 		{{spVersion}} &nbsp;<i class="fa fa-mobile" *ngIf="!isDesktopFlg"></i> <i class="fa fa-desktop"
 			*ngIf="isDesktopFlg"></i></span>
 	<button (mousedown)="exitButtonPressed()" type="button" class="btn btn-secondary roundButton"><i
-			class="fa fa-arrow-left"></i>
-		Exit</button> 
-	<span *ngIf="currentPlayer && gameObj.actionButtonMessage==''">{{currentPlayer.status}}</span>
-	<button *ngIf="ableToTakeThisTurn && gameObj.actionButtonMessage && gameObj.actionButtonMessage.length>0 && !hideActionButton"
-		(mousedown)="completeTurnButtonPressed()" id="completeTurnButton" type="button"
-		class="btn btn-success roundButton">{{gameObj.actionButtonMessage}}</button>
-	<button *ngIf="ableToTakeThisTurn && hideActionButton" (mousedown)="redoPurchase()" type="button"
-		class="btn btn-success roundButton"><i class="fa fa-refresh"></i> Redo</button>
-	<button *ngIf="gameObj.actionButtonMessage == 'Complete Turn' && ableToTakeThisTurn && hideActionButton" (mousedown)="completeTurnButtonPressed()" type="button"
-		class="btn btn-success roundButton"><i class="fa fa-arrow-right"></i> End Turn</button>
+			class="fa fa-arrow-left"></i> Exit
+	</button>
 	<span *ngIf="this.gameObj.gameOver" style="font-size: 20px; font-weight: 700;">
 		Game Over!
 	</span>
 	<span *ngIf="currentPlayer && !this.gameObj.gameOver">
+		<span *ngIf="gameObj.actionButtonMessage==''">{{currentPlayer.status}}</span>
+		<span *ngIf="ableToTakeThisTurn">
+			<button *ngIf="allowRebuyFlg" (mousedown)="redoPurchase()" type="button"
+				class="btn btn-success roundButton"><i class="fa fa-refresh"></i> Redo</button>
+			<button *ngIf="gameObj.actionButtonMessage" (mousedown)="completeTurnButtonPressed()" id="completeTurnButton" type="button"
+				class="btn btn-success roundButton"><i class="fa fa-arrow-right"></i>
+				{{gameObj.actionButtonMessage}}</button>
+		</span>
+
 		<img (mousedown)="scrollToNation(currentPlayer.nation)"
 			src="{{spFlagOfNation(currentPlayer.nation, gameObj.type)}}" height=42
 			title="{{superpowersData.superpowers[gameObj.currentNation]}}" style="cursor: pointer;">
 		<span style="background-color: #777; color: white; border: 1px solid black;">{{currentPlayer.userName}}</span>
-		<span *ngIf="currentPlayer.status == 'Purchase'" style="background-color: #ccc; color: black; font-size: 14px; padding: 3px;">
-			<span><img src="assets/graphics/images/coin.png" height=30
-					title="coins">{{currentPlayer.money}} </span>
+		<span *ngIf="currentPlayer.status == 'Purchase'"
+			style="background-color: #ccc; color: black; font-size: 14px; padding: 3px;">
+			<span><img src="assets/graphics/images/coin.png" height=30 title="coins">{{currentPlayer.money}} </span>
 		</span>
 	</span>
+
 </section>
 <!---gray bar--->
 <div [style.background-color]="adminModeFlg?'red':'gray'"
@@ -101,22 +107,26 @@
 		<button id="unitsButton" (mousedown)="unitsPopup.show()" type="button" class="btn btn-primary tight roundButton"
 			style="line-height: 14px;"><i class="fa fa-fighter-jet"></i><br><span
 				style="font-size: 10px;">Units</span></button>
-		<button id="techButton" *ngIf="!gameObj.currentCampaign || gameObj.currentCampaign == 0 || gameObj.currentCampaign > 5" (mousedown)="techPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button"
+		<button id="techButton"
+			*ngIf="!gameObj.currentCampaign || gameObj.currentCampaign == 0 || gameObj.currentCampaign > 5"
+			(mousedown)="techPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)" type="button"
 			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-cogs"></i><br><span
 				style="font-size: 10px;">Tech</span></button>
-		<button *ngIf="!gameObj.currentCampaign || gameObj.currentCampaign == 0 || gameObj.currentCampaign > 6" id="alliesButton"
-			(mousedown)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 1)" type="button"
-			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-users"></i><br><span
-				style="font-size: 10px;">Allies</span></button>
-		<button id="logsButton" (mousedown)="logsPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, yourPlayer)" type="button"
+		<button *ngIf="!gameObj.currentCampaign || gameObj.currentCampaign == 0 || gameObj.currentCampaign > 6"
+			id="alliesButton" (mousedown)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 1)"
+			type="button" class="btn btn-primary tight roundButton" style="line-height: 14px;"><i
+				class="fa fa-users"></i><br><span style="font-size: 10px;">Allies</span></button>
+		<button id="logsButton"
+			(mousedown)="logsPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, yourPlayer)" type="button"
 			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i class="fa fa-list-ol"></i><br><span
 				style="font-size: 10px;">Logs</span></button>
 		<button *ngIf="gameObj.multiPlayerFlg" id="chatButton"
 			(mousedown)="chatPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, yourPlayer)" type="button"
 			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i
 				class="fa fa-commenting"></i><br><span style="font-size: 10px;">Chat</span></button>
-		<button *ngIf="!gameObj.currentCampaign || gameObj.currentCampaign == 0 || gameObj.currentCampaign > 6" (mousedown)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 2)"
-			type="button" class="btn btn-primary tight roundButton" style="line-height: 14px;"><i
+		<button *ngIf="!gameObj.currentCampaign || gameObj.currentCampaign == 0 || gameObj.currentCampaign > 6"
+			(mousedown)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 2)" type="button"
+			class="btn btn-primary tight roundButton" style="line-height: 14px;"><i
 				class="fa fa-line-chart"></i><br><span style="font-size: 10px;">Stats</span></button>
 		<button id="" (mousedown)="audioPopup.show()" type="button" class="btn btn-primary tight roundButton"
 			style="line-height: 14px;"><i class="fa fa-volume-up"></i><br><span
@@ -289,33 +299,48 @@
 	<div *ngIf="gameObj && superpowersData && gameObj.currentCampaign > 0">
 		<div style="font-size: 28px;">{{superpowersData.campaigns[gameObj.currentCampaign-1].name}}</div>
 		<div style="font-size: 12px;">{{superpowersData.campaigns[gameObj.currentCampaign-1].desc}}</div>
-		<div *ngIf="gameObj.currentCampaign>=1" style="font-size: 12px; text-align: left; border: 1px solid black; padding: 5px;">
+		<div *ngIf="gameObj.currentCampaign>=1"
+			style="font-size: 12px; text-align: left; border: 1px solid black; padding: 5px;">
 			<div *ngIf="gameObj.currentCampaign==1">
-				<div><img src="assets/graphics/units/piece3u.png" height="30"> <b>Basic Training:</b> Practice buying tanks and taking over a capital.</div>
+				<div><img src="assets/graphics/units/piece3u.png" height="30"> <b>Basic Training:</b> Practice buying
+					tanks and taking over a capital.</div>
 			</div>
 			<div *ngIf="gameObj.currentCampaign==2">
-				<div><img src="assets/graphics/units/leader2.png" height="30"> <b>National Leader:</b> 10 bonus coins per turn as long as he is alive. Also, all ground units defend at +1 when he is attacked.</div>
-				<div><img src="assets/graphics/units/piece10u.png" height="30"> <b>General:</b> All infantry attack at +1 when your general joins the battle. Also special abilities for each general. See Units tab for details.</div>
+				<div><img src="assets/graphics/units/leader2.png" height="30"> <b>National Leader:</b> 10 bonus coins
+					per turn as long as he is alive. Also, all ground units defend at +1 when he is attacked.</div>
+				<div><img src="assets/graphics/units/piece10u.png" height="30"> <b>General:</b> All infantry attack at
+					+1 when your general joins the battle. Also special abilities for each general. See Units tab for
+					details.</div>
 			</div>
 			<div *ngIf="gameObj.currentCampaign==3">
-				<div><img src="assets/graphics/units/piece7u.png" height="30"> <b>Bombers:</b> Your goal this campaign is to strategically bomb your enemy into submission. Read up on bombers on the units tab.</div>
-				<div><img src="assets/graphics/units/piece13u.png" height="30"> <b>Air Defense:</b> Protect your factories with Air Defense! Up to 2 per territory can be used. See the units tab.</div>
+				<div><img src="assets/graphics/units/piece7u.png" height="30"> <b>Bombers:</b> Your goal this campaign
+					is to strategically bomb your enemy into submission. Read up on bombers on the units tab.</div>
+				<div><img src="assets/graphics/units/piece13u.png" height="30"> <b>Air Defense:</b> Protect your
+					factories with Air Defense! Up to 2 per territory can be used. See the units tab.</div>
 			</div>
 			<div *ngIf="gameObj.currentCampaign==4">
-				<div><img src="assets/graphics/units/piece14u.png" height="30"> <b>Nukes:</b> Test out your nukes by launching them at enemy cities! Read up on nukes on the units tab.</div>
-				<div><img src="assets/graphics/units/piece13u.png" height="30"> <b>Air Defense:</b> Air defense units protect against nukes by reducing the amount of damage.</div>
+				<div><img src="assets/graphics/units/piece14u.png" height="30"> <b>Nukes:</b> Test out your nukes by
+					launching them at enemy cities! Read up on nukes on the units tab.</div>
+				<div><img src="assets/graphics/units/piece13u.png" height="30"> <b>Air Defense:</b> Air defense units
+					protect against nukes by reducing the amount of damage.</div>
 			</div>
 			<div *ngIf="gameObj.currentCampaign==5">
-				<div><img src="assets/graphics/units/piece4u.png" height="30"> <b>Transport:</b> Attempt an amphibious landings and take over the USA capital!</div>
+				<div><img src="assets/graphics/units/piece4u.png" height="30"> <b>Transport:</b> Attempt an amphibious
+					landings and take over the USA capital!</div>
 			</div>
 			<div *ngIf="gameObj.currentCampaign==6">
-				<div><img src="assets/graphics/units/piece18u.png" height="30"> <b>Technology:</b> Technologies are now available for purchase, which can help turn the tide of the war. See the "Tech" tab for details.</div>
+				<div><img src="assets/graphics/units/piece18u.png" height="30"> <b>Technology:</b> Technologies are now
+					available for purchase, which can help turn the tide of the war. See the "Tech" tab for details.
+				</div>
 			</div>
 			<div *ngIf="gameObj.currentCampaign==7">
-				<div><img src="assets/graphics/misc/news3.png" height="30"> <b>Diplomacy:</b> Join forces and win as a team. Try to ally with another player through offering Peace Treaties and Alliances. Control 4 capitals to win the game.</div>
+				<div><img src="assets/graphics/misc/news3.png" height="30"> <b>Diplomacy:</b> Join forces and win as a
+					team. Try to ally with another player through offering Peace Treaties and Alliances. Control 4
+					capitals to win the game.</div>
 			</div>
 			<div *ngIf="gameObj.currentCampaign==8">
-				<div><img src="assets/graphics/units/piece5u.png" height="30"> <b>Fog of War:</b> Enemy units are now masked from view, in this diplomacy game. Control 5 capitals to win the game.</div>
+				<div><img src="assets/graphics/units/piece5u.png" height="30"> <b>Fog of War:</b> Enemy units are now
+					masked from view, in this diplomacy game. Control 5 capitals to win the game.</div>
 			</div>
 		</div>
 	</div>
@@ -325,8 +350,9 @@
 		<p>You goal is to conquer at least 6 world superpowers!</p>
 	</div>
 	<div style="padding: 10px;"><button (mousedown)="introContinuePressed()" id="intro4" type="button"
-		class="btn btn-primary roundButton tall glowBlue">Start the Game!</button></div>
-	<div><a routerLink="/"><button id="intro5" type="button" class="btn btn-secondary roundButton">Exit Game</button></a></div>
+			class="btn btn-primary roundButton tall glowBlue">Start the Game!</button></div>
+	<div><a routerLink="/"><button id="intro5" type="button" class="btn btn-secondary roundButton">Exit
+				Game</button></a></div>
 </div>
 
 <div id="currentTurnPopup" class="popupScreenNoPad" style="text-align:center;" onClick="closePopup('currentTurnPopup')">
@@ -556,13 +582,16 @@
 <div id="diplomacyWarningPopup" class="popupScreen2">
 	<div class="title">-End Turn-</div>
 	<div class="borderClass2" *ngIf="showAllianceMessageFlg">
-		<div>Special Notice: You can form an alliance with another player and win the game together as a team. View the 'Allies' tab or 'Diplomacy' button to offer a peace treaty!</div>
-		<button (mousedown)="dismissAllianceMessage()" type="button" class="btn btn-success roundButton tall">Ok!</button>
+		<div>Special Notice: You can form an alliance with another player and win the game together as a team. View the
+			'Allies' tab or 'Diplomacy' button to offer a peace treaty!</div>
+		<button (mousedown)="dismissAllianceMessage()" type="button"
+			class="btn btn-success roundButton tall">Ok!</button>
 	</div>
 	<div *ngIf="!showAllianceMessageFlg">
 		<button onClick="closePopup('diplomacyWarningPopup')" type="button"
 			class="btn btn-secondary roundButton">Cancel</button>
-		<button *ngIf="currentPlayer && !currentPlayer.diplomacyFlg && (!gameObj.currentCampaign || gameObj.currentCampaign == 0 || gameObj.currentCampaign >=7)"
+		<button
+			*ngIf="currentPlayer && !currentPlayer.diplomacyFlg && (!gameObj.currentCampaign || gameObj.currentCampaign == 0 || gameObj.currentCampaign >=7)"
 			(mousedown)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 1)" type="button"
 			class="btn btn-warning roundButton">Diplomacy</button>
 		<button (mousedown)="placeUnitsAndEndTurn()" type="button" class="btn btn-success roundButton tall2"><i

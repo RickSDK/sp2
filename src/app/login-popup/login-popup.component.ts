@@ -96,7 +96,7 @@ export class LoginPopupComponent extends BaseComponent implements OnInit {
   }
   createFormButtonPressed() {
     if (this.user.rank < 2) {
-      showAlertPopup('Sorry! You must first complete the Single Player campaign before signing up for multiplayer.', 1);
+      showAlertPopup('Sorry! You must first complete Basic Training before signing up for multiplayer.', 1);
       return;
     }
     this.showLoginFlg = !this.showLoginFlg;

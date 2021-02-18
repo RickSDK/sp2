@@ -82,10 +82,13 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   public battleAnalysisObj: any;
   public yourPlayer: any;
   public battleDelay = 1200;
+  public isFactoryFlg = false;
   //battle board
   public displayBattle: any;
   public boardCols = [1, 2, 3, 4, 5];
   public allowFactoryFlg = true;
+  public factoryTerritories = [];
+  public factoryTerrIndex = 0;
 
   constructor() { super(); }
 
@@ -96,6 +99,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
     this.user = user;
     this.currentPlayer = currentPlayer;
     this.initView(gameObj, ableToTakeThisTurn, currentPlayer, user);
+    this.isFactoryFlg = ableToTakeThisTurn && terr.factoryCount > 0 && currentPlayer.status == 'Purchase' && terr.treatyStatus == 4;
 
     $("#territoryPopup").modal();
 
@@ -111,13 +115,8 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
         }
       }
       if (user.rank < 2 && currentPlayer.status == 'Attack') {
-        //          var ter = gameObj.territories[61];
-        //          if (ter.owner == 2 && gameObj.round == 1) {
-        //           showAlertPopup('Good job! Click "Complete Turn" at the top to finish your turn.');
-        //closePopup('generalWithdrawPopup');
         if (gameObj.round > 1 && gameObj.round < 5)
           highlightCompleteTurnButton(gameObj.round == 1);
-        //         }
       }
     });
     this.checkAllTroops = false;
@@ -128,17 +127,29 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
 
     var superpowersData = this.superpowersData;
     var moveTerr = [];
-    this.gameObj.territories.forEach(function (terr) {
-      if (terr.movableTroopCount > 0) {
-        refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPlayer);
-        totalUnitsThatCanMove += terr.movableTroopCount;
-        if (terr.movableTroopCount > 0) {
-          terr.distObj = { land: 9, air: 9, sea: 9 };
-          moveTerr.push(terr);
+    var factoryTerritories = [];
+    var factoryTerrIndex = 0;
+    var idx = 0;
+    this.gameObj.territories.forEach(function (terr2) {
+      if (ableToTakeThisTurn && terr2.factoryCount > 0 && currentPlayer.status == 'Purchase' && terr2.owner == currentPlayer.nation) {
+        factoryTerritories.push(terr2);
+        if (terr2.id == terr.id)
+          factoryTerrIndex = idx;
+        idx++;
+      }
+      if (terr2.movableTroopCount > 0) {
+        refreshTerritory(terr2, gameObj, currentPlayer, superpowersData, yourPlayer);
+        totalUnitsThatCanMove += terr2.movableTroopCount;
+        if (terr2.movableTroopCount > 0) {
+          terr2.distObj = { land: 9, air: 9, sea: 9 };
+          moveTerr.push(terr2);
         }
       }
-
     });
+    this.factoryTerritories = factoryTerritories;
+    this.factoryTerrIndex = factoryTerrIndex;
+    if (this.factoryTerritories.length < 2)
+      this.isFactoryFlg = false;
     this.totalMoveTerrs = moveTerr;
     //console.log('moveTerr', moveTerr);
     this.hostileMessage = populateHostileMessage('home', this.selectedTerritory, this.gameObj, this.currentPlayer);
@@ -181,7 +192,7 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       if (gameObj.round == 5 && currentPlayer.status == 'Attack' && terr.id == 17) {
         showAlertPopup('If you are able to control all territories belonging to a superpower (Brown ones for Russia) you will gain additional 10 coins/turn. You may also want to split up your forces to attack multiple territories. Just remember to include tanks and infantry with each battle. Tanks are better at attacking, but infantry are cheaper and will be used first as casualties.');
       }
-      if (gameObj.round > 5 && currentPlayer.status == 'Attack' && terr.id >= 16  && terr.id <= 20) {
+      if (gameObj.round > 5 && currentPlayer.status == 'Attack' && terr.id >= 16 && terr.id <= 20) {
         showAlertPopup('Control all the brown territories to end this campaign.');
       }
     }
@@ -265,6 +276,30 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
         this.battleHappened.emit('cdr');
       }, 500);
     }
+  }
+  territoryAdvance(nextFlg: boolean) {
+    if (this.factoryTerritories.length < 2) {
+      this.isFactoryFlg = false;
+      return;
+    }
+    if (nextFlg)
+      this.factoryTerrIndex++;
+    else
+      this.factoryTerrIndex--;
+
+    if (this.factoryTerrIndex < 0)
+      this.factoryTerrIndex = this.factoryTerritories.length - 1;
+
+    if (this.factoryTerrIndex > this.factoryTerritories.length - 1)
+      this.factoryTerrIndex = 0;
+
+    if (this.factoryTerrIndex < this.factoryTerritories.length) {
+      var terr = this.factoryTerritories[this.factoryTerrIndex];
+      this.selectedTerritory = terr;
+      //        this.show(terr, this.currentPlayer, this.gameObj, this.ableToTakeThisTurn, this.user, this.yourPlayer);
+    }
+
+
   }
   completePurchaseButtonClicked() {
     playClick();

@@ -89,6 +89,7 @@ function createNewGame(id, type, numPlayers, name, attack, pieces, startingNatio
 			'Objective: Control 4 capitals as a team to win.',
 			'Objective: Control 5 capitals as a team to win.',
 			'Objective: You must Control 6 capitals by yourself to win.',
+			'Objective: You must Control 6 capitals to win.',
 		]
 		gameObj.desc = descriptions[currentCampaign - 1];
 	}
@@ -405,7 +406,7 @@ function loadGameUnits(pieces, players, territories, currentCampaign, type) {
 		}
 	}
 	if (currentCampaign == 3) { //add factories for bombers to hit
-		units.push(unitOfId(id++, 2, 15, 11, pieces)); 
+		units.push(unitOfId(id++, 2, 15, 11, pieces));
 		units.push(unitOfId(id++, 2, 15, 12, pieces));
 		units.push(unitOfId(id++, 2, 15, 8, pieces));
 

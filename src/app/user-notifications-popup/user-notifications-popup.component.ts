@@ -70,7 +70,7 @@ export class UserNotificationsPopupComponent extends BaseComponent implements On
     this.emailSentFlg = true;
   }
   sendEmailToUser(email: string, code: number) {
-    var url = 'http://www.appdigity.com/pages/emailSP.php';
+    var url = 'https://www.appdigity.com/pages/emailSP.php';
     var postData = this.getPostDataFromObj({ email: email, code: code });
     console.log('1x', postData);
     fetch(url, postData).then((resp) => resp.text())

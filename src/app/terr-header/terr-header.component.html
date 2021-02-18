@@ -57,21 +57,6 @@
                     Ally</td>
         </tr>
     </table>
-    <div *ngIf="0">
-        <div *ngIf="selectedTerritory.treatyStatus==0" style="font-size: 13px; color: gray;">You are currently at war!
-        </div>
-        <div *ngIf="selectedTerritory.treatyStatus==1" style="font-size: 13px; color: gray;">It will cost you 5 coins to
-            attack this turn. Optionally, you can declare war this turn, then attack for free next turn.
-        </div>
-        <div *ngIf="selectedTerritory.treatyStatus==2" style="font-size: 13px; color: gray;">It will cost you 10 coins
-            to
-            attack this turn. Optionally, you can declare war this turn, then attack for free next turn.
-        </div>
-        <div *ngIf="selectedTerritory.treatyStatus==3" style="font-size: 13px; color: gray;">It will cost you 15 coins
-            to
-            attack this turn. Optionally, you can declare war this turn, then attack for free next turn.
-        </div>
-    </div>
 </div>
 
 <div *ngIf="selectedTerritory.capital && selectedTerritory.id<79"

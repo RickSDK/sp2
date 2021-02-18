@@ -70,7 +70,10 @@ export class ForumPopupComponent extends BaseComponent implements OnInit {
               var newFlg = (dif >= 0) ? 'N' : 'Y';
               if ((c[0] == '4' || c[0] == '5') && !adminFlg)
                 return;
-              forumTopics.push({ icon: icons[x], category: c[0], name: c[1], topic_count: c[2], post_count: c[3], user: c[4], userId: c[5], dateStamp: dt.oracle, timeStamp: c[6], newFlg: newFlg, localDate: dt.localDate });
+              var localDate = dt.localDate;
+              if (!localDate || localDate == 'Invalid Date')
+                localDate = c[6];
+              forumTopics.push({ icon: icons[x], category: c[0], name: c[1], topic_count: c[2], post_count: c[3], user: c[4], userId: c[5], dateStamp: dt.oracle, timeStamp: c[6], newFlg: newFlg, localDate: localDate });
             }
           });
           this.forumTopics = forumTopics;

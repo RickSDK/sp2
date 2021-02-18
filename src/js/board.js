@@ -238,6 +238,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	terr.units = units;
 	terr.movableTroopCount = movableTroopCount;
 	if (terr.defeatedByNation > 0 && numberVal(terr.defeatedByRound) < gameObj.round - 1) {
+		console.log('xxxxxx', terr.defeatedByNation, gameObj.round);
 		terr.defeatedByNation = 0;
 	}
 	terr.enemyPiecesExist = enemyPiecesExist;
@@ -933,7 +934,9 @@ function cleanUpTerritories(player, gameObj) {
 		if (player.status == 'Attack' || player.cpu) {
 			if (terr.attackedByNation == player.nation)
 				terr.attackedByNation = 0;
-			if (terr.defeatedByNation == player.nation) {
+
+
+			if (terr.defeatedByNation == player.nation && terr.defeatedByRound < gameObj.round) {
 				terr.defeatedByNation = 0;
 				terr.defeatedByRound = 0;
 			}
@@ -1271,12 +1274,15 @@ function highlightTerritoryWithArrow(terrId, gameObj) {
 	var terr = gameObj.territories[terrId - 1];
 	highlightMessageWithArrow(terr.x - 40, terr.y + 140);
 }
-function highlightElementWithArrow(elementId) {
+function highlightElementWithArrow(elementId, shiftFlg = false) {
 	var e = document.getElementById(elementId);
 	if (e) {
 		var box = e.getBoundingClientRect();
-		console.log('box', box);
-		highlightMessageWithArrow(box.left + 50, box.top + box.height);
+		var shift = 50;
+		if (shiftFlg)
+			shift = -20;
+		//console.log('box', box);
+		highlightMessageWithArrow(box.left + shift, box.top + box.height);
 	}
 }
 function highlightMessageWithArrow(x, y) {

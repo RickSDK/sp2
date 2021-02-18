@@ -2,8 +2,8 @@
 function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
     if (0 && unit.piece == 49 && toTerr.id == 131) {
         console.log('cm', unit.piece, unit.terr, distObj, optionType);
-        //return true;    // if this function returns true, a checkbox will show up
-    }
+     }
+    //return true;    // if this function returns true, a checkbox will show up
 
     if (unit.owner != currentPlayer.nation)
         return false;
@@ -1163,6 +1163,26 @@ function autoLoadButtonPressed(selectedTerritory, moveTerr, optionType, player) 
                 if (unit.piece != 2 || cargoSpace - cargoUnits > 10) {
                     e.checked = checked;
                     cargoUnits += 10;
+                }
+            }
+        }
+    });
+    if(cargoSpace - cargoUnits < 20)
+        return;
+    // now load tanks
+    moveTerr.forEach(function (terr) {
+        var t1 = document.getElementById('ter' + terr.id);
+        if (t1)
+            t1.checked = checked;
+        for (var x = 0; x < terr.units.length; x++) {
+            var unit = terr.units[x];
+            var e = document.getElementById('unit' + unit.id);
+            if (e && unit.allowMovementFlg && unit.piece != 13) {
+                if (unit.subType != 'vehicle')
+                    continue;
+                if (cargoSpace - cargoUnits > 20) {
+                    e.checked = checked;
+                    cargoUnits += 20;
                 }
             }
         }

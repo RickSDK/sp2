@@ -384,10 +384,9 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
   removePlayerFromGame(game: any, player: any) {
     this.buttonAction = 'removePlayer';
     this.selectedGame = game;
-    this.playerId = player.id;
+    this.playerId = player.playerId;
     this.buttonActionMessage = 'Remove ' + player.name + ' from this game?';
     this.displayFixedPopup('actionConfirmationPopup');
-
   }
   editPlayerPressed(event: any) {
     //changeTeamOfPlayer

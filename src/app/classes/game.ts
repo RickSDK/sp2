@@ -66,7 +66,7 @@ export class Game {
         this.accountSitFlg = obj.accountSitFlg;
         this.slowResponseFlg = obj.slowResponseFlg;
 
-        this.showDetailsFlg = obj.status == 'Open';
+        this.showDetailsFlg = false;
     }
 }
 

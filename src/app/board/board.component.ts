@@ -164,11 +164,13 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	public carrierAddedFlg = false;
 	public adminModeFlg = false;
 	public showPanelsFlg = true;
-	public hideActionButton = false;
+	public allowRebuyFlg = false;
 	public displayBattle: any;
 	public warAudio = new Audio('assets/sounds/war1.mp3');
-	public gameMusic = new Audio('assets/music/menu.mp3');
-	public endGameMusic = new Audio('assets/music/introAudio.mp3');
+	//public gameMusic = new Audio('assets/music/menu.mp3');
+	//public endGameMusic = new Audio('assets/music/introAudio.mp3');
+	public gameMusic = new Audio('http://www.superpowersgame.com/music/menu.mp3');
+	public endGameMusic = new Audio('http://www.superpowersgame.com/music/introAudio.mp3');
 	public haltPurchaseFlg = false;
 	public haltCombatActionFlg = false;
 	public haltActionFlg = false;
@@ -208,6 +210,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.gameObj = { territories: [] };
 		this.hostname = getHostname();
 		this.user = userObjFromUser();
+		startSpinner('Loading Game', '100px');
+
 		setTimeout(() => {
 			this.initBoard();
 		}, 1000);
@@ -236,7 +240,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.gameMusic.volume = 0.3;
 		var currentGameId = numberVal(localStorage.currentGameId);
 		this.loadingFlg = true;
-		startSpinner('Loading Game', '100px');
 		updateProgressBar(20);
 		if (this.gameId > 0) {
 			this.getMultiplayerGameObjFromServer();
@@ -278,7 +281,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					capitalsWin = this.superpowersData.campaigns[currentCampaign - 1].capitalsWin;
 					if (currentCampaign >= 8)
 						startingNation = Math.round(currentCampaign) - 3;
-					if (currentCampaign == 9)
+					if (currentCampaign == 9 || currentCampaign == 11)
 						startingNation = 1; //usa
 				}
 
@@ -408,21 +411,25 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	adminFixBoard() {
 		this.showAlertPopup('Fix on!', 1);
 
-		//var player2 = this.gameObj.players[6];
-		//player2.treaties=[0,3,3,0,0,0,4,3];
+		//var player2 = this.gameObj.players[0];
+		//player2.treaties=[3, 1, 1, 1, 0, 1, 0, 1];
+		//var player3 = this.gameObj.players[3];
+		//player3.treaties=[1, 1, 3, 1, 0, 1, 0, 1];
 
-		var terrId = 16;
+		var terrId = 104;
 		var terr = this.gameObj.territories[terrId - 1];
 		//terr.owner = 5;
-		//this.addUnitToTerr(terr, 6, true, true, true);
+		//this.addUnitToTerr(terr, 3, true, true, false);
+		//terr.facBombed = false;
 
-
+		//var player = this.gameObj.players[7];
+		//player.money = 97;
 
 		if (0) {
 			var x = 0;
 			terr.units.forEach(unit => {
-				if (unit.terr == terrId && (unit.piece == 6 && unit.owner == 1)) {
-					unit.terr = 61;
+				if (unit.terr == terrId && (unit.piece == 10)) {
+					unit.terr = 101;
 				}
 			});
 		}
@@ -431,11 +438,11 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		if (0) {
 			setTimeout(() => {
-				this.addUnitToTerr(terr, 1, true, true, true);
-				this.addUnitToTerr(terr, 1, true, true, true);
-				this.addUnitToTerr(terr, 1, true, true, true);
-				this.addUnitToTerr(terr, 2, true, true, true);
-				this.addUnitToTerr(terr, 2, true, true, true);
+				this.addUnitToTerr(terr, 13, true, true, false);
+				//this.addUnitToTerr(terr, 1, true, true, true);
+				//this.addUnitToTerr(terr, 1, true, true, true);
+				//this.addUnitToTerr(terr, 2, true, true, true);
+				//this.addUnitToTerr(terr, 2, true, true, true);
 				//this.addUnitToTerr(terr, 3, true, true, true);
 				//this.addUnitToTerr(terr, 11, true, true, true);
 			}, 1000);
@@ -524,10 +531,13 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		//--------------------end test
 		this.currentPlayer = getCurrentPlayer(this.gameObj);
 		if (0) {
+			this.currentPlayer = this.gameObj.players[4];
+			this.gameObj.turnId = this.currentPlayer.turn;
 			// if chaning turn
-			this.currentPlayer.status = 'Attack';
-			this.currentPlayer.money = 0;
-			//select * from SP_PLAYER where game = '11297'
+			//this.currentPlayer.status = 'Attack';
+			this.currentPlayer.money = 20;
+			console.log('select * from SP_PLAYER where game = \'' + this.gameObj.id + '\' AND user = \'' + this.currentPlayer.userId + '\'');
+			console.log('update SP_GAME set turn = \'xxx\' where row_id = \'' + this.gameObj.id + '\'');
 			//update SP_GAME set turn = '49204' where row_id = '11297'
 		}
 		this.currentPlayerNation = this.currentPlayer.nation;
@@ -657,7 +667,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 						if (hours > 24) {
 							var numAllies = numberHumanAllies(player, gameObj);
 							/*
-							if (hours > 48 && obj.rank <= 8) {
+							if (hours > 48 ) {
 								if (gameObj.type == 'battlebots' || gameObj.type == 'freeforall' || gameObj.round <= 2) {
 									playerIsAwol = true;
 								}
@@ -666,7 +676,12 @@ export class BoardComponent extends BaseComponent implements OnInit {
 								if (hours > 60 && gameObj.round <= 6)
 									playerIsAwol = true;
 							}*/
-							if(hours > 48 && (gameObj.type == 'battlebots' || gameObj.type == 'freeforall')) {
+							if (hours > 48 && obj.rank <= 4) {
+								if (gameObj.round <= 2 || gameObj.numPlayers == 2)
+									playerIsAwol = true;
+							}
+
+							if (hours > 48 && (gameObj.type == 'battlebots' || gameObj.type == 'freeforall')) {
 								playerIsAwol = true;
 							}
 							if (hours >= 60 && numAllies == 0) {
@@ -679,10 +694,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 								secondsLeftInTimer = 43000; // allow for account sit
 
 							console.log('----possible awol----');
-							console.log('hours', hours);
-							console.log('rank', obj.rank);
-							console.log('numAllies', numAllies);
-							console.log('playerIsAwol', playerIsAwol);
+							console.log('----hours', hours);
+							console.log('----rank', obj.rank);
+							console.log('----numAllies', numAllies);
+							console.log('----playerIsAwol', playerIsAwol);
 						}
 						if (ableToTakeThisTurn && obj.time_elapsed > 57600) {
 							var elapsedHours = Math.round(obj.time_elapsed / 3600);
@@ -820,7 +835,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.currentPlayer.status == 'Purchase')
 			defaultLine = 'Round ' + this.gameObj.round + '. Conduct attacks, then press "Complete Turn" button at the top to end your turn.';
 
-		if (this.gameObj.currentCampaign == 2) {
+		if (this.gameObj.currentCampaign == 2 && this.gameObj.round == 2) {
 			playVoiceClip('round' + this.gameObj.round + '.mp3');
 			militaryAdvisorPopup('Your goal this campaign is to take over all the Russian territories, which are the ones colored brown.');
 			return;
@@ -890,14 +905,14 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.gameObj.currentCampaign == 4) {
 			this.btPopupMessage = 'Click on the "Units" button and research Nuclear Missiles under the "Air" units tab.';
 			setTimeout(() => {
-				highlightElementWithArrow('unitsButton');
+				highlightElementWithArrow('unitsButton', true);
 			}, 1000);
 			return;
 		}
 		if (this.gameObj.currentCampaign == 6) {
 			this.btPopupMessage = 'Click on the "Tech" tab to see all of the technology possible. Click on the "Info" and "Show Description" buttons to see the details.';
 			setTimeout(() => {
-				highlightElementWithArrow('techButton');
+				highlightElementWithArrow('techButton', true);
 			}, 1000);
 			return;
 		}
@@ -959,7 +974,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	initializePlayerForPurchase() {
 		//human & cpu
 		var player = this.currentPlayer;
-		this.hideActionButton = false;
+		this.allowRebuyFlg = false;
 		player.carrierAddedFlg = false;
 		player.battleFlg = false;
 		player.diplomacyFlg = false;
@@ -1035,7 +1050,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.currentPlayer.status = 'Diplomacy';
 		} else {
 			this.currentPlayer.status = 'Purchase';
-			this.gameObj.actionButtonMessage = '';	
+			this.gameObj.actionButtonMessage = '';
 		}
 		refreshAllPlayerTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 	}
@@ -1048,8 +1063,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		resetAllPlayerDistanceObjects(this.gameObj, this.currentPlayer);
 		this.newPlayerHelpText = 'Make an attack, or move units or press "End Turn"';
 
-		this.gameObj.actionButtonMessage = '';
-		this.hideActionButton = !this.currentPlayer.battleFlg;
+		this.allowRebuyFlg = !this.currentPlayer.battleFlg;
+		this.gameObj.actionButtonMessage = (this.allowRebuyFlg) ? 'End Turn' : 'Complete Turn';
 		if (this.currentPlayer.cpuFlg)
 			this.computerGo();
 		else {
@@ -1620,7 +1635,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	completingPurchases() {
 		this.playerSetToAttackAndRefresh();
-		this.hideActionButton = !this.hideActionButton;
+		this.allowRebuyFlg = true;
 		this.logPurchases(this.currentPlayer);
 		scrubUnitsOfPlayer(this.currentPlayer, this.gameObj, this.superpowersData.units); // in case of tech
 		if (!this.currentPlayer.cpuFlg)
@@ -1846,9 +1861,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		};
 	}
 	battleCompletedEmit(battleObj: any) {
-		if (this.hideActionButton)
-			this.hideActionButton = false;
+		if (this.allowRebuyFlg)
+			this.allowRebuyFlg = false;
 
+		this.gameObj.actionButtonMessage = 'Complete Turn';
 		resetAllPlayerDistanceObjects(this.gameObj, this.currentPlayer);
 		this.battleObj = battleObj;
 		this.newPlayerHelpText = 'Press "Complete Turn" button at the top.';
@@ -1856,7 +1872,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.gameObj.currentCampaign == 4 && this.gameObj.round == 1) {
 			this.btPopupMessage = 'Click on the "Logs" button to see a full report of damage.';
 			setTimeout(() => {
-				highlightElementWithArrow('logsButton');
+				highlightElementWithArrow('logsButton', true);
 			}, 1000);
 		}
 		if (this.gameObj.currentCampaign == 5 && battleObj.terr == 59 && battleObj.militaryObj.wonFlg) {
@@ -2232,7 +2248,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	redoPurchase() {
 		playClick();
 		this.playerSetToPurchaseAndRefresh();
-		this.hideActionButton = !this.hideActionButton;
+		this.allowRebuyFlg = false;
 		this.logItem(this.currentPlayer, 'Redoing Purchases', 'Redo');
 	}
 	completeTurnButtonPressed() {
@@ -2263,7 +2279,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.currentPlayer.status == 'Purchase') {
 			this.completingPurchases();
 		} else if (this.currentPlayer.status == 'Attack') {
-			this.hideActionButton = false;
+			this.allowRebuyFlg = false;
 			displayFixedPopup('diplomacyWarningPopup');
 		} else if (this.currentPlayer.status == 'Place Units')
 			this.placeUnitsAndEndTurn();
@@ -2273,7 +2289,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		playClick();
 		closePopup('actionPopup');
 		closePopup('diplomacyWarningPopup');
-		this.hideActionButton = false;
+		this.allowRebuyFlg = false;
 		this.gameObj.actionButtonMessage = '';
 		this.currentPlayer.status = 'Place Units';
 		this.carrierAddedFlg = false;
@@ -2372,6 +2388,11 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			showAlertPopup('New Carrier placed. You can load fighters onto it or press "Complete Turn".', 1);
 			return;
 		}
+		if (this.currentPlayer.status != "Place Units") {
+			console.log('this.currentPlayer.status', this.currentPlayer.status);
+			showAlertPopup('Turn out of sync!', 1);
+			return;
+		}
 		this.uploadMultiplayerFlg = this.gameObj.multiPlayerFlg;
 		if (this.gameObj.multiPlayerFlg) {
 			startSpinner('Saving...', '150px', 'spinnerOKButton');
@@ -2403,7 +2424,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 			this.gameObj.actionButtonMessage = '';
 			this.ableToTakeThisTurn = false;
-			this.hideActionButton = false;
+			this.allowRebuyFlg = false;
 			this.showControls = true;
 
 			saveGame(this.gameObj, this.user, this.currentPlayer, false, true, prevPlayer, 0);
@@ -2557,7 +2578,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				techs.push(tech.name);
 			}
 			if (id == 52) {
-				this.hideActionButton = false;
+				this.allowRebuyFlg = false;
 				this.removeEMPFromServer();
 				this.currentPlayer.empPurchaseRd = this.gameObj.round;
 				var terr = this.gameObj.territories[pUnit.terr - 1];

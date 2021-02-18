@@ -129,9 +129,9 @@
                         <th *ngIf="game.type=='Locked'">T</th>
                         <th></th>
                     </tr>
-                    <tr *ngFor="let player of game.players" (mousedown)="editPlayer(game, player, 'popupUser')">
+                    <tr *ngFor="let player of game.players">
                         <td><img src="assets/graphics/images/flag{{player.nation}}.gif" height="20"></td>
-                        <td>
+                        <td  (mousedown)="editPlayer(game, player, 'popupUser')">
                             <i *ngIf="player.top" class="fa fa-star"></i>
                             <i *ngIf="player.turnFlg" class="fa fa-check"></i>
                             {{player.userName}}

@@ -233,7 +233,7 @@ function emailNextPlayer(line, gameName) {
 	}
 }
 function sendEmailToNextPlayer(email, code, gameName) {
-	var url = 'http://www.appdigity.com/pages/emailSP.php';
+	var url = 'https://www.appdigity.com/pages/emailSP.php';
 	const postData = this.getPostDataFromObj({ email: email, code: code, gameName: gameName });
 
 	fetch(url, postData).then((resp) => resp.text())
@@ -401,9 +401,24 @@ function loadMultiPlayerGame(data) {
 	gameObj.gameUpdDt = c[5];
 	gameObj.secondsSinceUpdate = c[6];
 	gameObj.secondsLeft = c[7];
-	console.log('secondsLeft:', gameObj.secondsLeft);
-	console.log('gameObj:', gameObj);
+	gameObj.numPlayers = countPlayers(gameObj.players);
+	//console.log('secondsLeft:', gameObj.secondsLeft);
+	//console.log('gameObj:', gameObj);
 	return gameObj;
+}
+function countPlayers(players) {
+	var playerHash = {};
+	var playerCount = 0;
+	players.forEach(function (player) {
+		if (!playerHash[player.playerId]) {
+			playerHash[player.playerId] = true;
+			playerCount++;
+		}
+	});
+	if (playerCount > 1)
+		return playerCount;
+	else
+		return players.length;
 }
 function parseSavedGame(objMain, logs, players, territories, units) {
 	var gameObj = {};

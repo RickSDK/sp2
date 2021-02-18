@@ -12,6 +12,7 @@ declare var saveUserObj: any;
 })
 export class CampaignComponent extends BaseComponent implements OnInit {
   public showVideoPlayerFlg = false;
+  public campaignFlg = false;
   public showCampaignsFlg = false;
   public currentVideo: any;
   public guestNum = 0;
@@ -46,13 +47,13 @@ export class CampaignComponent extends BaseComponent implements OnInit {
     if (campaign.lock)
       return 'btn btn-secondary roundButton';
     if (campaign.id == this.campaignId)
-      return 'btn btn-success roundButton';
+      return 'btn btn-primary roundButton glowButton';
 
     return 'btn btn-primary roundButton';
   }
   selectCampaign(campaign: any, startGame: any) {
     if (campaign.lock) {
-      this.showAlertPopup('Sorry, this Campaign is locked. Complete the previous campaign first.', 1);
+      this.showAlertPopup('Sorry, this Tutorial is locked. Complete the previous one first.', 1);
       return;
     }
     localStorage.currentCampaign = campaign.id;
@@ -61,13 +62,18 @@ export class CampaignComponent extends BaseComponent implements OnInit {
     else
       startGame.show();
   }
-  singlePlayerGame(startGame: any) {
-    if (!this.user.rank || this.user.rank < 1) {
-      this.showAlertPopup('Whoa! You have no idea what you are doing yet! Complete the Campaign before playing a standard single player game.', 1);
+  campaignClicked(campaignFlg: boolean) {
+    if (campaignFlg && (!this.user.rank || this.user.rank <= 1)) {
+      this.showAlertPopup('Whoa! You have no idea what you are doing yet! Complete Basic Training first!', 1);
       return;
     }
-    if (this.user.rank == 1) {
-      this.showAlertPopup('You must be Private 1st Class to unlock this option. Complete Campaign #8 get promoted.', 1);
+    this.campaignFlg = campaignFlg;
+
+    this.showCampaignsFlg = true;
+  }
+  singlePlayerGame(startGame: any) {
+    if (!this.user.rank || this.user.rank <= 1) {
+      this.showAlertPopup('Whoa! You have no idea what you are doing yet! Complete Basic Training first!', 1);
       return;
     }
     localStorage.currentCampaign = 0;
@@ -80,8 +86,10 @@ export class CampaignComponent extends BaseComponent implements OnInit {
     this.user = userObjFromUser();
     this.campaignId = localStorage.campaignId || 1;
     console.log('campaignId', this.campaignId, this.user.rank);
-    if (this.campaignId > 1 && this.campaignId <= 8)
+    if (this.user.rank <=1 || (this.campaignId > 1 && this.campaignId <= 8)) {
       this.showCampaignsFlg = true;
+      this.campaignFlg = false;
+    }
 
     if (this.user.rank < 1)
       this.campaignId = 1;
