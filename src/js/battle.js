@@ -1283,6 +1283,8 @@ function transferControlOfTerr(terr, nation, gameObj, annihilationFlg, player) {
     }
 
     terr.owner = nation;
+    if(terr.nuked)
+        terr.nuked = false;
     terrUnits = [];
     gameObj.units.forEach(function (unit) {
         if (unit.terr == terr.id && unit.piece != 44) { //seals exempt

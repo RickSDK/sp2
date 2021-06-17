@@ -1,17 +1,23 @@
 <!------------------top units----------------------------->
 <div class="terr-card">
-    <div>
-        <img *ngFor="let nation of selectedTerritory.flags" src="assets/graphics/images/flag{{nation}}.gif" height=30 style="cursor: pointer;"
-        (click)="switchOwnership(nation)">
-        {{selectedTerritory.name}} units
-        <button *ngIf="selectedTerritory.unitCount>0" (click)="unitDetailFlg=!unitDetailFlg" type="button"
+    <div >
+
+        Units
+        <button *ngIf="selectedTerritory.unitCount>0 && !selectedTerritory.fogOfWar" (click)="unitDetailFlg=!unitDetailFlg" type="button"
             class="btn btn-secondary roundButton"><i class="fa fa-retweet"></i></button>
     </div>
-    <div *ngIf="ableToTakeThisTurn && selectedTerritory.id <= 79 && selectedTerritory.flags.length > 1 && selectedTerritory.owner==currentPlayer.nation && currentPlayer.status=='Attack'"
+
+    <div *ngIf="0 && ableToTakeThisTurn && selectedTerritory.id <= 79 && selectedTerritory.flags.length > 1 && selectedTerritory.owner==currentPlayer.nation && currentPlayer.status=='Attack'"
         style="font-size: 11px;"> Multiple nations. <button ng-click="attackButtonClicked()" id="warButton"
             type="button" class="btnbtn-danger roundButton">Attack!</button></div>
 
     <div [ngStyle]="ngStyleLogs(selectedTerritory.owner)" style="color: black;">
+        <div *ngIf="ableToTakeThisTurn && selectedTerritory.flags.length > 1">
+            <div>Multiple Nations</div>
+            <img *ngFor="let nation of selectedTerritory.flags" src="assets/graphics/images/flag{{nation}}.gif" height=50 style="cursor: pointer;"
+            (click)="switchOwnership(nation)">
+        </div>
+
         <div *ngIf="selectedTerritory.militaryUnits2.length==0">-None-</div>
         <div *ngIf="!selectedTerritory.fogOfWar">
             <!------------------large img units------------------unitDetailPopup.show(unit, true)----------->

@@ -32,8 +32,8 @@ export class TerrUnitsComponent extends BaseComponent implements OnInit {
     if (this.selectedTerritory.nation == 99 && this.selectedTerritory.owner != nation && this.ableToTakeThisTurn) {
       this.playClick();
       this.selectedTerritory.owner = nation;
-      this.closeModal('#territoryPopup');
-      //      this.messageEvent.emit('home');
+      //this.closeModal('#territoryPopup');
+      this.messageEvent.emit('switch');
     }
 
   }

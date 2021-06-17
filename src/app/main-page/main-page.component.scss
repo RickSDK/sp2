@@ -1,3 +1,17 @@
+.popupMain {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 0;
+    color: #008;
+    width: 280px;
+    height: 420px; 
+    text-align: center;
+    padding: 8px;
+    padding-top: 80px;
+    cursor: pointer;
+    z-index: 500;
+}
 .main-page-item {
     width: 100%; 
     max-width: 220px; 

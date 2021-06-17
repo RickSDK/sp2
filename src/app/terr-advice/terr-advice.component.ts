@@ -34,6 +34,10 @@ export class TerrAdviceComponent implements OnInit {
     return { 'background-color': color, 'color': 'black' };
   }
   declareWar() {
+    if(this.gameObj.type === 'autobalance' && this.selectedTerritory.territoryType == 'Ally') {
+      playSound('error.mp3');
+      return;
+    }
     playSound('shotgun.mp3');
     playSound('warning.mp3');
     declareWarOnNation(this.selectedTerritory.owner, this.gameObj, this.currentPlayer, this.superpowersData)

@@ -9,13 +9,21 @@
 		<div
 			style="max-width: 800px; display: block; margin-left: auto; margin-right: auto; padding-bottom: 60px; text-align: center;">
 			<img id="spLogo" src="assets/graphics/images/superpowers.png" style="width: 100%;">
+
+		<div *ngIf="user.rank <= 1">
+			<button (mousedown)="singlePlayerGame()" type="button" class="btn btn-secondary tall glowButton roundButton">
+				Play Now! </button>
+		</div>
+
+
 			<div class="container-fluid" style="text-align: center;" *ngIf="!showVideoPlayerFlg">
 				<div class="row">
 					<div class="col-sm-6" style="padding: 0;">
 						<img (mousedown)="singlePlayerGame()" *ngIf="user.rank>=2" class="shadowed main-page-item"
 							src="assets/graphics/buttons/singleButton.png" title="Single Player">
-						<img (mousedown)="singlePlayerGame()" *ngIf="!user || !user.rank || user.rank<2" class="shadowed main-page-item"
-							src="assets/graphics/buttons/basicTrainButton.png" title="Basic Training">
+						<img (mousedown)="singlePlayerGame()" *ngIf="!user || !user.rank || user.rank<2"
+							class="shadowed main-page-item" src="assets/graphics/buttons/basicTrainButton.png"
+							title="Basic Training">
 
 						<div *ngIf="singleGameId>0"
 							style="color: #337ab7; margin-top: -15px; z-index: 100; font-size: 12px;">
@@ -28,6 +36,8 @@
 						</button>
 
 					</div>
+
+
 
 					<div class="col-sm-6" style="padding: 0;">
 
@@ -100,6 +110,7 @@
 </div>
 
 <!-------popups------------------>
+
 <div class="popupScreenNoPad" style="width: 280px; z-index: 5;" id="continueGamePopup">
 	<img src="assets/graphics/advisors/leader.png" height=170 onClick="closePopup('continueGamePopup')">
 	<div style="font-size: 24px;">Game in Progress!</div>
@@ -108,12 +119,10 @@
 		class="btn btn-secondary roundButton tall glowButton">Continue</button>
 	<button (mousedown)="startSPGame(2)" type="button" class="btn btn-primary roundButton">Start New Game</button>
 </div>
-<div class="popupScreenNoPad" style="width: 280px; z-index: 5;" id="initPopup" onClick="closePopup('initPopup')">
-	<div style="background-color: #337ab7; color: white; text-align: center;">Superpowers Game Master
-		<button type="button" class="btn btn-secondary roundButton"><i class="fa fa-times"></i></button>
-	</div>
+<div class="popupMain" style="width: 280px; z-index: 5; background-image: url('assets/graphics/misc/popup2.png');"
+	id="initPopup" onClick="closePopup('initPopup')">
 	<div style="padding: 5px;" *ngIf="user">
-		<img src="assets/graphics/advisors/leader.png" height=170>
+		<img *ngIf="!user.newRankFlg" src="assets/graphics/advisors/leader.png" height=170>
 		<div *ngIf="user.rank == 0">
 			Welcome newbie! Want to take over the world? Yes, of course you do! Press 'Basic Training' to get started!
 		</div>

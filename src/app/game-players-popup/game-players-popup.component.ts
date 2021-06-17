@@ -66,6 +66,7 @@ export class GamePlayersPopupComponent extends BaseComponent implements OnInit {
     });
 
     gameObj.players.forEach(player => {
+      player.teamNation = gameObj.maxAllies > 0 ? player.team : player.nation;
       player.unitCount = unitCountHash[player.nation] || 0;
       addIncomeForPlayer(player, gameObj);
     });

@@ -411,14 +411,17 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	adminFixBoard() {
 		this.showAlertPopup('Fix on!', 1);
 
-		//var player2 = this.gameObj.players[0];
-		//player2.treaties=[3, 1, 1, 1, 0, 1, 0, 1];
+		//var player2 = this.gameObj.players[4];
+		//player2.treaties=[3, 2, 3, 1, 3, 4, 0, 2];
 		//var player3 = this.gameObj.players[3];
 		//player3.treaties=[1, 1, 3, 1, 0, 1, 0, 1];
 
-		var terrId = 104;
+		var terrId = 54;
 		var terr = this.gameObj.territories[terrId - 1];
-		//terr.owner = 5;
+		//terr.owner = 3;
+		//terr.attackedByNation = 0;
+		//terr.defeatedByNation = 0;
+		//terr.nuked = false;
 		//this.addUnitToTerr(terr, 3, true, true, false);
 		//terr.facBombed = false;
 
@@ -428,8 +431,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (0) {
 			var x = 0;
 			terr.units.forEach(unit => {
-				if (unit.terr == terrId && (unit.piece == 10)) {
-					unit.terr = 101;
+				if (unit.terr == terrId && unit.piece == 3) {
+					//unit.dead = true;
+					unit.terr = 107;
 				}
 			});
 		}
@@ -438,22 +442,24 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		if (0) {
 			setTimeout(() => {
-				this.addUnitToTerr(terr, 13, true, true, false);
-				//this.addUnitToTerr(terr, 1, true, true, true);
-				//this.addUnitToTerr(terr, 1, true, true, true);
-				//this.addUnitToTerr(terr, 2, true, true, true);
-				//this.addUnitToTerr(terr, 2, true, true, true);
 				//this.addUnitToTerr(terr, 3, true, true, true);
-				//this.addUnitToTerr(terr, 11, true, true, true);
+				//this.addUnitToTerr(terr, 3, true, true, true);
+				this.addUnitToTerr(terr, 3, true, true, true);
+				this.addUnitToTerr(terr, 2, true, true, true);
+				this.addUnitToTerr(terr, 2, true, true, true);
+				this.addUnitToTerr(terr, 2, true, true, true);
+				this.addUnitToTerr(terr, 2, true, true, true);
 			}, 1000);
 		}
-
+		var x=0;
 		if (0) {
-			terr.owner = 4;
 			terr.units.forEach(unit => {
-				if (unit.piece == 2 && unit.nation != 4) {
+				if (unit.piece == 19 && x++==0) {
 					//			unit.dead = true;
-					unit.nation = 4;
+					console.log('hey!!');
+					unit.terr = 50;
+					//unit.nation = 3;
+					//unit.owner = 3;
 				}
 			});
 		}
@@ -535,7 +541,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			this.gameObj.turnId = this.currentPlayer.turn;
 			// if chaning turn
 			//this.currentPlayer.status = 'Attack';
-			this.currentPlayer.money = 20;
+			//this.currentPlayer.money = 20;
 			console.log('select * from SP_PLAYER where game = \'' + this.gameObj.id + '\' AND user = \'' + this.currentPlayer.userId + '\'');
 			console.log('update SP_GAME set turn = \'xxx\' where row_id = \'' + this.gameObj.id + '\'');
 			//update SP_GAME set turn = '49204' where row_id = '11297'
@@ -973,6 +979,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 	initializePlayerForPurchase() {
 		//human & cpu
+
 		var player = this.currentPlayer;
 		this.allowRebuyFlg = false;
 		player.carrierAddedFlg = false;
@@ -987,7 +994,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.gameObj.unitPurchases = [];
 		this.gameObj.superBCForm.cost = 0;
 		this.newPlayerHelpText = 'Purchase units then press "Purchase Complete"';
-
+		console.log('xxx initializePlayerForPurchase xxx')
 		resetPlayerUnits(player, this.gameObj); //<------------------------------------------------- clean player units
 		if (this.currentPlayer.mainBaseID == 0)
 			this.currentPlayer.mainBaseID = findMainBase(this.gameObj, this.currentPlayer);
@@ -1045,7 +1052,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.playerSetToPurchaseAndRefresh();
 	}
 	playerSetToPurchaseAndRefresh() {
-		if (this.currentPlayer && this.currentPlayer.offers && this.currentPlayer.offers.length > 0) {
+		if (this.currentPlayer && (this.currentPlayer.offers && this.currentPlayer.offers.length > 0 || this.currentPlayer.allySpotsOpen < 0)) {
 			this.gameObj.actionButtonMessage = 'Diplomacy';
 			this.currentPlayer.status = 'Diplomacy';
 		} else {
@@ -1059,7 +1066,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		refreshAllPlayerTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 	}
 	initializePlayerForAttack() {
-		var numFactories = cleanUpTerritories(this.currentPlayer, this.gameObj); //<------------------ clean territories
+		//var numFactories = cleanUpTerritories(this.currentPlayer, this.gameObj); //<------------------ clean territories
 		resetAllPlayerDistanceObjects(this.gameObj, this.currentPlayer);
 		this.newPlayerHelpText = 'Make an attack, or move units or press "End Turn"';
 
@@ -1640,6 +1647,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		scrubUnitsOfPlayer(this.currentPlayer, this.gameObj, this.superpowersData.units); // in case of tech
 		if (!this.currentPlayer.cpuFlg)
 			saveGame(this.gameObj, this.user, this.currentPlayer);
+		cleanUpTerritories(this.currentPlayer, this.gameObj); //<------------------ clean territories
 		this.initializePlayerForAttack();
 	}
 	diplomacyDone(msg: string) {

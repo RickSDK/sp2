@@ -1,5 +1,5 @@
 function spVersion() {
-	return 'v4.100';
+	return 'v4.113';
 }
 function googleAds() {
 	window.onload = function () {
@@ -424,7 +424,7 @@ function popupNationMessage(nation1, msg, nation2, x, y, diploFlg) {
 	setTimeout(function () { popupMessageFadeOut(boxId); }, 3000);
 	setTimeout(function () { popupMessageOff(boxId); }, 4000);
 }
-function popupBattleReport(reportObj, boxId='battlePopup') {
+function popupBattleReport(reportObj, boxId = 'battlePopup') {
 	playSound('drip.mp3');
 	var e = document.getElementById(boxId);
 	if (e) {

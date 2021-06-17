@@ -1,6 +1,7 @@
 export class Game {
     public gameId: number;
     public name: string;
+    public shortName: string;
     public type: string;
     public turn: string;
     public round: number;
@@ -32,10 +33,13 @@ export class Game {
     public maxRank: number;
     public players: any;
 
-  
+
     constructor(obj: any) {
         this.gameId = obj.gameId;
         this.name = obj.name;
+        this.shortName = obj.name;
+        if (obj.name.length > 20)
+            this.shortName = obj.name.substring(0, 20);
         this.type = obj.type;
         this.turn = obj.turn;
         this.round = obj.round;
@@ -59,9 +63,9 @@ export class Game {
         this.maxRank = obj.maxRank;
         this.players = obj.players;
         this.joinGameFlg = obj.joinGameFlg;
-        this.bugFlg =  obj.bugFlg;
-        this.chatFlg =  obj.chatFlg;
-        this.gameType =  obj.gameType;
+        this.bugFlg = obj.bugFlg;
+        this.chatFlg = obj.chatFlg;
+        this.gameType = obj.gameType;
         this.inGame = obj.inGame;
         this.accountSitFlg = obj.accountSitFlg;
         this.slowResponseFlg = obj.slowResponseFlg;

@@ -210,7 +210,7 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   }
 
   multiplayGameClicked(login: any) {
-    if (this.user.userId > 0 && this.user.rank >= 2)
+    if (this.user.userId > 0 && this.user.rank >= 1)
       this.router.navigate(['/multiplayer']);
     else
       login.show();

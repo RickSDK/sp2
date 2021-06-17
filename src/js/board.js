@@ -871,7 +871,7 @@ function resetPlayerUnits(player, gameObj) {
 				unit.cargo = [];
 			if (unit.cargo.length == 0)
 				unit.cargoUnits = 0;
-			if (unit.cargoUnits > 0)
+			if (unit.cargoUnits > 0 && gameObj.round>1)
 				doubleCheckCargoUnits(unit, gameObj);
 			//				if (unit.piece == 44)
 			//					checkSealUnit(unit, player);
@@ -960,7 +960,7 @@ function cleanUpTerritories(player, gameObj) {
 			}
 
 			territories.push(terr);
-			checkCargoForTerr(terr, gameObj);
+			checkCargoForTerr(terr, gameObj, player.nation);
 		}
 	});
 	if (player.mainBaseID == 0 && mainBase > 0)
@@ -1094,18 +1094,22 @@ function capitalsForPlayer(player, gameObj) {
 	return capitals;
 }
 function checkGameTeams(incomes, capitals, gameObj) {
+	//console.log('xxxcheckGameTeams', gameObj.teams);
 	var x = 0;
 	gameObj.teams.forEach(function (team) {
 		var nations = [];
 		var alive = false;
 		var numPlayers = 0;
 		var teamPlayers = [];
+		var teamNation = team.name;
 		gameObj.players.forEach(function (player) {
 			if (player.team == team.name) {
 				if (player.alive) {
 					numPlayers++;
 					alive = true;
 					teamPlayers.push(player.nation);
+					if(gameObj.maxAllies == 0)
+						teamNation = player.nation;
 				}
 
 				player.capitals.forEach(function (cap) {
@@ -1113,6 +1117,7 @@ function checkGameTeams(incomes, capitals, gameObj) {
 				});
 			}
 		});
+		team.teamNation = teamNation;
 		team.teamPlayers = teamPlayers;
 		team.numPlayers = numPlayers;
 		team.alive = alive;
@@ -1355,7 +1360,36 @@ function doubleCheckCargoIsOnTransport(unit, transport) {
 		transport.cargoUnits = cargoUnits;
 	}
 }
-function checkCargoForTerr(terr, gameObj) {
+function checkCargoForTerr(terr, gameObj, nation) {
+	var fighterToCarrierHash = {};
+	var emptyCarrier = null;
+
+	terr.units.forEach(function (unit) {
+		if(unit.piece == 8 && unit.owner == nation) {
+			if(unit.cargo && unit.cargo.length>0) {
+				unit.cargo.forEach(function (c) {
+					fighterToCarrierHash[c.id] = unit.id;
+				});
+			} else 
+			emptyCarrier = unit;
+
+		}
+	});
+
+	terr.units.forEach(function (unit) {
+		if(unit.subType == 'fighter') {
+			if(unit.id == unit.cargoOf && fighterToCarrierHash[unit.id]>0) {
+				unit.cargoOf = fighterToCarrierHash[unit.id];
+				console.log('fighter cargo of self! fixed.', unit.id, unit.cargoOf);
+			}
+			if(unit.cargoOf == unit.id && emptyCarrier && emptyCarrier.cargo.length<2) {
+				console.log('fighter stranded! fixed.', unit.id, unit.cargoOf);
+				unit.cargoOf = emptyCarrier.id;
+				emptyCarrier.cargo.push({ id: unit.id, piece: unit.piece, cargoUnits: unit.cargoUnits })
+			}
+		}
+	});
+
 	if (terr.unitsPlacedInCargo != terr.unitsHeldInCargo) {
 		terr.units.forEach(function (unit) {
 			if (unit.cargoOf > 0) {

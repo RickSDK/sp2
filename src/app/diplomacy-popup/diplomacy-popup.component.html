@@ -29,7 +29,7 @@
                     <div *ngFor="let request of currentPlayer.allyRequests">{{request}}</div>
                  </div>
                 <!--over limit of allies-->
-                <div *ngIf="currentPlayer.allySpotsOpen < 0" class="borderClass3">
+                <div *ngIf="currentPlayer.allySpotsOpen < 0 && currentPlayer.offers.length == 0" class="borderClass3">
                     <div class="blueBgWhite"><i class="fa fa-users"></i> Too many Allies!</div>
                     <div>You are over your limit of allies. Click on an ally to drop</div>
                     <button *ngFor="let ally of currentPlayer.allies" (click)="dropAlly(ally)" type="button"

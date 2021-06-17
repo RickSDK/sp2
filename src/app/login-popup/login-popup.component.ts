@@ -95,7 +95,7 @@ export class LoginPopupComponent extends BaseComponent implements OnInit {
     showAlertPopup('not working yet', 1);
   }
   createFormButtonPressed() {
-    if (this.user.rank < 2) {
+    if (this.user.rank < 1) {
       showAlertPopup('Sorry! You must first complete Basic Training before signing up for multiplayer.', 1);
       return;
     }

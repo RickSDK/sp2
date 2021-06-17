@@ -162,7 +162,7 @@
 	<div id="playerPanel" class="roundedPanel" *ngIf="currentPlayer">
 		<div style="background-color: #444; color: white; font-size: 10px;">Players</div>
 		<div *ngFor="let player of gameObj.players" style="white-space: nowrap;"
-			[style.background-color]="player.nation==yourNation?'white':'#ccc'" title="{{player.userName}}">
+			[style.background-color]="player.nation==currentPlayer.nation?'white':'#ccc'" title="{{player.userName}}">
 			<div *ngIf="player.alive">
 				<i *ngIf="player.nation==currentPlayer.nation" class="fa fa-check"
 					style="font-size: 10px; color: green;"></i>

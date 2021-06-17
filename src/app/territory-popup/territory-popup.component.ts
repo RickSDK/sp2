@@ -245,7 +245,8 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
       this.optionType = 'production';
     }
     this.checkSendButtonStatus(null);
-    checkCargoForTerr(terr, gameObj);
+    if(terr.nation == 99 && ableToTakeThisTurn && currentPlayer.nation>0)
+      checkCargoForTerr(terr, gameObj, currentPlayer.nation);
 
     this.allowFactoryFlg = isFactoryAllowedOnTerr(terr, this.gameObj);
 
@@ -337,6 +338,11 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   }
   buttonClicked(type) {
     //this event emitted from app-terr-buttons
+    if(type == 'switch') {
+      console.log('xxx', type);
+      refreshTerritory(this.selectedTerritory, this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
+      return;
+    }
     if (type == 'loadShips') {
       this.showMoreTerrFlg = true;
       this.loadingFlg = false;

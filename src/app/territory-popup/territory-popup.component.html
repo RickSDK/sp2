@@ -293,7 +293,6 @@
 						class="btn btn-success roundButton glowButton"> Purchase Complete
 					</button>
 				</div>
-
 				<app-terr-buttons
 					*ngIf="ableToTakeThisTurn && (currentPlayer.status == 'Attack' || currentPlayer.status == 'Place Units') && optionType != 'battle'"
 					[selectedTerritory]="selectedTerritory" [currentPlayer]="currentPlayer"
@@ -550,7 +549,7 @@
 				<button (mousedown)="closeModal('#territoryPopup')" type="button" class="btn btn-secondary roundButton"
 					style="height: 60px;">Close</button>
 				<button *ngIf="adminModeFlg" (mousedown)="adminAllowMovePressed()" type="button"
-					class="btn btn-secondary roundButton" title="allow all units here to move">Unfeeze Units</button>
+					class="btn btn-secondary roundButton" title="allow all units here to move">Unfreeze Units</button>
 				<button *ngIf="adminModeFlg" (mousedown)="moveHerosPressed()" type="button"
 					class="btn btn-secondary roundButton">Move Heros</button>
 				<button *ngIf="ableToTakeThisTurn && optionType=='production'" [disabled]="currentPlayer.money > 5"

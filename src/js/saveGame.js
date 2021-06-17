@@ -1,47 +1,4 @@
-function zipUpHistoryData(gameObj, user, nation) {
-	//	console.log('zipUpHistoryData', nation);
-	/*
-	var historyObj = {};
-	historyObj.round = gameObj.round;
-	historyObj.nation = nation;
-	historyObj.turn = gameObj.turnId;
-	var data = [];
-	gameObj.territories.forEach(function (terr) {
-		var nation = terr.owner;
-		var unitCount = terr.unitCount;
-		var piece = terr.piece;
-		var flag = terr.flag.replace("flag", "");
-		flag = flag.replace(".gif", "");
-		if (terr.nation == 99 && unitCount == 0 && nation > 0)
-			nation = 0;
-		var line = nation + ':' + unitCount + ':' + piece + ':' + flag;
-		if (line == "0:0:0:flag99.gif")
-			line = "";
-		if (flag != "flag99.gif" && unitCount == 0 && piece == 0)
-			line = nation;
-		data.push(line);
-	});
-	historyObj.data = data;
-	var dataStr = JSON.stringify(historyObj);
 
-	var url = getHostname() + "/webHistory.php";
-	$.post(url,
-		{
-			user_login: user.userName,
-			code: user.code,
-			userName: user.userName,
-			gameId: gameObj.id,
-			round: gameObj.round,
-			nation: gameObj.currentNation,
-			turn: gameObj.turnId,
-			data: dataStr,
-			action: 'postHistory',
-		},
-		function (data, status) {
-			//		console.log('webHistory', data);
-		});
-*/
-}
 function saveGame(gameObj, user, currentPlayer, sendEmailFlg, endOfTurn, prevPlayer, secondsLeft) {
 	//return; //no save!
 	if (!gameObj) {
@@ -179,16 +136,16 @@ function uploadCompletedGameStats(gameObj, winningNationStr, superpowersData, yo
 	console.log('uploadCompletedGameStats', gameObj.id, winningNationStr);
 
 	const url = this.getHostname() + "/web_join_game2.php";
-    const postData = this.getPostDataFromObj({ user_login: user.userName, code: user.code, action: 'uploadStats', game_id: gameObj.id, gameData: winningNationStr });
+	const postData = this.getPostDataFromObj({ user_login: user.userName, code: user.code, action: 'uploadStats', game_id: gameObj.id, gameData: winningNationStr });
 	console.log(postData);
-	
-    fetch(url, postData).then((resp) => resp.text())
-      .then((data) => {
-        console.log(data);
-      })
-      .catch(error => {
-        this.showAlertPopup('Unable to reach server: ' + error, 1);
-      });
+
+	fetch(url, postData).then((resp) => resp.text())
+		.then((data) => {
+			console.log(data);
+		})
+		.catch(error => {
+			this.showAlertPopup('Unable to reach server: ' + error, 1);
+		});
 	/*
 	var url = getHostname()+"/web_join_game2.php";
 	$.post(url,
@@ -238,7 +195,7 @@ function sendEmailToNextPlayer(email, code, gameName) {
 
 	fetch(url, postData).then((resp) => resp.text())
 		.then((data) => {
-//			console.log(data);
+			//			console.log(data);
 		})
 		.catch(error => {
 			this.showAlertPopup('Unable to reach server: ' + error, 1);
@@ -253,8 +210,8 @@ function compressUnits(units) {
 		if (unit.dead || unit.hp == 0)
 			console.log('!!dead unit removed', unit.piece, unit.terr);
 		else {
-//			if (unit.piece == 12)
-//				console.log('compressSBC', unit);
+			//			if (unit.piece == 12)
+			//				console.log('compressSBC', unit);
 			if (unit.piece == 12)
 				unitList.push(unit);
 			else

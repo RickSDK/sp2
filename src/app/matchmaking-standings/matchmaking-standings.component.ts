@@ -146,22 +146,24 @@ export class MatchmakingStandingsComponent extends BaseComponent implements OnIn
   startMMGames(points = 0) {
     this.playClick();
     this.availablePlayers = 1;
-    console.log(points);
+    console.log('xxx startMMGames', points);
+    /*
     var fifthPlace = 1520;
     if (points > this.maxPoints - 6)
       points = this.maxPoints - 6;
 
     if (points > fifthPlace)
-      points = fifthPlace;
+      points = fifthPlace;*/
     var tollarance = 100 - this.fullLeaderList.length;
     if (tollarance < 15)
       tollarance = 15;
     var readyList = [];
     var ipHash = {};
+    console.log('xxx tollarance', tollarance);
     this.fullLeaderList.forEach(function (player) {
       player.ptDiff = Math.abs(player.points - points);
       if (player.games_max > player.games_playing && player.days_old <= 1) {
-        console.log('player ready: ', player.userName, player.ptDiff);
+        console.log('player ready: ', player.userName, player.ptDiff, player.userId);
         if (player.ptDiff <= tollarance) {
 
           var num = numberVal(ipHash[player.ip]);
@@ -198,6 +200,7 @@ export class MatchmakingStandingsComponent extends BaseComponent implements OnIn
       this.showAlertPopup('Not enough players found! tollarance: ' + tollarance + ', players found: ' + readyList.length, 1);
       return;
     }
+    console.log('readyList', readyList);
     var finalList = [];
     for (var x = 0; x < numPlayers; x++) {
       finalList.push(readyList[x].id);

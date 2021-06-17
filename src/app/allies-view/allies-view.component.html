@@ -95,7 +95,7 @@
                         src="assets/graphics/misc/news3.png" height=30 title="Alliance"><br>Ally</th>
                 <th *ngIf="ableToTakeThisTurn" class="centerText">Offer</th>
             </tr>
-            <tr *ngFor="let player of displayPlayers" [ngStyle]="ngStyleLogs(player.team, !player.alive)">
+            <tr *ngFor="let player of displayPlayers" [ngStyle]="ngStyleLogs(player.teamNation, !player.alive)">
                 <td *ngIf="gameObj.allowAlliances">{{player.team}}</td>
                 <td align=center>
                     <i class="fa fa-trophy" style="font-size: 20px; color: blue;"
@@ -155,7 +155,6 @@
         </table>
     </div>
 </div>
-
 <div class="spCard">
     <div>
         <div class="cpTitle"><span *ngIf="gameObj.maxAllies>0">Teams/</span>Capitals</div>
@@ -166,7 +165,7 @@
                 <th class="centerText">Capitals</th>
                 <th class="centerText">Income</th>
             </tr>
-            <tr *ngFor="let team of displayTeams" [ngStyle]="ngStyleLogs(team.name)">
+            <tr *ngFor="let team of displayTeams" [ngStyle]="ngStyleLogs(team.teamNation)">
                 <td *ngIf="gameObj.maxAllies>0" align=center> {{team.name}}</td>
                 <td>
                     <span *ngFor="let player of gameObj.players">
