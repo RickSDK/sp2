@@ -1,10 +1,12 @@
 
 function saveGame(gameObj, user, currentPlayer, sendEmailFlg, endOfTurn, prevPlayer, secondsLeft) {
-	//return; //no save!
+	//return;
 	if (!gameObj) {
 		showAlertPopup('Error on save game. no gameObj', 1);
 		return;
 	}
+	if(currentPlayer.cpuFlg && !endOfTurn)
+		return;
 	var userCode = btoa(localStorage.password);
 	var user_login = localStorage.userName;
 	if (user) {
@@ -29,7 +31,7 @@ function saveGame(gameObj, user, currentPlayer, sendEmailFlg, endOfTurn, prevPla
 		updateNation = prevPlayer.nation;
 		nextUpdateNation = currentPlayer.nation;
 	}
-	console.log('++++++++saveGame++++++++++');
+	console.log('++++++++saveGame2++++++++++', localStorage.gameUpdDt, currentPlayer.cpuFlg);
 	//console.log('currentPlayer', currentPlayer);
 	//console.log('prevPlayer', prevPlayer);
 
@@ -88,8 +90,7 @@ function saveGame(gameObj, user, currentPlayer, sendEmailFlg, endOfTurn, prevPla
 					//					if (endOfTurn)
 					//						zipUpHistoryData(gameObj, user, prevPlayer.nation);
 				} else {
-					console.log('---: expected success');
-					console.log('currentPlayer', currentPlayer);
+					console.log('Error! Unable to sync game with server:', data);
 					updateStatusMessage('Error! Unable to sync game with server: ' + data, false);
 					showAlertPopup('Warning. Possible sync error. Keep playing but if you continue getting this error, try hitting refresh on your browser.');
 				}

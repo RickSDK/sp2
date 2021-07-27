@@ -38,8 +38,8 @@ export class Game {
         this.gameId = obj.gameId;
         this.name = obj.name;
         this.shortName = obj.name;
-        if (obj.name.length > 20)
-            this.shortName = obj.name.substring(0, 20);
+        if (obj.name.length > 18)
+            this.shortName = obj.name.substring(0, 18);
         this.type = obj.type;
         this.turn = obj.turn;
         this.round = obj.round;

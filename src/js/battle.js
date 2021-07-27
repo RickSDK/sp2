@@ -169,6 +169,10 @@ function arrayOfPieces(units) {
 }
 function startBattle(terr, player, gameObj, superpowersData, battle) {
     var cost = costToAttack(terr, player);
+    if(player.cpuFlg && cost==15) {
+        console.log('bad attack!!', terr.name);
+        return;
+    }
     if (cost > 0 && gameObj.round < gameObj.attack) {
         //showAlertPopup('Whoa can\'t attack this turn!', 1);
         console.log('bad attack!!', terr.name);

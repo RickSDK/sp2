@@ -106,7 +106,7 @@
                                 </div>
                             </div>
                         </div>-->
-                    <div style="border: 1px solid black; margin: 3px; background-color: #ddd;">
+                    <div style="border: 1px solid black; margin: 3px; background-color: #ddd;" *ngIf="user.rank>=2">
                         <div class="btn-group">
                             <button (click)="fogIdx=0" type="button" class="btn btn-default roundButton"
                                 [ngClass]="ngClassSegment(fogIdx,0)"><i class="fa fa-sun-o"></i><br> Standard</button>

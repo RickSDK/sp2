@@ -52,6 +52,7 @@ function purchaseCPUUnits(player, gameObj, superpowersData, rank) {
         else
             terr1 = hotSpotTerr;
     }
+    var overflowRounds = gameObj.round - 100;
 
     var num = Math.floor((Math.random() * 8));
     if (player.cpu) {
@@ -59,8 +60,9 @@ function purchaseCPUUnits(player, gameObj, superpowersData, rank) {
             player.money += 5;
         if (gameObj.round > 20)
             player.money -= 5;
-        if (gameObj.round >= 100)
-            player.money += 350; // keep players from dragging feet
+ 
+        if (overflowRounds > 0 && player.money > 40)
+            player.money += overflowRounds * 32;
 
         var difficultyNum = numberVal(gameObj.difficultyNum);
         if (difficultyNum == -1 || rank <= 3)
@@ -74,6 +76,9 @@ function purchaseCPUUnits(player, gameObj, superpowersData, rank) {
             addUniToQueue(7, 1, superpowersData, player, gameObj, terr1);
         else
             return; // no more purchases
+    }
+    if (overflowRounds > 0) {
+        addUniToQueue(14, overflowRounds, superpowersData, player, gameObj, terr1); // 15 nukes to prevent foot dragging
     }
     if (gameObj.currentCampaign == 4)
         addUniToQueue(14, 1, superpowersData, player, gameObj, terr1);
@@ -140,7 +145,6 @@ function checkForAllyTerritoryRequests(player, gameObj, superpowersData) {
 
 function addComputerFactory(player, superpowersData, gameObj) {
     if (player.territories.length == 0) {
-        console.log('hey!!! no territories!!!');
         return;
     }
     var num = Math.floor((Math.random() * player.territories.length));
@@ -199,14 +203,15 @@ function getRandomTech(player) {
 function doCpuDiplomacyRespond(player, gameObj, superpowersData) {
     if (player.allySpotsOpen < 0 && player.allies.length > 0) {
         var nation = player.allies[0];
-        dropAllyOfNation(player, nation, gameObj, superpowersData)
+        //dropAllyOfNation(player, nation, gameObj, superpowersData)
     }
     player.offers.forEach(function (nation) {
         var status = player.treaties[nation - 1];
         var roundsW = roundsOfWar(player, nation, gameObj);
         var roundsP = roundsOfPeace(player, nation, gameObj);
-        if (status < 2 && (roundsW > 3 || gameObj.round < 6))
+        if (status < 2 && gameObj.round < 100 && (roundsW > 3 || gameObj.round < 6))
             acceptOfferFromNation(player, nation, gameObj, superpowersData);
+
         if (status == 2) {
             if (player.allySpotsOpen > 0)
                 acceptOfferFromNation(player, nation, gameObj, superpowersData);
@@ -221,6 +226,9 @@ function doCpuDiplomacyRespond(player, gameObj, superpowersData) {
 function doCpuDiplomacyOffer(player, gameObj, superpowersData) {
     if (gameObj.currentCampaign >= 1 && gameObj.currentCampaign <= 6)
         return; // no diplomacy!!
+
+    if (gameObj.round > 100)
+        return;
 
     var num = Math.floor((Math.random() * gameObj.players.length));
     var player2 = gameObj.players[num];
@@ -244,9 +252,12 @@ function declareWarIfNeeded(gameObj, player, superpowersData) {
             var roundsP = roundsOfPeace(player, p2.nation, gameObj);
             var roundsW = roundsOfWar(player, p2.nation, gameObj);
             if ((status == 1 || status == 2) && roundsP > 3 && (player.alliesMaxed || p2.alliesMaxed)) {
-                console.log('xxxdeclare war', roundsP);
+                console.log('xxxdeclare war', roundsP, p2.nation);
                 declareWarOnNation(p2.nation, gameObj, player, superpowersData);
             }
+            if ((status == 1 || status == 2) && gameObj.round > 100 && !p2.cpu)
+                declareWarOnNation(p2.nation, gameObj, player, superpowersData);
+
             if (gameObj.type == 'co-op' && gameObj.round > 50) {
                 if (status > 0 && !p2.cpu) {
                     console.log('xxxdeclare war2');
@@ -486,6 +497,11 @@ function isAtWarWith(player, terr, gameObj) {
     return (status == 0 && gameObj.round > 5);
 }
 function okToAttack(player, terr, gameObj) {
+    if (gameObj.round >= 100 && player.cpu) {
+        var p2 = playerOfNation(terr.owner, gameObj);
+        if (p2.cpu)
+            return false;
+    }
     if (terr.attackedByNation == player.nation && terr.attackedRound == gameObj.round)
         return false;
     if (terr.owner == 0)
@@ -619,6 +635,8 @@ function stageAttackBetweenTerritories(terr1, terr2, currentPlayer, limit = 500)
     var pieceId = 2;
     var groundUnits = 0;
     if (terr1 && terr2) {
+        if (terr1.unitCount > 1 && (terr1.unitCount / 2) > limit)
+            limit = Math.round(terr1.unitCount / 2);
         attId = terr1.id;
         defId = terr2.id;
         artCount = 0;
@@ -637,7 +655,7 @@ function stageAttackBetweenTerritories(terr1, terr2, currentPlayer, limit = 500)
                     artCount++;
                 else
                     spotterCount++;
-                limit -= unit.att;
+                limit--;
                 attackUnits.push(unit);
                 pieceId = unit.piece;
                 if (unit.type == 1)

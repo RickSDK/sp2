@@ -10,30 +10,25 @@
 			style="max-width: 800px; display: block; margin-left: auto; margin-right: auto; padding-bottom: 60px; text-align: center;">
 			<img id="spLogo" src="assets/graphics/images/superpowers.png" style="width: 100%;">
 
-		<div *ngIf="user.rank <= 1">
-			<button (mousedown)="singlePlayerGame()" type="button" class="btn btn-secondary tall glowButton roundButton">
-				Play Now! </button>
-		</div>
-
+			<div *ngIf="!user || user.rank==0" style="padding: 10px; text-align: center;">
+				<a routerLink="/info"><button type="button" class="btn btn-primary roundButton tall"><i
+							class="fa fa-book"></i>
+						Rules & Info</button></a>
+			</div>
 
 			<div class="container-fluid" style="text-align: center;" *ngIf="!showVideoPlayerFlg">
 				<div class="row">
 					<div class="col-sm-6" style="padding: 0;">
-						<img (mousedown)="singlePlayerGame()" *ngIf="user.rank>=2" class="shadowed main-page-item"
-							src="assets/graphics/buttons/singleButton.png" title="Single Player">
-						<img (mousedown)="singlePlayerGame()" *ngIf="!user || !user.rank || user.rank<2"
-							class="shadowed main-page-item" src="assets/graphics/buttons/basicTrainButton.png"
-							title="Basic Training">
 
+
+
+
+						<img (mousedown)="singlePlayerGame()" class="shadowed main-page-item"
+							src="assets/graphics/buttons/singleButton.png" title="Single Player">
 						<div *ngIf="singleGameId>0"
 							style="color: #337ab7; margin-top: -15px; z-index: 100; font-size: 12px;">
 							<b>Game in Progress!</b>
 						</div>
-
-						<button *ngIf="0" (mousedown)="multiplayGameClicked(loginPopup)" type="button"
-							class="btn btn-primary circleButton"
-							style="width: 180px; height: 180px; background-size: cover; background-image: url('assets/graphics/buttons/multiplayer.png'); background-position: center; background-size: cover;">
-						</button>
 
 					</div>
 
@@ -74,20 +69,16 @@
 	</span>
 
 	<a routerLink="/info"><button type="button" class="btn btn-primary roundButton"><i class="fa fa-book"></i>
-			Rules </button></a>
+			Rules</button></a>
 
-	<button *ngIf="guestNum ==0" (mousedown)="playVideo(1)" type="button" class="btn btn-secondary roundButton"
-		style="height: 60px;"><i class="fa fa-film"></i>
+	<button (mousedown)="playVideo(1)" type="button" class="btn btn-secondary roundButton"><i class="fa fa-film"></i>
 		Intro
 		Video</button>
-	<button *ngIf="guestNum==1" (mousedown)="playVideo(2)" type="button"
-		class="btn btn-secondary roundButton glowButton"><i class="fa fa-film"></i> Gameplay
-	</button>
-	<button *ngIf="guestNum==2" (mousedown)="playVideo(2)" type="button" class="btn btn-secondary roundButton"><i
-			class="fa fa-film"></i> Gameplay
+	<button (mousedown)="playVideo(2)" type="button"
+		class="btn btn-secondary roundButton"><i class="fa fa-film"></i> Gameplay
 	</button>
 	<button *ngIf="guestNum==3" (mousedown)="playVideo(3)" type="button"
-		class="btn btn-secondary roundButton glowButton"><i class="fa fa-film"></i> Homescreen
+		class="btn btn-secondary roundButton"><i class="fa fa-film"></i> Homescreen
 		Icon
 		Video</button>
 

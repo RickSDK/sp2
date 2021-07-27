@@ -17,6 +17,7 @@ export class CampaignComponent extends BaseComponent implements OnInit {
   public currentVideo: any;
   public guestNum = 0;
   public campaignId = 1;
+  public localCampaignId = localStorage.campaignId;
   public singleGameId = localStorage.currentGameId;
 
   constructor(private router: Router) { super(); }
@@ -62,6 +63,9 @@ export class CampaignComponent extends BaseComponent implements OnInit {
     else
       startGame.show();
   }
+  toggleCampaignMode() {
+    this.showCampaignsFlg = !this.showCampaignsFlg;
+  }
   campaignClicked(campaignFlg: boolean) {
     if (campaignFlg && (!this.user.rank || this.user.rank <= 1)) {
       this.showAlertPopup('Whoa! You have no idea what you are doing yet! Complete Basic Training first!', 1);
@@ -72,10 +76,6 @@ export class CampaignComponent extends BaseComponent implements OnInit {
     this.showCampaignsFlg = true;
   }
   singlePlayerGame(startGame: any) {
-    if (!this.user.rank || this.user.rank <= 1) {
-      this.showAlertPopup('Whoa! You have no idea what you are doing yet! Complete Basic Training first!', 1);
-      return;
-    }
     localStorage.currentCampaign = 0;
     if (this.singleGameId > 0)
       this.router.navigate(['/board']);
@@ -84,12 +84,8 @@ export class CampaignComponent extends BaseComponent implements OnInit {
   }
   paintMainScreen() {
     this.user = userObjFromUser();
+    console.log('localStorage.campaignId', localStorage.campaignId);
     this.campaignId = localStorage.campaignId || 1;
-    console.log('campaignId', this.campaignId, this.user.rank);
-    if (this.user.rank <=1 || (this.campaignId > 1 && this.campaignId <= 8)) {
-      this.showCampaignsFlg = true;
-      this.campaignFlg = false;
-    }
 
     if (this.user.rank < 1)
       this.campaignId = 1;

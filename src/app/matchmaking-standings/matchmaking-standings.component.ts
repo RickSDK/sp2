@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { exit } from 'process';
 import { BaseComponent } from '../base/base.component';
 
 declare var $: any;
@@ -147,21 +148,18 @@ export class MatchmakingStandingsComponent extends BaseComponent implements OnIn
     this.playClick();
     this.availablePlayers = 1;
     console.log('xxx startMMGames', points);
-    /*
-    var fifthPlace = 1520;
-    if (points > this.maxPoints - 6)
-      points = this.maxPoints - 6;
 
-    if (points > fifthPlace)
-      points = fifthPlace;*/
-    var tollarance = 100 - this.fullLeaderList.length;
+    var tollarance = 200 - this.fullLeaderList.length;
     if (tollarance < 15)
       tollarance = 15;
     var readyList = [];
     var ipHash = {};
     console.log('xxx tollarance', tollarance);
     this.fullLeaderList.forEach(function (player) {
-      player.ptDiff = Math.abs(player.points - points);
+      //player.ptDiff = Math.abs(player.points - points);
+      player.ptDiff = player.games_max - player.games_playing;
+      if (player.games_playing == 0)
+        player.ptDiff = 5;
       if (player.games_max > player.games_playing && player.days_old <= 1) {
         console.log('player ready: ', player.userName, player.ptDiff, player.userId);
         if (player.ptDiff <= tollarance) {
@@ -194,6 +192,7 @@ export class MatchmakingStandingsComponent extends BaseComponent implements OnIn
       numPlayers = 6;
     if (gameType == 'ffa-7')
       numPlayers = 7;
+
 
     if (readyList.length < numPlayers) {
       this.availablePlayers = readyList.length;

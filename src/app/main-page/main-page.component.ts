@@ -70,10 +70,6 @@ export class MainPageComponent extends BaseComponent implements OnInit {
 
     if (this.user.userId > 0)
       this.getUserData();
-    else {
-      if (this.user.rank < 2)
-        this.displaySPPopup('initPopup');
-    }
 
     this.paintMainScreen();
 

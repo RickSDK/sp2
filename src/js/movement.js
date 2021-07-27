@@ -540,7 +540,6 @@ function moveCargoWithThisUnit(unit, gameObj, terr1Id) {
     }
 }
 function findTransportForThisCargo(unit, terr, gameObj) {
-    //console.log('findTransportForThisCargo', terr.id, unit);
     if (unit.type == 1 && unit.movesLeft == 0)
         unit.movesLeft = 2;
     if (unit.cargoUnits == 0)
@@ -565,18 +564,22 @@ function findTransportForThisCargo(unit, terr, gameObj) {
             return;
         }
     }
+
     if (unit.type == 1) {
+        console.log('findTransportForThisCargo', terr.name, unit.id, unit.piece);
         // load ground units onto transport ships
         for (var u = 0; u < terr.units.length; u++) {
             var transport = terr.units[u];
             if (transport.subType == 'transport' && transport.owner == unit.owner) {
+                console.log('possible transport found!', transport.id, transport.cargoSpace, transport.cargoUnits, unit.cargoUnits)
                 if (transport.cargoSpace >= transport.cargoUnits + unit.cargoUnits) {
+                    console.log('this one!', transport.id);
                     loadThisUnitOntoThisTransport(unit, transport);
                     return;
                 }
             }
         }
-
+        console.log('none found!', terr.name, unit.id);
     }
     if (unit.subType == 'fighter') {
         // load fighter (search all units)
@@ -611,11 +614,12 @@ function findTransportForThisCargo(unit, terr, gameObj) {
         }
     }*/
 
-    console.log('no transport found!!!', unit, terr.units.length);
-    //unit.terr = unit.prevTerr;
-    //showAlertPopup('no transport found!', 1);
+    console.log('no transport found!!!', unit.terr, unit.prevTerr);
+    unit.terr = unit.prevTerr;
+    showAlertPopup('no transport found!', 1);
 }
 function loadThisUnitOntoThisTransport(unit, transport) {
+    //console.log('loadThisUnitOntoThisTransport');
     if (!unit) {
         showAlertPopup('no unit selected!', 1);
         return;
@@ -737,7 +741,6 @@ function showUnitsForMovementBG2(optionType, gameObj, currentPlayer, totalMoveTe
         //terr.distObj = distanceBetweenTerrs(terr, selectedTerritory, maxDist, 0, 0, 0, allyHash, gameObj.territories);
         //console.log('xxx1', terr.name, terr.distObj);
         findTheDistanceBetweenTwoTerrs(terr, selectedTerritory, maxDist, 0, 0, 0, allyHash, gameObj.territories);
-        console.log('xxx2', terr.name, terr.distObj);
         var moveUnits = 0;
         terr.units.forEach(function (unit) {
             unit.allowMovementFlg = false;

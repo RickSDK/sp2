@@ -1437,6 +1437,15 @@ function changeTreaty(p1, p2, type, gameObj, superpowersData, cost = 0) {
 		return;
 	if (p1.nation == p2.nation)
 		return;
+	
+	if(p1.cpu && type == 1) {
+		console.log('cpu should not be dropping an ally');
+		return;
+	}
+	if(p1.cpuFlg && cost == 15) {
+		console.log('cpu should not be declaring war on an ally');
+		return;
+	}
 	p1.treaties[p2.nation - 1] = type;
 	p2.treaties[p1.nation - 1] = type;
 	if (type > 0 || cost > 0)
@@ -1924,6 +1933,7 @@ function flagOfOwner(terr, showDetailsFlg, unitCount, isPurchasePhase, type) {
 	return flag;
 }
 function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPlayer, user) {
+	console.log('checkVictoryConditions', gameObj.currentCampaign);
 	figureOutTeams(gameObj);
 
 	var victoryMet = false;
@@ -2023,6 +2033,7 @@ function checkVictoryConditions(currentPlayer, gameObj, superpowersData, yourPla
 	}
 
 	if (maxCapitalsHeld > 1 && (gameObj.currentCampaign == 1 || gameObj.currentCampaign == 3 || gameObj.currentCampaign == 4 || gameObj.currentCampaign == 5)) {
+		console.log('this might be the problem!!!', gameObj.currentCampaign);
 		gameObj.gameOver = true;
 		if (winningTeam == '1')
 			gameObj.currentSituation = winMessage;

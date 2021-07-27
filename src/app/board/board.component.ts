@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef, NgZone } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
-import { analyzeAndValidateNgModules, ThrowStmt } from '@angular/compiler';
 import { DiplomacyPopupComponent } from '../diplomacy-popup/diplomacy-popup.component';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -246,8 +245,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		} else {
 			if ((currentGameId > 0)) {
 				//load game
-				console.log('+++ load single player....', localStorage.currentGameId);
+				console.log('+++ load single player....', localStorage.currentGameId, localStorage.currentCampaign);
 				this.gameObj = loadSinglePlayerGame();
+				//this.gameObj.currentCampaign = localStorage.currentCampaign;
 				this.gameObj.fogOfWar = (this.gameObj.fogOfWar == true || this.gameObj.fogOfWar == 'Y');
 			} else {
 				//new game
@@ -291,9 +291,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					//					numPlayers = localStorage.customNumPlayers;
 					//					pObj = JSON.parse(localStorage.customGamePlayers);
 				}
-				console.log('+++ createNewGameSimple1', startingNation);
 				this.gameObj = createNewGameSimple(type, numPlayers, name, startingNation, pObj, this.user, currentCampaign);
-				console.log('+++ createNewGameSimple2', startingNation);
+				console.log('+++ createNewGameSimple2', startingNation, currentCampaign);
 				this.gameObj.difficultyNum = localStorage.difficultyNum || 1;
 				this.gameObj.capitalsWin = capitalsWin;
 				if (currentCampaign >= 8)
@@ -411,12 +410,15 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	adminFixBoard() {
 		this.showAlertPopup('Fix on!', 1);
 
-		//var player2 = this.gameObj.players[4];
-		//player2.treaties=[3, 2, 3, 1, 3, 4, 0, 2];
-		//var player3 = this.gameObj.players[3];
-		//player3.treaties=[1, 1, 3, 1, 0, 1, 0, 1];
+		if(0) {
+			var player2 = this.gameObj.players[2];
+			player2.treaties=[3, 0, 4, 2, 2, 0, 0, 1];
+			var player3 = this.gameObj.players[3];
+			player3.treaties=[4, 0, 3, 0, 0, 0, 0, 0];
+		}
 
-		var terrId = 54;
+
+		var terrId = 63;
 		var terr = this.gameObj.territories[terrId - 1];
 		//terr.owner = 3;
 		//terr.attackedByNation = 0;
@@ -431,9 +433,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (0) {
 			var x = 0;
 			terr.units.forEach(unit => {
-				if (unit.terr == terrId && unit.piece == 3) {
+				if (unit.terr == terrId) {
+					//console.log('dead');
 					//unit.dead = true;
-					unit.terr = 107;
+					unit.terr = 38;
 				}
 			});
 		}
@@ -444,22 +447,21 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			setTimeout(() => {
 				//this.addUnitToTerr(terr, 3, true, true, true);
 				//this.addUnitToTerr(terr, 3, true, true, true);
-				this.addUnitToTerr(terr, 3, true, true, true);
 				this.addUnitToTerr(terr, 2, true, true, true);
 				this.addUnitToTerr(terr, 2, true, true, true);
 				this.addUnitToTerr(terr, 2, true, true, true);
 				this.addUnitToTerr(terr, 2, true, true, true);
+				//this.addUnitToTerr(terr, 2, true, true, true);
 			}, 1000);
 		}
-		var x=0;
+		var x = 0;
 		if (0) {
 			terr.units.forEach(unit => {
-				if (unit.piece == 19 && x++==0) {
+				if (1) {
 					//			unit.dead = true;
-					console.log('hey!!');
-					unit.terr = 50;
-					//unit.nation = 3;
-					//unit.owner = 3;
+					//unit.terr = 120;
+					unit.nation = 7;
+					unit.owner = 7;
 				}
 			});
 		}
@@ -601,11 +603,11 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.gameObj.multiPlayerFlg && !this.currentPlayer.cpu && this.gameObj.secondsSinceUpdate > 30) {
 			if (this.yourPlayer && this.yourPlayer.cpu && this.yourPlayer.alive) {
 				if (this.currentPlayer.awolFlg) {
-					this.showAlertPopup('Looks like you went awol so the computer took over your turn. Restoring you back into the game.', 1);
-					this.yourPlayer.cpu = false;
-					setTimeout(() => {
-						saveGame(this.gameObj, this.user, this.currentPlayer);
-					}, 1000);
+					//					this.showAlertPopup('Looks like you went awol so the computer took over your turn. Restoring you back into the game.', 1);
+					//					this.yourPlayer.cpu = false;
+					//					setTimeout(() => {
+					//						saveGame(this.gameObj, this.user, this.currentPlayer);
+					//					}, 1000);
 				}
 			} else {
 				if (this.user.userName == this.currentPlayer.userName && this.gameObj.mmFlg) {
@@ -1256,6 +1258,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				}
 			}
 
+			if (this.gameObj.round >= 6)
+				this.checkForMixedSeaZones(this.currentPlayer, this.gameObj);
+
 			this.attemptToAttackACapital(this.currentPlayer, this.gameObj);
 
 			if (this.gameObj.currentCampaign != 7 && this.gameObj.currentCampaign != 8 && this.gameObj.currentCampaign != 9) {
@@ -1277,7 +1282,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			if (this.currentPlayer.secondaryTargetId > 0)
 				this.attemptToAttack(this.currentPlayer.secondaryTargetId);
 
-			this.attackFromAllTerritories();
+			this.attackFromAllTerritories2();
 
 			this.advanceMainBase();
 		}
@@ -1294,6 +1299,36 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				this.computerMove();
 			}, delay);
 		}
+	}
+	checkForMixedSeaZones(player: any, gameObj: any) {
+		this.gameObj.territories.forEach(terr => {
+			if (terr.flags && terr.flags.length > 1) {
+				if (terr.flags[0] == player.nation || terr.flags[1] == player.nation) {
+					console.log('Cleanup this sea zone: ', terr.name);
+					var warHash = {}
+					var nation = 0;
+					player.treaties.forEach(treatyNum => {
+						nation++;
+						if (treatyNum == 0)
+							warHash[nation] = true;
+
+					});
+					var attackUnits = [];
+					var defUnits = [];
+					terr.units.forEach(unit => {
+						if (unit.owner == player.nation && unit.att > 0)
+							attackUnits.push(unit);
+						if (unit.owner != player.nation && unit.def > 0 && warHash[unit.owner])
+							defUnits.push(unit);
+
+					});
+					if(attackUnits.length>0) {
+						var obj = { attackUnits: attackUnits, defUnits: defUnits, t1: terr.id, t2: terr.id, id: 5, terr: terr, attTerr: terr }
+						this.doThisBattle(obj);
+					}
+				}
+			}
+		});
 	}
 	attemptToAttackACapital(player: any, gameObj: any) {
 		this.gameObj.territories.forEach(terr => {
@@ -1382,7 +1417,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			borders.forEach(borderId => {
 				if (borderId > 0) {
 					var terr2 = this.gameObj.territories[borderId - 1];
-					if (terr2.nation < 99 && terr2.owner != player.nation && !terr2.nuked && terr2.unitCount > min && isAtWarWith(player, terr2, this.gameObj)) {
+					if (terr2.nation < 99 && terr2.owner != player.nation && !terr2.nuked && terr2.unitCount > min && isAtWarWith(player, terr2, this.gameObj) && okToAttack(player, terr2, this.gameObj)) {
 						min = terr2.unitCount;
 						bestTerr = terr2;
 					}
@@ -1392,6 +1427,37 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				this.landTheCruise(terr.id, attackUnits, bestTerr, [terr], this.currentPlayer, this.gameObj, this.superpowersData);
 			}
 		});
+	}
+	isValidNukeTarget(terr, minUnits, attacker, gameObj) {
+		return (!terr.nuked && terr.unitCount > minUnits && terr.defStrength > 10 && terr.owner != attacker.nation && isAtWarWith(attacker, terr, gameObj) && okToAttack(attacker, terr, gameObj));
+	}
+	bestTargetIn3Spaces(terr, currentPlayer, spacesAway, checkedHash, target, minUnits, chosenTargetHash, launchTerrName) {
+		spacesAway--;
+		if (spacesAway <= 0)
+			return target;
+
+		var borders = terr.borders.split('+');
+		borders.forEach(idStr => {
+			var id = numberVal(idStr) - 1;
+			if (!checkedHash[id] && !chosenTargetHash[idStr]) {
+				checkedHash[id] = true;
+				var terr1 = this.gameObj.territories[id];
+				if (this.isValidNukeTarget(terr1, minUnits, currentPlayer, this.gameObj)) {
+					target = terr1;
+					minUnits = terr1.unitCount;
+				}
+				if (0) {
+					var valid = this.isValidNukeTarget(terr1, minUnits, currentPlayer, this.gameObj);
+					console.log('     +++', launchTerrName, terr1.name, terr1.id, valid, minUnits, terr1.unitCount, chosenTargetHash);
+				}
+				if (spacesAway > 1)
+					target = this.bestTargetIn3Spaces(terr1, currentPlayer, spacesAway, checkedHash, target, minUnits, chosenTargetHash, launchTerrName);
+			}
+
+		});
+		if (0 && target)
+			console.log('   xxx target Found: ', target.name, target.unitCount, chosenTargetHash);
+		return target;
 	}
 	attemptCPUToNuke() {
 		var terrHash = {};
@@ -1404,7 +1470,35 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					terrHash[unit.terr] = 1;
 			}
 		});
+		var nukeTargets = [];
 		var keys = Object.keys(terrHash);
+		var spacesAway = 2;
+		if (this.currentPlayer.tech[3])
+			spacesAway++;
+		if (this.currentPlayer.tech[4])
+			spacesAway++;
+		if (this.currentPlayer.tech[5])
+			spacesAway++;
+
+		var chosenTargetHash = {};
+		keys.forEach(idStr => {
+			var id = numberVal(idStr) - 1;
+			var terr = this.gameObj.territories[id];
+			var checkedHash = {}
+			checkedHash[id] = true;
+			//console.log('++++++++++++++++', terr.name)
+			var target = this.bestTargetIn3Spaces(terr, this.currentPlayer, spacesAway, checkedHash, null, 3, chosenTargetHash, terr.name);
+
+			if (1) {
+				var targetName = (target) ? target.name : 'none';
+				console.log('+++Nuke Target: ', terr.name, targetName);
+			}
+			if (target) {
+				chosenTargetHash[target.id] = true;
+				nukeTargets.push({ t1: terr, t2: target });
+			}
+		});
+		/*
 		var nukeTargets = [];
 		keys.forEach(idStr => {
 			var id = numberVal(idStr) - 1;
@@ -1416,13 +1510,15 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				nukeTargets.push({ t1: terr, t2: target });
 			}
 		});
+		*/
 		var hitListHash = {};
+		console.log('nukeTargets', nukeTargets);
 		nukeTargets.forEach(nukeTarget => {
 			if (hitListHash[nukeTarget.t2.id])
 				return;
 			var terr = nukeTarget.t1;
 			var target = nukeTarget.t2;
-			if (target.unitCount < 6)
+			if (target.unitCount < 3)
 				return;
 			hitListHash[target.id] = true;
 			var hits = maximumPossibleNukeHitsForTerr(target, this.currentPlayer, this.gameObj);
@@ -1436,6 +1532,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			if (attackUnits.length > 0 && hits > 0 && !terr.nuked && terr.attackedByNation != this.currentPlayer.nation)
 				this.landTheNuke(terr.id, attackUnits, target, [terr], this.currentPlayer, this.gameObj, this.superpowersData);
 		});
+
 
 	}
 	strategicBombThisTerr(fromTerrId: number, attackUnits: any, targetTerr: any, launchTerritories: any, player: any, gameObj: any, superpowersData: any) {
@@ -1460,7 +1557,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		for (var x = 0; x < terr.land.length; x++) {
 			var id = terr.land[x];
 			var terr2 = this.gameObj.territories[id - 1];
-			if (terr2.factoryCount > 0 && terr2.owner != attacker.nation && numberVal(terr2.defendingFighterId) == 0 && !terr2.facBombed && isAtWarWith(attacker, terr2, gameObj)) {
+			if (terr2.factoryCount > 0 && terr2.owner != attacker.nation && numberVal(terr2.defendingFighterId) == 0 && !terr2.facBombed && isAtWarWith(attacker, terr2, gameObj) && okToAttack(attacker, terr2, gameObj)) {
 				bestTerr = terr2;
 			} else
 				bestTerr = this.findStratBombOfTerr(terr2, attacker, range, bestTerr, gameObj);
@@ -1493,17 +1590,20 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		range--;
 		if (range == 0 || !terr.land)
 			return bestTerr;
-		for (var x = 0; x < terr.land.length; x++) {
-			var id = terr.land[x];
+
+		var borders = terr.borders.split('+');
+		borders.forEach(id => {
 			var terr2 = this.gameObj.territories[id - 1]; //treatyStatus(attacker, terr2.owner)
-			if (!terr2.nuked && terr2.unitCount > max && terr2.owner != attacker.nation && isAtWarWith(attacker, terr2, gameObj)) {
+			console.log('x', terr2.name, terr2.unitCount, max, terr2.owner, attacker.nation);
+			if (!terr2.nuked && terr2.unitCount > max && terr2.owner != attacker.nation && isAtWarWith(attacker, terr2, gameObj) && okToAttack(attacker, terr2, gameObj)) {
 				max = terr2.unitCount;
 				bestTerr = terr2;
 			}
 			var possibleTarget = this.findLargestEnemyOfTerr(terr2, attacker, max, range, bestTerr, gameObj);
+			console.log('y', possibleTarget);
 			if (possibleTarget && possibleTarget.unitCount > max)
 				bestTerr = possibleTarget;
-		}
+		});
 		return bestTerr;
 
 	}
@@ -1543,8 +1643,22 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		});
 		this.moveSpriteFromTerrToTerr(terr1, terr2, piece);
 	}
+	attackFromAllTerritories2() {
+		this.gameObj.territories.forEach(terr => {
+			if (terr.owner == this.currentPlayer.nation && terr.unitCount > 0 && terr.id <= 79) {
+				var terr2 = findGoodTargetForTerr(terr, this.currentPlayer, this.gameObj, false);
+				if (terr2) {
+					var obj = stageAttackBetweenTerritories(terr, terr2, this.currentPlayer, terr2.defStrength + 10);
+					this.doThisBattle(obj);
+				}
+			}
+
+		});
+	}
 	attackFromAllTerritories() {
 		var logging = false;
+		if (logging)
+			console.log('xxx attackFromAllTerritories');
 		for (var x = 0; x < this.currentPlayer.territories.length; x++) {
 			var terr1 = this.currentPlayer.territories[x];
 			var terr2 = findGoodTargetForTerr(terr1, this.currentPlayer, this.gameObj, logging);
@@ -1645,8 +1759,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.allowRebuyFlg = true;
 		this.logPurchases(this.currentPlayer);
 		scrubUnitsOfPlayer(this.currentPlayer, this.gameObj, this.superpowersData.units); // in case of tech
-		if (!this.currentPlayer.cpuFlg)
-			saveGame(this.gameObj, this.user, this.currentPlayer);
+		//		if (!this.currentPlayer.cpuFlg)
+		//			saveGame(this.gameObj, this.user, this.currentPlayer);
 		cleanUpTerritories(this.currentPlayer, this.gameObj); //<------------------ clean territories
 		this.initializePlayerForAttack();
 	}

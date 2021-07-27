@@ -1,43 +1,37 @@
 <app-header></app-header>
 
 <div style="display: table; position: absolute; left: 0; top: 0; height: 100%; width: 100%;">
+
     <div style="display: table-cell; vertical-align: middle; text-align: center;">
-        <div style="max-width: 800px; display: block; margin-left: auto; margin-right: auto; text-align: center; padding-bottom: 60px;">
+        <div
+            style="max-width: 800px; display: block; margin-left: auto; margin-right: auto; text-align: center; padding-bottom: 60px;">
             <div>
                 <img routerLink="/" id="spLogo2" src="assets/graphics/images/superpowers.png"
-                    style="width: 100%; cursor: pointer;"> 
+                    style="width: 100%; cursor: pointer;">
                 <div *ngIf="user.userName == 'Guest'" class="borderClass3">
                     <div style="padding: 20px;">
                         <div>Welcome to Superpowers! First step, let's get a name:</div>
-                        <div><input type="text" id="userName" value='New Player' name="userName" maxlength="15" placeholder="User Name">
+                        <div><input type="text" id="userName" value='New Player' name="userName" maxlength="15"
+                                placeholder="User Name">
                             <button (mousedown)="enterUsernamePressed()" type="button"
                                 class="btn btn-primary tall roundButton glowButton">Continue</button>
                         </div>
                     </div>
                 </div>
+                <div *ngIf="user.userName != 'Guest' && !showCampaignsFlg" class="grayBox">
 
-                <div *ngIf="user.userName != 'Guest' && !showCampaignsFlg">
-                    <div style="color: white; font-size: 24px; font-weight: 800; text-shadow: 2px 2px black;">
-                        Single Player</div>
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-sm-4" style="padding: 0;">
+                            <div class="col-sm-6" style="padding: 0;">
 
                                 <img (mousedown)="campaignClicked(false)" class="shadowed main-page-item"
                                     src="assets/graphics/buttons/basicTrainButton.png" title="Basic Training">
 
                             </div>
-                            <div class="col-sm-4" style="padding: 0;">
+                            <div class="col-sm-6" style="padding: 0;">
 
-                                <img (mousedown)="campaignClicked(true)" class="shadowed main-page-item"
-                                    src="assets/graphics/buttons/campaign.png" title="Campaigns">
-
-                            </div>
-
-                            <div class="col-sm-4" style="padding: 0;">
-
-                                <img (mousedown)="singlePlayerGame(startGamePopup)" class="shadowed main-page-item"
-                                    src="assets/graphics/buttons/customGame.png" title="Single-Player Game">
+                                <img *ngIf="user && user.rank>=1" (mousedown)="singlePlayerGame(startGamePopup)" class="shadowed main-page-item"
+                                    src="assets/graphics/buttons/singleButton.png" title="Single-Player Game">
 
 
                             </div>
@@ -45,18 +39,21 @@
                     </div>
                 </div>
                 <div *ngIf="user.userName != 'Guest' && showCampaignsFlg">
+                    <button (mousedown)="toggleCampaignMode()" type="button" class="btn btn-secondary tall roundButton">
+                        Back </button>
                     <span *ngFor="let campaign of superpowersData.campaigns">
-                    <button *ngIf="!campaign.lock"
-                        (mousedown)="selectCampaign(campaign, startGamePopup)" type="button"
-                        [ngClass]="ngClassCampButton(campaign)" style="width: 250px;">
-                        <div style="font-size: 14px; font-weight: 700;">Tutorial #{{campaign.id}}</div>
-                        <img src="assets/graphics/units/piece{{campaign.unit}}u.png" height="60">
-                        <div style="font-size: 24px; font-weight: 700;"><i class="fa fa-lock" *ngIf="campaign.lock"></i>
-                            {{campaign.name}}</div>
-                        <div style="font-size: 11px;">{{campaign.desc}}</div>
-                        <button *ngIf="campaign.id == campaignId" type="button" class="btn btn-secondary tall roundButton">
-                            Play! </button>
-                    </button>
+                        <button *ngIf="!campaign.lock" (mousedown)="selectCampaign(campaign, startGamePopup)"
+                            type="button" [ngClass]="ngClassCampButton(campaign)" style="width: 250px;">
+                            <div style="font-size: 14px; font-weight: 700;">Tutorial #{{campaign.id}}</div>
+                            <img src="assets/graphics/units/piece{{campaign.unit}}u.png" height="60">
+                            <div style="font-size: 24px; font-weight: 700;"><i class="fa fa-lock"
+                                    *ngIf="campaign.lock"></i>
+                                {{campaign.name}}</div>
+                            <div style="font-size: 11px;">{{campaign.desc}}</div>
+                            <button *ngIf="campaign.id == campaignId" type="button"
+                                class="btn btn-secondary tall roundButton">
+                                Play! </button>
+                        </button>
 
                     </span>
                 </div>
