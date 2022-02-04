@@ -8,6 +8,33 @@
 
         <div *ngIf="!loadingFlg">
 
+
+            <div *ngIf="user.rank <= 2 || (user.rank <= 4 && multiPlayerObj.mmWins < 1)" class="borderClass3">
+                <div style="font-size: 24px; font-weight: 700;">Welcome to Superpowers!</div>
+                <div style="padding: 10px; font-size: 12px; color: gray;">Keep in mind games take several days to
+                    play. Each player has up to 24 hours to take their turn. Check back regularly.</div>
+
+
+                <button (mousedown)="filterGames(1)" [disabled]="buttonIdx==1" type="button"
+                    class="btn btn-primary roundButton mainButton">
+                    <div><i style="font-size: 32px;" class="fa fa-arrow-down"></i></div>
+                    <b>Join Game</b>
+                </button>
+                <button (mousedown)="createGamePopup.show()" type="button"
+                    class="btn btn-primary roundButton mainButton">
+                    <div><i style="font-size: 32px;" class="fa fa-plus"></i></div>
+                    <b>Create Game</b>
+                </button>
+
+                <button (mousedown)="matchmakerStandingsPopup.show()" type="button"
+                    class="btn btn-primary roundButton mainButton">
+                    <div><i style="font-size: 32px;" class="fa fa-trophy"></i></div>
+                    <b>Matchmaking</b>
+                    <div style="color: cyan;">Join Now!</div>
+                    <div style="font-size: 10px; color: yellow;">Games automatically start when filled up</div>
+                </button>
+
+            </div>
             <div
                 style="background-color: #007; text-align: center; padding: 3px; color: white; font-size: 20px; font-weight: 700;">
                 Multiplayer Games
@@ -15,8 +42,6 @@
                     <i class="fa fa-refresh"></i>
                 </button>
             </div>
-
-
             <div class="mediumBlueBg" style="text-align: center; padding-bottom: 5px;">
                 <div class="btn-group">
                     <button (mousedown)="filterGames(0)" type="button" class="btn btn-default roundButton segmentButton"
@@ -82,25 +107,16 @@
                     </table>
                 </div>
 
-                <div *ngIf="buttonIdx==0 && gameList.length==0" class="borderClass3">
-                    <div style="font-size: 24px; font-weight: 700;">Welcome to Superpowers!</div>
-                    <div style="padding: 10px;">Click a button above to <b>Join</b> or <b>Create</b> a new game!
-                    </div>
-                    <div style="padding: 10px; font-size: 12px; color: gray;">Keep in mind games take several days to
-                        play. Each player has up to 24 hours to take their turn. Check back regularly.</div>
-                    <div class="borderClass2">
-                        <div>Also consider joining Matchmaking.</div>
-                        <button (mousedown)="matchmakerStandingsPopup.show()" type="button"
-                            class="btn btn-primary roundButton">
-                            <i class="fa fa-trophy"></i> Matching League
-                        </button>
-                    </div>
-                </div>
+
                 <div *ngIf="buttonIdx==1 && gameList.length==0" class="borderClass3">
                     <img src="assets/graphics/advisors/leader.png" height=170>
-                    <div style="font-size: 20px; font-weight: 700;">No open games. Press
-                        <b>'Create'</b> button above.
+                    <div style="font-size: 20px; font-weight: 700;">No open games. Get one started!
                     </div>
+                    <button (mousedown)="createGamePopup.show()" type="button"
+                        class="btn btn-primary roundButton mainButton">
+                        <div><i style="font-size: 32px;" class="fa fa-plus"></i></div>
+                        <b>Create Game</b>
+                    </button>
                     <div>Note: Games usually take a couple of days to fill up.</div>
                 </div>
 

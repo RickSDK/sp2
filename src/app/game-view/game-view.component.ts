@@ -89,6 +89,7 @@ export class GameViewComponent extends BaseComponent implements OnInit {
     this.disableButtonFlg = true;
     var currentPlayer = getCurrentPlayer(this.gameObj);
     currentPlayer.cpu = true;
+    this.computerGo();
   }
   undoMoves() {
     this.playClick();

@@ -73,7 +73,7 @@ function initializeBattle(attackPlayer, selectedTerritory, attackUnits, gameObj,
                     defActiveMedics++;
                 if (unit.piece == 27)
                     destoryerIncludedFlg = true;
-                if (unit.targetDroneFlg)
+                if (unit.piece == 6)
                     numDefDroneKillers++;
             }
         }
@@ -283,7 +283,7 @@ function getBattleAnalysis(battle, selectedTerritory, player, gameObj, optionTyp
         if (unit.piece == 3 || unit.piece == 46)
             unit.att = unit.att2;
         if (unit.piece == 50)
-            unit.numAtt = 1;
+            unit.numAtt = 2;
         if (includesGeneral) {
             if (unit.subType == 'soldier' || unit.id == 46 || unit.id == 51)
                 unit.att = unit.att2 + 1;
@@ -631,6 +631,7 @@ function rollAttackDice(battle, gameObj, stratFlg = false) {
             battle.numDefDroneKillers--;
             unit.dead = true; // kill drone
             battle.attCasualties.push(43);
+            console.log('drone killed!!');
         }
     });
 }
@@ -1144,8 +1145,7 @@ function wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, ti
 
     if (displayBattle.militaryObj.wonFlg) {
         selectedTerritory.defeatedByNation = currentPlayer.nation;
-        selectedTerritory.defeatedByRound = gameObj.round;
-
+        
         illuminateThisTerritory(selectedTerritory, gameObj);
         if (selectedTerritory.nation == 99)
             squareUpAllCargo(displayBattle.attackUnits, gameObj);
@@ -1166,7 +1166,8 @@ function wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, ti
 
     if (displayBattle.defender > 0) {
         var p2 = playerOfNation(displayBattle.defender, gameObj);
-        if (displayBattle.militaryObj.wonFlg) {
+
+         if (displayBattle.militaryObj.wonFlg) {
             if (gameObj.round == gameObj.attack && selectedTerritory.nation < 99 && selectedTerritory.defeatedByRound != gameObj.round)
                 p2.defenseFlg = true;
         }
@@ -1174,6 +1175,9 @@ function wrapUpBattle(displayBattle, currentPlayer, gameObj, superpowersData, ti
         p2.kills += losses;
         p2.losses += hits;
         p2.kd = getKdForPlayer(p2);
+    }
+    if (displayBattle.militaryObj.wonFlg) {
+        selectedTerritory.defeatedByRound = gameObj.round;
     }
 
     var unit1 = (losses == 1) ? 'unit' : 'units';
@@ -1342,7 +1346,8 @@ function hostileActObj(type, terr, gameObj, player) {
         message = "This territory has just been conquered.";
         allowFlg = (terr.nation == 99 || type == 'bomb');
     }
-    if (terr.attackedByNation == player.nation && terr.attackedRound == gameObj.round) {
+    var normalAttackFlg = true; // make false to allow multiple attacks to same territory.
+    if (normalAttackFlg && terr.attackedByNation == player.nation && terr.attackedRound == gameObj.round) {
         message = "This territory has already been attacked.";
         allowFlg = (terr.nation == 99 || type == 'bomb');
     }
@@ -1385,7 +1390,7 @@ function hostileActObj(type, terr, gameObj, player) {
             message = 'This country has already been bombed.';
             allowFlg = false;
         }
-        if (type != 'bomb' && terr.attackedByNation == player.nation && terr.attackedRound == gameObj.round) {
+        if (normalAttackFlg && type != 'bomb' && terr.attackedByNation == player.nation && terr.attackedRound == gameObj.round) {
             message = 'Can\'t attack the same territory twice.';
             allowFlg = false;
         }

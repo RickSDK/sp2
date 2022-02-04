@@ -17,13 +17,13 @@
 	</svg>
 </div>
 <!---flags--->
-<div *ngFor="let terr of gameObj.territories" id="{{'terr'+terr.id}}" style="position: absolute; z-index: 0;">
-	<img (mousedown)="terrClicked(territoryPopup, terr, gameObj, ableToTakeThisTurn, currentPlayer, user)"
+<div (mousedown)="terrClicked(territoryPopup, terr, gameObj, ableToTakeThisTurn, currentPlayer, user)" *ngFor="let terr of gameObj.territories" id="{{'terr'+terr.id}}" style="position: absolute; z-index: 2;">
+	<img 
 		src="assets/graphics/images/{{terr.flag || 'flag10.gif'}}" [class]="ngClassFlag(terr, isDesktopFlg)"
-		id="{{'flag'+terr.id}}" title='{{terr.title}}' alt='{{terr.title}}' style="cursor: pointer; z-index: 1;"
+		id="{{'flag'+terr.id}}" title='{{terr.title}}' alt='{{terr.title}}' style="cursor: pointer; z-index: 5;"
 		(mouseenter)="changeSVGColor(true, terr.id, terr.owner)"
 		(mouseleave)="changeSVGColor(false, terr.id, terr.owner)">
-	<div style="padding-top: 0px; margin-top: -6px; max-width: 60px; white-space: nowrap;" *ngIf="terr.nation<99"><span
+	<div style="padding-top: 0px; margin-top: -6px; max-width: 60px; white-space: nowrap;" *ngIf="terr.nation<99"><span *ngIf="terr.unitCount>0"
 			class="boardBlack">{{terr.displayUnitCount}}</span>&nbsp;<img *ngIf="terr.piece>0"
 			src="{{ngUnitSrc(terr.piece, terr.owner)}}" title="{{terr.pieceName}}"
 			style="max-height: 18px; max-width: 24px;"></div>
@@ -31,7 +31,7 @@
 		*ngIf="terr.nation==99 && terr.totalUnitCount>0">
 		<span class="boardBlack" style="background-color: blue;">{{terr.displayUnitCount}}</span>
 		<img *ngIf="terr.piece>0" src="{{ngUnitSrc(terr.piece, terr.owner)}}" title="{{terr.pieceName}}"
-			style="max-height: 22px; max-width: 45px;">
+			style="max-height: 22px; max-width: 45px; z-index: 1;">
 
 	</div>
 	<img *ngIf="terr.showGeneralFlg" src="assets/graphics/units/piece10u.png" height="25"
@@ -46,12 +46,12 @@
 
 <!---nation labels--->
 <span *ngFor="let terr of gameObj.territories" id="name{{terr.id}}" [ngStyle]="ngStyleNameLabel(terr)"
-	style="z-index: 0; display: none; position: absolute; text-align: center; width: 55px; background-color: black; color: white; font-size: 10px; border: 1px solid white; box-shadow: 5px 5px 5px #000;">{{terr.name}}
+	style="z-index: 2; display: none; position: absolute; margin-top: -7px; text-align: center; padding: 3px; background-color: black; color: white; font-size: 10px; border: 1px solid white; box-shadow: 5px 5px 5px #000; pointer-events: none; min-width: 60px;">{{terr.name}}
 	<div *ngIf="terr.capital && terr.id<79" style="color: yellow; font-size: 10px;"><i class="fa fa-star"></i>Capital
 	</div>
 </span>
 
-<img onClick="closePopup('target')" src="assets/graphics/images/target.png" id="target" class="targetSign off">
+<img onClick="closePopup('target')" src="assets/graphics/images/target.png" id="target" class="targetSign off" style="z-index: 10;">
 
 <!---top bar--->
 <section *ngIf="gameObj" [class]="ngClassGradient()"
@@ -158,7 +158,7 @@
 <!-----------------players sidebar------------------>
 <div id="sidelinePopup" *ngIf="!hidePlayersPanelFlag"
 	(mousedown)="gamePlayersPopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user, 0)"
-	style="cursor: pointer; position: fixed; min-width: 50px; max-width: 68px; top: 150px; left: 0; border: 1px solid black; text-align: center; box-shadow: 3px 3px 5px #000; transition: all 1s ease;">
+	style="cursor: pointer; position: fixed; min-width: 50px; max-width: 68px; top: 150px; left: 0; border: 1px solid black; text-align: center; box-shadow: 3px 3px 5px #000; transition: all 1s ease; z-index: 10;">
 	<div id="playerPanel" class="roundedPanel" *ngIf="currentPlayer">
 		<div style="background-color: #444; color: white; font-size: 10px;">Players</div>
 		<div *ngFor="let player of gameObj.players" style="white-space: nowrap;"
@@ -180,13 +180,13 @@
 
 <button id="sidelineButton" *ngIf="isMobileFlg && !hidePlayersPanelFlag" (mousedown)="hidePlayersPanelFlag=true"
 	type="button"
-	style="cursor: pointer; position: fixed; min-width: 50px; max-width: 60px; top: 320px; left: 0; transition: all 1s ease;"
+	style="cursor: pointer; position: fixed; min-width: 50px; max-width: 60px; top: 320px; left: 0; transition: all 1s ease; z-index: 10;"
 	class="btn btn-secondary roundButton"><i class="fa fa-arrow-down"></i></button>
 
 <!-----------------purchase sidebar------------------>
 <div id="purchaseSideBar" (mousedown)="productionQueuePopup.show(gameObj, ableToTakeThisTurn, currentPlayer, user)"
 	*ngIf="showPanelsFlg && !hidePlayersPanelFlag"
-	style="cursor: pointer; position: fixed; min-width: 50px; max-width: 60px; top: 360px; left: 0; border: 1px solid black; text-align: center; box-shadow: 3px 3px 5px #000; transition: all 1s ease;">
+	style="cursor: pointer; position: fixed; min-width: 50px; max-width: 60px; top: 360px; left: 0; border: 1px solid black; text-align: center; box-shadow: 3px 3px 5px #000; transition: all 1s ease; z-index: 10;">
 	<div class="roundedPanel" *ngIf="currentPlayer">
 		<div style="background-color: #444; color: white; font-size: 10px;">Purchases</div>
 		<img *ngFor="let unit of gameObj.unitPurchases" src="{{ngUnitSrc(unit.piece)}}"
@@ -605,38 +605,38 @@
 
 
 <img id="sprite" src="assets/graphics/units/piece{{spritePieceId}}u.png"
-	style="display: none; position: absolute; left: 100px; top: 200px; max-height: 60px;; max-width: 60px;">
+	style="display: none; position: absolute; left: 100px; top: 200px; max-height: 60px;; max-width: 60px; z-index: 10;">
 <img id="spriteShip" src="assets/graphics/units/piece{{spriteShipId}}u.png"
-	style="display: none; position: absolute; left: 150px; top: 200px; max-height: 60px;; max-width: 60px;">
+	style="display: none; position: absolute; left: 150px; top: 200px; max-height: 60px;; max-width: 60px; z-index: 10;">
 <img id="sprite144" src="assets/graphics/units/piece144u.png"
-	style="display: none; position: absolute; left: 200px; top: 200px; max-height: 60px;; max-width: 60px;">
+	style="display: none; position: absolute; left: 200px; top: 200px; max-height: 60px;; max-width: 60px; z-index: 10;">
 <img id="sprite7" src="assets/graphics/units/piece7u.png"
-	style="display: none; position: absolute; left: 250px; top: 200px; max-height: 60px;; max-width: 60px;">
+	style="display: none; position: absolute; left: 250px; top: 200px; max-height: 60px;; max-width: 60px; z-index: 10;">
 <img id="sprite14" src="assets/graphics/units/piece14u.png"
-	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 60px;; max-width: 60px;">
+	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 60px;; max-width: 60px; z-index: 10;">
 <img id="spriteInf1" src="assets/graphics/units/piece2u.png"
-	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 60px;; max-width: 60px;">
+	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 60px;; max-width: 60px; z-index: 10;">
 <img id="spriteInf2" src="assets/graphics/units/piece2u.png"
-	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 60px;; max-width: 60px;">
+	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 60px;; max-width: 60px; z-index: 10;">
 <img id="spriteInf3" src="assets/graphics/units/piece2u.png"
-	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 60px;; max-width: 60px;">
+	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 60px;; max-width: 60px; z-index: 10;">
 <img id="spriteInf4" src="assets/graphics/units/piece2u.png"
-	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 60px;; max-width: 60px;">
+	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 60px;; max-width: 60px; z-index: 10;">
 <img id="spriteInf5" src="assets/graphics/units/piece2u.png"
-	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 60px;; max-width: 60px;">
+	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 60px;; max-width: 60px; z-index: 10;">
 
 <img id="spriteFlg1" src="assets/graphics/images/flag1.gif"
-	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 40px;; max-width: 40px;">
+	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 40px;; max-width: 40px; z-index: 10;">
 <img id="spriteFlg2" src="assets/graphics/images/flag1.gif"
-	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 40px;; max-width: 40px;">
+	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 40px;; max-width: 40px; z-index: 10;">
 <img id="spriteFlg3" src="assets/graphics/images/flag1.gif"
-	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 40px;; max-width: 40px;">
+	style="display: none; position: absolute; left: 300px; top: 200px; max-height: 40px;; max-width: 40px; z-index: 10;">
 
 <img id="nukeSprite" src="assets/graphics/anim/nuke{{nukeFrameNum}}.png"
-	style="display: block; position: absolute; left: -200px; top: 200px; height: 200px;">
+	style="display: block; position: absolute; left: -200px; top: 200px; height: 200px; z-index: 10;">
 
 <img id="cruiseSprite" src="assets/graphics/anim/ex{{nukeFrameNum}}.png"
-	style="display: block; position: absolute; left: -200px; top: 200px; max-height: 100px;; max-width: 100px;">
+	style="display: block; position: absolute; left: -200px; top: 200px; max-height: 100px;; max-width: 100px; z-index: 10;">
 
 
 

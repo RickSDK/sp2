@@ -60,7 +60,7 @@ function purchaseCPUUnits(player, gameObj, superpowersData, rank) {
             player.money += 5;
         if (gameObj.round > 20)
             player.money -= 5;
- 
+
         if (overflowRounds > 0 && player.money > 40)
             player.money += overflowRounds * 32;
 
@@ -236,6 +236,9 @@ function doCpuDiplomacyOffer(player, gameObj, superpowersData) {
     if (!player2.cpu && gameObj.round > 8)
         return;
 
+    if (gameObj.type == 'barbarian' && status != 1)
+        return;
+
     if (status < 2) {
         var rounds = roundsOfWar(player, player2.nation, gameObj);
         if (rounds > 3)
@@ -357,37 +360,42 @@ function findMainBase(gameObj, currentPlayer) {
     });
     return baseId;
 }
-function findPrimaryTarget(gameObj, player) {
+function findPrimaryTarget(gameObj, player, superpowersData) {
     if (player.requestedTarget && player.requestedTarget > 0)
         return player.requestedTarget;
     var target = 0;
     if (player.nation == 1)
-        target = findNextPrimaryTargetForPlayer(player, [1, 2, 3, 4, 5], gameObj);
+        target = findNextPrimaryTargetForPlayer(player, [1, 2, 3, 4, 5], gameObj, superpowersData);
     if (player.nation == 2)
-        target = findNextPrimaryTargetForPlayer(player, [7, 12, 8, 9, 62], gameObj);
+        target = findNextPrimaryTargetForPlayer(player, [7, 12, 8, 9], gameObj, superpowersData);
     if (player.nation == 3)
-        target = findNextPrimaryTargetForPlayer(player, [13, 14, 15, 16, 17, 18, 19, 20], gameObj);
+        target = findNextPrimaryTargetForPlayer(player, [13, 14, 15, 16, 17, 18, 19, 20], gameObj, superpowersData);
     if (player.nation == 4)
-        target = findNextPrimaryTargetForPlayer(player, [21, 24, 25, 23, 22], gameObj);
+        target = findNextPrimaryTargetForPlayer(player, [21, 24, 25, 23, 22], gameObj, superpowersData);
     if (player.nation == 5)
-        target = findNextPrimaryTargetForPlayer(player, [28, 70, 29, 30, 31, 34], gameObj);
+        target = findNextPrimaryTargetForPlayer(player, [28, 29, 30, 31, 34], gameObj, superpowersData);
     if (player.nation == 6)
-        target = findNextPrimaryTargetForPlayer(player, [35, 37, 40, 41, 36, 38, 39], gameObj);
+        target = findNextPrimaryTargetForPlayer(player, [35, 37, 40, 41, 36, 38, 39], gameObj, superpowersData);
     if (player.nation == 7)
-        target = findNextPrimaryTargetForPlayer(player, [42, 44, 43, 45, 46, 47, 48, 49], gameObj);
+        target = findNextPrimaryTargetForPlayer(player, [42, 44, 43, 45, 46, 47, 48, 49], gameObj, superpowersData);
     if (player.nation == 8)
-        target = findNextPrimaryTargetForPlayer(player, [50, 55, 54, 53, 52, 51], gameObj);
+        target = findNextPrimaryTargetForPlayer(player, [50, 55, 54, 53, 52, 51], gameObj, superpowersData);
     return target;
 }
-function findNextPrimaryTargetForPlayer(player, ids, gameObj) {
+function findNextPrimaryTargetForPlayer(player, ids, gameObj, superpowersData) {
+    var primaryTarget = 0;
     for (var x = 0; x < ids.length; x++) {
         var id = ids[x];
         var terr = gameObj.territories[id - 1];
         if (terr.owner != player.nation) {
-            return id;
+            if (player.cpu && treatyStatus(player, terr.owner) > 0) {
+                declareWarOnNation(terr.owner, gameObj, player, superpowersData);
+            }
+            primaryTarget = id;
         }
     }
-    return 0;
+    console.log('primaryTarget!!!', primaryTarget);
+    return primaryTarget;
 }
 function findSecondaryTarget(gameObj, player) {
     var terrId = findBorderingAttackableTerritory(gameObj, player);
@@ -497,6 +505,9 @@ function isAtWarWith(player, terr, gameObj) {
     return (status == 0 && gameObj.round > 5);
 }
 function okToAttack(player, terr, gameObj) {
+    if (player.nation == terr.nation && terr.owner != terr.nation)
+        return true;
+
     if (gameObj.round >= 100 && player.cpu) {
         var p2 = playerOfNation(terr.owner, gameObj);
         if (p2.cpu)
@@ -514,6 +525,12 @@ function okToAttack(player, terr, gameObj) {
         return false;
     if (gameObj.round < gameObj.attack)
         return false;
+
+    var status = treatyStatus(player, terr.owner)
+    if (status > 0) {
+        return false;
+    }
+
     if (gameObj.round == gameObj.attack) {
         if (player.attackFlg)
             return false;

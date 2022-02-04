@@ -58,13 +58,13 @@
             <button (click)="infoFlg = !infoFlg" type="button" class="btn btn-secondary roundButton"><i
                     class="fa fa-info-circle"></i> Fog of War</button>
 
-            <div *ngIf="gameObj.hardFog=='Y'">
+            <div *ngIf="gameObj.hardFog">
                 <div class="borderClass2" *ngIf="infoFlg">
                     <p><b>Hardcore Fog-of-War:</b> Most enemy units are completely hidden. If you have a military unit
                         bordering an enemy territory, you will see regular fog-of-war counts.</p>
                 </div>
             </div>
-            <div ng-hide="gameObj.hardFog=='Y'">
+            <div ng-hide="gameObj.hardFog">
                 <div class="borderClass2" *ngIf="infoFlg">
                     <div><b>Fog of War:</b> Enemy units are hidden from view. Instead you will be given an
                         approximate size of their force, without knowing specifics:</div>

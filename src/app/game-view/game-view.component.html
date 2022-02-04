@@ -26,19 +26,19 @@
 					<font color=#000>Y</font>
 				</td>
 			</tr>
-			<tr *ngIf="!gameObj.fogOfWar && gameObj.hardFog!='Y'">
+			<tr *ngIf="!gameObj.fogOfWar && !gameObj.hardFog">
 				<td><b>Visibility:</b></td>
 				<td>
 					<font color=#08f><i class="fa fa-sun-o"></i> Standard</font>
 				</td>
 			</tr>
-			<tr *ngIf="gameObj.fogOfWar && gameObj.hardFog!='Y'">
+			<tr *ngIf="gameObj.fogOfWar && !gameObj.hardFog">
 				<td><b>Visibility:</b></td>
 				<td>
 					<font color=#08f><i class="fa fa-moon-o"></i> Fog-of-War</font>
 				</td>
 			</tr>
-			<tr *ngIf="gameObj.hardFog=='Y'">
+			<tr *ngIf="gameObj.hardFog">
 				<td><b>Visibility:</b></td>
 				<td>
 					<font color=#08f><i class="fa fa-cloud"></i> Hardcore Fog</font>
@@ -102,7 +102,7 @@
 			<i class="fa fa-user" style="font-size: 26px;"></i>
 			<div style="font-size: 10px;">Turn all Human</div>
 		</button>
-		<button *ngIf="user.userName=='Rick'" (click)="turnIntoCPU()" [disabled]="disableButtonFlg" type="button" class="btn btn-warning roundButton">
+		<button *ngIf="user.userName=='Rick'" (click)="turnIntoCPU()" type="button" class="btn btn-warning roundButton">
 			<i class="fa fa-android" style="font-size: 26px;"></i>
 			<div style="font-size: 10px;">Turn into CPU</div>
 		</button>

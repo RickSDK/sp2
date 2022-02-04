@@ -329,12 +329,16 @@ export class TerritoryPopupComponent extends BaseComponent implements OnInit {
   }
   adminAllowMovePressed() {
     this.playClick();
+    this.selectedTerritory.attackedRound = 0;
+    this.selectedTerritory.defeatedByRound = 0;
     this.selectedTerritory.units.forEach(unit => {
       unit.movesLeft = 2;
     });
   }
   moveHerosPressed() {
     this.playClick();
+    localStorage.moveHerosId = this.selectedTerritory.id;
+    this.closeModal('#territoryPopup');
   }
   buttonClicked(type) {
     //this event emitted from app-terr-buttons

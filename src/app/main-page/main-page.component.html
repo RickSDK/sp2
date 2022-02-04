@@ -48,6 +48,11 @@
 				</div>
 			</div>
 
+			<div *ngIf="!promoVideoWatched" class="borderClass2">
+				<div><i class="fa fa-arrow-down" style="font-size: 32px;"></i></div>
+				Check out the Boardgame Hacker video below to get a quick overview of Superpowers!
+			</div>
+
 			<div *ngIf="0" style="display: inline-block; border: 1px solid gray; width: 100%; max-width: 400px;">
 				<div style="text-align: center; font-size: 12px; color: gray;">Google Ads</div>
 				<ins class="adsbygoogle" style="display:block;" data-ad-client="ca-pub-2626924352662007"
@@ -71,14 +76,18 @@
 	<a routerLink="/info"><button type="button" class="btn btn-primary roundButton"><i class="fa fa-book"></i>
 			Rules</button></a>
 
-	<button (mousedown)="playVideo(1)" type="button" class="btn btn-secondary roundButton"><i class="fa fa-film"></i>
-		Intro
-		Video</button>
-	<button (mousedown)="playVideo(2)" type="button"
-		class="btn btn-secondary roundButton"><i class="fa fa-film"></i> Gameplay
+
+	<button (mousedown)="playYouTubeVideo()" type="button" class="btn btn-secondary roundButton glowBlue"><i class="fa fa-play"></i>
+		Boardgame Hacker
+		Video!
 	</button>
-	<button *ngIf="guestNum==3" (mousedown)="playVideo(3)" type="button"
-		class="btn btn-secondary roundButton"><i class="fa fa-film"></i> Homescreen
+	<button (mousedown)="playVideo(1)" type="button" class="btn btn-secondary roundButton"><i class="fa fa-play"></i>
+		Intro</button>
+	<button *ngIf="promoVideoWatched" (mousedown)="playVideo(2)" type="button" class="btn btn-secondary roundButton"><i class="fa fa-play"></i>
+		Gameplay
+	</button>
+	<button *ngIf="guestNum==3" (mousedown)="playVideo(3)" type="button" class="btn btn-secondary roundButton"><i
+			class="fa fa-play"></i> Homescreen
 		Icon
 		Video</button>
 
@@ -86,7 +95,12 @@
 
 <div *ngIf="showVideoPlayerFlg"
 	style="position: absolute; left: 0; top: 0; text-align: center; width: 100%; z-index: 100; background-color: gray; padding-bottom: 50px; box-shadow: 5px 5px 10px #444;">
-	<video id="mainVideo" style="width: 100%; height: auto; min-width: 480px; min-height: 320px;">
+
+
+	<iframe *ngIf="showYouTubePlayerFlg" style="width: 100%; min-height: 480px;" src="https://www.youtube.com/embed/m4teSllXKgM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
+	<video *ngIf="!showYouTubePlayerFlg" id="mainVideo" style="width: 100%; height: auto; min-width: 480px; min-height: 320px;">
 		<source src="http://www.superpowersgame.com/superpowers480.mov" type="video/mp4">
 	</video>
 	<div>

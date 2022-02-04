@@ -66,7 +66,7 @@ export class LoginPopupComponent extends BaseComponent implements OnInit {
     localStorage.password = this.password;
 
     const url = this.getHostname() + "/spApiText.php";
-    const postData = this.getPostDataFromObj({ Username: this.userName, Password: this.password, action: 'login', rank: this.user.rank });
+    const postData = this.getPostDataFromObj({ Username: this.userName, Password: this.password, action: 'login' });
 
     fetch(url, postData).then((resp) => resp.text())
       .then((data) => {
@@ -82,6 +82,7 @@ export class LoginPopupComponent extends BaseComponent implements OnInit {
   }
   successCallback(data: any) {
     if (this.verifyServerResponse(data)) {
+      console.log('hey', data);
       var userObj = parseServerDataIntoUserObj(data);
       localStorage.userName = userObj.userName;
       getIPInfo(localStorage.userName, localStorage.password);

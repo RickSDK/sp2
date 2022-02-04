@@ -111,10 +111,10 @@ export class MatchmakingStandingsComponent extends BaseComponent implements OnIn
             this.maxPoints = player.points;
           if (player.name.length > 0) {
             if (ipHash[player.ip]) {
-              this.ipCheck = 'ipViolation!!!';
-              this.ipViolateFlg = true;
-              this.ipViolator = player.name;
-              ipHash[player.ip]++;
+              //this.ipCheck = 'ipViolation!!!';
+              //this.ipViolateFlg = true;
+              //this.ipViolator = player.name;
+              //ipHash[player.ip]++;
             } else
               ipHash[player.ip] = 1;
             if (player.games_max > player.games_playing && player.days_old < 2) {
@@ -177,7 +177,7 @@ export class MatchmakingStandingsComponent extends BaseComponent implements OnIn
       }
     });
     console.log(readyList.length + ' players within ' + tollarance + ' points of ' + points);
-    readyList.sort(function (a, b) { return a.ptDiff - b.ptDiff; });
+    readyList.sort(function (a, b) { return b.ptDiff - a.ptDiff; });
 
     var numPlayers = 8;
     var gameTypes = ["battlebots", "diplomacy", "autobalance", "freeforall", "firefight", "hungerGames", "barbarian", "co-op", "ffa-5", "ffa-6", "ffa-7"];

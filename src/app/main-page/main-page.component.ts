@@ -33,11 +33,14 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   public guestNum = 0;
   public currentVideo: any;
   public adsbygoogle: any;
+  public showYouTubePlayerFlg = false;
+  public promoVideoWatched = false;
 
   public videos = [
     { seconds: 41, src: 'http://www.superpowersgame.com/superpowers480.mov' },
     { seconds: 325, src: 'http://www.superpowersgame.com/videos/SPGamePlay480.mov' },
     { seconds: 24, src: 'http://www.superpowersgame.com/videos/homescreen.mov' },
+    { seconds: 200, src: 'https://www.youtube.com/watch?v=m4teSllXKgM' },
   ];
 
 
@@ -76,6 +79,7 @@ export class MainPageComponent extends BaseComponent implements OnInit {
     // flexSprite();
     this.singleGameId = localStorage.currentGameId;
     this.showHomeButtonFlg = localStorage.showHomeButtonFlg != 'Y';
+    this.promoVideoWatched = localStorage.promoVideoWatched == 'Y';
     //getIPInfo(localStorage.userName, localStorage.password);
 
   }
@@ -113,8 +117,15 @@ export class MainPageComponent extends BaseComponent implements OnInit {
         this.guestNum = 5;
     }
   }
+  playYouTubeVideo() {
+    this.promoVideoWatched = true;
+    this.showVideoPlayerFlg = true;
+    this.showYouTubePlayerFlg = true;
+    localStorage.promoVideoWatched = 'Y';
+  }
   playVideo(num: number) {
     this.showVideoPlayerFlg = true;
+    this.showYouTubePlayerFlg = false;
     setTimeout(() => {
       this.startPlayingVideo(num);
     }, 500);
@@ -127,20 +138,19 @@ export class MainPageComponent extends BaseComponent implements OnInit {
       localStorage.videoGamePlayWatched = 'Y';
     if (num == 3)
       localStorage.videoIconWatched = 'Y';
+
     var vid = this.videos[num - 1];
     if (this.currentVideo) {
       this.currentVideo.src = vid.src;
       this.currentVideo.play();
-      /*
-      setTimeout(() => {
-        this.turnOffVideo();
-      }, vid.seconds * 1000);*/
+      console.log('playing', this.currentVideo);
     }
   }
 
   turnOffVideo() {
     console.log('off!');
-    this.currentVideo.pause();
+    if(this.currentVideo)
+      this.currentVideo.pause();
     this.showVideoPlayerFlg = false;
     this.paintMainScreen();
   }
@@ -231,25 +241,6 @@ export class MainPageComponent extends BaseComponent implements OnInit {
     console.log('User updated from emit!', this.user);
     this.paintMainScreen();
   }
-  /*
-  flexSprite(width: number) {
-    if (this.expandFlg)
-      width++;
-    else
-      width--;
-    var e = document.getElementById('spLogo');
-    console.log('e',e);
-    if (e) {
-      e.style.width = width + '%';
-      if (width < 75 || width > 99) {
-        this.expandFlg = !this.expandFlg;
-      }
-      requestAnimationFrame(flexSprite);
-      //     setTimeout(() => {
-      //      this.flexSprite(width);
-      //     }, 80);
-    }
-  }*/
 }
 
 var width = 100;

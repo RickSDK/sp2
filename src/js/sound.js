@@ -100,39 +100,39 @@ function playSound(fileName) {
 	if (!isSoundOn()) {
 		return;
 	}
-	if (fileName == 'clink.wav') {
+	if (fileName == 'clink.wav' && clinkSound) {
 		clinkSound.play();
 		return;
 	}
-	if (fileName == 'gun.mp3') {
+	if (fileName == 'gun.mp3' && gun) {
 		gun.play();
 		return;
 	}
-	if (fileName == 'error.mp3') {
+	if (fileName == 'error.mp3' && error) {
 		error.play();
 		return;
 	}
-	if (fileName == 'shotgun.mp3') {
+	if (fileName == 'shotgun.mp3' && shotgun) {
 		shotgun.play();
 		return;
 	}
-	if (fileName == 'warning.mp3') {
+	if (fileName == 'warning.mp3' && warning) {
 		warning.play();
 		return;
 	}
-	if (fileName == 'tada.mp3') {
+	if (fileName == 'tada.mp3' && tada) {
 		tada.play();
 		return;
 	}
-	if (fileName == 'bombers.mp3') {
+	if (fileName == 'bombers.mp3' && bombers) {
 		bombers.play();
 		return;
 	}
-	if (fileName == 'torture.mp3') {
+	if (fileName == 'torture.mp3' && torture) {
 		torture.play();
 		return;
 	}
-	if (fileName == 'Scream.mp3') {
+	if (fileName == 'Scream.mp3' && Scream) {
 		Scream.play();
 		return;
 	}
@@ -208,7 +208,8 @@ function playSound(fileName) {
 		console.log('>>>>>>> playing sound: ', fileName);
 		setTimeout(() => {
 			var audio = new Audio('assets/sounds/' + fileName);
-			audio.play();
+			if(audio)
+				audio.play();
 		}, 100);
 	} else {
 		console.log('illegal sound!!!')

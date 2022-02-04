@@ -5,9 +5,9 @@
             <td width="80">
                 <button (mousedown)="enterGame(game)" [ngClass]="ngClassGameButton(game)" type="button"
                     class="btn btn-default roundButton">
-                    <div><i class="fa fa-arrow-right"></i></div>
+                    <div><i class="fa fa-eye" style="font-size: 20px"></i></div>
                     <span *ngIf="game.joinGameFlg">Join</span>
-                    <span *ngIf="!game.joinGameFlg">Enter</span>
+                    <span *ngIf="!game.joinGameFlg">View</span>
                 </button>
             </td>
             <td width="35">
@@ -125,7 +125,7 @@
                     <tr>
                         <th>N</th>
                         <th>Player</th>
-                        <th>$</th>
+                        <th title="Player's Income">$</th>
                         <th *ngIf="game.type=='Locked'">T</th>
                         <th></th>
                     </tr>

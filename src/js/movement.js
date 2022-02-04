@@ -1,12 +1,15 @@
 
 function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
-    if (0 && unit.piece == 49 && toTerr.id == 131) {
-        console.log('cm', unit.piece, unit.terr, distObj, optionType);
+    if (0 && unit.piece == 49) {
+        console.log('xxxxx', unit.type, toTerr.id, distObj, optionType);
     }
     //return true;    // if this function returns true, a checkbox will show up
 
     if (unit.owner != currentPlayer.nation)
         return false;
+
+    if (optionType != 'cruise' && toTerr.id < 79 && unit.type == 3)
+        return false; // boats cannot go on land
 
     if (optionType == 'cruise') {
         if (unit.didAttackFlg)
@@ -82,6 +85,9 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
     }
     if (optionType == 'movement' && unit.type == 1 && toTerr.nation == 99 && distObj.air > 1) {
         return false; // cargo
+    }
+    if (optionType == 'movement' && unit.type == 1 && toTerr.nation == 99 && distObj.air == 1 && toTerr.transportSpace > 0) {
+        return true; // cargo situation!!
     }
     if (optionType == 'movement' && unit.type == 2 && toTerr.nation == 99 && unit.cargoOf > 0 && unit.terr >= 79) {
         return false; // fighters
@@ -292,7 +298,7 @@ function distanceBetweenTerrs(terr1, terr2, max, land, air, sea, allyHash, terri
         return { land: land, air: air, sea: sea };
     //return { land: maxLand, air: maxAir, sea: maxSea };
 
-    if (land > 1 && (terr1.defeatedByNation > 0 || terr1.nuked)) // || terr1.attackedByNation > 0
+    if (land > 1 && (terr1.defeatedByNation > 0)) // || terr1.attackedByNation > 0
         land = 9;
 
     //console.log('here', terr1.id, terr2.id, land, air);
@@ -331,7 +337,9 @@ function distanceBetweenTerrs(terr1, terr2, max, land, air, sea, allyHash, terri
     return { land: maxLand, air: maxAir, sea: maxSea };
 }
 function isTerritoryBlocked(fromNation, terr, allyHash) {
-    if (terr.nation < 99 && (terr.defeatedByNation > 0 || terr.nuked))
+    if (terr.nation < 99 && terr.defeatedByNation > 0)
+        return true;
+    if (terr.nation < 99 && terr.attackedByNation == fromNation)
         return true;
     if (terr.owner == fromNation || terr.unitCount == 0 || fromNation == 0)
         return false;
@@ -1242,7 +1250,7 @@ function verifyUnitsAreLegal(units, terr) {
     return true;
 }
 function isArtillery(unit) {
-    if (unit.piece == 1 || unit.piece == 24 || unit.piece == 33 || unit.piece == 38)
+    if (unit.piece == 1 || unit.piece == 24 || unit.piece == 33 || unit.piece == 35 || unit.piece == 38)
         return true;
     else
         return false;

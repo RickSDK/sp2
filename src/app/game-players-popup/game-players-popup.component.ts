@@ -23,6 +23,7 @@ export class GamePlayersPopupComponent extends BaseComponent implements OnInit {
   public gameUpdDt: string;
   public generalRetreatObj: any;
   public generalRetreatFlg = false;
+  public titles = ['Players', 'Allies', 'Stats', 'Territories','Game Details'];
 
   constructor() { super(); }
 

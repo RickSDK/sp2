@@ -185,6 +185,10 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 				transportCargo += 2;
 			if (unit.subType == 'soldier')
 				transportCargo++;
+			if (highestPiece == 44)
+				highestPiece = unit.piece; // seal
+			if (highestPiece == 0 && unit.piece == 44)
+				highestPiece = 44; // seal
 			if (unit.piece > highestPiece && (terr.nation < 99 || unit.type == 3 || unit.type == 4))
 				highestPiece = unit.piece;
 			if (terr.nation == 99) {
@@ -238,7 +242,6 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 	terr.units = units;
 	terr.movableTroopCount = movableTroopCount;
 	if (terr.defeatedByNation > 0 && numberVal(terr.defeatedByRound) < gameObj.round - 1) {
-		console.log('xxxxxx', terr.defeatedByNation, gameObj.round);
 		terr.defeatedByNation = 0;
 	}
 	terr.enemyPiecesExist = enemyPiecesExist;
@@ -871,7 +874,7 @@ function resetPlayerUnits(player, gameObj) {
 				unit.cargo = [];
 			if (unit.cargo.length == 0)
 				unit.cargoUnits = 0;
-			if (unit.cargoUnits > 0 && gameObj.round>1)
+			if (unit.cargoUnits > 0 && gameObj.round > 1)
 				doubleCheckCargoUnits(unit, gameObj);
 			//				if (unit.piece == 44)
 			//					checkSealUnit(unit, player);
@@ -932,7 +935,7 @@ function cleanUpTerritories(player, gameObj) {
 
 	gameObj.territories.forEach(function (terr) {
 		if (player.status == 'Attack' || player.cpu) {
-			if (terr.attackedByNation == player.nation)
+			if (terr.attackedByNation == player.nation && terr.attackedRound < gameObj.round)
 				terr.attackedByNation = 0;
 
 
@@ -1108,7 +1111,7 @@ function checkGameTeams(incomes, capitals, gameObj) {
 					numPlayers++;
 					alive = true;
 					teamPlayers.push(player.nation);
-					if(gameObj.maxAllies == 0)
+					if (gameObj.maxAllies == 0)
 						teamNation = player.nation;
 				}
 
@@ -1365,24 +1368,24 @@ function checkCargoForTerr(terr, gameObj, nation) {
 	var emptyCarrier = null;
 
 	terr.units.forEach(function (unit) {
-		if(unit.piece == 8 && unit.owner == nation) {
-			if(unit.cargo && unit.cargo.length>0) {
+		if (unit.piece == 8 && unit.owner == nation) {
+			if (unit.cargo && unit.cargo.length > 0) {
 				unit.cargo.forEach(function (c) {
 					fighterToCarrierHash[c.id] = unit.id;
 				});
-			} else 
-			emptyCarrier = unit;
+			} else
+				emptyCarrier = unit;
 
 		}
 	});
 
 	terr.units.forEach(function (unit) {
-		if(unit.subType == 'fighter') {
-			if(unit.id == unit.cargoOf && fighterToCarrierHash[unit.id]>0) {
+		if (unit.subType == 'fighter') {
+			if (unit.id == unit.cargoOf && fighterToCarrierHash[unit.id] > 0) {
 				unit.cargoOf = fighterToCarrierHash[unit.id];
 				console.log('fighter cargo of self! fixed.', unit.id, unit.cargoOf);
 			}
-			if(unit.cargoOf == unit.id && emptyCarrier && emptyCarrier.cargo.length<2) {
+			if (unit.cargoOf == unit.id && emptyCarrier && emptyCarrier.cargo.length < 2) {
 				console.log('fighter stranded! fixed.', unit.id, unit.cargoOf);
 				unit.cargoOf = emptyCarrier.id;
 				emptyCarrier.cargo.push({ id: unit.id, piece: unit.piece, cargoUnits: unit.cargoUnits })
@@ -1437,12 +1440,12 @@ function changeTreaty(p1, p2, type, gameObj, superpowersData, cost = 0) {
 		return;
 	if (p1.nation == p2.nation)
 		return;
-	
-	if(p1.cpu && type == 1) {
+
+	if (p1.cpu && type == 1) {
 		console.log('cpu should not be dropping an ally');
 		return;
 	}
-	if(p1.cpuFlg && cost == 15) {
+	if (p1.cpuFlg && cost == 15) {
 		console.log('cpu should not be declaring war on an ally');
 		return;
 	}

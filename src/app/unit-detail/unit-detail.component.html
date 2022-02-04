@@ -81,7 +81,7 @@
 <div *ngIf="!hideUnitDetailFlg" style="text-align: left;">
 	<hr>
 	<p *ngFor="let desc of selectedUnit.desc" style="padding: 5px;">{{desc}}</p>
-	<p *ngIf="selectedUnit.targetDroneFlg" style="padding: 5px;">When defending, this unit will instantly kill one
+	<p *ngIf="0 && selectedUnit.targetDroneFlg" style="padding: 5px;">When defending, this unit will instantly kill one
 		predator drone in addition to regular defense.</p>
 	<p *ngIf="selectedUnit.id>=20 && selectedUnit.id<=51" style="padding: 5px; font-size: 10px; font-weight: 800;">
 		Special Unit Restriction: Limit 6 {{selectedUnit.name}} units per offensive attack. No limits on defense.</p>

@@ -47,6 +47,7 @@ function logOutUser() {
 	localStorage.password = '';
 	localStorage.userObj = '';
 	localStorage.campaignId = '';
+	localStorage.userObj = '';
 }
 function parseServerDataIntoUserObj(data) {
 	var userObj = userObjFromUser();
