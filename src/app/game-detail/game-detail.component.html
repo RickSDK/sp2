@@ -56,11 +56,16 @@
     </table>
     <div *ngIf="game.showDetailsFlg">
 
+        <button *ngIf="user.userName == 'Rick' && game.round==1"
+        (mousedown)="openGameButtonPressed(game, 'cancelGame')" type="button"
+        class="btn btn-danger roundButton">
+        <i class="fa fa-trash"></i> Delete Game</button>
+
         <div *ngIf="game.status == 'Open'">
-            <button *ngIf="game.host == user.userName" [disabled]="game.players.length<2"
+            <button *ngIf="game.status == 'Open' && game.host == user.userName" [disabled]="game.players.length<2"
                 (mousedown)="openGameButtonPressed(game, 'start')" type="button" class="btn btn-warning roundButton">
                 <i class="fa fa-play"></i> Start Game</button>
-            <button *ngIf="game.host == user.userName && game.no_stats_flg"
+            <button *ngIf="game.status == 'Open' && game.host == user.userName && game.no_stats_flg"
                 (mousedown)="openGameButtonPressed(game, 'add_computer')" type="button"
                 class="btn btn-warning roundButton">
                 <i class="fa fa-android"></i> Add CPU</button>
@@ -68,7 +73,7 @@
                 (mousedown)="openGameButtonPressed(game, 'cancelGame')" type="button"
                 class="btn btn-danger roundButton">
                 <i class="fa fa-trash"></i> Delete Game</button>
-            <button *ngIf="game.inGame && game.host != user.userName"
+            <button *ngIf="game.status == 'Open' && game.inGame && game.host != user.userName"
                 (mousedown)="openGameButtonPressed(game, 'leaveGame')" type="button"
                 class="btn btn-warning roundButton"><i class="fa fa-sign-out"></i>
                 Leave</button>

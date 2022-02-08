@@ -420,7 +420,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 
 
-		var terrId = 137;
+		var terrId = 84;
 		var terr = this.gameObj.territories[terrId - 1];
 
 		//this.addUnitToTerr(terr, 2, true, true, true);
@@ -439,10 +439,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (0) {
 			var x = 0;
 			terr.units.forEach(unit => {
-				if (unit.terr == terrId && unit.piece == 1) {
-					//console.log('dead');
+				if (unit.terr == terrId && unit.type == 1) {
+					console.log('admin dead: ', unit.piece);
 					//unit.dead = true;
-					unit.terr = 13;
+					//unit.terr = 13;
 				}
 			});
 		}

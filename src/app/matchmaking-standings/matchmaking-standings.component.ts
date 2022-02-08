@@ -156,10 +156,10 @@ export class MatchmakingStandingsComponent extends BaseComponent implements OnIn
     var ipHash = {};
     console.log('xxx tollarance', tollarance);
     this.fullLeaderList.forEach(function (player) {
-      //player.ptDiff = Math.abs(player.points - points);
-      player.ptDiff = player.games_max - player.games_playing;
-      if (player.games_playing == 0)
-        player.ptDiff = 5;
+      player.ptDiff = Math.abs(player.points - points);
+      //player.ptDiff = player.games_max - player.games_playing;
+      //if (player.games_playing == 0)
+        //player.ptDiff = 5;
       if (player.games_max > player.games_playing && player.days_old <= 1) {
         console.log('player ready: ', player.userName, player.ptDiff, player.userId);
         if (player.ptDiff <= tollarance) {
@@ -176,8 +176,8 @@ export class MatchmakingStandingsComponent extends BaseComponent implements OnIn
         }
       }
     });
+    readyList.sort(function (a, b) { return a.ptDiff - b.ptDiff; });
     console.log(readyList.length + ' players within ' + tollarance + ' points of ' + points);
-    readyList.sort(function (a, b) { return b.ptDiff - a.ptDiff; });
 
     var numPlayers = 8;
     var gameTypes = ["battlebots", "diplomacy", "autobalance", "freeforall", "firefight", "hungerGames", "barbarian", "co-op", "ffa-5", "ffa-6", "ffa-7"];
