@@ -120,6 +120,8 @@ function clearAllDistanceObjects(gameObj) {
 
 }
 function isTerrOwned(terr, nation) {
+    if(!terr)
+        return false;
     if (terr.owner == nation)
         return true;
     return terr.treatyStatus >= 3;

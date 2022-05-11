@@ -35,6 +35,7 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   public adsbygoogle: any;
   public showYouTubePlayerFlg = false;
   public promoVideoWatched = false;
+  public showInstallFlg = false;
 
   public videos = [
     { seconds: 41, src: 'http://www.superpowersgame.com/superpowers480.mov' },

@@ -129,8 +129,10 @@ export class UserPopupComponent extends BaseComponent implements OnInit {
       completedGamesLimit: 100,
       gameId: 0
     });
+    console.log('xxx', postData);
     fetch(url, postData).then((resp) => resp.text())
       .then((data) => {
+        console.log('data', data);
         if (this.verifyServerResponse(data)) {
           this.loadingFlg = false;
           this.serverUser = userFromLine(data);

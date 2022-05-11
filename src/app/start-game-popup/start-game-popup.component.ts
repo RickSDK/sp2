@@ -27,6 +27,8 @@ export class StartGamePopupComponent extends BaseComponent implements OnInit {
   public game: any;
   public nations = [1, 2, 3, 4, 5, 6, 7, 8];
   public yourNation = 0;
+  public mainGameType = 1;
+  public mainImageSrc = "assets/graphics/splash/poster02.jpg";
 
   constructor(private router: Router) { super(); }
 
@@ -42,6 +44,23 @@ export class StartGamePopupComponent extends BaseComponent implements OnInit {
     this.segmentIdx = 0;
     this.campaignId = localStorage.currentCampaign || 0;
     $("#startGamePopup").modal();
+  }
+  changeMainGameType(num: number) {
+    this.mainGameType = num;
+    this.nations = [1, 2, 3, 4, 5, 6, 7, 8];
+    this.yourNation = 1;
+    this.mainImageSrc = 'assets/graphics/splash/poster02.jpg';
+    if(num==2) {
+      this.yourNation = 1;
+      this.numPlayers = 5;
+      this.nations = [1, 2, 3, 4, 7];
+      this.mainImageSrc = 'assets/graphics/images/mapAxisAllies.png';
+    } 
+  }
+  flagOfNation(nation: number, type: number) {
+    if(type>1)
+      nation += 10;
+    return "assets/graphics/images/flag"+nation+".gif";
   }
   changeSegmentIdx(num: number) {
     this.segmentIdx = num;
@@ -76,6 +95,7 @@ export class StartGamePopupComponent extends BaseComponent implements OnInit {
     localStorage.gameTypeName = types[this.segmentIdx];
     localStorage.gameType = this.segmentIdx;
     localStorage.numPlayers = this.numPlayers;
+    localStorage.mainGameType = this.mainGameType;
 
     $("#startGamePopup").modal('hide');
     this.router.navigate(['/board']);

@@ -121,7 +121,8 @@ function getMultObjFromLine(line) {
 	obj.confirmTextFlg = (c[25] == 'Y');
 	obj.email_flg = (c[26] == 'Y');
 	obj.textFlg = (c[27] == 'Y');
-	obj.forumPosts = numberVal(c[28]);
+  obj.forumPosts = numberVal(c[28]);
+  obj.games_max = numberVal(c[29]);
 	return obj;
 }
 function userFromLine(line) {
@@ -418,7 +419,8 @@ function mailFromLine(line) {
 		obj.orig_sender = c[x++];
 		obj.orig_recipient = c[x++];
 
-		obj.formattedDate = dateComponentFromDateStamp(obj.msgDate, true, true);
+		var dt = getDateObjFromJSDate(obj.msgDate);
+		obj.formattedDate = dt.localDate;
 	}
 	return obj;
 }

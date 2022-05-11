@@ -1,4 +1,12 @@
 .mainButton {
     height: 120px;
-    width: 150px;
+    max-width: 150px;
+    width: 30%;
+}
+.spCard2 {
+    background-color: #033a77;
+    color: white;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 3px;
 }

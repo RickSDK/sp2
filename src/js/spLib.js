@@ -1,5 +1,5 @@
 function spVersion() {
-	return 'v4.136';
+	return 'v4.138';
 }
 function googleAds() {
 	window.onload = function () {
@@ -100,6 +100,7 @@ function unitOfId(id, nation, pieceId, terrId, pieces, allowMovesFlg) {
 }
 function getInitialTerritories(player) {
 	var gTerritories = [];
+	console.log('getInitialTerritories xxx!', player);
 	var terrs = getGameTerritories();
 	terrs.forEach(function (terr) {
 		var unitCount = 0;

@@ -39,7 +39,7 @@ function createNewGameFromInitObj(obj, pieces) {
 	gameObj.battleId = 1;
 	gameObj.purchaseDoneFlg = false;
 	gameObj.players = loadPlayers2(obj.players, obj.gameType);
-	gameObj.territories = getGameTerritories();
+	gameObj.territories = getGameTerritories(obj.mainGameType);
 	updateTerritories(gameObj.territories, gameObj.players);
 	gameObj.units = loadGameUnits(pieces, gameObj.players, gameObj.territories);
 	gameObj.unitId = gameObj.units.length + 1;
@@ -49,14 +49,15 @@ function createNewGameFromInitObj(obj, pieces) {
 	gameObj.teams = loadTeams(obj.players.length);
 	return gameObj;
 }
-function createNewGameSimple(type, numPlayers, name, startingNation, pObj, user, currentCampaign) {
+function createNewGameSimple(type, numPlayers, name, startingNation, pObj, user, currentCampaign, mainGameType) {
 	var gUnits = populateUnits();
-	return createNewGame(3, type, numPlayers, name, 6, gUnits, startingNation, localStorage.fogOfWar, user.rank, localStorage.customGame, pObj, localStorage.hardFog, false, user, currentCampaign);
+	return createNewGame(3, type, numPlayers, name, 6, gUnits, startingNation, localStorage.fogOfWar, user.rank, localStorage.customGame, pObj, localStorage.hardFog, false, user, currentCampaign, mainGameType);
 }
-function createNewGame(id, type, numPlayers, name, attack, pieces, startingNation, fogOfWar, rank, customGame, pObj, hardFog, turboFlg, user, currentCampaign) {
+function createNewGame(id, type, numPlayers, name, attack, pieces, startingNation, fogOfWar, rank, customGame, pObj, hardFog, turboFlg, user, currentCampaign, mainGameType) {
 	// this is for single player games
 	var gameObj = new Object;
 	gameObj.name = name;
+	gameObj.mainGameType = mainGameType;
 	gameObj.id = id;
 	gameObj.round = 1;
 	gameObj.attack = attack;
@@ -77,6 +78,10 @@ function createNewGame(id, type, numPlayers, name, attack, pieces, startingNatio
 	gameObj.multiPlayerFlg = false;
 	gameObj.typeName = gameTypeNameForType(gameObj.type);
 	gameObj.desc = gameDescForType(gameObj.type);
+	if(mainGameType == 2) {
+		gameObj.typeName = "Axis & Allies";
+		gameObj.desc = "Defeat the enemies!";
+	}
 	if (currentCampaign > 0) {
 		var descriptions = [
 			'Objective: Take over the Russian capital.',
@@ -103,20 +108,32 @@ function createNewGame(id, type, numPlayers, name, attack, pieces, startingNatio
 	gameObj.viewingNation = startingNation;
 	gameObj.purchaseDoneFlg = false;
 	gameObj.currentCampaign = currentCampaign;
-	if (customGame == 'Y') {
-		gameObj.players = loadPlayers2(pObj, type);
-		//		gameObj.players = loadPlayersFromObj(pObj);
+	if(mainGameType == 2) {
+		gameObj.players = loadAAPlayers(startingNation);
+		gameObj.territories = getGameTerritories(mainGameType);
+		//updateTerritories(gameObj.territories, gameObj.players, type);
+		gameObj.units = loadAAGameUnits(pieces, gameObj.players, gameObj.territories);
+		gameObj.unitId = gameObj.units.length + 1;
+		gameObj.currentNation = 13;
+		gameObj.airDefenseTech = [false, false, false, false, false, false, false, false, false];
+		gameObj.teams = loadTeams(numPlayers);
 	} else {
-		gameObj.players = loadPlayers(numPlayers, startingNation, rank, user, currentCampaign, type);
+		if (customGame == 'Y') {
+			gameObj.players = loadPlayers2(pObj, type);
+			//		gameObj.players = loadPlayersFromObj(pObj);
+		} else {
+			gameObj.players = loadPlayers(numPlayers, startingNation, rank, user, currentCampaign, type);
+		}
+		gameObj.territories = getGameTerritories(mainGameType);
+		updateTerritories(gameObj.territories, gameObj.players, type);
+		gameObj.units = loadGameUnits(pieces, gameObj.players, gameObj.territories, currentCampaign, type, mainGameType);
+		gameObj.unitId = gameObj.units.length + 1;
+		gameObj.currentNation = getTurnNation(1);
+		gameObj.airDefenseTech = [false, false, false, false, false, false, false, false, false];
+		gameObj.superBCForm = { name: '', hp: 0, att: 0, def: 0, adCount: 0, numAtt: 0, numDef: 0 };
+		gameObj.teams = loadTeams(5);
 	}
-	gameObj.territories = getGameTerritories();
-	updateTerritories(gameObj.territories, gameObj.players, type);
-	gameObj.units = loadGameUnits(pieces, gameObj.players, gameObj.territories, currentCampaign, type);
-	gameObj.unitId = gameObj.units.length + 1;
-	gameObj.currentNation = getTurnNation(1);
-	gameObj.airDefenseTech = [false, false, false, false, false, false, false, false, false];
-	gameObj.superBCForm = { name: '', hp: 0, att: 0, def: 0, adCount: 0, numAtt: 0, numDef: 0 };
-	gameObj.teams = loadTeams(numPlayers);
+
 	return gameObj;
 }
 function updateTerritories(territories, players, type) {
@@ -173,6 +190,21 @@ function loadTeams(num) {
 		teams.push({ name: x, income: 20, capitals: 1 });
 	}
 	return teams;
+}
+function loadAAPlayers(startingNation) {
+	var players = [];
+	var nations = [3,2,7,4,1];
+	for (var x = 0; x < 5; x++) {
+		var player = {};
+		player.id = x + 1;
+		player.team = x%2+1;
+		player.nation = nations[x];
+		treatieslist = [3, 1, 3, 1, 1, 1, 3, 1];
+		cpuFlg = player.nation != startingNation;
+		player.name = (cpuFlg)?'Computer':'You';
+		players.push({ id: player.id, playerId: player.id, turn: x + 1, team: player.team, nation: player.nation, generalFlg: true, leaderFlg: true, kills: 0, losses: 0, kd: 0, preferedTeam: x % 2 + 1, userName: player.name, userId: player.id, alive: true, income: 30, money: 20, unitCount: 10, sp: 1, cap: 1, status: 'Purchase', treaties: treatieslist, offers: [], tech: [], battleship: [], cpu: cpuFlg, placedInf: 0 });
+	}
+	return players;
 }
 function loadPlayers2(playersObj, type) {
 	var players = [];
@@ -288,7 +320,6 @@ function loadPlayersFromObj(pObj, userName) {
 }
 function loadPlayers(numPlayers, startingNation, rank, user, currentCampaign, type) {
 	var players = [];
-	console.log('x1rank', rank);
 	if (currentCampaign == 1) {
 		players.push({ id: 1, turn: 1, team: 1, nation: 2, generalFlg: true, leaderFlg: true, kills: 0, losses: 0, kd: 0, preferedTeam: 1, userName: userName, userId: 1, alive: true, income: 30, money: 20, unitCount: 10, sp: 1, cap: 1, status: 'Purchase', treaties: [1, 1, 1, 1, 1, 1, 1, 1], offers: [], tech: [], battleship: [], cpu: false, placedInf: 0 });
 		players.push({ id: 2, turn: 2, team: 2, nation: 4, generalFlg: true, leaderFlg: true, kills: 0, losses: 0, kd: 0, preferedTeam: 2, userName: 'CPU1', userId: 2, alive: true, income: 30, money: 20, unitCount: 10, sp: 1, cap: 1, status: 'Purchase', treaties: [1, 1, 1, 1, 1, 1, 1, 1], offers: [], tech: [], battleship: [], cpu: true, placedInf: 0 });
@@ -391,7 +422,10 @@ function loadGameObj(currentGameId, startingNation, pieces) {
 	obj.battles = [];
 	return obj;
 }
-function loadGameUnits(pieces, players, territories, currentCampaign, type) {
+
+function loadGameUnits(pieces, players, territories, currentCampaign, type, mainGameType) {
+	if(mainGameType==2)
+		return loadAAGameUnits(pieces, players, territories);
 	var playerHash = {};
 	players.forEach(function (player) {
 		playerHash[player.nation] = 1;

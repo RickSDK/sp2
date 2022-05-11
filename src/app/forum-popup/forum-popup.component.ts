@@ -48,6 +48,7 @@ export class ForumPopupComponent extends BaseComponent implements OnInit {
     fetch(url, postData).then((resp) => resp.text())
       .then((data) => {
         if (this.verifyServerResponse(data)) {
+          //console.log(data);
           this.category = 0;
           this.forumPost = 0;
           var items = data.split("<a>");
@@ -65,9 +66,20 @@ export class ForumPopupComponent extends BaseComponent implements OnInit {
             if (c.length > 5) {
               x++;
               var dt = getDateObjFromJSDate(c[6]);
-              var jsDate = new Date(dt.jsDate);
-              var dif = lastForumLogin.getTime() - jsDate.getTime();
-              var newFlg = (dif >= 0) ? 'N' : 'Y';
+              var lfDt = getDateObjFromJSDate(localStorage.lastForumLogin);
+              var obj = {
+                'category': c[1],
+                'localStorage': localStorage.lastForumLogin,
+                'lfDt.oracle': lfDt.oracle,
+                'lfDt.getTime': lfDt.getTime,
+                'dt.oracle': dt.oracle,
+                'dt.getTime': dt.getTime,
+                'dif': lfDt.getTime - dt.getTime,
+                'newFlg': (lfDt.getTime - dt.getTime >= 0) ? 'N' : 'Y',
+                'localDate': dt.localDate
+              }
+              console.log(obj);
+              var newFlg = (obj.dif >= 0) ? 'N' : 'Y';
               if ((c[0] == '4' || c[0] == '5') && !adminFlg)
                 return;
               var localDate = dt.localDate;
@@ -205,16 +217,31 @@ function forumObjFromLine(line, lastForumLogin) {
     var regex = /(<([^>]+)>)/ig
     body = decodeForumPost(c[8].replace(regex, ""));
   }
-  console.log('body', body);
+  //console.log('body', body);
   if (c.length > 5) {
     var dateStamp = convertStringToDate(c[6]);
     var dateStampText = dateComponentFromDateStamp(c[6], true, true);
     var dt = getDateObjFromJSDate(c[6]);
-    var jsDate = new Date(dt.jsDate);
-    var dif = lastForumLogin.getTime() - jsDate.getTime();
+    var lfDt = getDateObjFromJSDate(localStorage.lastForumLogin);
+
+    var dtObj = {
+      'category': c[1],
+      'localStorage': localStorage.lastForumLogin,
+      'lfDt.oracle': lfDt.oracle,
+      'lfDt.getTime': lfDt.getTime,
+      'dt.oracle': dt.oracle,
+      'dt.getTime': dt.getTime,
+      'dif': lfDt.getTime - dt.getTime,
+      'newFlg': (lfDt.getTime - dt.getTime >= 0) ? 'N' : 'Y',
+      'localDate': dt.localDate
+    }
+    //console.log('xxx', dtObj);
+
+    //var jsDate = new Date(dt.jsDate);
+    //var dif = lastForumLogin.getTime() - jsDate.getTime();
     //var dif = lastForumLogin.getTime() - dateStamp.getTime();
-    var newFlg = (dif >= 0) ? 'N' : 'Y';
-    obj = { id: c[0], name: c[1], topic_count: c[2], post_count: c[3], user: c[4], userId: c[5], dateStamp: dateStampText, newFlg: newFlg, body: body, category: c[9], lastUser: c[10] };
+    //var newFlg = (dif >= 0) ? 'N' : 'Y';
+    obj = { id: c[0], name: c[1], topic_count: c[2], post_count: c[3], user: c[4], userId: c[5], dateStamp: dt.localDate, newFlg: dtObj.newFlg, body: body, category: c[9], lastUser: c[10] };
   }
   return obj;
 }

@@ -39,6 +39,10 @@ export class TerrButtonsComponent extends BaseComponent implements OnInit {
   constructor() { super(); }
 
   ngOnInit(): void {
+    console.log('xxx allies', this.currentPlayer.allies);
+    if (this.currentPlayer.allies.length > 0)
+      this.allyNation = this.currentPlayer.allies[0];
+
   }
   initChild() {
     this.allyNation = 1;
@@ -48,11 +52,11 @@ export class TerrButtonsComponent extends BaseComponent implements OnInit {
 
   }
   changeSecondaryIndex(num: number) {
-    if(this.selectedTerritory.attackedRound == this.gameObj.round) {
+    if (this.selectedTerritory.attackedRound == this.gameObj.round) {
       this.showAlertPopup('Sorry, newly conquered territories cannot be transferred.', 1);
       return;
     }
-    if(this.selectedTerritory.facBombed) {
+    if (this.selectedTerritory.facBombed) {
       this.showAlertPopup('Sorry, bombed out factories cannot be transferred.', 1);
       return;
     }

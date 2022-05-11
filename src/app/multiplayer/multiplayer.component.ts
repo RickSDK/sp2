@@ -57,6 +57,8 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
   public teamIdx = 0;
   public selectedTeam = this.teams[0];
   public adsbygoogle: any;
+  public playerStandingsList = [];
+  public matchStandingsList = [];
 
   constructor(private router: Router) { super(); }
 
@@ -112,6 +114,7 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
           var gameToStart;
           this.multiPlayerObj = getMultObjFromLine(basics);
           var accountSitGameName;
+          //console.log(data);
           console.log(this.multiPlayerObj);
           if (this.multiPlayerObj.urgentCount > 0)
             this.showAlertPopup('You have an urgent piece of mail!', 1);
@@ -128,13 +131,38 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
           }
           var games = items[1].split("<a>");
           this.multiPlayerObj.usersOnline = items[2];
+
+          var top5MatchStr = items[4];
+
+          this.playerStandingsList = [];
+          var pList = items[3].split("\*");
+          pList.forEach(playerStr => {
+            if (playerStr != '') {
+              var items = playerStr.split("|");
+              this.playerStandingsList.push({ name: items[0], wins: items[1], losses: items[2], points: items[3] });
+            }
+          });
+
+          this.matchStandingsList = [];
+          var pList = items[4].split("\*");
+          pList.forEach(playerStr => {
+            if (playerStr != '') {
+              var items = playerStr.split("|");
+              this.matchStandingsList.push({ name: items[0], wins: items[1], losses: items[2], points: items[3] });
+            }
+          });
+
           var accountSitTotal = 0;
+          var ingameCount = 0;
           var slowResponseFlg = false
           for (var x = 0; x < games.length; x++) {
             var game = games[x];
             if (game.length > 10) {
               var gameOb1 = gameFromLine(game, this.user.userName);
               var gameOb: Game = new Game(gameOb1);
+              //console.log(gameOb);
+              if (gameOb.inGame)
+                ingameCount++;
               if (gameOb.accountSitFlg) {
                 accountSitTotal++;
                 accountSitGameName = gameOb.name;
@@ -159,7 +187,12 @@ export class MultiplayerComponent extends BaseComponent implements OnInit {
               this.startThisMultiplayerGame(gameToStart);
             }, 500);
           }
-          this.filterGames(0);
+
+          if (ingameCount > 0)
+            this.filterGames(0);
+          else {
+            this.filterGames(1);
+          }
 
         }
         //        console.log(data);

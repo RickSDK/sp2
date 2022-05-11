@@ -108,6 +108,18 @@ export class LoginPopupComponent extends BaseComponent implements OnInit {
       return;
     }
     console.log(emailField2, firstName, password1, password2);
+    if (emailField2 == firstName) {
+      this.showAlertPopup('Second field is username, not email.', 1);
+      return;
+    }
+    if (firstName.includes('@')) {
+      this.showAlertPopup('Second field is username, not email, and cannot contain @ symbol.', 1);
+      return;
+    }
+    if (!emailField2.includes('@')) {
+      this.showAlertPopup('Invalid email address.', 1);
+      return;
+    }
     if (firstName.toLowerCase() == 'guest') {
       this.showAlertPopup('Choose your username. Don\'t use "Guest"', 1);
       return;

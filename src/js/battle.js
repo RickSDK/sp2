@@ -846,9 +846,9 @@ function sinkCargo(unit, gameObj) {
     }
 }
 function unitCannotBeHealed(battle, unit) {
-    if (!battle || unit.subType != 'soldier')
+    if (!battle || unit.subType != 'soldier' || battle.cruiseFlg || battle.nukeFlg)
         return true;
-
+    console.log('xxx', battle.defActiveMedics, unit)
     if (battle && battle.defActiveMedics > 0) {
         battle.defActiveMedics--;
         var healedFlg = healInfantryByMedic(battle.defendingUnits);
@@ -866,6 +866,9 @@ function markRemainerAsDead(units, targetHash, gameObj, battle) {
     units.forEach(unit => {
         if (unit.dead)
             return;
+        if(unit.subType == 'hero' && battle.cruiseFlg) {
+            return;
+        }
 
         if (unit.type == 3 && targetHash['noplanes'] > 0) {
             targetHash['noplanes']--;
@@ -932,6 +935,7 @@ function markCasualties(battle, gameObj) {
         console.log(battle.attTargets);
         console.log(battle.attHits);
         console.log(battle.defHits);
+        console.log(battle);
 
     }
     //------------attacking units hit by defenders  

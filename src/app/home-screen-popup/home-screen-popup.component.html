@@ -7,12 +7,9 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" style="text-align: center;" *ngIf="0">
+            <div class="modal-body" style="text-align: center;">
 
-                <div class="darkBlue">Add an icon to your phone's desktop! It's easy</div>
-                <hr>
-                <div><b>Step 1:</b> Click your browser's menu options</div>
-
+                <div class="darkBlue">Add an icon to your phone's desktop! It's easy. Use your phone's browser and go to www.superpowersgame.com</div>
                 <div style="text-align: center; padding: 5px;">
                     <div class="btn-group">
                         <button (click)="buttonIdx=0" type="button" class="btn btn-default segmentButton roundButton"
@@ -27,14 +24,17 @@
                         </button>
                     </div>
                 </div>
+               <hr>
+                <div><b>Step 1:</b> Click your browser's menu options</div>
 
+ 
 
-                <img *ngIf="buttonIdx==0" src="assets/graphics/misc/androidView.png" height="85">
-                <img *ngIf="buttonIdx==1" src="assets/graphics/misc/iosView.png" height="85">
+                <img *ngIf="buttonIdx==0" src="assets/graphics/misc/install0.png" class="image-blowup" width="200">
+                <img *ngIf="buttonIdx==1" src="assets/graphics/misc/install2.png" class="image-blowup" width="200">
                 <hr>
                 <div><b>Step 2:</b> Click "Add to Home Screen"</div>
-                <img src="assets/graphics/misc/desktop2.png" width="320">
-                <img src="assets/graphics/misc/desktop.png" width="320">
+                <img *ngIf="buttonIdx==0" src="assets/graphics/misc/install1.png" class="image-blowup" width="200">
+                <img *ngIf="buttonIdx==1" src="assets/graphics/misc/install3.png" class="image-blowup" width="200">
 
 
             </div>

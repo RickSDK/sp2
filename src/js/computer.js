@@ -387,7 +387,7 @@ function findNextPrimaryTargetForPlayer(player, ids, gameObj, superpowersData) {
     for (var x = 0; x < ids.length; x++) {
         var id = ids[x];
         var terr = gameObj.territories[id - 1];
-        if (terr.owner != player.nation) {
+        if (terr && terr.owner != player.nation) {
             if (player.cpu && treatyStatus(player, terr.owner) > 0) {
                 declareWarOnNation(terr.owner, gameObj, player, superpowersData);
             }
@@ -425,7 +425,7 @@ function findClosestAttackableCapital(gameObj, player) {
     var minId = 0;
     for (var x = 0; x < targets.length; x++) {
         var t = gameObj.territories[targets[x] - 1];
-        if (t.owner != player.nation && okToAttack(player, t, gameObj)) {
+        if (t && t.owner != player.nation && okToAttack(player, t, gameObj)) {
             var dist = landDistFromTerr(player.mainBaseID, t.id, 0, gameObj);
             if (dist < min) {
                 min = dist;
@@ -765,7 +765,7 @@ function recallBoats(gameObj, player) {
     for (var x = 0; x < ids.length; x++) {
         var id = ids[x];
         var terr = gameObj.territories[id - 1];
-        if (terr.owner == player.nation) {
+        if (terr && terr.owner == player.nation) {
             gameObj.units.forEach(function (unit) {
                 if (unit.owner == player.nation && unit.movesLeft > 0 && (unit.terr == terr.enemyWater || unit.terr == terr.enemyWater2)) {
                     unit.terr = terr.id;

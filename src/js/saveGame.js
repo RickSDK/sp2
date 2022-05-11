@@ -308,8 +308,9 @@ function compressTerritories(territories) {
 	});
 	return terrList;
 }
-function uncompressTerritories(territories) {
-	var gTerrs = getGameTerritories()
+function uncompressTerritories(territories, mainGameType) {
+	console.log('here!', mainGameType);
+	var gTerrs = getGameTerritories(mainGameType)
 	var terrList = [];
 	var x = 0;
 	territories.forEach(function (terr) {
@@ -396,7 +397,7 @@ function parseSavedGame(objMain, logs, players, territories, units) {
 		showAlertPopup2('Error! unable to parse saved game! [players]');
 	}
 	try {
-		gameObj.territories = uncompressTerritories(JSON.parse(territories));
+		gameObj.territories = uncompressTerritories(JSON.parse(territories), gameObj.mainGameType);
 	} catch (e) {
 		showAlertPopup2('Error! unable to parse saved game! [territories]');
 	}

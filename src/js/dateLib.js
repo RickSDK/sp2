@@ -9,7 +9,12 @@ function getDateObjFromJSDate(dateStr = '') {
     var now = new Date();
     if (dateStr)
         now = new Date(dateStr);
+
+    if(now.toLocaleDateString() == 'Invalid Date')
+        now = new Date(dateStr.replace(/ /, 'T'));
+        
     return {
+        sentDate: dateStr,
         jsDate: now.toString(),
         legacy: convertDateToString(now),
         oracle: oracleDateStampFromDate(now),

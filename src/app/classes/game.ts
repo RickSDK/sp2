@@ -29,6 +29,7 @@ export class Game {
     public inGame: boolean;
     public accountSitFlg: boolean;
     public slowResponseFlg: boolean;
+    public staleFlg: boolean;
     public minRank: number;
     public maxRank: number;
     public players: any;
@@ -71,6 +72,11 @@ export class Game {
         this.slowResponseFlg = obj.slowResponseFlg;
 
         this.showDetailsFlg = false;
+        this.staleFlg = false;
+        if (this.timeLeft == '-Times up-')
+            this.staleFlg = true;
+        if (this.turnObj.seconds > 93600)
+            this.staleFlg = true;
     }
 }
 

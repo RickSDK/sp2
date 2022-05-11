@@ -9,13 +9,39 @@
         <div *ngIf="!loadingFlg">
 
 
-            <div *ngIf="user.rank <= 2 || (user.rank <= 4 && multiPlayerObj.mmWins < 1)" class="borderClass3">
+            <div
+                style="background-color: #007; text-align: center; padding: 3px; color: white; white-space: nowrap; height: 57px;">
+                <button (mousedown)="filterGames(1)" [disabled]="buttonIdx==1" type="button"
+                    class="btn btn-success roundButton"><i class="fa fa-arrow-down"></i>
+                    Join Game</button>
+                <button (mousedown)="createGamePopup.show()" type="button" class="btn btn-secondary roundButton"><i
+                        class="fa fa-plus"></i>
+                    Create Game</button>
+
+                <button *ngIf="multiPlayerObj && multiPlayerObj.mmPoints == 0"
+                    (mousedown)="matchmakerStandingsPopup.show()" [disabled]="buttonIdx==1" type="button"
+                    class="btn btn-success roundButton">
+                    <i class="fa fa-trophy"></i>
+                </button>
+
+                <button (mousedown)="gameStandingsPopup.show()" type="button" class="btn btn-secondary roundButton"><i
+                        class="fa fa-list-alt"></i>
+                </button>
+                <button (mousedown)="matchmakerStandingsPopup.show()" type="button"
+                    class="btn btn-secondary roundButton"><i class="fa fa-trophy"></i>
+                </button>
+            </div>
+
+            <!---    new players   -->
+            <div *ngIf="!multiPlayerObj.confirmEmailFlg" style="background-color: #ccc; color: #900;">
+                <i class="fa fa-exclamation-triangle"></i> Your email address has not been confirmed. Please press 'Profile' button above to confirm your email address.
+            </div>
+            <div *ngIf="0" class="borderClass3">
                 <div style="font-size: 24px; font-weight: 700;">Welcome to Superpowers!</div>
                 <div style="padding: 10px; font-size: 12px; color: gray;">Keep in mind games take several days to
                     play. Each player has up to 24 hours to take their turn. Check back regularly.</div>
 
-
-                <button (mousedown)="filterGames(1)" [disabled]="buttonIdx==1" type="button"
+                <button *ngIf="buttonIdx!=1" (mousedown)="filterGames(1)" [disabled]="buttonIdx==1" type="button"
                     class="btn btn-primary roundButton mainButton">
                     <div><i style="font-size: 32px;" class="fa fa-arrow-down"></i></div>
                     <b>Join Game</b>
@@ -29,19 +55,69 @@
                 <button (mousedown)="matchmakerStandingsPopup.show()" type="button"
                     class="btn btn-primary roundButton mainButton">
                     <div><i style="font-size: 32px;" class="fa fa-trophy"></i></div>
-                    <b>Matchmaking</b>
+                    <b>Match</b>
                     <div style="color: cyan;">Join Now!</div>
-                    <div style="font-size: 10px; color: yellow;">Games automatically start when filled up</div>
+                    <div style="font-size: 10px; color: yellow;" class="hidden-xxs">Games automatically start when
+                        filled up</div>
                 </button>
+            </div>
 
-            </div>
-            <div
-                style="background-color: #007; text-align: center; padding: 3px; color: white; font-size: 20px; font-weight: 700;">
-                Multiplayer Games
-                <button (mousedown)="loadGames()" type="button" class="btn btn-secondary roundButton">
-                    <i class="fa fa-refresh"></i>
-                </button>
-            </div>
+            <table width="100%" *ngIf="multiPlayerObj">
+                <tr>
+                    <td>
+
+                        <div class="spCard2" (mousedown)="gameStandingsPopup.show()">
+                            <div class="spTitle"><i class="fa fa-list-alt"></i> Top 5 Standings</div>
+                            <table class="spTable" width="100%">
+                                <tr style="font-size: 10px;">
+                                    <th>#</th>
+                                    <th>Player</th>
+                                    <th>W</th>
+                                    <th>L</th>
+                                     <th>Pts</th>
+                                </tr>
+                                <tr *ngFor="let player of playerStandingsList; let i = index" style="font-size: 12px;">
+                                    <td>#{{i+1}}</td>
+                                    <td>{{player.name}}</td>
+                                    <td>{{player.wins}}</td>
+                                    <td>{{player.losses}}</td>
+                                    <td><b>{{player.points}}</b></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                    <td>
+                        <button *ngIf="multiPlayerObj.games_max == 0" (mousedown)="matchmakerStandingsPopup.show()"
+                            type="button" class="btn btn-primary roundButton">
+                            <b> <i class="fa fa-trophy"></i> Matchmaking</b>
+                            <div style="color: cyan;">Join Now!</div>
+                            <div style="color: #ccc; font-size: 10px;">Games start automatically</div>
+                        </button>
+                        <div *ngIf="multiPlayerObj.games_max > 0" class="spCard2" (mousedown)="matchmakerStandingsPopup.show()" style="width: 100%;">
+                            <div class="spTitle"><i class="fa fa-trophy"></i> Matchmaking Top 5</div>
+                            <table class="spTable" width="100%">
+                                <tr style="font-size: 10px;">
+                                    <th>#</th>
+                                    <th>Player</th>
+                                    <th>W</th>
+                                    <th>L</th>
+                                     <th>Pts</th>
+                                </tr>
+                                 <tr *ngFor="let player of matchStandingsList; let i = index" style="font-size: 12px;">
+                                    <td>#{{i+1}}</td>
+                                    <td>{{player.name}}</td>
+                                    <td>{{player.wins}}</td>
+                                    <td>{{player.losses}}</td>
+                                    <td><b>{{player.points}}</b></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+
+
             <div class="mediumBlueBg" style="text-align: center; padding-bottom: 5px;">
                 <div class="btn-group">
                     <button (mousedown)="filterGames(0)" type="button" class="btn btn-default roundButton segmentButton"
@@ -90,7 +166,7 @@
             </div>
 
             <div class="mediumBlueBg">
-                <div *ngIf="buttonIdx==0 && multiPlayerObj && gameList.length>0">
+                <div *ngIf="multiPlayerObj && gameList.length>0">
                     <table width="100%">
                         <tr style="background-color: #000; color: white; height: 40px; border-bottom: 1px solid gray; ">
                             <td style="text-align: left; padding-left: 5px;">
@@ -145,34 +221,12 @@
 </div>
 
 <div class="top-bar">
-    <span class="hidden-xxs" style="color: #aaa; font-size: 12px;">Version {{spVersion}}</span>
+    <span class="hidden-xs" style="color: #aaa; font-size: 12px;">{{spVersion}}</span>
 
     <a routerLink="/"><button type="button" class="btn btn-secondary roundButton"><i class="fa fa-home"></i>
         </button></a>
-    <button (mousedown)="filterGames(1)" [disabled]="buttonIdx==1" type="button" class="btn btn-success roundButton"><i
-            class="fa fa-arrow-down"></i>
-        Join <span class="hidden-xxs">Game</span></button>
-    <button (mousedown)="createGamePopup.show()" type="button" class="btn btn-secondary roundButton"><i
-            class="fa fa-plus"></i>
-        Create </button>
-
-    <button *ngIf="multiPlayerObj && multiPlayerObj.mmPoints == 0" (mousedown)="matchmakerStandingsPopup.show()"
-        [disabled]="buttonIdx==1" type="button" class="btn btn-success roundButton">
-        <i class="fa fa-trophy"></i>
-    </button>
-
-    <button (mousedown)="gameStandingsPopup.show()" type="button" class="btn btn-secondary roundButton"><i
-            class="fa fa-list-alt"></i>
-    </button>
-    <button (mousedown)="matchmakerStandingsPopup.show()" type="button" class="btn btn-secondary roundButton"><i
-            class="fa fa-trophy"></i>
-    </button>
-
-</div>
-
-<div class="bottom-bar">
     <button (mousedown)="userPopup.show(user)" type="button" class="btn btn-secondary roundButton">
-        <i class="fa fa-user"></i> {{user.userName}}
+        <i class="fa fa-user"></i> <span class="hidden-xxs"> Profile</span>
     </button>
     <button (mousedown)="mailPopup.show()" type="button" class="btn btn-secondary roundButton">
         <i class="fa fa-envelope"></i> Mail <span
@@ -186,7 +240,14 @@
             <i class="fa fa-book"></i> Rules
         </button></a>
 
+
+    <button (mousedown)="loadGames()" type="button" class="btn btn-secondary roundButton hidden-xs">
+        <i class="fa fa-refresh"></i>
+    </button>
+
 </div>
+
+
 
 <div id="joinConfirmationPopup" class="popupScreen2">
     <div *ngIf="selectedGame">

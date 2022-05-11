@@ -1615,6 +1615,11 @@ h2 {
 		display: block;
 	}
 }
+@media screen and (max-width: 600px) {
+	.hidden-xs {
+		display: none !important;
+	}
+}
 @media screen and (max-width: 479px) {
 	#spLogo {
 		height: 80px;

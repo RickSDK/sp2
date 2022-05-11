@@ -1,4 +1,3 @@
-
 function refreshAllTerritories(gameObj, currentPlayer, superpowersData, yourPlayer) {
 	console.log('refreshAllTerritories', yourPlayer);
 	gameObj.territories.forEach(function (terr) {
@@ -20,6 +19,7 @@ function refreshTerritory(terr, gameObj, currentPlayer, superpowersData, yourPla
 		console.log('refreshTerritory: no terr!');
 		return;
 	}
+	console.log('refreshTerritory')
 
 	var isPurchasePhase = (yourPlayer && yourPlayer.nation == currentPlayer.nation && yourPlayer.nation == terr.owner && currentPlayer.status == 'Purchase');
 	var unitCount = 0;

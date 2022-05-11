@@ -36,6 +36,7 @@
                 "./node_modules/jquery/dist/jquery.min.js",
 		"./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
 		"src/js/data.js",
+		"src/js/dataAA.js",
 		"src/js/graph.js",
 		"src/js/jsLib.js",
 		"src/js/loadGame.js",

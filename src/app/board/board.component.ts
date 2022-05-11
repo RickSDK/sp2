@@ -122,6 +122,7 @@ declare var strategicBombBattle: any;
 declare var loadMultiPlayerGame: any;
 declare var spVersion: any;
 declare var preloadAllAudio: any;
+declare var removeAllSeals: any;
 
 @Component({
 	selector: 'app-board',
@@ -270,6 +271,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 						startingNation = 4;
 				}
 				var numPlayers = localStorage.numPlayers;
+				var mainGameType = localStorage.mainGameType;
 				var name = 'Single Player Game';
 				var currentCampaign = localStorage.currentCampaign || 0;
 				var capitalsWin = 6;
@@ -291,7 +293,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					//					numPlayers = localStorage.customNumPlayers;
 					//					pObj = JSON.parse(localStorage.customGamePlayers);
 				}
-				this.gameObj = createNewGameSimple(type, numPlayers, name, startingNation, pObj, this.user, currentCampaign);
+				this.gameObj = createNewGameSimple(type, numPlayers, name, startingNation, pObj, this.user, currentCampaign, mainGameType);
 				console.log('+++ createNewGameSimple2', startingNation, currentCampaign);
 				this.gameObj.difficultyNum = localStorage.difficultyNum || 1;
 				this.gameObj.capitalsWin = capitalsWin;
@@ -420,9 +422,10 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 
 
-		var terrId = 84;
+		var terrId = 141;
 		var terr = this.gameObj.territories[terrId - 1];
 
+		//this.addUnitToTerr(terr, 2, true, true, true);
 		//this.addUnitToTerr(terr, 2, true, true, true);
 		//this.addUnitToTerr(terr, 13, true, true, true);
 
@@ -430,19 +433,24 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		//terr.attackedByNation = 0;
 		//terr.defeatedByNation = 0;
 		//terr.nuked = false;
-		//this.addUnitToTerr(terr, 3, true, true, false);
+		//this.addUnitToTerr(terr, 43, true, true, false);
 		//terr.facBombed = false;
 
 		//var player = this.gameObj.players[4];
 		//player.money = 95;
-
 		if (0) {
 			var x = 0;
 			terr.units.forEach(unit => {
-				if (unit.terr == terrId && unit.type == 1) {
-					console.log('admin dead: ', unit.piece);
+				if (unit.terr == terrId && unit.piece == 12) {
+					console.log('unit!!: ', unit);
+					unit.adCount = 2;
+					unit.att = 5;
+					unit.def = 5;
+					unit.numAtt = 3;
+					unit.numDef = 3;
+					unit.bcHp = 3;
 					//unit.dead = true;
-					//unit.terr = 13;
+					//unit.terr = 14;
 				}
 			});
 		}
@@ -454,15 +462,14 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				//this.addUnitToTerr(terr, 3, true, true, true);
 				//this.addUnitToTerr(terr, 3, true, true, true);
 				//this.addUnitToTerr(terr, 10, true, true, true);
+				this.addUnitToTerr(terr, 28, true, true, true);
+				this.addUnitToTerr(terr, 28, true, true, true);
+				this.addUnitToTerr(terr, 28, true, true, true);
+				this.addUnitToTerr(terr, 28, true, true, true);
+				this.addUnitToTerr(terr, 28, true, true, true);
 				this.addUnitToTerr(terr, 2, true, true, true);
 				this.addUnitToTerr(terr, 2, true, true, true);
 				this.addUnitToTerr(terr, 2, true, true, true);
-				this.addUnitToTerr(terr, 2, true, true, true);
-				this.addUnitToTerr(terr, 2, true, true, true);
-				this.addUnitToTerr(terr, 2, true, true, true);
-				this.addUnitToTerr(terr, 6, true, true, true);
-				this.addUnitToTerr(terr, 6, true, true, true);
-				this.addUnitToTerr(terr, 6, true, true, true);
 				//this.addUnitToTerr(terr, 5, true, true, false);
 				//this.addUnitToTerr(terr, 2, true, true, true);
 			}, 1000);
@@ -649,6 +656,9 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		this.cdr.detectChanges();
 	}
+	showXY(event) {
+		console.log('coords: ', event.x, event.y);
+	}
 	checkEMPAndTimer(player, gameObj, ableToTakeThisTurn) {
 		var url = this.getHostname() + "/webSuperpowers.php";
 		var postData = this.getPostDataFromObj({ user_login: this.user.userName, code: this.user.code, action: 'checkEMPAndTimer', gameId: gameObj.id });
@@ -827,6 +837,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.currentPlayer.mainBaseID = findMainBase(this.gameObj, this.currentPlayer);
 	}
 	displayMilitaryAdvisorMessage() {
+		if (this.gameObj.mainGameType == 2 && this.currentPlayer.placedInf < 3)
+			this.currentPlayer.placedInf = 3;
 		if (!this.gameObj.multiPlayerFlg && this.gameObj.round == 1 && this.gameObj.currentCampaign <= 6 && this.gameObj.currentCampaign >= 1) {
 			if (this.currentPlayer.status == 'Purchase') {
 				displayFixedPopup('introPopup');
@@ -922,9 +934,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		this.playGameButtonPressed();
 		closePopup('introPopup');
 
-		if (this.gameObj.currentCampaign > 0 && this.gameObj.currentCampaign < 7)
+		if ((this.gameObj.currentCampaign > 0 && this.gameObj.currentCampaign < 7) || this.gameObj.mainGameType == 2)
 			this.currentPlayer.placedInf = 3;
-
 		if (this.gameObj.currentCampaign == 4) {
 			this.btPopupMessage = 'Click on the "Units" button and research Nuclear Missiles under the "Air" units tab.';
 			setTimeout(() => {
@@ -963,7 +974,18 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		this.initializePlayer();
 	}
+	checkForSealsStuff() {
+		for (var x = 0; x < this.gameObj.players.length; x++) {
+			var player = this.gameObj.players[x];
+			if (player.nation == 1) {
+				if (!player.generalFlg || !player.leaderFlg)
+					removeAllSeals(this.gameObj);
+			}
+
+		}
+	}
 	initializePlayer() {
+		this.checkForSealsStuff();
 		//playVoiceClip('nation' + this.currentPlayer.nation + '.mp3');
 		refreshAllTerritories(this.gameObj, this.currentPlayer, this.superpowersData, this.yourPlayer);
 		this.showAllianceMessageFlg = (this.gameObj.currentCampaign == 7 && this.gameObj.round == 1);
@@ -1009,7 +1031,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		player.techPurchasedThisTurn = false;
 		localStorage.generalRetreatObj = '';
 		this.gameObj.unitPurchases = [];
-		this.gameObj.superBCForm.cost = 0;
+		if (this.gameObj.superBCForm)
+			this.gameObj.superBCForm.cost = 0;
 		this.newPlayerHelpText = 'Purchase units then press "Purchase Complete"';
 		resetPlayerUnits(player, this.gameObj); //<------------------------------------------------- clean player units
 		if (this.currentPlayer.mainBaseID == 0)

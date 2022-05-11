@@ -62,12 +62,33 @@
 	</div>
 </div>
 
+<div *ngIf="showInstallFlg" style="display: table; position: absolute; left: 0; top: 0; height: 100%; width: 100%;">
+	<div style="display: table-cell; vertical-align: middle; text-align: center;">
+		<div class="signupWindow"
+			style="max-width: 800px; display: block; margin-left: auto; margin-right: auto; padding-bottom: 60px; text-align: center; background-color: #ccc;">
+			<div>Using Superpowers on your phone? There is nothing to install, but you can qucikly add an icon to your phone desktop:</div>
+
+			<button (click)="homeScreenPopup.show()" type="button" class="btn btn-primary roundButton main-page-item"><i
+					class="fa fa-book"></i> Instructions
+			</button>
+
+			<button (mousedown)="playVideo(3)" type="button" class="btn btn-primary roundButton"><i
+					class="fa fa-play"></i> Instruction
+				Video</button>
+
+			<button (mousedown)="showInstallFlg = !showInstallFlg" type="button" class="btn btn-secondary roundButton"><i
+					class="fa fa-times"></i>
+			</button>
+
+		</div>
+	</div>
+</div>
+
 <div class="bottom-bar">
 
-	<button (mousedown)="userPopup.show(user)" type="button" class="btn btn-primary roundButton">
-		<img src="assets/graphics/ranks/rank{{user.rank}}.png" style="max-height: 28px; max-width: 60px;"
-			title="{{yourRankName}}">
-		<span style="padding: 5px;">{{user.userName}}</span>
+	<button *ngIf="user.userId > 0" (mousedown)="userPopup.show(user)" type="button" class="btn btn-primary roundButton">
+		<i class="fa fa-user"></i>
+		<span style="padding: 5px;">Profile</span>
 	</button>
 	<span *ngIf="user.userId == 0" class="whiteLink" (mousedown)="multiplayGameClicked(loginPopup)">
 		Login
@@ -77,19 +98,21 @@
 			Rules</button></a>
 
 
-	<button (mousedown)="playYouTubeVideo()" type="button" class="btn btn-secondary roundButton glowBlue"><i class="fa fa-play"></i>
+	<button (mousedown)="playYouTubeVideo()" type="button" class="btn btn-secondary roundButton glowBlue"><i
+			class="fa fa-play"></i>
 		Boardgame Hacker
 		Video!
 	</button>
 	<button (mousedown)="playVideo(1)" type="button" class="btn btn-secondary roundButton"><i class="fa fa-play"></i>
 		Intro</button>
-	<button *ngIf="promoVideoWatched" (mousedown)="playVideo(2)" type="button" class="btn btn-secondary roundButton"><i class="fa fa-play"></i>
+	<button *ngIf="promoVideoWatched" (mousedown)="playVideo(2)" type="button" class="btn btn-secondary roundButton"><i
+			class="fa fa-play"></i>
 		Gameplay
 	</button>
-	<button *ngIf="guestNum==3" (mousedown)="playVideo(3)" type="button" class="btn btn-secondary roundButton"><i
-			class="fa fa-play"></i> Homescreen
-		Icon
-		Video</button>
+
+	<button (mousedown)="showInstallFlg = !showInstallFlg" type="button" class="btn btn-primary roundButton"><i
+			class="fa fa-mobile"></i> Install
+	</button>
 
 </div>
 
@@ -97,10 +120,14 @@
 	style="position: absolute; left: 0; top: 0; text-align: center; width: 100%; z-index: 100; background-color: gray; padding-bottom: 50px; box-shadow: 5px 5px 10px #444;">
 
 
-	<iframe *ngIf="showYouTubePlayerFlg" style="width: 100%; min-height: 480px;" src="https://www.youtube.com/embed/m4teSllXKgM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+	<iframe *ngIf="showYouTubePlayerFlg" style="width: 100%; min-height: 480px;"
+		src="https://www.youtube.com/embed/m4teSllXKgM" title="YouTube video player" frameborder="0"
+		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+		allowfullscreen></iframe>
 
 
-	<video *ngIf="!showYouTubePlayerFlg" id="mainVideo" style="width: 100%; height: auto; min-width: 480px; min-height: 320px;">
+	<video *ngIf="!showYouTubePlayerFlg" id="mainVideo"
+		style="width: 100%; height: auto; min-width: 480px; min-height: 320px;">
 		<source src="http://www.superpowersgame.com/superpowers480.mov" type="video/mp4">
 	</video>
 	<div>
@@ -172,3 +199,4 @@
 
 <app-login-popup #loginPopup (messageEvent)="userUpdated($event)"></app-login-popup>
 <app-user-popup #userPopup [user]="user" (messageEvent)="userUpdated($event)"></app-user-popup>
+<app-home-screen-popup #homeScreenPopup></app-home-screen-popup>

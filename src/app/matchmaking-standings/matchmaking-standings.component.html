@@ -14,7 +14,7 @@
                     <button (click)="changeMaxGames(-1)" [disabled]="maxGames==0" type="button"
                         class="btn btn-primary roundButton"><i class="fa fa-minus"></i></button>
                     <span class="borderClass2">{{maxGames}}</span>
-                    <button (click)="changeMaxGames(1)" [disabled]="maxGames>=5" type="button"
+                    <button (click)="changeMaxGames(1)" [disabled]="maxGames>=7" type="button"
                         class="btn btn-primary roundButton"><i class="fa fa-plus"></i></button>
                     <button *ngIf="maxGames>0" (click)="exitLeague()" type="button" class="btn btn-danger roundButton">
                         <i class="fa fa-sign-out"></i> Exit League
