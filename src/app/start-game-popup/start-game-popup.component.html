@@ -25,7 +25,7 @@
                         <button (mousedown)="changeMainGameType(1)" type="button"
                             class="btn btn-default roundButton tall" [ngClass]="ngClassSegment(mainGameType,1)">
                             Superpowers</button>
-                        <button (mousedown)="changeMainGameType(2)" type="button"
+                        <button *ngIf="0" (mousedown)="changeMainGameType(2)" type="button"
                             class="btn btn-default roundButton tall" [ngClass]="ngClassSegment(mainGameType,2)">
                             Axis & Allies</button>
                     </div>
@@ -128,9 +128,6 @@
                             </table>
                         </div>
 
-                        <div><button (click)="startGame()" type="button"
-                                class="btn btn-danger roundButton tall glowRed">Start
-                                Game!</button></div>
 
                     </div>
                     <div *ngIf="user.rank > 2" style="font-size: 10px;">Note single player games are just for fun. Stats
@@ -140,6 +137,8 @@
                     </div>
                 </div>
 
+                <div><button (click)="startGame()" type="button"
+                    class="btn btn-danger roundButton tall glowRed">Start Game!</button></div>
 
 
 

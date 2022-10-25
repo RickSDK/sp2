@@ -412,6 +412,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	adminFixBoard() {
 		this.showAlertPopup('Fix on!', 1);
 
+
+
 		if (0) {
 			var player1 = this.gameObj.players[0];
 			player1.treaties = [1, 4, 3, 3, 1, 21, 2, 2];
@@ -422,14 +424,15 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 
 
-		var terrId = 141;
+		var terrId = 59;
 		var terr = this.gameObj.territories[terrId - 1];
 
+		//this.addUnitToTerr(terr, 50, true, true, true);
+		//this.addUnitToTerr(terr, 11, true, true, true);
 		//this.addUnitToTerr(terr, 2, true, true, true);
 		//this.addUnitToTerr(terr, 2, true, true, true);
-		//this.addUnitToTerr(terr, 13, true, true, true);
 
-		//terr.owner = 3;
+		//terr.owner = 7;
 		//terr.attackedByNation = 0;
 		//terr.defeatedByNation = 0;
 		//terr.nuked = false;
@@ -437,28 +440,43 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		//terr.facBombed = false;
 
 		//var player = this.gameObj.players[4];
-		//player.money = 95;
+		//this.currentPlayer.money = 95;
+		//player.money = 56;
 		if (0) {
 			var x = 0;
 			terr.units.forEach(unit => {
-				if (unit.terr == terrId && unit.piece == 12) {
+				if (unit.terr == terrId ) {
 					console.log('unit!!: ', unit);
-					unit.adCount = 2;
-					unit.att = 5;
-					unit.def = 5;
-					unit.numAtt = 3;
-					unit.numDef = 3;
-					unit.bcHp = 3;
+					//if(unit.piece == 2)
 					//unit.dead = true;
-					//unit.terr = 14;
+					//	unit.terr = 5 ;
+					//unit.adCount = 2;
+					//unit.att = 5;
+					//unit.def = 5;
+					//unit.numAtt = 3;
+					//unit.numDef = 3;
+					//unit.bcHp = 3;
+					//unit.dead = true;
+					//unit.owner = 7;
+					//unit.nation = 7;
 				}
 			});
 		}
 		//terr.owner = 3;
 
+		if(0) {
+			var logs = [];
+			this.gameObj.logs.forEach(log => {
+				if(log.id != 853)
+				logs.push(log);
+			});
+			this.gameObj.logs = logs;
+		}
+
 
 		if (0) {
 			setTimeout(() => {
+				
 				//this.addUnitToTerr(terr, 3, true, true, true);
 				//this.addUnitToTerr(terr, 3, true, true, true);
 				//this.addUnitToTerr(terr, 10, true, true, true);
@@ -485,6 +503,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				}
 			});
 		}
+
+
 		/*
 		terr.owner = 1;
 
@@ -636,7 +656,6 @@ export class BoardComponent extends BaseComponent implements OnInit {
 				this.checkEMPAndTimer(this.currentPlayer, this.gameObj, this.ableToTakeThisTurn);
 			}
 		}
-
 		var treatyOfferedNation = 0;
 		var nation = this.currentPlayer.nation;
 		this.gameObj.players.forEach(function (player) {
@@ -693,7 +712,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					}
 					player.empCount = obj.empCount;
 					if ((obj.nation == player.nation || gameObj.top1Nation == gameObj.top2Nation) && this.gameObj.secondsSinceUpdate > 30) {
-						console.log('checking for awol');
+						console.log('checking for awol', hours);
 						var playerIsAwol = false;
 
 						if (hours > 30) {
@@ -757,6 +776,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 									this.showSkipPlayerButtonFlg = true;
 
 							}
+						} else if(obj.time_elapsed > 20000 && this.yourPlayer.treaties[this.currentPlayer.nation - 1]==3 && this.currentPlayer.status == "Attack") {
+							this.showAccountSitButtonFlg = true;
 						}
 					}
 					this.cdr.detectChanges();
@@ -1055,7 +1076,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 			return;
 		}
 		this.checkTreatyOffers(player);
-		scrollToCapital(this.currentPlayer.nation);
+		scrollToCapital(this.currentPlayer.nation, this.gameObj.mainGameType);
 
 		if (player.cpu)
 			this.computerGo();
@@ -1836,7 +1857,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (this.currentPlayer.offers.length == 0) {
 			this.playerSetToPurchaseAndRefresh();
 		}
-		scrollToCapital(this.currentPlayer.nation);
+		scrollToCapital(this.currentPlayer.nation, this.gameObj.mainGameType);
 	}
 	checkTreatyOffers(player) {
 		if (this.ableToTakeThisTurn && (player.offers.length > 0 || player.news.length > 0 || player.botRequests.length > 0)) {
@@ -2942,7 +2963,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 	}
 
 	scrollToNation(nation) {
-		scrollToCapital(nation);
+		scrollToCapital(nation, this.gameObj.mainGameType);
 	}
 	ngClassGradient = function () {
 		if (this.yourPlayer && this.currentPlayer && this.yourPlayer.nation == this.currentPlayer.nation) {

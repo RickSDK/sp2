@@ -695,7 +695,7 @@ function scrubUnitsOfPlayer(player, gameObj, gUnits) {
 				}
 			}
 			if (player.tech[1]) {				//AGM Maverick
-				if (unit.piece == 6 || unit.piece == 35 || unit.piece == 47 || unit.piece == 48) {
+				if (unit.piece == 6 || unit.piece == 35 || unit.piece == 36 || unit.piece == 47 || unit.piece == 48) {
 					unit.target = 'vehicles';
 				}
 			}
@@ -752,10 +752,10 @@ function scrubUnitsOfPlayer(player, gameObj, gUnits) {
 				unit.mv = unit.mv2 + 2;
 				unit.moveAtt = unit.moveAtt2 + 1;
 			}
-			if (unit.piece == 36 && player.tech[15]) { //apache
-				unit.mv = 3;
-				unit.moveAtt = 3;
-			}
+			//if (unit.piece == 36 && player.tech[15]) { //apache
+			//	unit.mv = 3;
+			//	unit.moveAtt = 3;
+			//}
 			if (unit.piece == 3 && player.tech[17]) {	//mobility
 				unit.moveAtt = 3;
 			}

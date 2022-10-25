@@ -417,7 +417,7 @@ function mailFromLine(line) {
 		obj.recipient = c[x++];
 		obj.recipientName = c[x++];
 		obj.orig_sender = c[x++];
-		obj.orig_recipient = c[x++];
+		obj.orig_recipient = c[x++];S
 
 		var dt = getDateObjFromJSDate(obj.msgDate);
 		obj.formattedDate = dt.localDate;

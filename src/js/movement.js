@@ -11,6 +11,9 @@ function checkMovement(distObj, unit, optionType, currentPlayer, toTerr) {
     if (optionType != 'cruise' && toTerr.id < 79 && unit.type == 3)
         return false; // boats cannot go on land
 
+    if (unit.piece == 4 && unit.movesLeft == 1) {
+        unit.mv = 1;
+    }
     if (optionType == 'cruise') {
         if (unit.didAttackFlg)
             return false;
@@ -120,7 +123,7 @@ function clearAllDistanceObjects(gameObj) {
 
 }
 function isTerrOwned(terr, nation) {
-    if(!terr)
+    if (!terr)
         return false;
     if (terr.owner == nation)
         return true;

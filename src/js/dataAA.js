@@ -1,11 +1,11 @@
 function getGameTerritoriesAA() {
 	var terrs = [];
 	var x = 1;
-	terrs.push({ id: x++, name: 'Eastern USA', x: 54, y: 329, nation: 1, owner: 1, type: 0, capital: true, water: 101, land: [2, 1], enemyWater: 1, enemyZone: 1, enemyWater2: 1, enemyZone2: 1, borders: '2+1' });
-	terrs.push({ id: x++, name: 'West Indies', x: 104, y: 401, nation: 1, owner: 1, type: 0, water: 0, borders: '2+1', land: [1, 3] });
-	terrs.push({ id: x++, name: 'Panama', x: 33, y: 425, nation: 1, owner: 1, type: 0, water: 0, borders: '2+1', land: [4] });
-	terrs.push({ id: x++, name: 'Brazil', x: 152, y: 532, nation: 1, owner: 1, type: 0, water: 0, borders: '2+1', land: [3] });
-	terrs.push({ id: x++, name: 'Sinkiang', x: 714, y: 293, nation: 1, owner: 1, type: 0, borders: '2+1' });
+	terrs.push({ id: x++, name: 'Eastern USA', x: 54, y: 329, nation: 1, owner: 1, type: 0, capital: true, water: 101, land: [56, 10], enemyWater: 1, enemyZone: 1, enemyWater2: 1, enemyZone2: 1, borders: '56+10+72' });
+	terrs.push({ id: x++, name: 'West Indies', x: 104, y: 401, nation: 1, owner: 1, type: 0, water: 0, borders: '79', land: [] });
+	terrs.push({ id: x++, name: 'Panama', x: 33, y: 425, nation: 1, owner: 1, type: 0, water: 0, borders: '57+11+79+84', land: [57,11] });
+	terrs.push({ id: x++, name: 'Brazil', x: 152, y: 532, nation: 1, owner: 1, type: 0, water: 0, borders: '57+58+59+80+82', land: [57,58,59] });
+	terrs.push({ id: x++, name: 'Sinkiang', x: 714, y: 293, nation: 1, owner: 1, type: 0, borders: '15+16+67+6+31+52+66', land: [15,16,67,6,31,52,66] });
 	terrs.push({ id: x++, name: 'China', x: 777, y: 311, nation: 1, owner: 1, type: 0, borders: '2+1' });
 	terrs.push({ id: x++, name: 'Alaska', x: 1069, y: 109, nation: 1, owner: 1, type: 0, borders: '2+1' });
 	terrs.push({ id: x++, name: 'Midway Island', x: 1068, y: 275, nation: 1, owner: 1, type: 0, borders: '2+1' });

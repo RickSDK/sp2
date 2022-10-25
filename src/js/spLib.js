@@ -1,5 +1,5 @@
 function spVersion() {
-	return 'v4.138';
+	return 'v4.142';
 }
 function googleAds() {
 	window.onload = function () {
@@ -352,7 +352,7 @@ function promoteSuperpowersUser(user) {
 	displayFixedPopup('promotionPopup');
 	playSound('tada.mp3');
 }
-function scrollToCapital(num) {
+function scrollToCapital(num, mainGameType) {
 	var e = document.getElementById('target');
 	if (e) {
 		e.style.display = 'block';
@@ -362,6 +362,10 @@ function scrollToCapital(num) {
 	var y = window.pageYOffset;
 	var centerXs = [0, 307, 635, 856, 1184, 993, 783, 664, 384];
 	var centerYs = [0, 314, 208, 142, 275, 450, 445, 535, 507];
+	if(mainGameType == 2) {
+		centerXs = [0, 54, 388, 608, 938, 993, 783, 327, 384];
+		centerYs = [0, 300, 204, 118, 314, 450, 445, 165, 507];	
+	}
 	var centerX = centerXs[num] + 2;
 	var centerY = centerYs[num] - 2;
 	var count = 0;
