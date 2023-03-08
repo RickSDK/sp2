@@ -39,13 +39,15 @@ export class TerrButtonsComponent extends BaseComponent implements OnInit {
   constructor() { super(); }
 
   ngOnInit(): void {
-    console.log('xxx allies', this.currentPlayer.allies);
     if (this.currentPlayer.allies.length > 0)
       this.allyNation = this.currentPlayer.allies[0];
 
   }
+  ngOnChanges(changes:any) {
+    this.ngOnInit();
+  }
+
   initChild() {
-    this.allyNation = 1;
     this.showAlliesButtonsFlg = false;
     this.secondaryIndex = 0;
     this.showAlliesButtonsIdx = 0;

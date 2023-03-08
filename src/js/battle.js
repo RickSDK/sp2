@@ -1350,7 +1350,7 @@ function hostileActObj(type, terr, gameObj, player) {
         message = "This territory has just been conquered.";
         allowFlg = (terr.nation == 99 || type == 'bomb');
     }
-    var normalAttackFlg = false; // make false to allow multiple attacks to same territory.
+    var normalAttackFlg = true; // make false to allow multiple attacks to same territory.
     if (normalAttackFlg && terr.attackedByNation == player.nation && terr.attackedRound == gameObj.round) {
         message = "This territory has already been attacked.";
         allowFlg = (terr.nation == 99 || type == 'bomb');
