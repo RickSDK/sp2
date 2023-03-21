@@ -7,17 +7,13 @@
         <app-progress-bar *ngIf="loadingFlg"></app-progress-bar>
 
         <div *ngIf="!loadingFlg">
-
-
-            <div
-                style="background-color: #007; text-align: center; padding: 3px; color: white; white-space: nowrap; height: 57px;">
+            <div style="background-color: #007; text-align: center; padding: 3px; color: white;">
                 <button (mousedown)="filterGames(1)" [disabled]="buttonIdx==1" type="button"
                     class="btn btn-success roundButton"><i class="fa fa-arrow-down"></i>
-                    Join Game</button>
+                    Join <span class="hide-sm">Game</span></button>
                 <button (mousedown)="createGamePopup.show()" type="button" class="btn btn-secondary roundButton"><i
                         class="fa fa-plus"></i>
-                    Create Game</button>
-
+                    Create <span class="hide-sm">Game</span></button>
                 <button *ngIf="multiPlayerObj && multiPlayerObj.mmPoints == 0"
                     (mousedown)="matchmakerStandingsPopup.show()" [disabled]="buttonIdx==1" type="button"
                     class="btn btn-success roundButton">
@@ -27,16 +23,18 @@
                 <button (mousedown)="gameStandingsPopup.show()" type="button" class="btn btn-secondary roundButton"><i
                         class="fa fa-list-alt"></i>
                 </button>
-                <button (mousedown)="matchmakerStandingsPopup.show()" type="button"
-                    class="btn btn-secondary roundButton"><i class="fa fa-trophy"></i>
+                <button (mousedown)="matchmakerStandingsPopup.show()" class="btn btn-secondary roundButton"><i
+                        class="fa fa-trophy"></i>
                 </button>
+
             </div>
 
             <!---    new players   -->
             <div *ngIf="!multiPlayerObj.confirmEmailFlg" style="background-color: #ccc; color: #900;">
-                <i class="fa fa-exclamation-triangle"></i> Your email address has not been confirmed. Please press 'Profile' button above to confirm your email address.
+                <i class="fa fa-exclamation-triangle"></i> Your email address has not been confirmed. Please press
+                'Profile' button above to confirm your email address.
             </div>
-            <div *ngIf="0" class="borderClass3">
+            <!--<div *ngIf="0" class="borderClass3">
                 <div style="font-size: 24px; font-weight: 700;">Welcome to Superpowers!</div>
                 <div style="padding: 10px; font-size: 12px; color: gray;">Keep in mind games take several days to
                     play. Each player has up to 24 hours to take their turn. Check back regularly.</div>
@@ -60,23 +58,24 @@
                     <div style="font-size: 10px; color: yellow;" class="hidden-xxs">Games automatically start when
                         filled up</div>
                 </button>
-            </div>
+            </div>-->
 
-            <table width="100%" *ngIf="multiPlayerObj">
+
+            <table *ngIf="multiPlayerObj" align="center">
                 <tr>
                     <td>
 
                         <div class="spCard2" (mousedown)="gameStandingsPopup.show()">
                             <div class="spTitle"><i class="fa fa-list-alt"></i> Top 5 Standings</div>
                             <table class="spTable" width="100%">
-                                <tr style="font-size: 10px;">
+                                <tr class="small-text">
                                     <th>#</th>
                                     <th>Player</th>
                                     <th>W</th>
                                     <th>L</th>
-                                     <th>Pts</th>
+                                    <th>Pts</th>
                                 </tr>
-                                <tr *ngFor="let player of playerStandingsList; let i = index" style="font-size: 12px;">
+                                <tr *ngFor="let player of playerStandingsList; let i = index" class="small-text">
                                     <td>#{{i+1}}</td>
                                     <td>{{player.name}}</td>
                                     <td>{{player.wins}}</td>
@@ -93,17 +92,18 @@
                             <div style="color: cyan;">Join Now!</div>
                             <div style="color: #ccc; font-size: 10px;">Games start automatically</div>
                         </button>
-                        <div *ngIf="multiPlayerObj.games_max > 0" class="spCard2" (mousedown)="matchmakerStandingsPopup.show()" style="width: 100%;">
+                        <div *ngIf="multiPlayerObj.games_max > 0" class="spCard2"
+                            (mousedown)="matchmakerStandingsPopup.show()" style="width: 100%;">
                             <div class="spTitle"><i class="fa fa-trophy"></i> Matchmaking Top 5</div>
                             <table class="spTable" width="100%">
-                                <tr style="font-size: 10px;">
+                                <tr class="small-text">
                                     <th>#</th>
                                     <th>Player</th>
                                     <th>W</th>
                                     <th>L</th>
-                                     <th>Pts</th>
+                                    <th>Pts</th>
                                 </tr>
-                                 <tr *ngFor="let player of matchStandingsList; let i = index" style="font-size: 12px;">
+                                <tr *ngFor="let player of matchStandingsList; let i = index" class="small-text">
                                     <td>#{{i+1}}</td>
                                     <td>{{player.name}}</td>
                                     <td>{{player.wins}}</td>
@@ -123,43 +123,43 @@
                     <button (mousedown)="filterGames(0)" type="button" class="btn btn-default roundButton segmentButton"
                         [ngClass]="ngClassSegment(buttonIdx,0)" style="min-width: 60px;">
                         <i class="fa fa-star" style="font-size: 26px;"></i>
-                        <div style="font-size: 10px;">My Games</div>
+                        <div class="small-text">My Games</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count0}})</div>
                     </button>
                     <button (mousedown)="filterGames(1)" type="button" class="btn btn-default roundButton segmentButton"
                         [ngClass]="ngClassSegment(buttonIdx,1)" style="min-width: 60px;">
                         <i class="fa fa-plus" style="font-size: 26px;"></i>
-                        <div style="font-size: 10px;">Open</div>
+                        <div class="small-text">Open</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count1}})</div>
                     </button>
                     <button (mousedown)="filterGames(2)" type="button" class="btn btn-default roundButton segmentButton"
                         [ngClass]="ngClassSegment(buttonIdx,2)" style="min-width: 60px;">
                         <i class="fa fa-play" style="font-size: 26px;"></i>
-                        <div style="font-size: 10px;">Playing</div>
+                        <div class="small-text">Playing</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count2}})</div>
                     </button>
                     <button (mousedown)="filterGames(3)" type="button" class="btn btn-default roundButton segmentButton"
                         [ngClass]="ngClassSegment(buttonIdx,3)" style="min-width: 60px;">
                         <i class="fa fa-stop" style="font-size: 26px;"></i>
-                        <div style="font-size: 10px;">Completed</div>
+                        <div class="small-text">Completed</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count3}})</div>
                     </button>
                     <button (mousedown)="filterGames(4)" type="button" class="btn btn-default roundButton segmentButton"
                         [ngClass]="ngClassSegment(buttonIdx,4)" style="min-width: 60px;">
                         <i class="fa fa-trophy" style="font-size: 26px;"></i>
-                        <div style="font-size: 10px;">MatchMaking</div>
+                        <div class="small-text">MatchMaking</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count4}})</div>
                     </button>
                     <button *ngIf="adminFlg && count5>0" (mousedown)="filterGames(5)" type="button"
                         class="btn btn-warning roundButton  segmentButton hidden-xxs" style="min-width: 60px;">
                         <i class="fa fa-bug" style="font-size: 26px;"></i>
-                        <div style="font-size: 10px;">Bugs</div>
+                        <div class="small-text">Bugs</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count5}})</div>
                     </button>
                     <button *ngIf="adminFlg && count6>0" (mousedown)="filterGames(6)" type="button"
                         class="btn btn-warning roundButton  segmentButton hidden-xxs" style="min-width: 60px;">
                         <i class="fa fa-clock-o" style="font-size: 26px;"></i>
-                        <div style="font-size: 10px;">Stale</div>
+                        <div class="small-text">Stale</div>
                         <div style="font-size: 12px; font-weight: 700;">({{count6}})</div>
                     </button>
                 </div>
@@ -210,7 +210,7 @@
             </div>
 
         </div>
-        <div style="display: inline-block; border: 1px solid gray; width: 100%;">
+        <div style="border: 1px solid gray;">
             <div style="text-align: center; font-size: 12px; color: gray;">Google Ads</div>
             <ins class="adsbygoogle" style="display:block;" data-ad-client="ca-pub-2626924352662007"
                 data-ad-slot="3410873039" data-ad-format="auto" data-full-width-responsive="true"></ins>

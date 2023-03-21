@@ -424,7 +424,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 
 
-		var terrId = 86;
+		var terrId = 8;
 		var terr = this.gameObj.territories[terrId - 1];
 
 		//this.addUnitToTerr(terr, 50, true, true, true);
@@ -432,7 +432,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		//this.addUnitToTerr(terr, 2, true, true, true);
 		//this.addUnitToTerr(terr, 2, true, true, true);
 
-		//terr.owner = 8;
+		//terr.owner = 6;
 		//terr.attackedByNation = 0;
 		//terr.defeatedByNation = 0;
 		//terr.nuked = false;
@@ -445,7 +445,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (0) {
 			var x = 0;
 			terr.units.forEach(unit => {
-				if (unit.terr == terrId && unit.owner==4) {
+				if (unit.terr == terrId && unit.owner==7) {
 					console.log('unit!!: ', unit);
 					//if(unit.piece == 2)
 					//unit.dead = true;
@@ -457,8 +457,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					//unit.numDef = 3;
 					//unit.bcHp = 3;
 					//unit.dead = true;
-//					unit.owner = 8;
-//					unit.nation = 8;
+					unit.owner = 6;
+					unit.nation = 6;
 				}
 			});
 		}

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">superpowers</string>
+    <string name="title_activity_main">superpowers</string>
+    <string name="package_name">com.mydomain.superpowers</string>
+    <string name="custom_url_scheme">com.mydomain.superpowers</string>
+</resources>

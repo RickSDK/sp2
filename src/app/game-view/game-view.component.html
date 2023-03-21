@@ -97,12 +97,11 @@
 		<i class="fa fa-floppy-o" style="font-size: 26px;"></i>
 		<div style="font-size: 10px;">Save Game</div>
 	</button>
+	<button *ngIf="1" (click)="turnAllPlayersHuman()" type="button" class="btn btn-warning roundButton">
+		<i class="fa fa-user" style="font-size: 26px;"></i>
+		<div style="font-size: 10px;">Turn all Human</div>
+	</button>
 	<span *ngIf="user.userName=='Rick'" style="border: 1px solid black; height: 80px;">
-
-		<button *ngIf="1" (click)="turnAllPlayersHuman()" type="button" class="btn btn-warning roundButton">
-			<i class="fa fa-user" style="font-size: 26px;"></i>
-			<div style="font-size: 10px;">Turn all Human</div>
-		</button>
 		<button *ngIf="user.userName=='Rick'" (click)="turnIntoCPU()" type="button" class="btn btn-warning roundButton">
 			<i class="fa fa-android" style="font-size: 26px;"></i>
 			<div style="font-size: 10px;">Turn into CPU</div>

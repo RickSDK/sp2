@@ -10,3 +10,15 @@
     overflow: hidden;
     margin: 3px;
 }
+.small-text {
+    font-size: 12px;
+}
+
+@media screen and (max-width: 440px) {
+    .small-text {
+        font-size: 8px;
+    }
+    .hide-sm {
+        display: none;
+    }
+}

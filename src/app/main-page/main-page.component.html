@@ -49,8 +49,8 @@
 			</div>
 
 			<div *ngIf="!promoVideoWatched" class="borderClass2">
-				<div><i class="fa fa-arrow-down" style="font-size: 32px;"></i></div>
-				Check out the Boardgame Hacker video below to get a quick overview of Superpowers!
+				<div><b>Welcome to Superpowers!</b></div>
+				Check out the Boardgame Hacker video below to get a quick overview!
 			</div>
 
 			<div *ngIf="0" style="display: inline-block; border: 1px solid gray; width: 100%; max-width: 400px;">
@@ -66,19 +66,15 @@
 	<div style="display: table-cell; vertical-align: middle; text-align: center;">
 		<div class="signupWindow"
 			style="max-width: 800px; display: block; margin-left: auto; margin-right: auto; padding-bottom: 60px; text-align: center; background-color: #ccc;">
-			<div>Using Superpowers on your phone? There is nothing to install, but you can qucikly add an icon to your phone desktop:</div>
+			<p>Get the app for free today!</p>
 
-			<button (click)="homeScreenPopup.show()" type="button" class="btn btn-primary roundButton main-page-item"><i
-					class="fa fa-book"></i> Instructions
-			</button>
+		<a href="https://apps.apple.com/us/app/superpowers-game/id539807409">
+			<img src="assets/graphics/appStore1.png" height="44">
+		</a>&nbsp;
 
-			<button (mousedown)="playVideo(3)" type="button" class="btn btn-primary roundButton"><i
-					class="fa fa-play"></i> Instruction
-				Video</button>
-
-			<button (mousedown)="showInstallFlg = !showInstallFlg" type="button" class="btn btn-secondary roundButton"><i
-					class="fa fa-times"></i>
-			</button>
+		<a href="https://play.google.com/store/apps/details?id=com.mydomain.superpowers">
+			<img src="assets/graphics/appStore2.png" height="44">
+		</a>
 
 		</div>
 	</div>
@@ -94,24 +90,20 @@
 		Login
 	</span>
 
-	<a routerLink="/info"><button type="button" class="btn btn-primary roundButton"><i class="fa fa-book"></i>
-			Rules</button></a>
-
-
 	<button (mousedown)="playYouTubeVideo()" type="button" class="btn btn-secondary roundButton glowBlue"><i
 			class="fa fa-play"></i>
-		Boardgame Hacker
-		Video!
+		Video
 	</button>
 	<button (mousedown)="playVideo(1)" type="button" class="btn btn-secondary roundButton"><i class="fa fa-play"></i>
 		Intro</button>
+
 	<button *ngIf="promoVideoWatched" (mousedown)="playVideo(2)" type="button" class="btn btn-secondary roundButton"><i
 			class="fa fa-play"></i>
 		Gameplay
 	</button>
 
 	<button (mousedown)="showInstallFlg = !showInstallFlg" type="button" class="btn btn-primary roundButton"><i
-			class="fa fa-mobile"></i> Install
+			class="fa fa-mobile"></i> Download
 	</button>
 
 </div>
