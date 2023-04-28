@@ -66,45 +66,70 @@
 	<div style="display: table-cell; vertical-align: middle; text-align: center;">
 		<div class="signupWindow"
 			style="max-width: 800px; display: block; margin-left: auto; margin-right: auto; padding-bottom: 60px; text-align: center; background-color: #ccc;">
+			<button (mousedown)="showInstallFlg=false" class="btn btn-primary" style="float: right;"><i
+					class="fa fa-times"></i></button>
+
 			<p>Get the app for free today!</p>
 
-		<a href="https://apps.apple.com/us/app/superpowers-game/id539807409">
-			<img src="assets/graphics/appStore1.png" height="44">
-		</a>&nbsp;
+			<a href="https://apps.apple.com/us/app/superpowers-game/id539807409">
+				<img src="assets/graphics/appStore1.png" height="44">
+			</a>&nbsp;
 
-		<a href="https://play.google.com/store/apps/details?id=com.mydomain.superpowers">
-			<img src="assets/graphics/appStore2.png" height="44">
-		</a>
+			<a href="https://play.google.com/store/apps/details?id=com.mydomain.superpowers">
+				<img src="assets/graphics/appStore2.png" height="44">
+			</a>
 
 		</div>
 	</div>
 </div>
 
+<div *ngIf="showVideosFlg" style="display: table; position: absolute; left: 0; top: 0; height: 100%; width: 100%;">
+	<div style="display: table-cell; vertical-align: middle; text-align: center;">
+		<div class="signupWindow"
+			style="max-width: 800px; display: block; margin-left: auto; margin-right: auto; padding-bottom: 60px; text-align: center; background-color: #ccc;">
+			<button (mousedown)="showVideosFlg=false" class="btn btn-primary" style="float: right;"><i
+					class="fa fa-times"></i></button>
+
+			<p>Check out these videos to understand the game.</p>
+
+			<button (mousedown)="playYouTubeVideo()" type="button" class="btn btn-secondary roundButton glowBlue"><i
+					class="fa fa-play"></i>
+				Board Game Hackers Video
+			</button>
+			<button (mousedown)="playVideo(1)" type="button" class="btn btn-secondary roundButton"><i
+					class="fa fa-play"></i>
+				Intro</button>
+
+			<button (mousedown)="playVideo(2)" type="button"
+				class="btn btn-secondary roundButton"><i class="fa fa-play"></i>
+				Gameplay
+			</button>
+
+		</div>
+	</div>
+</div>
+
+
+
 <div class="bottom-bar">
 
-	<button *ngIf="user.userId > 0" (mousedown)="userPopup.show(user)" type="button" class="btn btn-primary roundButton">
+	<button *ngIf="user.userId > 0" (mousedown)="userPopup.show(user)" type="button"
+		class="btn btn-primary roundButton">
 		<i class="fa fa-user"></i>
 		<span style="padding: 5px;">Profile</span>
 	</button>
 	<span *ngIf="user.userId == 0" class="whiteLink" (mousedown)="multiplayGameClicked(loginPopup)">
 		Login
 	</span>
-
-	<button (mousedown)="playYouTubeVideo()" type="button" class="btn btn-secondary roundButton glowBlue"><i
-			class="fa fa-play"></i>
-		Video
-	</button>
-	<button (mousedown)="playVideo(1)" type="button" class="btn btn-secondary roundButton"><i class="fa fa-play"></i>
-		Intro</button>
-
-	<button *ngIf="promoVideoWatched" (mousedown)="playVideo(2)" type="button" class="btn btn-secondary roundButton"><i
-			class="fa fa-play"></i>
-		Gameplay
-	</button>
-
 	<button (mousedown)="showInstallFlg = !showInstallFlg" type="button" class="btn btn-primary roundButton"><i
 			class="fa fa-mobile"></i> Download
 	</button>
+	<button (mousedown)="showVideosFlg = !showVideosFlg" type="button" class="btn btn-primary roundButton"><i
+			class="fa fa-play"></i> Videos
+	</button>
+
+
+
 
 </div>
 

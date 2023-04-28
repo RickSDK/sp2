@@ -36,6 +36,7 @@ export class MainPageComponent extends BaseComponent implements OnInit {
   public showYouTubePlayerFlg = false;
   public promoVideoWatched = false;
   public showInstallFlg = false;
+  public showVideosFlg = false;
 
   public videos = [
     { seconds: 41, src: 'http://www.superpowersgame.com/superpowers480.mov' },
@@ -119,12 +120,14 @@ export class MainPageComponent extends BaseComponent implements OnInit {
     }
   }
   playYouTubeVideo() {
+    this.showVideosFlg = false;
     this.promoVideoWatched = true;
     this.showVideoPlayerFlg = true;
     this.showYouTubePlayerFlg = true;
     localStorage.promoVideoWatched = 'Y';
   }
   playVideo(num: number) {
+    this.showVideosFlg = false;
     this.showVideoPlayerFlg = true;
     this.showYouTubePlayerFlg = false;
     setTimeout(() => {

@@ -424,7 +424,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		}
 
 
-		var terrId = 8;
+		var terrId = 106;
 		var terr = this.gameObj.territories[terrId - 1];
 
 		//this.addUnitToTerr(terr, 50, true, true, true);
@@ -445,7 +445,7 @@ export class BoardComponent extends BaseComponent implements OnInit {
 		if (0) {
 			var x = 0;
 			terr.units.forEach(unit => {
-				if (unit.terr == terrId && unit.owner==7) {
+				if (unit.terr == terrId && unit.piece==41) {
 					console.log('unit!!: ', unit);
 					//if(unit.piece == 2)
 					//unit.dead = true;
@@ -613,7 +613,8 @@ export class BoardComponent extends BaseComponent implements OnInit {
 
 		this.currentPlayer.allies = alliesFromTreaties(this.currentPlayer);
 		this.currentPlayer.maxAlliesForPlayer = getMaxAllies(this.currentPlayer, this.gameObj);
-		this.currentPlayer.treatiesAtStart = this.currentPlayer.treaties.slice(0);
+		if(this.currentPlayer.treaties)
+			this.currentPlayer.treatiesAtStart = this.currentPlayer.treaties.slice(0);
 		this.currentPlayer.allySpotsOpen = this.currentPlayer.maxAlliesForPlayer - this.currentPlayer.allies.length;
 
 		if (this.gameObj.gameOver) {
@@ -1393,12 +1394,15 @@ export class BoardComponent extends BaseComponent implements OnInit {
 					console.log('Cleanup this sea zone: ', terr.name);
 					var warHash = {}
 					var nation = 0;
-					player.treaties.forEach(treatyNum => {
-						nation++;
-						if (treatyNum == 0)
-							warHash[nation] = true;
+					if(player.treaties) {
+						player.treaties.forEach(treatyNum => {
+							nation++;
+							if (treatyNum == 0)
+								warHash[nation] = true;
+	
+						});
+					}
 
-					});
 					var attackUnits = [];
 					var defUnits = [];
 					terr.units.forEach(unit => {

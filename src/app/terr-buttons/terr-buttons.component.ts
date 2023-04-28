@@ -54,7 +54,7 @@ export class TerrButtonsComponent extends BaseComponent implements OnInit {
 
   }
   changeSecondaryIndex(num: number) {
-    if (this.selectedTerritory.attackedRound == this.gameObj.round) {
+    if (this.selectedTerritory.defeatedByRound == this.gameObj.round) {
       this.showAlertPopup('Sorry, newly conquered territories cannot be transferred.', 1);
       return;
     }

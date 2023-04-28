@@ -126,6 +126,7 @@ export class MailPopupComponent extends BaseComponent implements OnInit {
     this.getData('delete', message.row_id);
   }
   getData(action: string, row_id: number) {
+    console.log('getData');
     this.row_id = row_id;
     var url = this.getHostname() + "/spSendMail.php";
     this.mailBoxName = (this.buttonIdx == 0) ? 'inbox' : 'sentBox';
@@ -136,10 +137,11 @@ export class MailPopupComponent extends BaseComponent implements OnInit {
       .then((data) => {
         //console.log('data', data);
         var items = data.split("<a>");
+        //console.log('items', items);
         var displayMessages = [];
         items.forEach(function (line) {
           var message = mailFromLine(line);
-          console.log(message);
+          //console.log(message);
           if (message && message.row_id > 0)
             displayMessages.push(message);
         });
